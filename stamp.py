@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Re-stamp styles.css / main.js / asset URLs with their content hash.
+"""Re-stamp styles.css / main.js / asset / icon URLs with their content hash.
 Run after editing any of them so browsers and the CDN fetch the new file."""
 import re, glob, hashlib, os
 
@@ -17,5 +17,8 @@ for f in pages:
         p = src.replace('../', '')
         return 'src="%s?v=%s"' % (src, h(p)) if os.path.exists(p) else m.group(0)
     s = re.sub(r'src="((?:\.\./)?assets/[^"?]+)(?:\?v=[a-f0-9]+)?"', asset, s)
+    # Icons are root-absolute on every page; browsers cache favicons hard, so stamp them too.
+    s = re.sub(r'href="/(favicon\.svg|favicon\.ico|apple-touch-icon\.png)(?:\?v=[a-f0-9]+)?"',
+               lambda m: 'href="/%s?v=%s"' % (m.group(1), h(m.group(1))), s)
     open(f, 'w').write(s)
 print("styles.css=%s  main.js=%s  (%d pages stamped)" % (css_h, js_h, len(pages)))

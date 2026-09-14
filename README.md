@@ -61,6 +61,7 @@ before any file is served. The home page and the work index stay public.
 
 ## Editing content
 
+- Copy follows [VOICE.md](VOICE.md). Read it before writing or rewriting any text on the site.
 - Case-study copy lives directly in each `work/*.html` file.
 - The originations chart on the Cross-Sell page reads its numbers from the
   `data-series` attribute on the `.chart` element; the table below it is the

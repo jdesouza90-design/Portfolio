@@ -114,6 +114,49 @@ const CONFIG = {
     }, 2500);
   }
 
+  /* ---- Tabs: the three tracking layers ----
+     Standard tablist keyboarding (arrows, Home, End; selection follows focus).
+     The underline is one element positioned from the selected tab's box, so
+     it slides rather than blinks; it is re-measured on resize and once the
+     web fonts land, since both change tab widths. */
+  $$("[data-tabs]").forEach((root) => {
+    const list = $('[role="tablist"]', root);
+    const tabs = $$('[role="tab"]', root);
+    const panels = tabs.map((t) => document.getElementById(t.getAttribute("aria-controls")));
+    if (!list || !tabs.length) return;
+    let current = Math.max(0, tabs.findIndex((t) => t.getAttribute("aria-selected") === "true"));
+    const place = () => {
+      const t = tabs[current];
+      list.style.setProperty("--tab-x", `${t.offsetLeft}px`);
+      list.style.setProperty("--tab-y", `${t.offsetTop + t.offsetHeight - 2}px`);
+      list.style.setProperty("--tab-w", `${t.offsetWidth}px`);
+    };
+    const select = (i, focus) => {
+      current = i;
+      tabs.forEach((t, k) => {
+        const on = k === i;
+        t.setAttribute("aria-selected", String(on));
+        t.tabIndex = on ? 0 : -1;
+        if (panels[k]) panels[k].classList.toggle("active", on);
+      });
+      place();
+      if (focus) tabs[i].focus();
+    };
+    tabs.forEach((t, i) => {
+      t.addEventListener("click", () => select(i));
+      t.addEventListener("keydown", (e) => {
+        const n = tabs.length;
+        const next = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: n - 1 }[e.key];
+        if (next === undefined) return;
+        e.preventDefault();
+        select((next + n) % n, true);
+      });
+    });
+    select(current);
+    window.addEventListener("resize", place, { passive: true });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(place);
+  });
+
   /* ---- Case study: table of contents scroll-spy ---- */
   const toc = $(".toc");
   if (toc && "IntersectionObserver" in window) {
