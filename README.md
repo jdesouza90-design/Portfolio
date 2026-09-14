@@ -89,9 +89,10 @@ sections, `--row` between rows, `--panel-h` for a visual beside copy.
 
 All five case studies are the same document, in this order:
 
-1. **Hero**: eyebrow, title, one-sentence lede, the project's screens on its
-   own tinted panel, then four facts (role, team, timeline, outcome) as a
-   `<dl>`: each `<dt>` holds the icon and the label, divided by dashed rules.
+1. **Hero**: eyebrow, title and one-sentence lede with the outcome stat beside
+   them, the project's screens on its own tinted panel, then four facts
+   (role, team, timeline, launch) as a `.facts` stat strip: a small label
+   above the value at heading size, cells divided by hairlines.
 2. **Results**: centred title and lede, then the proof (chart, capacity meter,
    A/B table, or quotes where there are no published numbers).
 3. **How we got there**: rows that alternate copy and a fixed-height panel
