@@ -119,7 +119,7 @@ All six case studies are the same document, in this order:
    above the value at heading size, cells divided by hairlines.
 2. **Results**: centred title and lede, then one `.proof` frame: the headline
    stat top-left, a label top-right, and under it the evidence (chart,
-   capacity meter, A/B table, or a hairline list of what shipped where there
+   capacity gauge, A/B table, or a hairline list of what shipped where there
    are no published numbers or the number is too new to chart).
 3. **My role**: hairline ledger rows (`.ledger`), heading left and paragraph
    right, so a hiring manager reads the leadership story before the work.

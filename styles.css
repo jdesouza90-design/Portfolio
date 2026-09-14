@@ -126,7 +126,7 @@
 .btn, .chip, .nav-links a, .back, .tools span, .layer-out > span:first-child, .about-logos span, footer,
 .facts dt, table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
 .gallery figcaption, .proof-head small, .tooltip, .chart-pill, details.data,
-thead th, .about-logos time, .capacity-ticks, .table-wrap td[data-label]::before
+thead th, .about-logos time, .gauge .lbl, .table-wrap td[data-label]::before
   { font-family: var(--font-body); margin: 0; }
 .t-subhead, .testimonial-foot cite b
   { font-size: var(--t-subhead); line-height: var(--lh-subhead); letter-spacing: var(--ls-subhead); font-weight: 500; color: var(--ink); }
@@ -138,7 +138,7 @@ thead th, .about-logos time, .capacity-ticks, .table-wrap td[data-label]::before
 .facts dt, table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
 .gallery figcaption, .proof-head small, .tooltip, .chart-pill, details.data
   { font-size: var(--t-small); line-height: var(--lh-small); font-weight: 400; color: var(--ink-2); }
-.t-micro, .eyebrow, thead th, .about-logos time, .capacity-ticks, .table-wrap td[data-label]::before
+.t-micro, .eyebrow, thead th, .about-logos time, .gauge .lbl, .table-wrap td[data-label]::before
   { font-size: var(--t-micro); line-height: var(--lh-micro); letter-spacing: var(--ls-micro); text-transform: uppercase; font-weight: 500; color: var(--ink-2); }
 .eyebrow { display: block; }
 
@@ -754,7 +754,7 @@ footer a:hover { color: var(--ink); }
 .walk-note { max-width: 932px; margin: var(--sp-3) auto 0; text-align: center; }
 @media (prefers-reduced-motion: reduce) { .walk::after, .walk .play { transition: none; } }
 
-/* Proof blocks: the chart and the capacity meter share one frame */
+/* Proof blocks: the chart and the capacity gauge share one frame */
 .proof { background: var(--surface); border: 1px solid var(--hair); border-radius: 16px; padding: clamp(22px, 3vw, 32px); position: relative; }
 .proof-head { display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; margin-bottom: var(--sp-5); }
 .proof-head small { display: block; max-width: 40ch; }
@@ -793,12 +793,28 @@ details.data { margin-top: 14px; }
 details.data summary { cursor: pointer; }
 details.data table { min-width: 0; margin-top: 10px; }
 details.data th, details.data td { white-space: normal; padding-inline: 10px; }   /* wraps rather than clips at 320px */
-.capacity-bar { position: relative; height: 14px; border-radius: 999px; background: var(--surface-2); margin: var(--sp-5) 0 var(--sp-3); overflow: hidden; }
-.capacity-bar span { position: absolute; inset: 0; width: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transform-origin: left; animation: fill-x 1.4s var(--ease) both; }
-/* the meter is below the fold; hold it empty until its block reveals so the fill is actually seen */
-.anim [data-reveal]:not(.in) .capacity-bar span { animation-play-state: paused; }
-@keyframes fill-x { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-.capacity-ticks { display: flex; justify-content: space-between; }
+/* Gauge: a half dial for capacity. The ring is the pool, filled left to right
+   along a 408-unit arc as the block reveals; a white slot with a green bar
+   rides its head, and white notches mark the hours. Labels are HTML placed
+   by percentage of the dial's box, so they keep their size at any width. */
+.gauge { position: relative; width: min(100%, 440px); aspect-ratio: 2 / 1; margin: var(--sp-6) auto var(--sp-7); }
+.gauge svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; display: block; }
+.gauge .track, .gauge .fill { fill: none; stroke-width: 56; }
+.gauge .track { stroke: color-mix(in srgb, var(--accent-2) 20%, var(--surface)); }
+.gauge .fill { stroke: url(#gauge-fill); stroke-dasharray: 409; stroke-dashoffset: 0; animation: gauge-fill 1.4s var(--ease) both; }
+.gauge .notch, .gauge .slot { stroke: var(--surface); stroke-width: 3; }
+.gauge .slot { stroke-width: 10; }
+.gauge .bar { stroke: var(--accent-ink); stroke-width: 3.5; stroke-linecap: round; }
+.gauge .needle { transform-box: view-box; transform-origin: 180px 178px; transform: rotate(84deg); animation: gauge-needle 1.4s var(--ease) both; }
+/* the dial is below the fold; hold it empty until its block reveals so the fill is actually seen */
+.anim [data-reveal]:not(.in) .gauge :is(.fill, .needle) { animation-play-state: paused; }
+@keyframes gauge-fill { from { stroke-dashoffset: 409; } to { stroke-dashoffset: 0; } }
+@keyframes gauge-needle { from { transform: rotate(-84deg); } to { transform: rotate(84deg); } }   /* 6° inside each end, so the head sits on the ring */
+.gauge .lbl { position: absolute; white-space: nowrap; }
+.gauge .l0 { left: 13.9%; top: 100%; transform: translate(-50%, 8px); }
+.gauge .l3 { left: 86.1%; top: 100%; transform: translate(-50%, 8px); }
+.gauge .l1 { left: 26.4%; top: 17.2%; transform: translate(-100%, -50%); }
+.gauge .l2 { left: 73.6%; top: 17.2%; transform: translateY(-50%); }
 
 /* Next: the closing band */
 .cs-next { margin-top: var(--section); padding-block: var(--section); background: var(--paper-2); border-top: 1px solid var(--hair); text-align: center; }
@@ -838,7 +854,7 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .anim [data-reveal], [data-rise] { opacity: 1; transform: none; transition: none; animation: none; }
-  .capacity-bar span, .hero-bg span { animation: none !important; }
+  .gauge .fill, .gauge .needle, .hero-bg span { animation: none !important; }
   .layer, .layer-tabs::after { transition: none; }
   .case-media img, .work-cta::after, .tooltip, .chart-marker, .chart-node { transition: none; transform: none; }
   .tooltip { transform: translate(-50%, 0); }
