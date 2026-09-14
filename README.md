@@ -43,6 +43,13 @@ Then open http://localhost:4173.
 
 ## Deploy
 
+The site is a static bundle plus one Vercel Edge Middleware file. Pushing to
+`main` deploys it. `middleware.js` gates everything under `/work`; it reads the
+password from the `CASE_STUDY_PASSWORD` environment variable, which must be set
+in the Vercel project for all environments.
+
+### Legacy
+
 Any static host works. Two easy options:
 
 - **Netlify (current host):** project `john-desouza-portfolio` on the Quicksand Partners team,
@@ -67,7 +74,7 @@ registered in `netlify.toml`). The home page stays public. Visitors see a styled
 the right password sets a 30-day cookie scoped to `/work`.
 
 - The password is the `CASE_STUDY_PASSWORD` environment variable on the Netlify project
-  (Project configuration → Environment variables). Current value: `DeSouza2026`.
+  (Vercel → Project → Settings → Environment Variables). The value is not stored in this repo.
 - To change it, edit the variable and trigger a redeploy. Changing it also logs everyone out,
   because the cookie is derived from the password.
 - If the variable is missing, the gate fails closed and shows a "not configured" message.

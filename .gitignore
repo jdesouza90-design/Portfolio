@@ -1,4 +1,9 @@
 node_modules/
+.next/
 .netlify/
 .vercel/
+.env
+.env.local
+.env*.local
 .DS_Store
+.claude/scheduled_tasks.lock
