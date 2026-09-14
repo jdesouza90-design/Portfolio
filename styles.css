@@ -298,15 +298,6 @@ main, .nav { position: relative; z-index: 1; }
 .lead-solo-copy { display: flex; flex-direction: column; gap: 20px; }
 .lead-solo-copy p { margin: 0; color: var(--ink-2); max-width: 58ch; }
 @media (max-width: 900px) { .lead-solo { grid-template-columns: 1fr; } }
-/* Team pills */
-.people { display: flex; flex-wrap: wrap; gap: 8px; }
-.person {
-  display: flex; align-items: center; gap: 9px; padding: 5px 13px 5px 5px;
-  border: 1px solid var(--hair); border-radius: 999px; background: var(--surface); font-size: .85rem; line-height: 1.2;
-}
-.person small { display: block; color: var(--ink-3); font-size: .72rem; margin-top: 2px; }
-.avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--surface-2); display: grid; place-items: center; font-family: var(--font-mono); font-size: .64rem; color: var(--ink-2); flex: none; }
-.avatar.me { background: linear-gradient(145deg, var(--accent), #1B37B8); color: #fff; box-shadow: 0 0 14px -3px var(--glow); }
 
 /* Tables */
 .table-wrap { overflow-x: auto; border: 1px solid var(--hair); border-radius: 16px; background: var(--surface); }
@@ -335,12 +326,12 @@ thead .hl { color: var(--accent-ink) !important; }
 .about-who span { display: block; color: var(--ink-2); font-size: clamp(1rem, 1.35vw, 1.15rem); margin-top: 5px; }
 .about-logos {
   list-style: none; display: grid; grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: auto auto auto;
+  grid-template-rows: auto auto auto auto;
   gap: clamp(24px, 4vw, 56px); padding: 0; margin: clamp(44px, 6vw, 72px) 0 0;
 }
 /* subgrid keeps the logo, count and location lines aligned across all three,
    even when one label wraps */
-.about-logos li { display: grid; grid-row: span 3; grid-template-rows: subgrid; gap: 0; padding-top: 26px; border-top: 1px solid var(--hair); align-content: start; justify-items: start; text-align: left; }
+.about-logos li { display: grid; grid-row: span 4; grid-template-rows: subgrid; gap: 0; padding-top: 26px; border-top: 1px solid var(--hair); align-content: start; justify-items: start; text-align: left; }
 /* wordmarks only, trimmed to the same ink height, so one size fits all three */
 .about-logos img { width: auto; max-width: 100%; align-self: end; justify-self: start; }
 /* official vector lockups, sized so the wordmark text matches across all three */
@@ -349,6 +340,7 @@ thead .hl { color: var(--accent-ink) !important; }
 .about-logos img[alt="Auth0"] { height: 29.0px; }
 .about-logos strong { font-weight: 600; font-size: 1.02rem; color: var(--ink); align-self: end; padding-top: 22px; }
 .about-logos span { color: var(--ink-2); font-size: .94rem; padding-top: 2px; }
+.about-logos time { display: block; margin-top: 10px; font-family: var(--font-mono); font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
 @media (max-width: 700px) {
   .about-logos { grid-template-columns: 1fr; grid-template-rows: none; }
   .about-logos li { grid-row: auto; grid-template-rows: none; }
@@ -429,7 +421,9 @@ footer a:hover { color: var(--ink); }
   font-size: clamp(1.875rem, 4vw, 3rem); line-height: 1.05; letter-spacing: -.01em;
   margin: 18px 0 24px; max-width: 22ch;
 }
-.cs-section > p { color: var(--ink-2); max-width: 62ch; margin: 0 0 clamp(36px, 4.5vw, 56px); font-size: 1.03rem; }
+/* body copy only. Without :not([class]) this outranks every classed paragraph
+   inside a case study - eyebrows, captions - and silently resets them. */
+.cs-section > p:not([class]) { color: var(--ink-2); max-width: 62ch; margin: 0 0 clamp(36px, 4.5vw, 56px); font-size: 1.03rem; }
 .cs-section h3 { font-size: 1.25rem; font-weight: 500; line-height: 1.3; letter-spacing: -.01em; margin: 0 0 10px; }
 
 /* Meta strip: the thin band of facts under the hero */
@@ -557,7 +551,10 @@ footer a:hover { color: var(--ink); }
 .walk.playing::after, .walk.playing .play { opacity: 0; }
 .walk.playing .play { pointer-events: none; }
 @media (prefers-reduced-motion: reduce) { .walk::after, .walk .play { transition: none; } }
-.walk-note { margin: 12px 0 0; font-size: .875rem; color: var(--ink-3); }
+/* the caption tracks the media it describes: same width, same centring,
+   so its left edge lines up with the video rather than the section */
+.cs-section > p.walk-note,
+.walk-note { max-width: 932px; margin: 12px auto 0; font-size: .875rem; color: var(--ink-3); }
 
 /* Chart */
 .chart { background: var(--surface); border: 1px solid var(--hair); border-radius: 16px; padding: 26px; position: relative; }
