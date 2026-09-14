@@ -815,6 +815,12 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
   /* ruled lines: a stack of documents waiting to be checked off */
   --panel-art: repeating-linear-gradient(180deg, rgba(20,16,12,.055) 0 1px, transparent 1px 24px);
 }
+.case-refi {
+  --panel-base: #EEE2CD;
+  --panel: linear-gradient(155deg, #F4EAD9 0%, #E4D5BB 100%);
+  /* a shallow downhill ruling: a rate stepping down */
+  --panel-art: repeating-linear-gradient(192deg, rgba(20,16,12,.05) 0 1px, transparent 1px 28px);
+}
 .case-staking {
   --panel-base: #EBE0D8;
   --panel: linear-gradient(155deg, #F2EAE5 0%, #E1CFC4 100%);
