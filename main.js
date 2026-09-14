@@ -71,17 +71,36 @@ const CONFIG = {
     }, { rootMargin: "0px 0px -8% 0px", threshold: 0.05 });
     revealEls.forEach((el) => io.observe(el));
 
+    // Backstop for the observer. It measures only the elements still hidden and
+    // detaches itself once they have all been revealed, so a long page is not
+    // paying for a full measure pass on every scroll tick for the rest of the visit.
+    const EVENTS = ["scroll", "resize", "load", "pageshow", "hashchange"];
+    let pending = revealEls.slice();
+    const detach = () => {
+      EVENTS.forEach((ev) => window.removeEventListener(ev, onMove));
+      document.removeEventListener("visibilitychange", onMove);
+      io.disconnect();
+    };
     const sweep = () => {
+      if (!pending.length) return;
       const vh = window.innerHeight;
-      revealEls.forEach((el) => {
-        if (el.classList.contains("in")) return;
+      const still = [];
+      for (const el of pending) {
+        if (el.classList.contains("in")) continue;
         const r = el.getBoundingClientRect();
         if (r.top < vh * 0.95 && r.bottom > 0) { show(el); io.unobserve(el); }
-      });
+        else still.push(el);
+      }
+      pending = still;
+      if (!pending.length) detach();
     };
     let queued = false;
-    const onMove = () => { if (queued) return; queued = true; setTimeout(() => { queued = false; sweep(); }, 60); };
-    ["scroll", "resize", "load", "pageshow", "hashchange"].forEach((ev) => window.addEventListener(ev, onMove, { passive: true }));
+    const onMove = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(() => { queued = false; sweep(); });
+    };
+    EVENTS.forEach((ev) => window.addEventListener(ev, onMove, { passive: true }));
     document.addEventListener("visibilitychange", onMove);
     sweep();
     setTimeout(sweep, 400);
@@ -114,11 +133,31 @@ const CONFIG = {
   $$(".walk").forEach((w) => {
     const img = $("img", w), btn = $(".play", w);
     if (!img || !btn) return;
+    const label = btn.querySelector("span") || btn;
     btn.addEventListener("click", () => {
-      img.src = img.dataset.anim;
-      w.classList.add("playing");          // fades the scrim with the control
-      btn.classList.add("playing");
-      btn.setAttribute("aria-pressed", "true");
+      if (btn.dataset.busy) return;
+      // These animations are several megabytes; hold the control in a loading
+      // state until the frames are actually decoded, rather than hiding it
+      // immediately and leaving the poster sitting there with no explanation.
+      btn.dataset.busy = "1";
+      w.classList.add("loading");
+      btn.setAttribute("aria-busy", "true");
+      const next = new Image();
+      const start = () => {
+        img.src = img.dataset.anim;
+        w.classList.remove("loading");
+        w.classList.add("playing");        // fades the scrim with the control
+        btn.classList.add("playing");
+        btn.setAttribute("aria-pressed", "true");
+        btn.removeAttribute("aria-busy");
+      };
+      next.onload = start;
+      next.onerror = () => {               // never strand the poster with no control
+        w.classList.remove("loading");
+        btn.removeAttribute("aria-busy");
+        delete btn.dataset.busy;
+      };
+      next.src = img.dataset.anim;
     });
   });
 
