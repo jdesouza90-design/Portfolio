@@ -30,10 +30,20 @@ const CONFIG = {
   window.addEventListener("scroll", onScroll, { passive: true });
   const toggle = $(".nav-toggle");
   if (toggle && nav) {
+    let lockY = 0;
     const setOpen = (open) => {
       nav.classList.toggle("open", open);
       toggle.setAttribute("aria-expanded", String(open));
       toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+      if (open) {
+        lockY = window.scrollY;
+        document.body.style.top = `-${lockY}px`;
+        document.body.classList.add("nav-locked");
+      } else {
+        document.body.classList.remove("nav-locked");
+        document.body.style.top = "";
+        window.scrollTo(0, lockY);
+      }
     };
     toggle.addEventListener("click", () => setOpen(!nav.classList.contains("open")));
     nav.addEventListener("keydown", (e) => {
