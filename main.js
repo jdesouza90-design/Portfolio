@@ -174,27 +174,53 @@ const CONFIG = {
   });
 
   /* ---- Testimonial carousel ----
-     Cycles on a timer, but only while it's on screen, the tab is visible and
-     nobody is hovering over it. Reduced-motion users get the quotes stacked
-     instead (see styles.css), so the timer never starts for them. */
+     Auto-advances every few seconds while it's on screen, the tab is visible
+     and focus isn't inside it. It runs under reduced motion too (the slides
+     cross-fade, they don't move; the CSS drops the fade there). The pause
+     button is the WCAG 2.2.2 stop, and the track only announces slides while
+     paused so a screen reader isn't interrupted by the timer. */
   $$("[data-carousel]").forEach((c) => {
+    const track = $(".testimonial-track", c);
     const slides = $$(".testimonial", c);
-    if (reduced || slides.length < 2) return;
+    const prev = $(".prev", c), next = $(".next", c), pause = $(".pause", c);
+    const dots = $$(".dot", c);
+    if (slides.length < 2 || !track) return;
     const DELAY = 7000;
-    let i = 0, timer = null, hover = false, seen = true;
+    let i = 0, timer = null, playing = true, focus = false, seen = true;
+
     const show = (k) => {
       i = (k + slides.length) % slides.length;
       slides.forEach((s, n) => s.classList.toggle("active", n === i));
+      dots.forEach((d, n) => d.setAttribute("aria-current", n === i ? "true" : "false"));
     };
+    const stop = () => { clearInterval(timer); timer = null; };
     const sync = () => {
-      const run = !hover && seen && !document.hidden;
+      const run = playing && !focus && seen && !document.hidden;
       if (run && !timer) timer = setInterval(() => show(i + 1), DELAY);
-      if (!run) { clearInterval(timer); timer = null; }
+      if (!run) stop();
+      track.setAttribute("aria-live", playing ? "off" : "polite");
+      if (pause) {
+        pause.setAttribute("aria-pressed", String(!playing));
+        pause.setAttribute("aria-label", playing ? "Pause rotation" : "Resume rotation");
+      }
     };
-    c.addEventListener("mouseenter", () => { hover = true; sync(); });
-    c.addEventListener("mouseleave", () => { hover = false; sync(); });
-    // scrolling can move the block out from under a still pointer without a mouseleave
-    window.addEventListener("scroll", () => { hover = c.matches(":hover"); sync(); }, { passive: true });
+    const nudge = (k) => { show(k); if (timer) { stop(); sync(); } };   // restart the clock after a manual move
+
+    prev && prev.addEventListener("click", () => nudge(i - 1));
+    next && next.addEventListener("click", () => nudge(i + 1));
+    dots.forEach((d, n) => d.addEventListener("click", () => nudge(n)));
+    // resuming from the button is explicit, so focus sitting on it shouldn't re-pause
+    pause && pause.addEventListener("click", () => { playing = !playing; focus = false; sync(); });
+    c.addEventListener("keydown", (e) => {
+      if (e.target.closest(".dots") === null) return;
+      const d = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+      if (!d) return;
+      e.preventDefault();
+      nudge(i + d);
+      dots[i].focus();
+    });
+    c.addEventListener("focusin", () => { focus = true; sync(); });
+    c.addEventListener("focusout", (e) => { if (!c.contains(e.relatedTarget)) { focus = false; sync(); } });
     document.addEventListener("visibilitychange", sync);
     if ("IntersectionObserver" in window) {
       new IntersectionObserver(([en]) => { seen = en.isIntersecting; sync(); }, { threshold: .25 }).observe(c);

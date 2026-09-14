@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../styles.css?v=f211fb84">
+<link rel="stylesheet" href="../styles.css?v=013aeb8f">
 <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body class="case-staking">
@@ -151,9 +151,9 @@
         <h3 class="t-heading">Launch day, including the hard parts</h3>
         <p class="t-body">Public posts from December 6, 2022. The Ledger feedback fed directly into the next iteration's wallet-connect priorities.</p>
       </div>
-      <section class="testimonials" data-carousel aria-label="Community reaction">
-        <div class="testimonial-track">
-          <div class="testimonial active" role="group" aria-label="1 of 3">
+      <section class="testimonials" data-carousel aria-roledescription="carousel" aria-label="Community reaction">
+        <div class="testimonial-track" aria-live="off">
+          <div class="testimonial active" role="group" aria-roledescription="slide" aria-label="1 of 3">
             <blockquote class="quote"><p>"Woah this is LIT! 🔥 way to go Chainlink team!!"</p></blockquote>
             <div class="testimonial-foot">
               <span class="avatar" aria-hidden="true">JD</span>
@@ -161,7 +161,7 @@
               <span class="testimonial-mark">Chainlink</span>
             </div>
           </div>
-          <div class="testimonial" role="group" aria-label="2 of 3">
+          <div class="testimonial" role="group" aria-roledescription="slide" aria-label="2 of 3">
             <blockquote class="quote"><p>"No Ledger wallet connect option? Seriously?"</p></blockquote>
             <div class="testimonial-foot">
               <span class="avatar" aria-hidden="true">5S</span>
@@ -169,7 +169,7 @@
               <span class="testimonial-mark">Chainlink</span>
             </div>
           </div>
-          <div class="testimonial" role="group" aria-label="3 of 3">
+          <div class="testimonial" role="group" aria-roledescription="slide" aria-label="3 of 3">
             <blockquote class="quote"><p>"For the future please add support for direct staking from Ledger. I for one will never use or interface with MM again."</p></blockquote>
             <div class="testimonial-foot">
               <span class="avatar" aria-hidden="true">A</span>
@@ -177,6 +177,16 @@
               <span class="testimonial-mark">Chainlink</span>
             </div>
           </div>
+        </div>
+        <div class="testimonial-controls">
+          <button class="ctl prev" type="button" aria-label="Previous"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg></button>
+          <div class="dots">
+            <button class="dot" type="button" aria-label="Show 1 of 3" aria-current="true"></button>
+            <button class="dot" type="button" aria-label="Show 2 of 3" aria-current="false"></button>
+            <button class="dot" type="button" aria-label="Show 3 of 3" aria-current="false"></button>
+          </div>
+          <button class="ctl next" type="button" aria-label="Next"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 3 5 5-5 5"/></svg></button>
+          <button class="ctl pause" type="button" aria-pressed="false" aria-label="Pause rotation"><svg class="i-pause" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="3.5" y="3" width="3" height="10" rx=".8"/><rect x="9.5" y="3" width="3" height="10" rx=".8"/></svg><svg class="i-play" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 3.2v9.6a.6.6 0 0 0 .9.5l7.4-4.8a.6.6 0 0 0 0-1L5.9 2.7a.6.6 0 0 0-.9.5Z"/></svg></button>
         </div>
       </section>
     </article>
@@ -197,6 +207,6 @@
   </div>
 </section>
 </main>
-<script src="../main.js?v=07001f57"></script>
+<script src="../main.js?v=19734410"></script>
 </body>
 </html>

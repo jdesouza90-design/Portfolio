@@ -177,7 +177,7 @@ main, .nav { position: relative; z-index: 1; }
 /* Every pressable thing on the site scales down on press, so the interface
    answers the hand before the page does. Hover lifts are gated to pointers
    that can hover: a tap on a phone would otherwise leave the button raised. */
-.btn:active, .icon-btn:active, .layer-tab:active { transform: scale(.97); }
+.btn:active, .icon-btn:active, .layer-tab:active, .testimonial-controls button:active { transform: scale(.97); }
 .walk .play:active { transform: translate(-50%, -50%) scale(.97); }
 @media (hover: hover) and (pointer: fine) {
   .btn:hover { transform: translateY(-2px); }
@@ -614,11 +614,22 @@ footer a:hover { color: var(--ink); }
 .testimonial-foot cite { display: block; min-width: 0; font-style: normal; font-size: var(--t-small); line-height: var(--lh-small); color: var(--ink-3); }
 .testimonial-foot cite b { display: block; font-weight: 500; color: var(--ink); font-size: var(--t-subhead); line-height: var(--lh-subhead); }
 .testimonial-mark { margin-left: auto; font-family: var(--font-display); font-size: var(--t-subhead); font-weight: 500; color: var(--ink); white-space: nowrap; }
-/* No rotation for reduced-motion users: the quotes simply stack */
-@media (prefers-reduced-motion: reduce) {
-  .testimonial-track { gap: var(--sp-6); }
-  .testimonial { grid-area: auto; opacity: 1; visibility: visible; filter: none; transition: none; }
-}
+.testimonial-controls { display: flex; align-items: center; gap: var(--sp-3); margin-top: var(--sp-5); }
+.testimonial-controls .dots { display: flex; margin-inline: var(--sp-1); }
+/* each dot is a 24px button (WCAG 2.2 target size) drawing an 8px mark; the current one stretches */
+.testimonial-controls .dot { position: relative; width: 24px; height: 24px; padding: 0; border: 0; background: none; cursor: pointer; transition: width var(--dur-ui) var(--ease), transform var(--dur-press) var(--ease); }
+.testimonial-controls .dot::before { content: ""; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 8px; height: 8px; border-radius: 999px; background: var(--hair-2); transition: width var(--dur-ui) var(--ease), background var(--dur-hover); }
+.testimonial-controls .dot[aria-current="true"] { width: 40px; }
+.testimonial-controls .dot[aria-current="true"]::before { width: 24px; background: var(--ink); }
+.testimonial-controls .ctl { width: 40px; height: 40px; padding: 0; border: 1px solid var(--hair-2); border-radius: 999px; background: transparent; color: var(--ink); cursor: pointer; display: grid; place-items: center; transition: transform var(--dur-press) var(--ease), border-color var(--dur-hover), color var(--dur-hover); }
+.testimonial-controls .ctl:hover { border-color: var(--accent); color: var(--accent-ink); }
+.testimonial-controls .ctl svg { width: 16px; height: 16px; }
+.testimonial-controls .pause { margin-left: auto; }
+.testimonial-controls .pause .i-pause, .testimonial-controls .pause[aria-pressed="true"] .i-play { display: block; }
+.testimonial-controls .pause .i-play, .testimonial-controls .pause[aria-pressed="true"] .i-pause { display: none; }
+/* Rotation keeps running for reduced-motion users too (the CSS above already drops the
+   cross-fade); the pause button is the one stop, so it shouldn't itself be inert. */
+@media (prefers-reduced-motion: reduce) { .testimonial-controls .dot, .testimonial-controls .dot::before { transition: none; } }
 
 /* Flow diagrams: before / after */
 .flow-pair { display: flex; flex-direction: column; gap: clamp(36px, 5vw, 64px); width: 100%; }
@@ -760,7 +771,7 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
   .capacity-bar span, .hero-bg span { animation: none !important; }
   .layer, .layer-tabs::after { transition: none; }
   .case-media img, .work-cta::after, .tooltip { transition: none; transform: none; }
-  .btn:hover, .btn:active, .icon-btn:active, .layer-tab:active { transform: none; }
+  .btn:hover, .btn:active, .icon-btn:active, .layer-tab:active, .testimonial-controls button:active { transform: none; }
   .walk .play:active { transform: translate(-50%, -50%); }
   .nav.open .nav-links { animation: none; }
 }
