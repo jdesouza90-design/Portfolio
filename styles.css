@@ -224,9 +224,11 @@ main, .nav { position: relative; z-index: 1; }
 }
 .case-copy { display: flex; flex-direction: column; align-items: flex-start; }
 .case-logo { width: auto; margin-bottom: clamp(18px, 2.2vw, 26px); }
-.case-logo[alt="Best Egg"] { height: 17.2px; }
-.case-logo[alt="Chainlink Labs"] { height: 28.8px; }
-.case-logo[alt="Auth0"] { height: 21.7px; }
+/* Standalone in each row, so match overall presence rather than text height
+   (the About row does the opposite, since the three sit side by side). */
+.case-logo[alt="Best Egg"] { height: 28px; }
+.case-logo[alt="Chainlink Labs"] { height: 28px; }
+.case-logo[alt="Auth0"] { height: 28px; }
 .case-copy h3 {
   font-family: var(--font-body); font-weight: 500;
   font-size: clamp(1.2rem, 2vw, 1.5rem); line-height: 1.3; letter-spacing: -.01em;
