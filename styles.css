@@ -479,7 +479,7 @@ footer a:hover { color: var(--ink); }
 }
 
 /* Hero lead: the outcome sits beside the title as a stat (or a one-line statement
-   where a project has no published number), and the credits shrink to a mono line. */
+   where a project has no published number), and the facts run as a stat strip below the screens. */
 .hero-lead { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); gap: clamp(32px, 5vw, 80px); align-items: end; }
 .hero-lead .cs-hero-copy { align-items: flex-start; text-align: left; margin-inline: 0; }
 .hero-lead .cs-hero-copy h1 { max-width: 16ch; }
@@ -487,8 +487,14 @@ footer a:hover { color: var(--ink); }
 .outcome-stat .t-stat { margin-top: var(--sp-3); color: var(--accent-ink); font-variant-numeric: tabular-nums; }
 .outcome-stat .t-heading { margin-top: var(--sp-3); max-width: 18ch; }
 .outcome-stat .t-small { margin-top: var(--sp-2); max-width: 28ch; color: var(--ink-2); }
-.credits { display: flex; flex-wrap: wrap; gap: 8px 0; margin: clamp(20px, 3vw, 28px) 0 0; font-family: var(--font-body); font-size: var(--t-micro); line-height: var(--lh-micro); letter-spacing: var(--ls-micro); text-transform: uppercase; font-weight: 500; color: var(--ink-3); }
-.credits span + span::before { content: "\00B7"; margin: 0 12px; color: var(--hair-2); }
+/* Facts: a stat strip under the screens. A label above, the value beneath at
+   heading size, cells divided by hairlines, after the Mercury stat band. */
+.facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: clamp(28px, 4vw, 48px) 0 0; padding: 0; border-top: 1px solid var(--hair); border-left: 1px solid var(--hair); }
+.facts > div { min-width: 0; padding: clamp(22px, 3vw, 32px) clamp(20px, 3vw, 36px); border-right: 1px solid var(--hair); border-bottom: 1px solid var(--hair); }
+.facts dt { font-size: var(--t-small); line-height: var(--lh-small); color: var(--ink-2); }
+.facts dd { margin: clamp(20px, 3vw, 40px) 0 0; font-family: var(--font-display); font-size: var(--t-heading); line-height: var(--lh-heading); letter-spacing: var(--ls-heading); color: var(--ink); font-variant-numeric: lining-nums tabular-nums; text-wrap: balance; }
+@media (max-width: 820px) { .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .facts { grid-template-columns: 1fr; } }
 
 /* Ledger: My role as hairline rows, heading left and paragraph right */
 .ledger { border-top: 1px solid var(--hair); }
