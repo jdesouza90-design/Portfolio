@@ -18,7 +18,7 @@ work/staking.html               Chainlink Labs · Staking v0.1
 work/no-code-tools.html         Auth0 · No-code tools
 work/sign-in-with-ethereum.html Auth0 · Sign-in with Ethereum
 styles.css                      Tokens, the ten type roles, components, case-study layout
-main.js                         CONFIG links, nav, scroll reveal, scroll-spy, chart, walkthroughs
+main.js                         CONFIG links, nav, scroll reveal, scroll-spy, chart, walkthroughs, AI strands
 middleware.js                   Vercel Edge Middleware: the password gate for /work/*
 vercel.json                     Cache and security headers
 ai-process-art.mjs              Draws assets/ai-process.svg, the abstract on the AI card
@@ -199,9 +199,12 @@ The rules that shape the code:
 - Company logos in `assets/logo-*.svg` are the companies' own vector files. Each
   is sized in `styles.css` so the wordmark text matches across all three, since
   the three lockups have different icon-to-text proportions.
-- The abstract beside "AI in the process" on the homepage is drawn by
-  `ai-process-art.mjs` from a fixed seed. Change its constants and re-run it
-  rather than editing the SVG.
+- The abstract beside "AI in the process" on the homepage is drawn live by
+  `main.js` on a canvas: the same strands in three dimensions, turning slowly,
+  with a pause button in the corner. `assets/ai-process.svg` is the still it
+  falls back to under reduced motion or without JavaScript; `ai-process-art.mjs`
+  draws that SVG from a fixed seed, so change its constants and re-run it
+  rather than editing the file.
 - Each case study has its own background, set by a `case-*` class on `<body>`
   and on its row in the work index.
 - The three walkthrough recordings are 2.8–7.8 MB and only load when a visitor
