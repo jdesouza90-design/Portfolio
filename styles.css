@@ -674,7 +674,7 @@ details.data table { min-width: 0; margin-top: 10px; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .anim [data-reveal], [data-rise] { opacity: 1; transform: none; transition: none; animation: none; }
-  .pulse, .capacity-bar span { animation: none !important; }
+  .pulse, .capacity-bar span, .node-link span { animation: none !important; }
   .case-row, .case-media img, .btn { transition: none; }
 }
 
@@ -710,16 +710,35 @@ details.data table { min-width: 0; margin-top: 10px; }
 .node-out { display: flex; align-items: center; gap: 10px; margin-top: 16px; }
 .node-out > span:first-child { font-size: .82rem; color: var(--ink-3); }
 
-/* the connector between two nodes */
-.node-link { height: 44px; display: flex; justify-content: center; position: relative; }
-.node-link span { position: relative; width: 1px; background: var(--hair-2); }
+/* The connector between two nodes. A pulse travels top to bottom so the
+   direction of the chain reads at a glance; the line itself stays quiet. */
+.node-link { height: 52px; display: flex; justify-content: center; position: relative; }
+.node-link span {
+  position: relative; width: 2px; border-radius: 2px;
+  background-color: var(--hair-2);
+  background-image: linear-gradient(180deg, transparent 0%, var(--accent) 42%, var(--accent) 58%, transparent 100%);
+  background-repeat: no-repeat;
+  background-size: 100% 55%;
+  animation: node-pulse 2.6s cubic-bezier(.45,0,.55,1) infinite;
+}
+.node-link:nth-child(4) span { animation-delay: .85s; }
+@keyframes node-pulse {
+  0%   { background-position: 0 -60%; }
+  70%  { background-position: 0 160%; }
+  100% { background-position: 0 160%; }
+}
 .node-link span::before,
 .node-link span::after { content: ""; position: absolute; left: 50%; transform: translateX(-50%); }
-.node-link span::before { top: -3px; width: 6px; height: 6px; border-radius: 50%; background: var(--paper); border: 1px solid var(--hair-2); }
+.node-link span::before {
+  top: -4px; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--paper); border: 1.5px solid var(--hair-2);
+}
 .node-link span::after {
-  bottom: -1px; width: 7px; height: 7px; border-right: 1px solid var(--hair-2); border-bottom: 1px solid var(--hair-2);
+  bottom: -1px; width: 8px; height: 8px;
+  border-right: 2px solid var(--hair-2); border-bottom: 2px solid var(--hair-2);
   transform: translateX(-50%) rotate(45deg);
 }
+
 @media (max-width: 900px) { .framework { grid-template-columns: 1fr; } }
 
 /* Centred "view all" under the work grid */
