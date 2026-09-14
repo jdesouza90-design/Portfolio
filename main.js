@@ -139,10 +139,11 @@ const CONFIG = {
       const t = tabs[current];
       list.style.setProperty("--tab-x", `${t.offsetLeft}px`);
       list.style.setProperty("--tab-y", `${t.offsetTop + t.offsetHeight - 2}px`);
-      list.style.setProperty("--tab-w", `${t.offsetWidth}px`);
+      list.style.setProperty("--tab-w", String(t.offsetWidth));   // unitless: the track is 1px wide and scaled
     };
     const select = (i, focus) => {
       current = i;
+      root.classList.toggle("instant", Boolean(focus));   // keyboard moves repeat; they don't animate
       tabs.forEach((t, k) => {
         const on = k === i;
         t.setAttribute("aria-selected", String(on));
