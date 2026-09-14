@@ -140,6 +140,8 @@ const CONFIG = {
       list.style.setProperty("--tab-x", `${t.offsetLeft}px`);
       list.style.setProperty("--tab-y", `${t.offsetTop + t.offsetHeight - 2}px`);
       list.style.setProperty("--tab-w", `${t.offsetWidth}px`);
+      // on a phone the strip scrolls, so the selected tab is brought into view
+      if (list.scrollWidth > list.clientWidth) list.scrollTo({ left: t.offsetLeft - (list.clientWidth - t.offsetWidth) / 2, behavior: "smooth" });
     };
     const select = (i, focus) => {
       current = i;
@@ -258,67 +260,102 @@ const CONFIG = {
     });
   });
 
-  /* ---- Single-series bar chart ---- */
+  /* ---- Single-series bar chart ----
+     Drawn at 720 wide, or 360 on a phone, where the wide drawing scaled its
+     labels to 5px. The narrow drawing keeps the same type, shortens the month
+     labels and anchors the annotations so they stay inside the frame. */
   $$("[data-chart]").forEach((el) => {
     const data = JSON.parse(el.dataset.series);
     const annos = JSON.parse(el.dataset.annotations || "[]");
     const fmt = (v) => v >= 1e6 ? `$${(v / 1e6).toFixed(2)}M` : v >= 1e3 ? `$${(v / 1e3).toFixed(0)}K` : `$${v}`;
     const full = (v) => "$" + v.toLocaleString("en-US");
-    const W = 720, H = 300, m = { t: 44, r: 16, b: 44, l: 52 };
-    const iw = W - m.l - m.r, ih = H - m.t - m.b;
-    const max = Math.max(...data.map((d) => d.value));
-    const step = Math.pow(10, Math.floor(Math.log10(max)));
-    const top = Math.ceil(max / step) * step;
-    const y = (v) => m.t + ih - (v / top) * ih;
-    const bw = Math.min(64, (iw / data.length) * 0.5);
-    const x = (k) => m.l + (iw / data.length) * (k + 0.5) - bw / 2;
     const ns = "http://www.w3.org/2000/svg";
-    const svg = document.createElementNS(ns, "svg");
-    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
-    svg.setAttribute("role", "img");
-    svg.setAttribute("aria-label", el.dataset.label || "Bar chart");
-    const add = (tag, attrs, parent = svg, text) => {
-      const n = document.createElementNS(ns, tag);
-      Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, v));
-      if (text != null) n.textContent = text;
-      parent.appendChild(n); return n;
-    };
-    const axis = add("g", { class: "axis" });
-    for (let g = 0; g <= 4; g++) {
-      const v = (top / 4) * g;
-      add("line", { class: "grid", x1: m.l, x2: W - m.r, y1: y(v), y2: y(v) }, axis);
-      add("text", { x: m.l - 8, y: y(v) + 4, "text-anchor": "end" }, axis, fmt(v).replace(".00", ""));
-    }
-    const tip = document.createElement("div");
-    tip.className = "tooltip";
-    el.appendChild(tip);
-    data.forEach((d, k) => {
-      const bx = x(k), by = y(d.value), h = Math.max(2, m.t + ih - by);
-      const r = Math.min(4, h);
-      const path = `M${bx},${m.t + ih} v${-(h - r)} a${r},${r} 0 0 1 ${r},${-r} h${bw - 2 * r} a${r},${r} 0 0 1 ${r},${r} v${h - r} z`;
-      const bar = add("path", { class: "bar", d: path });
-      add("text", { x: bx + bw / 2, y: m.t + ih + 18, "text-anchor": "middle" }, axis, d.label);
-      if (d.sub) add("text", { x: bx + bw / 2, y: m.t + ih + 32, "text-anchor": "middle", style: "font-size:9.5px" }, axis, d.sub);
-      if (k === data.length - 1 || d.callout) add("text", { class: "val", x: bx + bw / 2, y: by - 8, "text-anchor": "middle" }, svg, fmt(d.value));
-      const hit = add("rect", { class: "hit", x: bx - 12, y: m.t, width: bw + 24, height: ih });
-      const showTip = () => {
-        tip.innerHTML = `<b>${full(d.value)}</b>${d.label}${d.sub ? " · " + d.sub : ""}`;
-        const box = el.getBoundingClientRect(), sb = svg.getBoundingClientRect();
-        const sx = sb.width / W;
-        tip.style.left = `${sb.left - box.left + (bx + bw / 2) * sx}px`;
-        tip.style.top = `${sb.top - box.top + by * sx}px`;
-        tip.classList.add("show"); bar.classList.add("hover");
+    let drawn = null;
+    const draw = () => {
+      const narrow = el.clientWidth < 520;
+      if (drawn === narrow) return;
+      drawn = narrow;
+      el.querySelectorAll("svg, .tooltip").forEach((n) => n.remove());
+      const W = narrow ? 360 : 720, H = narrow ? 250 : 300;
+      const m = narrow ? { t: 48, r: 10, b: 44, l: 46 } : { t: 44, r: 16, b: 44, l: 52 };
+      const iw = W - m.l - m.r, ih = H - m.t - m.b;
+      const max = Math.max(...data.map((d) => d.value));
+      const step = Math.pow(10, Math.floor(Math.log10(max)));
+      const top = Math.ceil(max / step) * step;
+      const y = (v) => m.t + ih - (v / top) * ih;
+      const bw = Math.min(narrow ? 36 : 64, (iw / data.length) * 0.5);
+      const x = (k) => m.l + (iw / data.length) * (k + 0.5) - bw / 2;
+      const svg = document.createElementNS(ns, "svg");
+      svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+      svg.setAttribute("role", "img");
+      svg.setAttribute("aria-label", el.dataset.label || "Bar chart");
+      const add = (tag, attrs, parent = svg, text) => {
+        const n = document.createElementNS(ns, tag);
+        Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, v));
+        if (text != null) n.textContent = text;
+        parent.appendChild(n); return n;
       };
-      const hideTip = () => { tip.classList.remove("show"); bar.classList.remove("hover"); };
-      [hit, bar].forEach((n) => { n.addEventListener("mouseenter", showTip); n.addEventListener("mousemove", showTip); n.addEventListener("mouseleave", hideTip); });
-    });
-    annos.forEach((a) => {
-      const ax = x(a.at) + bw / 2;
-      add("line", { class: "anno-line", x1: ax, x2: ax, y1: 14, y2: y(data[a.at].value) - 18 });
-      add("text", { class: "anno", x: ax + 6, y: 12 }, svg, a.text);
-    });
-    el.insertBefore(svg, el.querySelector("details"));
+      const axis = add("g", { class: "axis" });
+      for (let g = 0; g <= 4; g++) {
+        const v = (top / 4) * g;
+        add("line", { class: "grid", x1: m.l, x2: W - m.r, y1: y(v), y2: y(v) }, axis);
+        add("text", { x: m.l - 8, y: y(v) + 4, "text-anchor": "end" }, axis, fmt(v).replace(".00", ""));
+      }
+      const tip = document.createElement("div");
+      tip.className = "tooltip";
+      el.appendChild(tip);
+      data.forEach((d, k) => {
+        const bx = x(k), by = y(d.value), h = Math.max(2, m.t + ih - by);
+        const r = Math.min(4, h);
+        const path = `M${bx},${m.t + ih} v${-(h - r)} a${r},${r} 0 0 1 ${r},${-r} h${bw - 2 * r} a${r},${r} 0 0 1 ${r},${r} v${h - r} z`;
+        const bar = add("path", { class: "bar", d: path });
+        // "Oct 2025" becomes "Oct" over "'25" on a phone
+        const parts = d.label.split(" ");
+        const label = narrow && parts.length > 1 ? parts[0] : d.label;
+        const sub = narrow && parts.length > 1 ? "'" + parts[1].slice(-2) : d.sub;
+        add("text", { x: bx + bw / 2, y: m.t + ih + 18, "text-anchor": "middle" }, axis, label);
+        if (sub) add("text", { x: bx + bw / 2, y: m.t + ih + 32, "text-anchor": "middle", style: narrow ? "" : "font-size:9.5px" }, axis, sub);
+        if (k === data.length - 1 || d.callout) add("text", { class: "val", x: bx + bw / 2, y: by - 8, "text-anchor": "middle" }, svg, fmt(d.value));
+        const hit = add("rect", { class: "hit", x: bx - 12, y: m.t, width: bw + 24, height: ih });
+        const showTip = () => {
+          tip.innerHTML = `<b>${full(d.value)}</b>${d.label}${d.sub ? " · " + d.sub : ""}`;
+          const box = el.getBoundingClientRect(), sb = svg.getBoundingClientRect();
+          const sx = sb.width / W;
+          tip.style.left = `${sb.left - box.left + (bx + bw / 2) * sx}px`;
+          tip.style.top = `${sb.top - box.top + by * sx}px`;
+          tip.classList.add("show"); bar.classList.add("hover");
+        };
+        const hideTip = () => { tip.classList.remove("show"); bar.classList.remove("hover"); };
+        [hit, bar].forEach((n) => { n.addEventListener("mouseenter", showTip); n.addEventListener("mousemove", showTip); n.addEventListener("mouseleave", hideTip); });
+      });
+      annos.forEach((a, i) => {
+        const ax = x(a.at) + bw / 2;
+        const right = narrow && ax > W / 2;          // anchor to the left of the line so the text stays in frame
+        const ty = narrow ? 12 + (i % 2) * 14 : 12;  // stagger rows on a phone so two notes never collide
+        add("line", { class: "anno-line", x1: ax, x2: ax, y1: ty + 4, y2: y(data[a.at].value) - 18 });
+        add("text", { class: "anno", x: ax + (right ? -6 : 6), y: ty, "text-anchor": right ? "end" : "start" }, svg, a.text);
+      });
+      el.insertBefore(svg, el.querySelector("details"));
+    };
+    draw();
+    let t; window.addEventListener("resize", () => { clearTimeout(t); t = setTimeout(draw, 120); });
   });
+
+  /* ---- Swipe strips ----
+     On a phone the flow, gallery and three-up hero scroll sideways. A region
+     that scrolls has to be reachable from the keyboard, so it gets a tab stop
+     only while it actually overflows. */
+  const strips = $$(".flow, .gallery, .hero-panel.three");
+  const stops = () => strips.forEach((s) => {
+    if (s.scrollWidth > s.clientWidth + 1) {
+      s.tabIndex = 0;
+      if (s.tagName !== "FIGURE") s.setAttribute("role", "group");
+      s.setAttribute("aria-label", "Screens, scroll sideways");
+    } else { s.removeAttribute("tabindex"); s.removeAttribute("aria-label"); if (s.tagName !== "FIGURE") s.removeAttribute("role"); }
+  });
+  stops();
+  window.addEventListener("resize", () => { clearTimeout(stops.t); stops.t = setTimeout(stops, 120); });
+  window.addEventListener("load", stops);
 
   /* ---- Footer year ---- */
   $$("[data-year]").forEach((el) => (el.textContent = new Date().getFullYear()));
