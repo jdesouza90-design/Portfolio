@@ -16,8 +16,8 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=8f81e65c">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600&family=DM+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=402d7f23">
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=cac0678c">
 <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
@@ -26,41 +26,36 @@
 <header class="nav">
   <div class="wrap">
     <a class="brand" href="/" aria-label="John DeSouza, home"><span>John DeSouza</span></a>
-    <ul class="nav-links">
-      <li><a href="/work.html">Work</a></li>
-      <li><a href="/#leadership">Leadership</a></li>
-      <li><a href="/#about">About</a></li>
-      <li><a class="nav-icon" data-link="linkedin" href="#" aria-label="LinkedIn profile" title="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.125 2.062 2.062 0 0 1 0 4.125zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/></svg></a></li>
-      <li><a data-link="resume" href="#">Resume</a></li>
-    </ul>
+    <button class="icon-btn nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <nav class="nav-links" id="site-nav" aria-label="Primary">
+      <ul>
+        <li><a href="/work.html">Work</a></li>
+        <li><a href="/#leadership">Leadership</a></li>
+        <li><a href="/#about">About</a></li>
+        <li><a class="nav-icon" data-link="linkedin" href="#" aria-label="LinkedIn profile" title="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.125 2.062 2.062 0 0 1 0 4.125zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/></svg></a></li>
+        <li><a data-link="resume" href="#">Resume</a></li>
+      </ul>
+    </nav>
     <div class="nav-actions">
       <a class="btn btn-primary btn-sm" data-link="email" href="#">Contact me</a>
     </div>
-    <button class="icon-btn nav-toggle" type="button" aria-label="Open menu" aria-expanded="false">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-    </button>
   </div>
 </header>
 
-<main id="main">
+<main id="main" tabindex="-1">
 
 <!-- ===== Hero ===== -->
 <section class="hero" id="top">
   <div class="hero-bg" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
   <div class="wrap">
-    <div class="hero-top">
-      <div>
-        <h1 data-rise style="--i:0">Strategic design, measured in business results.</h1>
-      </div>
-      <div class="hero-side">
-        <p class="lede" data-rise style="--i:1">I'm John DeSouza, a Director of Product Design. Thirteen years in product design, the last six leading distributed teams through 0&#8594;1 products in consumer lending, blockchain infrastructure and enterprise identity.</p>
-        <div class="hero-ctas" data-rise style="--i:2">
-          <a class="btn btn-primary" href="work.html">See the work</a>
-          <a class="btn btn-ghost" data-link="linkedin" href="#">Connect on LinkedIn</a>
-        </div>
-      </div>
+    <h1 data-rise style="--i:0">Strategic design, measured in business results.</h1>
+    <p class="lede" data-rise style="--i:1">I'm John DeSouza, a Director of Product Design. Thirteen years in product design, the last six leading distributed teams through 0&#8594;1 products in consumer lending, blockchain infrastructure and enterprise identity.</p>
+    <div class="hero-ctas" data-rise style="--i:2">
+      <a class="btn btn-primary" href="work.html">See the work</a>
+      <a class="btn btn-ghost" data-link="linkedin" href="#">Connect on LinkedIn</a>
     </div>
-
   </div>
 </section>
 
@@ -235,28 +230,29 @@
         <img decoding="async" width="687" height="1024" src="assets/john.webp?v=3d660c6a" alt="John DeSouza" loading="lazy">
       </figure>
       <div class="about-text" data-reveal="2">
-        <p class="about-statement">Thirteen years in product design, six managing remote design orgs. I lead teams that can trace their work to a business result.</p>
-        <div class="about-who">
+        <h2 class="about-statement">Thirteen years in product design, six managing remote design orgs. I lead teams that can trace their work to a business result.</h2>
+        <p class="about-who">
           <strong>John DeSouza</strong>
           <span>Director of Product Design II, Best Egg</span>
-        </div>
+        </p>
       </div>
     </div>
-      <ul class="about-logos">
-        <li>
-          <img decoding="async" class="logo-invert" width="300" height="63" src="assets/logo-bestegg.svg?v=8ca51028" alt="Best Egg" loading="lazy">
-          <strong>5 designers</strong><span>Remote, US</span><time>April 2024 &ndash; Present</time>
-        </li>
-        <li>
-          <img decoding="async" class="logo-invert" width="234" height="42" src="assets/logo-chainlink.svg?v=6b614390" alt="Chainlink Labs" loading="lazy">
-          <strong>4 senior designers</strong><span>Globally remote</span><time>December 2021 &ndash; November 2022</time>
-        </li>
-        <li>
-          <img decoding="async" class="logo-invert" width="1164" height="344" src="assets/logo-auth0.svg?v=bcdd5f87" alt="Auth0" loading="lazy">
-          <strong>7 designers</strong><span>Globally remote</span><time>September 2020 &ndash; December 2021</time>
-        </li>
-      </ul>
-  </section>
+    <ul class="about-logos">
+      <li>
+        <img decoding="async" width="300" height="63" src="assets/logo-bestegg.svg?v=8ca51028" alt="Best Egg" loading="lazy">
+        <strong>5 designers</strong><span>Remote, US</span><time>April 2024 &ndash; Present</time>
+      </li>
+      <li>
+        <img decoding="async" width="234" height="42" src="assets/logo-chainlink.svg?v=6b614390" alt="Chainlink Labs" loading="lazy">
+        <strong>4 senior designers</strong><span>Globally remote</span><time>December 2021 &ndash; November 2022</time>
+      </li>
+      <li>
+        <img decoding="async" width="1164" height="344" src="assets/logo-auth0.svg?v=bcdd5f87" alt="Auth0" loading="lazy">
+        <strong>7 designers</strong><span>Globally remote</span><time>September 2020 &ndash; December 2021</time>
+      </li>
+    </ul>
+  </div>
+</section>
 
 <!-- ===== Contact ===== -->
 <section class="section" id="contact">

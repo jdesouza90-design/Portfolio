@@ -65,7 +65,7 @@ Every piece of text on the site takes one of ten roles, defined as tokens at the
 top of `styles.css` (`--t-display` … `--t-quote`, with matching `--lh-*` and
 `--ls-*`). Nothing sets a font size outside them. The serif speaks (display,
 title, heading, quote, stat); the sans does the work (subhead, lede, body,
-small); the mono labels (micro).
+small, micro).
 
 | Role | Use | Size (phone → desktop) |
 |---|---|---|
@@ -76,7 +76,7 @@ small); the mono labels (micro).
 | Lede | The paragraph under a display or title | 18 → 21 |
 | Body | Running text | 17 |
 | Small | Captions, facts, tables, buttons, nav | 15 |
-| Micro | Mono eyebrows and labels | 12 |
+| Micro | Eyebrows and labels, small caps | 12 |
 | Stat | A headline number | 44 → 64 |
 | Quote | A pull quote | 22 → 28 |
 
