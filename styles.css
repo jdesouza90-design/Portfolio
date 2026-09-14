@@ -121,14 +121,14 @@
 
 /* The sans does the work: subhead, lede, body, small, micro */
 .t-subhead, .t-lede, .t-body, .t-small, .t-micro, .eyebrow,
-.flow-arrow, .testimonial-foot cite b,
+.testimonial-foot cite b,
 .layer-tab, .work-cta, .about-logos strong, .gate-form input,
 .btn, .chip, .nav-links a, .back, .tools span, .layer-out > span:first-child, .about-logos span, footer,
 .facts dt, table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
 .gallery figcaption, .proof-head small, .tooltip, details.data,
 thead th, .about-logos time, .capacity-ticks, .table-wrap td[data-label]::before
   { font-family: var(--font-body); margin: 0; }
-.t-subhead, .flow-arrow, .testimonial-foot cite b
+.t-subhead, .testimonial-foot cite b
   { font-size: var(--t-subhead); line-height: var(--lh-subhead); letter-spacing: var(--ls-subhead); font-weight: 500; color: var(--ink); }
 .t-lede
   { font-size: var(--t-lede); line-height: var(--lh-lede); letter-spacing: var(--ls-lede); font-weight: 400; color: var(--ink-2); max-width: var(--m-lede); }
@@ -241,7 +241,7 @@ main, .nav { position: relative; z-index: 1; }
 .icon-btn:hover { border-color: var(--accent); color: var(--accent-ink); }
 .icon-btn svg { width: 17px; height: 17px; }
 
-/* Chip: one shape for every tag on the site (.layer-chip and .flow-label are chips with a tone) */
+/* Chip: one shape for every tag on the site */
 .chip {
   display: inline-block; line-height: 1.25;
   background: color-mix(in srgb, var(--surface) 92%, var(--paper));
@@ -436,7 +436,26 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .tools { list-style: none; display: flex; flex-wrap: wrap; gap: clamp(18px, 2.4vw, 32px); padding: 0; margin: 26px 0 0; }
 .tools li { display: flex; align-items: center; gap: 10px; }
 .tools img { width: 28px; height: 28px; object-fit: contain; }
-@media (max-width: 900px) { .lead-solo { grid-template-columns: minmax(0, 1fr); } }
+/* AI in the process: an abstract on the left fills the card's height beside the copy;
+   the tools row closes the column under a hairline. At one column the art becomes a
+   short cover so the copy stays near the top. */
+.lead-art { align-items: stretch; }
+.lead-art-panel { position: relative; overflow: hidden; margin: 0; border-radius: var(--radius-sm); min-height: 300px; background: linear-gradient(135deg, #F4EFE5, #E4DAC6); }
+.lead-art-panel img, .lead-art-panel canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+/* the still SVG is the ground truth; the canvas takes over once main.js is running the strands */
+.lead-art-panel canvas { display: none; }
+.lead-art-panel.live canvas { display: block; }
+.lead-art-panel.live img { visibility: hidden; }
+.art-ctl { position: absolute; right: 12px; bottom: 12px; width: 36px; height: 36px; padding: 0; border: 1px solid var(--hair-2); border-radius: 999px; background: rgba(255, 255, 255, .55); color: var(--ink); cursor: pointer; display: grid; place-items: center; transition: border-color var(--dur-hover), color var(--dur-hover); }
+.art-ctl:hover { border-color: var(--accent); color: var(--accent-ink); }
+.art-ctl svg { width: 14px; height: 14px; }
+.art-ctl .i-pause, .art-ctl[aria-pressed="true"] .i-play { display: block; }
+.art-ctl .i-play, .art-ctl[aria-pressed="true"] .i-pause { display: none; }
+.lead-art .tools { margin-top: var(--sp-6); padding-top: var(--sp-5); border-top: 1px solid var(--hair); }
+@media (max-width: 900px) {
+  .lead-solo { grid-template-columns: minmax(0, 1fr); }
+  .lead-art-panel { min-height: 0; aspect-ratio: 16 / 10; }
+}
 @media (max-width: 760px) { .lead-points { grid-template-columns: 1fr; } .lead-grid .point-icon { margin: 0 auto 20px 0; } }
 
 /* Three layers of design tracking: intro on the left; on the right a tab strip
@@ -514,7 +533,14 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
   --ink-2: color-mix(in srgb, var(--paper) 70%, transparent);
   --ink-3: color-mix(in srgb, var(--paper) 56%, transparent);
   --hair-2: color-mix(in srgb, var(--paper) 36%, transparent);
-  position: relative; overflow: hidden; background: var(--ink); color: var(--paper);
+  --contact-origin: 100% 50%;
+  position: relative; overflow: hidden; color: var(--paper);
+  /* the panel ground in its dark register: a lifted corner fading to ink,
+     and rings in paper rippling out from behind the buttons */
+  background-color: var(--ink);
+  background-image:
+    repeating-radial-gradient(circle at var(--contact-origin), rgba(246,244,240,.07) 0 1px, transparent 1px 42px),
+    linear-gradient(155deg, #241D17 0%, #14100C 58%, #100D0A 100%);
   border-radius: var(--radius); padding: clamp(44px, 7vw, 88px);
   display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 36px; align-items: center;
 }
@@ -527,7 +553,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .contact .btn-ghost { border-color: var(--hair-2); color: var(--paper); background: transparent; }
 .contact .btn-ghost:hover { border-color: var(--paper); color: var(--paper); }
 .contact :focus-visible { outline-color: var(--paper); }   /* the accent ring is only 3.2:1 on ink */
-@media (max-width: 720px) { .contact { grid-template-columns: 1fr; } }
+@media (max-width: 720px) { .contact { --contact-origin: 100% 100%; grid-template-columns: 1fr; } }   /* stacked, the buttons sit at the bottom */
 footer { padding: 30px 0 44px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 footer a { color: var(--ink-2); text-decoration: none; }
 footer a:hover { color: var(--ink); }
@@ -664,20 +690,6 @@ footer a:hover { color: var(--ink); }
 /* Rotation keeps running for reduced-motion users too (the CSS above already drops the
    cross-fade); the pause button is the one stop, so it shouldn't itself be inert. */
 @media (prefers-reduced-motion: reduce) { .testimonial-controls .dot, .testimonial-controls .dot::before { transition: none; } }
-
-/* Flow diagrams: before / after */
-.flow-pair { display: flex; flex-direction: column; gap: clamp(36px, 5vw, 64px); width: 100%; }
-.flow-caption { margin: 0 0 var(--sp-4); }
-.flow { display: grid; grid-template-columns: 1fr 28px 1fr 28px 1fr; gap: 12px; align-items: start; }
-.flow.four { grid-template-columns: 1fr 28px 1fr 28px 1fr 28px 1fr; }
-.flow-step { text-align: center; }
-.flow-step img { border-radius: 22px; border: 0; box-shadow: 0 0 0 1px var(--hair); width: 100%; height: auto; background: #fff; }
-.flow-step.bad img { box-shadow: 0 0 0 2px var(--danger); }
-.flow-step.new img { box-shadow: 0 0 0 2px var(--accent), 0 14px 30px -18px var(--glow); }
-.flow-arrow { display: grid; place-items: center; height: 100%; min-height: 120px; color: var(--accent); }
-.flow-label { margin-top: 14px; }
-.bad .flow-label { color: var(--danger); }
-.new .flow-label { color: var(--accent-ink); }
 
 /* Shots: the exact piece of UI a decision refers to, cut from the real screen
    and set on the case study's panel ground so the three read as one set.
@@ -870,17 +882,14 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 }
 
 @media (max-width: 640px) {
-  /* Sequences stay in order: the flow, the gallery and the three-up hero become
+  /* Sequences stay in order: the gallery and the three-up hero become
      swipe strips, one screen at a time with the next one peeking in. */
-  .flow, .flow.four, .gallery, .hero-panel.three {
+  .gallery, .hero-panel.three {
     display: flex; flex-wrap: nowrap; justify-content: flex-start; align-items: flex-start;
     overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch; scrollbar-width: none;
   }
-  .flow::-webkit-scrollbar, .gallery::-webkit-scrollbar, .hero-panel.three::-webkit-scrollbar { display: none; }
-  .flow { gap: 12px; padding-bottom: 4px; }
-  .flow-step { flex: 0 0 60%; min-width: 0; scroll-snap-align: start; scroll-snap-stop: always; }
-  .flow-arrow { flex: 0 0 auto; height: auto; min-height: 0; align-self: center; }
+  .gallery::-webkit-scrollbar, .hero-panel.three::-webkit-scrollbar { display: none; }
   .gallery { gap: 16px; }
   .gallery figure { flex: 0 0 76%; scroll-snap-align: start; scroll-snap-stop: always; }
   .panel .gallery img { max-height: 520px; }
