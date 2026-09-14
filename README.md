@@ -107,6 +107,31 @@ All five case studies are the same document, in this order:
 Icons are inline SVG, 24-unit, 1.5 stroke, ink with one green accent detail
 (`class="ac"` for an accent stroke, `ac-fill` for a tinted shape).
 
+### On a phone
+
+Section 11 of `styles.css` is the phone layer (560px and under, a few rules
+at 640 and 760). The grids above it collapse to one column on their own; the
+phone layer fixes what a collapse alone gets wrong:
+
+- Section openers and case-study heroes are left-aligned; the homepage hero
+  stays centred.
+- Sequences keep their order: the before/after flow, the gallery and a
+  three-screen hero become swipe strips (`overflow-x: auto` with scroll snap),
+  one screen at a time with the next peeking in. `main.js` gives a strip a
+  tab stop only while it actually overflows.
+- Story panels take the height of their screen instead of a landscape box;
+  cropped desktop screens keep the 4:3 box.
+- The A/B table stacks into one card per metric, each cell labelled by its
+  column through `data-label` on the `<td>`.
+- The bar chart draws a 360-wide variant with short month labels, since the
+  720-wide drawing scaled its type to 5px.
+- The facts strip loses its box and tightens to label-over-value rows; the
+  tab strip scrolls; the testimonial quote steps down to quote size and the
+  product mark drops under the name; the phone menu carries Contact.
+
+Collapsed grids use `minmax(0, 1fr)`, never bare `1fr`: a swipe strip inside
+a `1fr` column widens the column to its content and the page scrolls sideways.
+
 ## Accessibility
 
 The site is held to WCAG 2.2 AA. Every page, including the password gate,
