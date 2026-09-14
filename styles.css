@@ -436,7 +436,17 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .tools { list-style: none; display: flex; flex-wrap: wrap; gap: clamp(18px, 2.4vw, 32px); padding: 0; margin: 26px 0 0; }
 .tools li { display: flex; align-items: center; gap: 10px; }
 .tools img { width: 28px; height: 28px; object-fit: contain; }
-@media (max-width: 900px) { .lead-solo { grid-template-columns: minmax(0, 1fr); } }
+/* AI in the process: an abstract on the left fills the card's height beside the copy;
+   the tools row closes the column under a hairline. At one column the art becomes a
+   short cover so the copy stays near the top. */
+.lead-art { align-items: stretch; }
+.lead-art-panel { position: relative; overflow: hidden; margin: 0; border-radius: var(--radius-sm); min-height: 300px; }
+.lead-art-panel img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.lead-art .tools { margin-top: var(--sp-6); padding-top: var(--sp-5); border-top: 1px solid var(--hair); }
+@media (max-width: 900px) {
+  .lead-solo { grid-template-columns: minmax(0, 1fr); }
+  .lead-art-panel { min-height: 0; aspect-ratio: 16 / 10; }
+}
 @media (max-width: 760px) { .lead-points { grid-template-columns: 1fr; } .lead-grid .point-icon { margin: 0 auto 20px 0; } }
 
 /* Three layers of design tracking: intro on the left; on the right a tab strip

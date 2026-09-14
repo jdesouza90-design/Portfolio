@@ -21,6 +21,7 @@ styles.css                      Tokens, the ten type roles, components, case-stu
 main.js                         CONFIG links, nav, scroll reveal, scroll-spy, chart, walkthroughs
 middleware.js                   Vercel Edge Middleware: the password gate for /work/*
 vercel.json                     Cache and security headers
+ai-process-art.mjs              Draws assets/ai-process.svg, the abstract on the AI card
 assets/                         Mockups, logos, walkthrough recordings exported from the deck
 og-image.png                    Social preview image used when the link is shared
 ```
@@ -198,6 +199,9 @@ The rules that shape the code:
 - Company logos in `assets/logo-*.svg` are the companies' own vector files. Each
   is sized in `styles.css` so the wordmark text matches across all three, since
   the three lockups have different icon-to-text proportions.
+- The abstract beside "AI in the process" on the homepage is drawn by
+  `ai-process-art.mjs` from a fixed seed. Change its constants and re-run it
+  rather than editing the SVG.
 - Each case study has its own background, set by a `case-*` class on `<body>`
   and on its row in the work index.
 - The three walkthrough recordings are 2.8–7.8 MB and only load when a visitor
