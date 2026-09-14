@@ -173,11 +173,20 @@ its label; the ticks carry the scale.
 ```html
 <div class="proof">
   <div class="proof-head">
-    <div><div class="t-stat">25M LINK</div><small>staked, with the pool full within 3 hours of launch</small></div>
+    <div><div class="t-stat" data-flow>25M LINK</div><small>staked, with the pool full within 3 hours of launch</small></div>
     <span class="eyebrow">Pool capacity · hours after launch</span>
   </div>
-  <div class="capacity-bar" role="img" aria-label="Pool capacity filled from 0 to 100 percent over the three hours after launch"><span></span></div>
-  <div class="capacity-ticks"><span>0 hr</span><span>1 hr</span><span>2 hr</span><span>3 hr · full</span></div>
+  <div class="gauge" role="img" aria-label="Pool capacity filled from 0 to 100 percent over the three hours after launch">
+    <svg viewBox="0 0 360 180" aria-hidden="true" focusable="false">
+      <defs><linearGradient id="gauge-fill" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="var(--accent)"/><stop offset="1" stop-color="var(--accent-2)"/></linearGradient></defs>
+      <path class="track" d="M50,178 A130,130 0 0 1 310,178"/>
+      <path class="fill" d="M50,178 A130,130 0 0 1 310,178"/>
+      <line class="notch" x1="180" y1="20" x2="180" y2="76" transform="rotate(-30 180 178)"/>
+      <line class="notch" x1="180" y1="20" x2="180" y2="76" transform="rotate(30 180 178)"/>
+      <g class="needle"><line class="slot" x1="180" y1="20" x2="180" y2="76"/><line class="bar" x1="180" y1="25" x2="180" y2="71"/></g>
+    </svg>
+    <span class="lbl l0">0 hr</span><span class="lbl l1">1 hr</span><span class="lbl l2">2 hr</span><span class="lbl l3">3 hr · full</span>
+  </div>
 </div>
 ```
 
