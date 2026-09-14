@@ -650,7 +650,7 @@ footer a:hover { color: var(--ink); }
   .cols .col:first-child .shot, .cols .col:last-child .shot { width: calc(100% - var(--col-pad)); }
 }
 @media (max-width: 900px) and (min-width: 561px) { .cols .col:nth-child(odd):last-child .shot { width: calc(100% - var(--col-pad)); } }
-.shot { margin: var(--sp-5) 0 0; aspect-ratio: 2 / 1; padding: 6% 7%; display: grid; place-items: center; border-radius: 12px; overflow: hidden; border: 1px solid var(--hair);
+.shot { margin: var(--sp-5) 0 0; aspect-ratio: 1.7; padding: 6% 7%; display: grid; place-items: center; border-radius: 12px; overflow: hidden; border: 1px solid var(--hair);
   background-color: var(--panel-base, #EFE8DB); background-image: var(--panel, linear-gradient(155deg, #F4EFE5 0%, #E4DAC6 100%)); }
 .shot-frame { position: relative; width: 100%; aspect-ratio: 1.9; overflow: hidden; border-radius: 10px; background: #fff; box-shadow: var(--shadow-screen); }
 .shot-frame img { position: absolute; left: 0; top: 0; width: calc(var(--s, 1) * 100%); height: auto; max-width: none; transform: translate(calc(var(--x, 0%) * -1), calc(var(--y, 0%) * -1)); }
