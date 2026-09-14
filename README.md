@@ -90,8 +90,8 @@ sections, `--row` between rows, `--panel-h` for a visual beside copy.
 All five case studies are the same document, in this order:
 
 1. **Hero**: eyebrow, title, one-sentence lede, the project's screens on its
-   own tinted panel, then four facts (role, team, timeline, outcome) as icon +
-   heading + text columns divided by dashed rules.
+   own tinted panel, then four facts (role, team, timeline, outcome) as a
+   `<dl>`: each `<dt>` holds the icon and the label, divided by dashed rules.
 2. **Results**: centred title and lede, then the proof (chart, capacity meter,
    A/B table, or quotes where there are no published numbers).
 3. **How we got there**: rows that alternate copy and a fixed-height panel
@@ -103,6 +103,34 @@ All five case studies are the same document, in this order:
 
 Icons are inline SVG, 24-unit, 1.5 stroke, ink with one cobalt detail
 (`class="ac"` for an accent stroke, `ac-fill` for a tinted shape).
+
+## Accessibility
+
+The site is held to WCAG 2.2 AA. Every page, including the password gate,
+runs clean through axe-core (WCAG 2.x A/AA and best-practice rules) and
+`html-validate`. To check a page after editing it:
+
+```
+npx html-validate index.html work.html work/*.html
+```
+
+The rules that shape the code:
+
+- Every colour pair is a token, and every token pair used for text passes
+  4.5:1 on the darkest ground it sits on (`--ink-3` was darkened for this).
+  The hero lede is set in `--ink` because it sits over the colour wash.
+- The nav is a `<nav aria-label="Primary">` landmark; the phone menu button
+  reports `aria-expanded`, Escape closes it and hands focus back.
+- The layer tabs follow the tablist pattern: arrows, Home and End move the
+  selection; hidden panels leave the tab order.
+- The walkthrough control leaves the tab order when it fades out. The chart
+  carries a text alternative and a data table.
+- Tables have header scopes. A table that scrolls sideways is a labelled,
+  focusable region.
+- Icons are `aria-hidden`; every image has an alt; logos used as decoration
+  have an empty one. Focus rings switch to paper on dark grounds.
+- `prefers-reduced-motion` switches off every animation and smooth scrolling.
+- Nothing scrolls sideways at 320px.
 
 ## Editing content
 

@@ -312,7 +312,9 @@ thead .hl { color: var(--accent-ink); }
 @keyframes hero-drift-d { from { transform: translate3d(8vw, 5vh, 0) scale(.85); } to { transform: translate3d(-10vw, -7vh, 0) scale(1.28); } }
 
 .hero h1 { margin-inline: auto; }
-.hero .lede { margin: var(--stack-head) auto 0; }
+/* The lede sits over the colour wash. Ink-2 fell to 4.1:1 where a blob passes
+   under it (3.3:1 where two overlap), so the hero sets it in ink. */
+.hero .lede { margin: var(--stack-head) auto 0; color: var(--ink); }
 .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: clamp(28px, 3vw, 38px); }
 
 /* Sections */
@@ -444,6 +446,7 @@ thead .hl { color: var(--accent-ink); }
 .contact .btn-primary:hover { background: #fff; color: var(--ink); box-shadow: none; }
 .contact .btn-ghost { border-color: var(--hair-2); color: var(--paper); background: transparent; }
 .contact .btn-ghost:hover { border-color: var(--paper); color: var(--paper); }
+.contact :focus-visible { outline-color: var(--paper); }   /* the accent ring is only 3.2:1 on ink */
 @media (max-width: 720px) { .contact { grid-template-columns: 1fr; } }
 footer { padding: 30px 0 44px; font-size: var(--t-small); color: var(--ink-3); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 footer a { color: var(--ink-2); text-decoration: none; }
@@ -561,6 +564,7 @@ footer a:hover { color: var(--ink); }
 .walk::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 1; background: linear-gradient(180deg, rgba(11, 15, 26, .12), rgba(11, 15, 26, .34)); transition: opacity .35s var(--ease); }
 .walk .play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 2; display: inline-flex; align-items: center; gap: 9px; padding: 12px 20px 12px 17px; border: 0; border-radius: 999px; background: rgba(255, 255, 255, .97); color: var(--ink); box-shadow: 0 10px 34px rgba(11, 15, 26, .34); transition: background .2s var(--ease), box-shadow .2s var(--ease), opacity .3s var(--ease); }
 .walk .play:hover { background: #fff; box-shadow: 0 14px 40px rgba(11, 15, 26, .42); }
+.walk .play:focus-visible { outline-color: #fff; }
 .walk.loading .play { cursor: progress; }
 .walk.loading .play svg { animation: walk-spin 1s linear infinite; transform-origin: 50% 50%; }
 @keyframes walk-spin { to { transform: rotate(360deg); } }
@@ -590,6 +594,7 @@ footer a:hover { color: var(--ink); }
 details.data { margin-top: 14px; font-size: var(--t-small); }
 details.data summary { cursor: pointer; color: var(--ink-2); }
 details.data table { min-width: 0; margin-top: 10px; }
+details.data th, details.data td { white-space: normal; padding-inline: 10px; }   /* wraps rather than clips at 320px */
 .capacity-bar { position: relative; height: 14px; border-radius: 999px; background: var(--surface-2); margin: var(--sp-5) 0 var(--sp-3); overflow: hidden; }
 .capacity-bar span { position: absolute; inset: 0; width: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transform-origin: left; animation: fill-x 2.4s var(--ease) both; }
 @keyframes fill-x { from { transform: scaleX(0); } to { transform: scaleX(1); } }

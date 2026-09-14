@@ -147,7 +147,9 @@ const CONFIG = {
         const on = k === i;
         t.setAttribute("aria-selected", String(on));
         t.tabIndex = on ? 0 : -1;
-        if (panels[k]) panels[k].classList.toggle("active", on);
+        // the hidden panels fade for .22s; keeping them out of the tab order
+        // means a quick Tab after an arrow key can't land on one mid-fade
+        if (panels[k]) { panels[k].classList.toggle("active", on); panels[k].tabIndex = on ? 0 : -1; }
       });
       place();
       if (focus) tabs[i].focus();
