@@ -571,11 +571,17 @@ footer a:hover { color: var(--ink); }
 .testimonial-foot cite { display: block; min-width: 0; font-style: normal; font-size: var(--t-small); line-height: var(--lh-small); color: var(--ink-3); }
 .testimonial-foot cite b { display: block; font-weight: 500; color: var(--ink); font-size: var(--t-subhead); line-height: var(--lh-subhead); }
 .testimonial-mark { margin-left: auto; font-family: var(--font-display); font-size: var(--t-subhead); font-weight: 500; color: var(--ink); white-space: nowrap; }
-/* No rotation for reduced-motion users: the quotes simply stack */
-@media (prefers-reduced-motion: reduce) {
-  .testimonial-track { gap: var(--sp-6); }
-  .testimonial { grid-area: auto; opacity: 1; visibility: visible; transition: none; }
-}
+.testimonial-controls { display: flex; align-items: center; gap: var(--sp-3); margin-top: var(--sp-5); }
+.testimonial-controls .dots { display: flex; gap: 6px; margin-inline: var(--sp-3); }
+.testimonial-controls .dot { width: 8px; height: 8px; padding: 0; border: 0; border-radius: 999px; background: var(--hair-2); cursor: pointer; transition: width .3s var(--ease), background .3s; }
+.testimonial-controls .dot[aria-current="true"] { width: 24px; background: var(--ink); }
+.testimonial-controls .ctl { width: 40px; height: 40px; padding: 0; border: 1px solid var(--hair-2); border-radius: 999px; background: transparent; color: var(--ink); cursor: pointer; display: grid; place-items: center; transition: border-color .2s, color .2s; }
+.testimonial-controls .ctl:hover { border-color: var(--accent); color: var(--accent-ink); }
+.testimonial-controls .ctl svg { width: 16px; height: 16px; }
+.testimonial-controls .pause { margin-left: auto; }
+.testimonial-controls .pause .i-pause, .testimonial-controls .pause[aria-pressed="true"] .i-play { display: block; }
+.testimonial-controls .pause .i-play, .testimonial-controls .pause[aria-pressed="true"] .i-pause { display: none; }
+@media (prefers-reduced-motion: reduce) { .testimonial, .testimonial-controls .dot { transition: none; } }
 
 /* Flow diagrams: before / after */
 .flow-pair { display: flex; flex-direction: column; gap: clamp(36px, 5vw, 64px); width: 100%; }
