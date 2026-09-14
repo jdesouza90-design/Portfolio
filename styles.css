@@ -113,14 +113,14 @@
 .t-quote, .quote p
   { font-family: var(--font-display); font-weight: 400; color: var(--ink); font-size: var(--t-quote); line-height: var(--lh-quote); letter-spacing: var(--ls-quote); margin: 0; }
 
-/* Micro: the mono label, one colour everywhere, a hairline tick leading it */
+/* Micro: the mono label, one colour everywhere. Ink-2, not ink-3: at 12px the
+   lighter grey fell under 3.5:1 on paper and read as decoration. */
 .eyebrow, .t-micro {
   font-family: var(--font-mono); font-size: var(--t-micro); line-height: var(--lh-micro);
   letter-spacing: var(--ls-micro); text-transform: uppercase; font-weight: 500;
-  color: var(--ink-3); margin: 0;
+  color: var(--ink-2); margin: 0;
 }
-.eyebrow { display: inline-flex; align-items: center; gap: 9px; }
-.eyebrow::before { content: ""; width: 18px; height: 1px; flex: none; background: var(--hair-2); }
+.eyebrow { display: block; }
 
 /* Stacks: the fixed distances between a label, its heading, and its text */
 .eyebrow + .t-display, .eyebrow + .t-title, .eyebrow + .h2, .eyebrow + h1, .contact .eyebrow + h2 { margin-top: var(--stack-label); }
@@ -306,7 +306,6 @@ thead .hl { color: var(--accent-ink) !important; }
 @keyframes hero-drift-c { from { transform: translate3d(-4vw, 4vh, 0) scale(1.05); } to { transform: translate3d(12vw, -10vh, 0) scale(1.35); } }
 @keyframes hero-drift-d { from { transform: translate3d(8vw, 5vh, 0) scale(.85); } to { transform: translate3d(-10vw, -7vh, 0) scale(1.28); } }
 
-.hero .eyebrow { justify-content: center; }
 .hero h1 { margin-inline: auto; }
 .hero .lede { margin: var(--stack-head) auto 0; }
 .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: clamp(28px, 3vw, 38px); }
@@ -595,7 +594,6 @@ details.data table { min-width: 0; margin-top: 10px; }
 /* Next: the closing band */
 .cs-next { margin-top: var(--section); padding-block: var(--section); background: var(--paper-2); border-top: 1px solid var(--hair); text-align: center; }
 .cs-next .wrap { display: flex; flex-direction: column; align-items: center; }
-.cs-next .eyebrow { justify-content: center; }
 .cs-next a.t-title { margin-top: var(--stack-label); text-decoration: none; transition: color .2s; }
 .cs-next a.t-title:hover { color: var(--accent-ink); }
 .cs-next .actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: clamp(28px, 3vw, 40px); }
