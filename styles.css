@@ -396,7 +396,7 @@ thead .hl { color: var(--accent-ink) !important; }
 .about-logos img { width: auto; max-width: 100%; align-self: end; justify-self: start; }
 /* official vector lockups, sized so the wordmark text matches across all three */
 .about-logos img[alt="Best Egg"] { height: 23.0px; }
-.about-logos img[alt="Chainlink Labs"] { height: 38.5px; }
+.about-logos img[alt="Chainlink Labs"] { height: 29px; }
 .about-logos img[alt="Auth0"] { height: 29.0px; }
 .about-logos strong { font-weight: 600; font-size: 1.02rem; color: var(--ink); align-self: end; padding-top: 22px; }
 .about-logos span { color: var(--ink-2); font-size: .94rem; padding-top: 2px; }
