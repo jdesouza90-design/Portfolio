@@ -85,7 +85,14 @@ const CONFIG = {
     document.addEventListener("visibilitychange", onMove);
     sweep();
     setTimeout(sweep, 400);
-    setTimeout(() => revealEls.forEach(show), 2500);   // failsafe: never leave content hidden
+    // Failsafe: if nothing ever revealed, the observer is broken - drop the
+    // animation entirely so content is visible. Never blanket-reveal, or
+    // everything below the fold is already shown before you scroll to it.
+    setTimeout(() => {
+      if (!revealEls.some((el) => el.classList.contains("in"))) {
+        document.documentElement.classList.remove("anim");
+      }
+    }, 2500);
   }
 
   /* ---- Case study: table of contents scroll-spy ---- */
