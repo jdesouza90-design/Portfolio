@@ -668,6 +668,11 @@ footer a:hover { color: var(--ink); }
 .proof-head { display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; margin-bottom: var(--sp-5); }
 .proof-head .t-stat { color: var(--accent-ink); }
 .proof-head small { display: block; color: var(--ink-2); font-size: var(--t-small); line-height: var(--lh-small); margin-top: var(--sp-2); max-width: 40ch; }
+/* The frame also hosts a comparison table (Verifications) or, where there is no
+   number to chart, a hairline list of what shipped (No-code tools, SIWE). */
+.proof .table-wrap { border: 0; border-top: 1px solid var(--hair); border-radius: 0; background: transparent; }
+.proof .tensions { margin-top: 0; }
+.proof .tensions li { grid-template-columns: minmax(0, 11rem) minmax(0, 1fr); }
 .chart svg { width: 100%; height: auto; display: block; overflow: visible; }
 .chart .bar { fill: var(--accent); transition: fill .15s; }
 .chart .bar:hover, .chart .bar.hover { fill: var(--accent-ink); }
