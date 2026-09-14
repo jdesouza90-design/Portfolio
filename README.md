@@ -10,9 +10,10 @@ Live: https://john-desouza.com
 
 ```
 index.html                      Home: hero, selected work, how I lead, how I track design, about, contact
-work.html                       Work index: all five case studies
+work.html                       Work index: all six case studies
 work/cross-sell.html            Best Egg · Cross-Sell (Vehicle Equity & Home Secured Loans)
 work/verifications.html         Best Egg · Verifications
+work/refinance-offers.html      Best Egg · Refinance offers on native mobile
 work/staking.html               Chainlink Labs · Staking v0.1
 work/no-code-tools.html         Auth0 · No-code tools
 work/sign-in-with-ethereum.html Auth0 · Sign-in with Ethereum
@@ -38,7 +39,7 @@ before any file is served. The home page and the work index stay public.
   Vercel → Project → Settings → Environment Variables. It is deliberately not
   stored in this repo.
 - A correct password sets a cookie scoped to `/work` that lasts 30 days, so a
-  visitor unlocks all five case studies once.
+  visitor unlocks all six case studies once.
 - Changing the password invalidates every existing cookie, because the cookie
   value is derived from the password.
 - If the variable is missing the gate fails closed and says so.
@@ -107,7 +108,7 @@ three rhythm tokens: `--section` between sections, `--row` between rows,
 
 ## Case study skeleton
 
-All five case studies are the same document, in this order:
+All six case studies are the same document, in this order:
 
 1. **Hero**: eyebrow, title and one-sentence lede with the outcome stat beside
    them, the project's screens on its own tinted panel, then four facts
@@ -116,7 +117,7 @@ All five case studies are the same document, in this order:
 2. **Results**: centred title and lede, then one `.proof` frame: the headline
    stat top-left, a label top-right, and under it the evidence (chart,
    capacity meter, A/B table, or a hairline list of what shipped where there
-   are no published numbers).
+   are no published numbers or the number is too new to chart).
 3. **My role**: hairline ledger rows (`.ledger`), heading left and paragraph
    right, so a hiring manager reads the leadership story before the work.
 4. **How we got there**, always in this order: the problem (copy with a
