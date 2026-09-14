@@ -794,18 +794,19 @@ details.data summary { cursor: pointer; }
 details.data table { min-width: 0; margin-top: 10px; }
 details.data th, details.data td { white-space: normal; padding-inline: 10px; }   /* wraps rather than clips at 320px */
 /* Gauge: a half dial for capacity. The ring is the pool, filled left to right
-   along a 408-unit arc as the block reveals; a white slot with a green bar
+   along a 408-unit arc over 2.4s as the block reveals (the in-out: it starts
+   and ends on screen); a white slot with a green bar
    rides its head, and white notches mark the hours. Labels are HTML placed
    by percentage of the dial's box, so they keep their size at any width. */
 .gauge { position: relative; width: min(100%, 440px); aspect-ratio: 2 / 1; margin: var(--sp-6) auto var(--sp-7); }
 .gauge svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; display: block; }
 .gauge .track, .gauge .fill { fill: none; stroke-width: 56; }
 .gauge .track { stroke: color-mix(in srgb, var(--accent-2) 20%, var(--surface)); }
-.gauge .fill { stroke: url(#gauge-fill); stroke-dasharray: 409; stroke-dashoffset: 0; animation: gauge-fill 1.4s var(--ease) both; }
+.gauge .fill { stroke: url(#gauge-fill); stroke-dasharray: 409; stroke-dashoffset: 0; animation: gauge-fill 2.4s var(--ease-in-out) both; }
 .gauge .notch, .gauge .slot { stroke: var(--surface); stroke-width: 3; }
 .gauge .slot { stroke-width: 10; }
 .gauge .bar { stroke: var(--accent-ink); stroke-width: 3.5; stroke-linecap: round; }
-.gauge .needle { transform-box: view-box; transform-origin: 180px 178px; transform: rotate(84deg); animation: gauge-needle 1.4s var(--ease) both; }
+.gauge .needle { transform-box: view-box; transform-origin: 180px 178px; transform: rotate(84deg); animation: gauge-needle 2.4s var(--ease-in-out) both; }
 /* the dial is below the fold; hold it empty until its block reveals so the fill is actually seen */
 .anim [data-reveal]:not(.in) .gauge :is(.fill, .needle) { animation-play-state: paused; }
 @keyframes gauge-fill { from { stroke-dashoffset: 409; } to { stroke-dashoffset: 0; } }
