@@ -18,7 +18,7 @@ work/staking.html               Chainlink Labs · Staking v0.1
 work/no-code-tools.html         Auth0 · No-code tools
 work/sign-in-with-ethereum.html Auth0 · Sign-in with Ethereum
 styles.css                      Tokens, the ten type roles, components, case-study layout
-main.js                         CONFIG links, nav, scroll reveal, scroll-spy, chart, walkthroughs, AI strands
+main.js                         CONFIG links, nav, scroll reveal, scroll-spy, chart, walkthroughs, AI strands, About portrait height
 middleware.js                   Vercel Edge Middleware: the password gate for /work/*
 vercel.json                     Cache and security headers
 ai-process-art.mjs              Draws assets/ai-process.svg, the abstract on the AI card

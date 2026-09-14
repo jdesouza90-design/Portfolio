@@ -504,8 +504,11 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .layer-chip svg { width: 15px; height: 15px; flex: none; }
 @media (max-width: 900px) { .framework { grid-template-columns: minmax(0, 1fr); } }   /* minmax(0), or the tab strip widens the column */
 
-/* About: portrait beside a single statement */
-.about-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 6vw, 88px); align-items: center; }
+/* About: portrait beside a single statement. The portrait stands exactly as tall
+   as the text: main.js measures the text and sets --portrait-w at the photo's own
+   ratio; without it the portrait takes 5 of 24 parts. Items align to the top so
+   the photo's edges meet the eyebrow and the last line. */
+.about-grid { display: grid; grid-template-columns: var(--portrait-w, minmax(0, 5fr)) minmax(0, 19fr); gap: clamp(32px, 6vw, 88px); align-items: start; }
 .portrait { margin: 0; border-radius: 14px; overflow: hidden; background: #DFD9CD; }
 .portrait img { width: 100%; height: auto; display: block; }
 /* name and title are one lockup, closer than a subhead and its text */
@@ -523,7 +526,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .about-logos span { padding-top: 2px; }
 .about-logos time { display: block; margin-top: 10px; }
 @media (max-width: 700px) { .about-logos { grid-template-columns: 1fr; grid-template-rows: none; } .about-logos li { grid-row: auto; grid-template-rows: none; } }
-@media (max-width: 900px) { .about-grid { grid-template-columns: 1fr; gap: 32px; } .portrait { max-width: 420px; } }
+@media (max-width: 900px) { .about-grid { grid-template-columns: 1fr; gap: 32px; } .portrait { max-width: 210px; } }
 
 /* Contact: the one dark block, closing the page */
 .contact {
@@ -947,7 +950,7 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 
   /* About */
   .about-grid { gap: 24px; }
-  .portrait { max-width: 300px; }
+  .portrait { max-width: 150px; }
   .about-logos { margin-top: 40px; gap: 20px; }
   .about-logos li { padding-top: 20px; }
 
