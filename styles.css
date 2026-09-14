@@ -440,8 +440,17 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
    the tools row closes the column under a hairline. At one column the art becomes a
    short cover so the copy stays near the top. */
 .lead-art { align-items: stretch; }
-.lead-art-panel { position: relative; overflow: hidden; margin: 0; border-radius: var(--radius-sm); min-height: 300px; }
-.lead-art-panel img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.lead-art-panel { position: relative; overflow: hidden; margin: 0; border-radius: var(--radius-sm); min-height: 300px; background: linear-gradient(135deg, #F4EFE5, #E4DAC6); }
+.lead-art-panel img, .lead-art-panel canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+/* the still SVG is the ground truth; the canvas takes over once main.js is running the strands */
+.lead-art-panel canvas { display: none; }
+.lead-art-panel.live canvas { display: block; }
+.lead-art-panel.live img { visibility: hidden; }
+.art-ctl { position: absolute; right: 12px; bottom: 12px; width: 36px; height: 36px; padding: 0; border: 1px solid var(--hair-2); border-radius: 999px; background: rgba(255, 255, 255, .55); color: var(--ink); cursor: pointer; display: grid; place-items: center; transition: border-color var(--dur-hover), color var(--dur-hover); }
+.art-ctl:hover { border-color: var(--accent); color: var(--accent-ink); }
+.art-ctl svg { width: 14px; height: 14px; }
+.art-ctl .i-pause, .art-ctl[aria-pressed="true"] .i-play { display: block; }
+.art-ctl .i-play, .art-ctl[aria-pressed="true"] .i-pause { display: none; }
 .lead-art .tools { margin-top: var(--sp-6); padding-top: var(--sp-5); border-top: 1px solid var(--hair); }
 @media (max-width: 900px) {
   .lead-solo { grid-template-columns: minmax(0, 1fr); }
