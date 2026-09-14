@@ -1,12 +1,12 @@
 /* ==========================================================================
    John DeSouza — portfolio
 
-   Direction: editorial restraint. Cool neutral ground, oversized light serif
+   Direction: editorial restraint. Warm paper ground, oversized light serif
    statements, vast whitespace, hairline rows. Colour is carried by the work
-   imagery, not by the page. The accent is the cobalt of John's own products.
+   imagery, not by the page; the one accent is a forest green.
 
    Order: tokens → type roles → base → primitives → nav → home → case study
-          → gate → motion → per-project grounds
+          → gate → motion → per-project grounds → phone
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -38,8 +38,9 @@
   --font-body: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
 
   /* Type scale: ten roles, and nothing on the site sets a size outside them.
-     The serif speaks (display, title, heading, quote, stat); the sans does
-     the work (subhead, lede, body, small, micro). */
+     The serif speaks (display, title, heading, stat, quote); the sans does
+     the work (subhead, lede, body, small, micro). Section 2 turns these into
+     the roles themselves. */
   --t-display: clamp(2.625rem, 1.5rem + 3.9vw, 4.25rem);   /* 42 → 68 */
   --t-title:   clamp(2rem, 1.25rem + 2.4vw, 2.875rem);     /* 32 → 46 */
   --t-heading: clamp(1.5rem, 1.2rem + 1vw, 1.875rem);      /* 24 → 30 */
@@ -59,7 +60,7 @@
   --ls-lede: -.005em;   --ls-micro: .08em;   --ls-stat: -.015em;    --ls-quote: -.01em;
 
   /* measure */
-  --m-display: 16ch; --m-title: 24ch; --m-heading: 26ch; --m-lede: 58ch; --m-body: 60ch;
+  --m-display: 16ch; --m-title: 24ch; --m-heading: 26ch; --m-quote: 44ch; --m-lede: 58ch; --m-body: 60ch;
 
   /* spacing scale: 4 · 8 · 12 · 16 · 24 · 32 · 48 · 64 · 96 · 128 */
   --sp-1: 4px;  --sp-2: 8px;  --sp-3: 12px; --sp-4: 16px; --sp-5: 24px;
@@ -91,48 +92,77 @@
 
 /* --------------------------------------------------------------------------
    2. Type roles
-   Each role is a class, so any element can take it. The component rules
-   further down assign roles by context, so plain markup gets the right role
-   without a class.
+   Every piece of text on the site takes exactly one of ten roles, and a role
+   sets all of type at once: face, size, weight, line-height, letter-spacing,
+   colour, measure and a zero margin. Headings and paragraphs carry their
+   role as a class in the markup (.t-title, .t-body, .eyebrow); the inline
+   and structural text of a component (a cell, a cite, a button) is listed
+   under its role here. Nothing after this section sets a face, size, weight,
+   line-height or letter-spacing, with two exceptions: .btn and .chip set the
+   line-height of their own box, and the phone rules at the end move a few
+   things a role up or down.
    -------------------------------------------------------------------------- */
-.t-display, .t-title, .t-heading, .t-quote, .t-stat,
-.hero h1, .cs-hero h1, .h2, .contact h2, .about-statement, .case-copy h2, .case-copy h3,
-.lead-solo-intro h3, .framework-intro h3, .layer-title, .brand
+
+/* The serif speaks: display, title, heading, stat, quote. It is never bold. */
+.t-display, .t-title, .t-heading, .t-stat, .t-quote,
+.brand, .facts dd, .avatar.glyph
   { font-family: var(--font-display); font-weight: 400; color: var(--ink); margin: 0; }
-
-.t-display, .hero h1, .cs-hero h1
+.t-display
   { font-size: var(--t-display); line-height: var(--lh-display); letter-spacing: var(--ls-display); max-width: var(--m-display); text-wrap: balance; }
-.t-title, .h2, .contact h2, .about-statement
+.t-title
   { font-size: var(--t-title); line-height: var(--lh-title); letter-spacing: var(--ls-title); max-width: var(--m-title); text-wrap: balance; }
-.t-heading, .case-copy h2, .case-copy h3, .lead-solo-intro h3, .framework-intro h3, .layer-title
+.t-heading, .brand, .facts dd, .avatar.glyph
   { font-size: var(--t-heading); line-height: var(--lh-heading); letter-spacing: var(--ls-heading); max-width: var(--m-heading); text-wrap: balance; }
-.t-subhead, .lead-points h4, .col h3, .col h4, .col dt, .about-who strong, .flow-caption
-  { font-family: var(--font-body); font-size: var(--t-subhead); line-height: var(--lh-subhead); letter-spacing: var(--ls-subhead); font-weight: 500; color: var(--ink); margin: 0; }
-.t-lede, .lede, .contact h2 + p
-  { font-family: var(--font-body); font-size: var(--t-lede); line-height: var(--lh-lede); letter-spacing: var(--ls-lede); font-weight: 400; color: var(--ink-2); max-width: var(--m-lede); margin: 0; }
-.t-body
-  { font-family: var(--font-body); font-size: var(--t-body); line-height: var(--lh-body); font-weight: 400; color: var(--ink-2); max-width: var(--m-body); margin: 0; }
-.t-small
-  { font-family: var(--font-body); font-size: var(--t-small); line-height: var(--lh-small); font-weight: 400; color: var(--ink-2); margin: 0; }
 .t-stat
-  { font-size: var(--t-stat); line-height: var(--lh-stat); letter-spacing: var(--ls-stat); font-variant-numeric: lining-nums tabular-nums; }
-.t-quote, .quote p
-  { font-family: var(--font-display); font-weight: 400; color: var(--ink); font-size: var(--t-quote); line-height: var(--lh-quote); letter-spacing: var(--ls-quote); margin: 0; }
+  { font-size: var(--t-stat); line-height: var(--lh-stat); letter-spacing: var(--ls-stat); }
+.t-quote
+  { font-size: var(--t-quote); line-height: var(--lh-quote); letter-spacing: var(--ls-quote); max-width: var(--m-quote); text-wrap: pretty; }
+.t-stat, .facts dd { font-variant-numeric: lining-nums tabular-nums; }
 
-/* Micro: the small-caps label, one colour everywhere. Ink-2, not ink-3: at 12px
-   the lighter grey fell under 3.5:1 on paper and read as decoration. */
-.eyebrow, .t-micro {
-  font-family: var(--font-body); font-size: var(--t-micro); line-height: var(--lh-micro);
-  letter-spacing: var(--ls-micro); text-transform: uppercase; font-weight: 500;
-  color: var(--ink-2); margin: 0;
-}
+/* The sans does the work: subhead, lede, body, small, micro */
+.t-subhead, .t-lede, .t-body, .t-small, .t-micro, .eyebrow,
+.flow-arrow, .testimonial-foot cite b,
+.layer-tab, .work-cta, .about-logos strong, .gate-form input,
+.btn, .chip, .nav-links a, .back, .tools span, .layer-out > span:first-child, .about-logos span, footer,
+.facts dt, table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
+.gallery figcaption, .proof-head small, .tooltip, details.data,
+thead th, .about-logos time, .capacity-ticks, .table-wrap td[data-label]::before
+  { font-family: var(--font-body); margin: 0; }
+.t-subhead, .flow-arrow, .testimonial-foot cite b
+  { font-size: var(--t-subhead); line-height: var(--lh-subhead); letter-spacing: var(--ls-subhead); font-weight: 500; color: var(--ink); }
+.t-lede
+  { font-size: var(--t-lede); line-height: var(--lh-lede); letter-spacing: var(--ls-lede); font-weight: 400; color: var(--ink-2); max-width: var(--m-lede); }
+.t-body, .layer-tab, .work-cta, .about-logos strong, .gate-form input
+  { font-size: var(--t-body); line-height: var(--lh-body); font-weight: 400; color: var(--ink-2); max-width: var(--m-body); }
+.t-small, .btn, .chip, .nav-links a, .back, .tools span, .layer-out > span:first-child, .about-logos span, footer,
+.facts dt, table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
+.gallery figcaption, .proof-head small, .tooltip, details.data
+  { font-size: var(--t-small); line-height: var(--lh-small); font-weight: 400; color: var(--ink-2); }
+.t-micro, .eyebrow, thead th, .about-logos time, .capacity-ticks, .table-wrap td[data-label]::before
+  { font-size: var(--t-micro); line-height: var(--lh-micro); letter-spacing: var(--ls-micro); text-transform: uppercase; font-weight: 500; color: var(--ink-2); }
 .eyebrow { display: block; }
 
-/* Stacks: the fixed distances between a label, its heading, and its text */
-.eyebrow + .t-display, .eyebrow + .t-title, .eyebrow + .h2, .eyebrow + h1, .contact .eyebrow + h2 { margin-top: var(--stack-label); }
-.eyebrow + .t-heading, .eyebrow + .t-subhead, .eyebrow + h3 { margin-top: var(--sp-3); }
-.t-display + .t-lede, .t-title + .t-lede, h1 + .lede, .t-title + .t-body { margin-top: var(--stack-head); }
-.t-heading + .t-body, .t-heading + .t-lede, .t-subhead + .t-body, .t-subhead + .t-small { margin-top: var(--sp-3); }
+/* Weight: 500 is the one emphasis, for whatever names or acts. */
+strong, b, tbody th, .about-logos strong, .t-body a, .t-lede a,
+.btn, .chip, .nav-links a, .back, .tools span, .layer-tab, .work-cta, .avatar, .testimonial-mark
+  { font-weight: 500; }
+
+/* Tone: ink for what leads, ink-2 for what runs (the roles' default), ink-3
+   for what sits beside on paper (a caption, a cite, the footer). Ink-3 is
+   4.7:1 on paper-2 and under 4.5:1 on the panel grounds, so a caption inside
+   a panel (.gallery figcaption) keeps ink-2. The accent marks the one action
+   or number in a block. */
+strong, b, tbody th, .about-logos strong, .chip, .tools span, .avatar, .testimonial-mark, .tooltip { color: var(--ink); }
+footer, .walk-note, .testimonial-foot cite, .gate-form input::placeholder { color: var(--ink-3); }
+.work-cta, .t-body a, .t-lede a, .outcome-stat .t-stat, .proof-head .t-stat, thead .hl, .layer-chip { color: var(--accent-ink); }
+
+/* Stacks: the fixed distances between a label, its heading and its text */
+.eyebrow + .t-display, .eyebrow + .t-title { margin-top: var(--stack-label); }
+.eyebrow + .t-heading, .eyebrow + .t-subhead, .eyebrow + .t-stat { margin-top: var(--sp-3); }
+.t-display + .t-lede, .t-title + .t-lede, .t-title + .t-body { margin-top: var(--stack-head); }
+.t-heading + .t-body, .t-heading + .t-lede { margin-top: var(--sp-4); }
+.t-subhead + .t-body, .t-subhead + .t-small { margin-top: var(--sp-3); }
+.t-stat + .t-small, .t-stat + small { margin-top: var(--sp-2); }
 .t-body + .t-body { margin-top: var(--sp-4); }
 
 /* --------------------------------------------------------------------------
@@ -160,7 +190,6 @@ button { font-family: inherit; }
 .skip:focus { left: 12px; }
 .wrap { max-width: var(--max); margin-inline: auto; padding-inline: var(--gutter); position: relative; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-.muted { color: var(--ink-2); }
 main, .nav { position: relative; z-index: 1; }
 
 /* --------------------------------------------------------------------------
@@ -168,8 +197,7 @@ main, .nav { position: relative; z-index: 1; }
    -------------------------------------------------------------------------- */
 .btn {
   display: inline-flex; align-items: center; gap: 8px;
-  padding: 13px 22px; border-radius: 999px;
-  font-weight: 500; font-size: var(--t-small); line-height: 1;
+  padding: 13px 22px; border-radius: 999px; line-height: 1;   /* the box is the padding, so the label sits at its own height */
   text-decoration: none; cursor: pointer; position: relative;
   border: 1px solid transparent;
   transition: transform var(--dur-press) var(--ease), background var(--dur-hover), border-color var(--dur-hover), box-shadow var(--dur-hover), color var(--dur-hover);
@@ -189,6 +217,22 @@ main, .nav { position: relative; z-index: 1; }
 .btn-ghost:hover { border-color: var(--accent); color: var(--accent-ink); }
 .btn-sm { padding: 10px 16px; }
 .btn svg { width: 16px; height: 16px; }
+/* Reach-out buttons: a leading icon settles into a second one on hover —
+   download becomes a check, an envelope becomes a send arrow, the LinkedIn
+   mark becomes an external-link cue. Two icons stacked in place, crossfaded. */
+.btn[data-link="resume"] .icon-swap, .btn[data-link="email"] .icon-swap, .btn[data-link="linkedin"] .icon-swap { position: relative; width: 16px; height: 16px; }
+.btn[data-link="resume"] .icon-swap svg, .btn[data-link="email"] .icon-swap svg, .btn[data-link="linkedin"] .icon-swap svg { position: absolute; inset: 0; transition: opacity var(--dur-hover), transform var(--dur-hover) var(--ease); }
+.btn[data-link="resume"] .icon-swap svg:last-child, .btn[data-link="email"] .icon-swap svg:last-child, .btn[data-link="linkedin"] .icon-swap svg:last-child { opacity: 0; transform: scale(.5); }
+@media (hover: hover) and (pointer: fine) {
+  .btn[data-link="resume"]:hover .icon-swap svg:first-child, .btn[data-link="email"]:hover .icon-swap svg:first-child, .btn[data-link="linkedin"]:hover .icon-swap svg:first-child { opacity: 0; transform: scale(.5); }
+  .btn[data-link="resume"]:hover .icon-swap svg:last-child, .btn[data-link="email"]:hover .icon-swap svg:last-child, .btn[data-link="linkedin"]:hover .icon-swap svg:last-child { opacity: 1; transform: scale(1); }
+}
+/* Browse-the-work buttons: a trailing arrow nudges forward on hover,
+   the same cue .work-cta already uses further down the page. */
+.btn-browse svg { transition: transform var(--dur-hover) var(--ease); }
+@media (hover: hover) and (pointer: fine) {
+  .btn-browse:hover svg { transform: translateX(3px); }
+}
 .icon-btn {
   width: 38px; height: 38px; border-radius: 999px; display: grid; place-items: center;
   border: 1px solid var(--hair-2); background: var(--surface); color: var(--ink); cursor: pointer;
@@ -197,11 +241,10 @@ main, .nav { position: relative; z-index: 1; }
 .icon-btn:hover { border-color: var(--accent); color: var(--accent-ink); }
 .icon-btn svg { width: 17px; height: 17px; }
 
-/* Tags: one shape for every label on the site */
-.chip, .flow-label, .layer-chip {
-  display: inline-block; font-family: var(--font-body);
-  font-size: var(--t-small); font-weight: 500; line-height: 1.25;
-  color: var(--ink); background: color-mix(in srgb, var(--surface) 92%, var(--paper));
+/* Chip: one shape for every tag on the site (.layer-chip and .flow-label are chips with a tone) */
+.chip {
+  display: inline-block; line-height: 1.25;
+  background: color-mix(in srgb, var(--surface) 92%, var(--paper));
   border: 1px solid rgba(20, 16, 12, .10); border-radius: 10px;
   padding: 7px 12px; white-space: nowrap;
 }
@@ -238,36 +281,32 @@ main, .nav { position: relative; z-index: 1; }
 .col-icon { width: 32px; height: 32px; display: block; margin: 0 0 var(--sp-5); color: var(--ink); fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .col-icon .ac { stroke: var(--accent); }
 .col-icon .ac-fill { stroke: var(--accent); fill: var(--glow); }
-.col dt > span { display: block; }
-.col h3, .col h4, .col dt > span { position: relative; }
-.col:not(:first-child) h3::before, .col:not(:first-child) h4::before, .col:not(:first-child) dt > span::before {
+.col .t-subhead { position: relative; }
+.col:not(:first-child) .t-subhead::before {
   content: ""; position: absolute; left: calc(-1 * var(--col-pad) - 1px); top: .1em; height: 1.1em; width: 2px;
   background: var(--accent); border-radius: 2px;
 }
-.col p, .col dd { margin: var(--sp-3) 0 0; font-size: var(--t-body); line-height: var(--lh-body); color: var(--ink-2); }
 @media (max-width: 900px) {
   .cols { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: var(--sp-7); }
   .col:nth-child(odd) { padding-left: 0; border-left: 0; }
-  .col:nth-child(odd) h3::before, .col:nth-child(odd) h4::before, .col:nth-child(odd) dt > span::before { display: none; }
+  .col:nth-child(odd) .t-subhead::before { display: none; }
   .col:nth-child(even) { padding-right: 0; }
 }
 @media (max-width: 560px) {
   .cols { grid-template-columns: 1fr; row-gap: 0; }
   .col { padding: var(--sp-6) 0; border-left: 0; border-top: 1px dashed var(--hair-2); }
   .col:first-child { border-top: 0; padding-top: 0; }
-  .col h3::before, .col h4::before, .col dt > span::before { display: none; }
+  .col .t-subhead::before { display: none; }
 }
 
 /* Tables */
 .table-wrap { overflow-x: auto; border: 1px solid var(--hair); border-radius: 16px; background: var(--surface); }
-table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: var(--t-small); line-height: var(--lh-small); }
+table { border-collapse: collapse; width: 100%; min-width: 640px; }
 th, td { text-align: left; padding: 15px 16px; border-bottom: 1px solid var(--hair); vertical-align: top; }
-thead th { font-size: var(--t-micro); text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); font-weight: 500; background: var(--surface-2); white-space: nowrap; }
-tbody th { font-weight: 500; color: var(--ink); white-space: nowrap; }
-tbody td { color: var(--ink-2); }
+thead th { background: var(--surface-2); white-space: nowrap; }
+tbody th { white-space: nowrap; }
 tr:last-child td, tr:last-child th { border-bottom: 0; }
 .hl { background: var(--glow); color: var(--ink); }
-thead .hl { color: var(--accent-ink); }
 
 /* --------------------------------------------------------------------------
    5. Nav
@@ -282,10 +321,10 @@ thead .hl { color: var(--accent-ink); }
 }
 .nav.scrolled { border-color: var(--hair); }
 .nav .wrap { display: flex; align-items: center; gap: 28px; width: 100%; }
-.brand { display: flex; align-items: center; gap: 11px; text-decoration: none; font-size: var(--t-heading); line-height: 1; letter-spacing: var(--ls-heading); }
+.brand { display: flex; align-items: center; gap: 11px; text-decoration: none; }
 .nav-links { margin-left: auto; }
 .nav-links ul { display: flex; gap: 28px; list-style: none; padding: 0; margin: 0; }
-.nav-links a { text-decoration: none; color: var(--ink-2); font-weight: 500; font-size: var(--t-small); transition: color .2s; }
+.nav-links a { text-decoration: none; transition: color var(--dur-hover); }
 .nav-links a.nav-icon { display: inline-flex; align-items: center; gap: 10px; padding-block: 2px; }
 .nav-links a.nav-icon svg { width: 17px; height: 17px; display: block; }
 .nav-links a.nav-icon span { display: none; }   /* the icon alone in the bar; icon + word in the phone menu */
@@ -303,7 +342,7 @@ thead .hl { color: var(--accent-ink); }
     padding: 8px var(--gutter) 16px;
   }
   .nav-links ul { flex-direction: column; gap: 0; }
-  .nav-links a { display: block; padding: 12px 0; font-size: var(--t-body); }
+  .nav-links a { display: block; padding: 12px 0; font-size: var(--t-body); line-height: var(--lh-body); }   /* a menu row is body size */
   .nav-links a.nav-icon { display: flex; padding: 12px 0; }
   .nav-links a.nav-icon span { display: inline; }
   .nav-links a.nav-download { display: flex; padding: 12px 0; }
@@ -315,7 +354,7 @@ thead .hl { color: var(--accent-ink); }
   .nav-toggle { display: grid; margin-left: auto; }
   .nav-actions .btn { display: none; }
   .nav-contact { display: block; padding-top: 12px; }
-  .nav-contact .btn { display: inline-flex; padding: 12px 20px; font-size: var(--t-small); color: var(--paper); }
+  .nav-contact .btn { display: inline-flex; padding: 12px 20px; color: var(--paper); }
 }
 
 /* --------------------------------------------------------------------------
@@ -337,9 +376,10 @@ thead .hl { color: var(--accent-ink); }
 @keyframes hero-drift-d { from { transform: translate3d(8vw, 5vh, 0) scale(.85); } to { transform: translate3d(-10vw, -7vh, 0) scale(1.28); } }
 
 .hero h1 { margin-inline: auto; }
+@media (min-width: 900px) { .hero h1 { max-width: 34ch; } .hero h1 .nowrap-lg { white-space: nowrap; } }
 /* The lede sits over the colour wash. Ink-2 fell to 4.1:1 where a blob passes
    under it (3.3:1 where two overlap), so the hero sets it in ink. */
-.hero .lede { margin: var(--stack-head) auto 0; color: var(--ink); }
+.hero .t-lede { margin-inline: auto; color: var(--ink); }
 .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: clamp(28px, 3vw, 38px); }
 
 /* Sections */
@@ -358,8 +398,7 @@ thead .hl { color: var(--accent-ink); }
 }
 .case-copy { display: flex; flex-direction: column; align-items: flex-start; }
 .case-logo { width: auto; height: 28px; margin-bottom: clamp(18px, 2.2vw, 26px); }
-.case-copy h2, .case-copy h3 { margin: 0 0 var(--sp-3); }
-.case-copy > p { margin: 0; color: var(--ink-2); max-width: 46ch; }
+.case-copy .t-body { max-width: 46ch; }
 .case-copy .chips { margin-top: var(--sp-4); }
 .case-copy .work-cta { margin-top: var(--sp-5); }
 .case-media { aspect-ratio: 16 / 10; padding: clamp(20px, 3vw, 40px); }
@@ -369,7 +408,7 @@ thead .hl { color: var(--accent-ink); }
   .case-row:hover .case-media img { transform: translateY(-5px); }
   .case-row:hover .work-cta::after { transform: translateX(5px); }
 }
-.work-cta { font-weight: 500; font-size: var(--t-body); color: var(--accent-ink); display: inline-flex; align-items: center; gap: 6px; }
+.work-cta { display: inline-flex; align-items: center; gap: 6px; }
 .work-cta::after { content: "→"; transition: transform var(--dur-hover) var(--ease); }
 .work-all { display: flex; justify-content: center; margin-top: clamp(32px, 4vw, 52px); }
 @media (max-width: 820px) {
@@ -381,13 +420,11 @@ thead .hl { color: var(--accent-ink); }
 .card { position: relative; background: var(--surface); border: 1px solid var(--hair); border-radius: var(--radius); padding: 28px; }
 .lead-solo + .lead-solo, .framework + .lead-solo { margin-top: clamp(80px, 10vw, 148px); }
 .lead-solo { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(28px, 5vw, 72px); padding: clamp(32px, 5vw, 56px); align-items: start; }
-.lead-solo-copy { display: flex; flex-direction: column; gap: var(--sp-4); }
-.lead-solo-copy p { margin: 0; color: var(--ink-2); max-width: 58ch; }
+.lead-solo-copy .t-body { max-width: 58ch; }
 .lead-points { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(24px, 3vw, 40px); }
 .lead-points > div { padding-top: 20px; border-top: 1px solid var(--hair-2); position: relative; }
 .lead-points > div::before { content: ""; position: absolute; top: -1px; left: 0; width: 28px; height: 1px; background: var(--accent); }
 .point-icon { width: 22px; height: 22px; display: block; margin: 0 0 14px; color: var(--accent); }
-.lead-points p { margin: var(--sp-3) 0 0; color: var(--ink-2); }
 /* Coaching: intro on top, then a 2x2 ledger of cells sharing hairlines.
    The 1px gap lets the card's hair colour show through as the rules. */
 .lead-grid { display: block; padding: 0; overflow: hidden; }
@@ -399,7 +436,6 @@ thead .hl { color: var(--accent-ink); }
 .tools { list-style: none; display: flex; flex-wrap: wrap; gap: clamp(18px, 2.4vw, 32px); padding: 0; margin: 26px 0 0; }
 .tools li { display: flex; align-items: center; gap: 10px; }
 .tools img { width: 28px; height: 28px; object-fit: contain; }
-.tools span { font-size: var(--t-small); font-weight: 500; color: var(--ink); }
 @media (max-width: 900px) { .lead-solo { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 760px) { .lead-points { grid-template-columns: 1fr; } .lead-grid .point-icon { margin: 0 auto 20px 0; } }
 
@@ -407,14 +443,14 @@ thead .hl { color: var(--accent-ink); }
    picks which of the three layers is showing. Panels are stacked in one grid
    cell so the block keeps the height of the tallest and never jumps. */
 .framework { margin-top: clamp(80px, 10vw, 148px); display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 5vw, 72px); align-items: start; }
-.framework-intro .muted { margin: var(--sp-5) 0 0; max-width: 44ch; }
+.framework-intro .t-body { max-width: 44ch; }
 /* Each tab carries its own slice of the track, and there is no gap between
    them, so the track reads as one line and still works if the strip wraps. */
 .layer-tabs { position: relative; display: flex; flex-wrap: wrap; }
 .layer-tab {
-  appearance: none; background: none; border: 0; margin: 0; cursor: pointer;
-  padding: 8px clamp(12px, 1.6vw, 18px) 14px; font: inherit; font-size: var(--t-body); font-weight: 500;
-  color: var(--ink-2); white-space: nowrap; transition: color var(--dur-hover), transform var(--dur-press) var(--ease);
+  appearance: none; background: none; border: 0; cursor: pointer;
+  padding: 8px clamp(12px, 1.6vw, 18px) 14px; white-space: nowrap;
+  transition: color var(--dur-hover), transform var(--dur-press) var(--ease);
   border-bottom: 1px solid var(--hair-2);
 }
 .layer-tab:first-child { padding-left: 2px; }
@@ -429,7 +465,7 @@ thead .hl { color: var(--accent-ink); }
 }
 .layer-stage { display: grid; margin-top: 22px; }
 .layer {
-  grid-area: 1 / 1;
+  grid-area: 1 / 1; display: flex; flex-direction: column;
   background: var(--surface); border: 1px solid var(--hair); border-radius: 16px;
   padding: 20px 22px; box-shadow: 0 10px 26px -22px rgba(20, 16, 12, .5);
   opacity: 0; visibility: hidden; transform: translateY(6px);
@@ -439,16 +475,12 @@ thead .hl { color: var(--accent-ink); }
 .layer.active { opacity: 1; visibility: visible; transform: none; transition: opacity var(--dur-ui) var(--ease) 60ms, transform var(--dur-ui) var(--ease) 60ms, visibility 0s; }
 /* arrow keys are repeated; a keyboard move swaps instantly and the underline just lands */
 [data-tabs].instant .layer, [data-tabs].instant .layer-tabs::after { transition-duration: 0s; transition-delay: 0s; }
-/* the card heading is set like the section's own, so the two read as a pair */
-.layer-title { max-width: none; padding-bottom: var(--sp-4); border-bottom: 1px solid var(--hair); }
-.layer > p { margin: var(--sp-4) 0 0; color: var(--ink-2); }
-.layer-out { display: flex; align-items: center; gap: 10px; margin-top: 16px; }
-.layer-out > span:first-child { font-size: var(--t-small); color: var(--ink-3); }
+.layer-title { padding-bottom: var(--sp-4); border-bottom: 1px solid var(--hair); }
+.layer-out { display: flex; align-items: center; gap: 10px; margin-top: auto; padding-top: 16px; }
 /* the one tag on the card carries the accent, with the layer's own mark */
 .layer-chip {
   display: inline-flex; align-items: center; gap: 7px;
-  color: var(--accent-ink); background: var(--glow);
-  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+  background: var(--glow); border-color: color-mix(in srgb, var(--accent) 30%, transparent);
 }
 .layer-chip svg { width: 15px; height: 15px; flex: none; }
 @media (max-width: 900px) { .framework { grid-template-columns: minmax(0, 1fr); } }   /* minmax(0), or the tab strip widens the column */
@@ -457,9 +489,9 @@ thead .hl { color: var(--accent-ink); }
 .about-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 6vw, 88px); align-items: center; }
 .portrait { margin: 0; border-radius: 14px; overflow: hidden; background: #DFD9CD; }
 .portrait img { width: 100%; height: auto; display: block; }
-.about-who { margin: clamp(28px, 3vw, 40px) 0 0; }
-.about-who strong { display: block; }
-.about-who span { display: block; color: var(--ink-2); font-size: var(--t-body); margin-top: 5px; }
+/* name and title are one lockup, closer than a subhead and its text */
+.about-who { margin-top: clamp(28px, 3vw, 40px); }
+.about-who .t-body { margin-top: var(--sp-1); }
 .about-logos { list-style: none; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: auto auto auto auto; gap: clamp(24px, 4vw, 56px); padding: 0; margin: clamp(44px, 6vw, 72px) 0 0; }
 /* subgrid keeps the logo, count and location lines aligned across all three */
 .about-logos li { display: grid; grid-row: span 4; grid-template-rows: subgrid; gap: 0; padding-top: 26px; border-top: 1px solid var(--hair); align-content: start; justify-items: start; text-align: left; }
@@ -468,9 +500,9 @@ thead .hl { color: var(--accent-ink); }
 .about-logos img[alt="Best Egg"] { height: 23px; }
 .about-logos img[alt="Chainlink Labs"] { height: 29px; }
 .about-logos img[alt="Auth0"] { height: 29px; }
-.about-logos strong { font-weight: 500; font-size: var(--t-body); color: var(--ink); align-self: end; padding-top: 22px; }
-.about-logos span { color: var(--ink-2); font-size: var(--t-small); padding-top: 2px; }
-.about-logos time { display: block; margin-top: 10px; font-size: var(--t-micro); font-weight: 500; letter-spacing: var(--ls-micro); text-transform: uppercase; color: var(--ink-3); }
+.about-logos strong { align-self: end; padding-top: 22px; }
+.about-logos span { padding-top: 2px; }
+.about-logos time { display: block; margin-top: 10px; }
 @media (max-width: 700px) { .about-logos { grid-template-columns: 1fr; grid-template-rows: none; } .about-logos li { grid-row: auto; grid-template-rows: none; } }
 @media (max-width: 900px) { .about-grid { grid-template-columns: 1fr; gap: 32px; } .portrait { max-width: 420px; } }
 
@@ -483,8 +515,8 @@ thead .hl { color: var(--accent-ink); }
   border-radius: var(--radius); padding: clamp(44px, 7vw, 88px);
   display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 36px; align-items: center;
 }
-.contact h2 { color: var(--paper); max-width: 20ch; margin-bottom: var(--stack-head); }
-.contact p:not(.eyebrow) { margin: 0; color: var(--ink-2); max-width: 50ch; }
+.contact .t-title { color: var(--paper); max-width: 20ch; }
+.contact .t-lede { max-width: 50ch; }
 .contact-actions { display: flex; flex-direction: column; gap: 10px; align-items: stretch; }
 .contact-actions .btn { justify-content: center; }
 .contact .btn-primary { background: var(--paper); color: var(--ink); }
@@ -493,7 +525,7 @@ thead .hl { color: var(--accent-ink); }
 .contact .btn-ghost:hover { border-color: var(--paper); color: var(--paper); }
 .contact :focus-visible { outline-color: var(--paper); }   /* the accent ring is only 3.2:1 on ink */
 @media (max-width: 720px) { .contact { grid-template-columns: 1fr; } }
-footer { padding: 30px 0 44px; font-size: var(--t-small); color: var(--ink-3); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+footer { padding: 30px 0 44px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 footer a { color: var(--ink-2); text-decoration: none; }
 footer a:hover { color: var(--ink); }
 
@@ -507,9 +539,8 @@ footer a:hover { color: var(--ink); }
 .cs-hero .back { margin-bottom: clamp(28px, 4vw, 44px); }
 .cs-hero.solo { padding-bottom: clamp(48px, 7vw, 96px); }
 .cs-hero-copy { display: flex; flex-direction: column; align-items: center; text-align: center; margin-inline: auto; }
-.cs-hero-copy h1 { margin-top: var(--stack-label); max-width: 22ch; }
-.cs-hero-copy .lede { margin-top: var(--stack-head); }
-.back { display: flex; width: fit-content; align-items: center; gap: 7px; text-decoration: none; color: var(--ink-2); font-size: var(--t-small); font-weight: 500; transition: color .2s; }
+.cs-hero-copy h1 { max-width: 22ch; }
+.back { display: flex; width: fit-content; align-items: center; gap: 7px; text-decoration: none; transition: color var(--dur-hover); }
 .back:hover { color: var(--accent-ink); }
 
 /* Hero panel: the project's screens on its own ground, full content width */
@@ -529,28 +560,25 @@ footer a:hover { color: var(--ink); }
 .hero-lead .cs-hero-copy { align-items: flex-start; text-align: left; margin-inline: 0; }
 .hero-lead .cs-hero-copy h1 { max-width: 16ch; }
 .outcome-stat { padding-left: clamp(20px, 3vw, 40px); border-left: 1px solid var(--hair-2); }
-.outcome-stat .t-stat { margin-top: var(--sp-3); color: var(--accent-ink); font-variant-numeric: tabular-nums; }
-.outcome-stat .t-heading { margin-top: var(--sp-3); max-width: 18ch; }
-.outcome-stat .t-small { margin-top: var(--sp-2); max-width: 28ch; color: var(--ink-2); }
+.outcome-stat .t-heading { max-width: 18ch; }
+.outcome-stat .t-small { max-width: 28ch; }
 /* Facts: a stat strip under the screens. A label above, the value beneath at
    heading size, cells divided by hairlines, after the Mercury stat band. */
 .facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: clamp(28px, 4vw, 48px) 0 0; padding: 0; border-top: 1px solid var(--hair); border-left: 1px solid var(--hair); }
 .facts > div { min-width: 0; padding: clamp(22px, 3vw, 32px) clamp(20px, 3vw, 36px); border-right: 1px solid var(--hair); border-bottom: 1px solid var(--hair); }
-.facts dt { font-size: var(--t-small); line-height: var(--lh-small); color: var(--ink-2); }
-.facts dd { margin: clamp(20px, 3vw, 40px) 0 0; font-family: var(--font-display); font-size: var(--t-heading); line-height: var(--lh-heading); letter-spacing: var(--ls-heading); color: var(--ink); font-variant-numeric: lining-nums tabular-nums; text-wrap: balance; }
+.facts dd { margin-top: clamp(20px, 3vw, 40px); }
 @media (max-width: 820px) { .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 480px) { .facts { grid-template-columns: 1fr; } }
 
 /* Ledger: My role as hairline rows, heading left and paragraph right */
 .ledger { border-top: 1px solid var(--hair); }
 .ledger-row { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(20px, 4vw, 64px); padding: clamp(24px, 3.5vw, 40px) 0; border-bottom: 1px solid var(--hair); align-items: start; }
-.ledger-row .t-heading { margin: 0; max-width: 14ch; }
-.ledger-row .t-body { margin: 0; max-width: 62ch; }
+.ledger-row .t-heading { max-width: 14ch; }
+.ledger-row .t-body { margin-top: 0; max-width: 62ch; }   /* beside the heading, not under it */
 
 /* Note: What I'd do differently as one narrow column, labels run into the sentence */
 .note { max-width: 62ch; margin-inline: auto; }
 .note .t-body + .t-body { margin-top: var(--sp-5); padding-top: var(--sp-5); border-top: 1px solid var(--hair); }
-.note strong { font-weight: 500; color: var(--ink); }
 
 @media (max-width: 900px) {
   .hero-lead { grid-template-columns: minmax(0, 1fr); }
@@ -591,15 +619,11 @@ footer a:hover { color: var(--ink); }
 
 /* Tensions: the three forces in a problem, a label and a line each */
 .tensions { list-style: none; margin: var(--sp-6) 0 0; padding: 0; border-top: 1px solid var(--hair); width: 100%; }
-.tensions li { padding: var(--sp-4) 0; border-bottom: 1px solid var(--hair); display: grid; grid-template-columns: minmax(0, 7.5rem) minmax(0, 1fr); gap: var(--sp-4); align-items: baseline; font-size: var(--t-small); line-height: var(--lh-small); }
-.tensions strong { font-weight: 500; color: var(--ink); }
-.tensions span { color: var(--ink-2); }
+.tensions li { padding: var(--sp-4) 0; border-bottom: 1px solid var(--hair); display: grid; grid-template-columns: minmax(0, 7.5rem) minmax(0, 1fr); gap: var(--sp-4); align-items: baseline; }
 @media (max-width: 560px) { .tensions li { grid-template-columns: 1fr; gap: 4px; } }
 
-/* Quotes. In a row they stack at lede size; as a proof block they run three across. */
+/* Quote: a pull quote, the text alone; the testimonial below adds the person */
 .quote { margin: 0; }
-.quote cite { display: block; font-style: normal; margin-top: var(--sp-4); font-size: var(--t-small); line-height: var(--lh-small); color: var(--ink-3); }
-.quote cite b { display: block; font-weight: 500; color: var(--ink); }
 
 /* Testimonial carousel: one piece of feedback at a time, set large, with the
    person underneath. Slides share a grid cell so the block is as tall as the
@@ -610,13 +634,13 @@ footer a:hover { color: var(--ink); }
 /* a touch of blur while the quotes cross so the eye reads one thing changing, not two overlapping */
 .testimonial.active { opacity: 1; visibility: visible; filter: none; transition: opacity .4s var(--ease), filter .4s var(--ease), visibility 0s; }
 .testimonial .quote { flex: 1; width: 100%; padding-bottom: var(--sp-6); border-bottom: 1px solid var(--hair-2); }
-.testimonial .quote p { font-size: var(--t-heading); line-height: var(--lh-quote); letter-spacing: var(--ls-heading); max-width: 44ch; margin-inline: auto; text-wrap: pretty; }
+.testimonial .quote p { margin-inline: auto; }
 .testimonial-foot { display: flex; align-items: center; justify-content: center; gap: var(--sp-4); padding-top: var(--sp-5); text-align: left; }
-.testimonial-foot .avatar { flex: none; width: 48px; height: 48px; border-radius: 12px; display: grid; place-items: center; background: var(--paper-2); color: var(--ink); font-family: var(--font-body); font-size: var(--t-small); font-weight: 500; letter-spacing: .02em; }
-.testimonial-foot .avatar.glyph { font-family: var(--font-display); font-size: var(--t-heading); line-height: 1; padding-top: .35em; }
-.testimonial-foot cite { display: block; min-width: 0; font-style: normal; font-size: var(--t-small); line-height: var(--lh-small); color: var(--ink-3); }
-.testimonial-foot cite b { display: block; font-weight: 500; color: var(--ink); font-size: var(--t-subhead); line-height: var(--lh-subhead); }
-.testimonial-mark { margin-left: var(--sp-3); padding-left: var(--sp-4); border-left: 1px solid var(--hair-2); font-family: var(--font-display); font-size: var(--t-subhead); font-weight: 400; color: var(--ink); white-space: nowrap; }
+.testimonial-foot .avatar { flex: none; width: 48px; height: 48px; border-radius: 12px; display: grid; place-items: center; background: var(--paper-2); }
+.testimonial-foot .avatar.glyph { padding-top: .35em; }   /* the quote mark hangs high in its em box; this centres it optically */
+.testimonial-foot cite { display: block; min-width: 0; font-style: normal; }
+.testimonial-foot cite b { display: block; }
+.testimonial-mark { margin-left: var(--sp-3); padding-left: var(--sp-4); border-left: 1px solid var(--hair-2); white-space: nowrap; }
 .testimonial-controls { display: flex; align-items: center; justify-content: center; gap: var(--sp-3); margin-top: var(--sp-5); }
 .testimonial-controls .dots { display: flex; margin-inline: var(--sp-1); }
 /* each dot is a 24px button (WCAG 2.2 target size) drawing an 8px mark; the current one stretches */
@@ -643,12 +667,11 @@ footer a:hover { color: var(--ink); }
 .flow-step img { border-radius: 22px; border: 0; box-shadow: 0 0 0 1px var(--hair); width: 100%; height: auto; background: #fff; }
 .flow-step.bad img { box-shadow: 0 0 0 2px var(--danger); }
 .flow-step.new img { box-shadow: 0 0 0 2px var(--accent), 0 14px 30px -18px var(--glow); }
-.flow-arrow { display: grid; place-items: center; height: 100%; min-height: 120px; color: var(--accent); font-size: 1.2rem; }
+.flow-arrow { display: grid; place-items: center; height: 100%; min-height: 120px; color: var(--accent); }
 .flow-label { margin-top: 14px; }
 .bad .flow-label { color: var(--danger); }
 .new .flow-label { color: var(--accent-ink); }
 
-/* Decision snippets: a fragment of UI above the decision it carries */
 /* Shots: the exact piece of UI a decision refers to, cut from the real screen
    and set on the case study's panel ground so the three read as one set.
     The pieces are cut from the source screens in assets/BE (cs-piece-*.webp). */
@@ -668,16 +691,12 @@ footer a:hover { color: var(--ink); }
 /* The screen sits in from the top-left and runs off the right and bottom, so the frame breaks it. No shadow: the hairline is the edge. */
 .shot-frame { position: absolute; left: 8%; top: 10%; width: 100%; height: 100%; overflow: hidden; border-radius: 10px 0 0 0; background: #fff; border: 1px solid var(--hair); border-right: 0; border-bottom: 0; }
 .shot-frame img { display: block; width: 100%; height: auto; max-width: none; }
-.snippet-ui { background: var(--surface); border: 1px solid var(--hair); border-radius: 10px; padding: 15px; font-size: var(--t-small); line-height: var(--lh-small); margin: var(--sp-4) 0 0; color: var(--ink-2); }
-.snippet-ui b { display: block; margin-bottom: 5px; font-weight: 500; color: var(--ink); }
-.snippet-ui .ui-btn { display: inline-block; margin-top: 10px; padding: 7px 13px; border-radius: 8px; background: var(--accent); color: #fff; font-size: var(--t-micro); font-weight: 600; }
-.snippet-ui .ui-link { display: inline-block; margin-top: 8px; color: var(--accent-ink); font-weight: 600; font-size: var(--t-micro); text-decoration: underline; }
 
 /* Gallery: several screens on one ground */
 .gallery { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
 .gallery figure { margin: 0; position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; min-width: 0; }
 .panel .gallery img { max-height: 720px; } /* outranks .row .panel img */
-.gallery figcaption { margin-top: var(--sp-4); text-align: center; font-size: var(--t-small); color: var(--ink-2); }
+.gallery figcaption { margin-top: var(--sp-4); text-align: center; }
 
 /* Walkthrough player: poster first, frames on demand */
 .walk { position: relative; border-radius: 16px; overflow: hidden; border: 1px solid var(--hair); background: #14100C; max-width: 932px; margin-inline: auto; width: 100%; }
@@ -693,14 +712,13 @@ footer a:hover { color: var(--ink); }
 .walk .play svg { width: 13px; height: 13px; flex: none; }
 .walk.playing::after, .walk.playing .play { opacity: 0; }
 .walk.playing .play { visibility: hidden; transition: opacity var(--dur-ui) var(--ease), visibility 0s var(--dur-ui); }
-.walk-note { max-width: 932px; margin: var(--sp-3) auto 0; font-size: var(--t-small); color: var(--ink-3); text-align: center; }
+.walk-note { max-width: 932px; margin: var(--sp-3) auto 0; text-align: center; }
 @media (prefers-reduced-motion: reduce) { .walk::after, .walk .play { transition: none; } }
 
 /* Proof blocks: the chart and the capacity meter share one frame */
 .proof { background: var(--surface); border: 1px solid var(--hair); border-radius: 16px; padding: clamp(22px, 3vw, 32px); position: relative; }
 .proof-head { display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; margin-bottom: var(--sp-5); }
-.proof-head .t-stat { color: var(--accent-ink); }
-.proof-head small { display: block; color: var(--ink-2); font-size: var(--t-small); line-height: var(--lh-small); margin-top: var(--sp-2); max-width: 40ch; }
+.proof-head small { display: block; max-width: 40ch; }
 /* The frame also hosts a comparison table (Verifications) or, where there is no
    number to chart, a hairline list of what shipped (No-code tools, SIWE). */
 .proof .table-wrap { border: 0; border-top: 1px solid var(--hair); border-radius: 0; background: transparent; }
@@ -711,15 +729,16 @@ footer a:hover { color: var(--ink); }
 .chart .bar:hover, .chart .bar.hover { fill: var(--accent-ink); }
 .chart .hit { fill: transparent; }
 .chart .grid { stroke: var(--hair); stroke-dasharray: 2 4; }
+/* The chart's text is in SVG units and scales with the drawing, so it is sized here, not by a role */
 .chart .axis text { font-size: 12px; fill: var(--ink-3); }
-.chart .val { font-size: 13px; fill: var(--ink); font-weight: 600; }
+.chart .val { font-size: 13px; fill: var(--ink); font-weight: 500; }
 .chart .anno { font-size: 11.5px; fill: var(--ink-2); }
 .chart .anno-line { stroke: var(--hair-2); stroke-dasharray: 3 3; }
-.tooltip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--hair-2); color: var(--ink); font-size: var(--t-small); padding: 9px 11px; border-radius: 8px; transform: translate(-50%, calc(-100% - 10px)) scale(.97); transform-origin: 50% 100%; white-space: nowrap; opacity: 0; transition: opacity 125ms var(--ease), transform 125ms var(--ease); z-index: 2; box-shadow: var(--shadow-lift); }
+.tooltip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--hair-2); padding: 9px 11px; border-radius: 8px; transform: translate(-50%, calc(-100% - 10px)) scale(.97); transform-origin: 50% 100%; white-space: nowrap; opacity: 0; transition: opacity 125ms var(--ease), transform 125ms var(--ease); z-index: 2; box-shadow: var(--shadow-lift); }
 .tooltip.show { opacity: 1; transform: translate(-50%, calc(-100% - 10px)); }
-.tooltip b { display: block; font-weight: 600; }
-details.data { margin-top: 14px; font-size: var(--t-small); }
-details.data summary { cursor: pointer; color: var(--ink-2); }
+.tooltip b { display: block; }
+details.data { margin-top: 14px; }
+details.data summary { cursor: pointer; }
 details.data table { min-width: 0; margin-top: 10px; }
 details.data th, details.data td { white-space: normal; padding-inline: 10px; }   /* wraps rather than clips at 320px */
 .capacity-bar { position: relative; height: 14px; border-radius: 999px; background: var(--surface-2); margin: var(--sp-5) 0 var(--sp-3); overflow: hidden; }
@@ -727,12 +746,12 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 /* the meter is below the fold; hold it empty until its block reveals so the fill is actually seen */
 .anim [data-reveal]:not(.in) .capacity-bar span { animation-play-state: paused; }
 @keyframes fill-x { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-.capacity-ticks { display: flex; justify-content: space-between; font-size: var(--t-micro); letter-spacing: .08em; color: var(--ink-3); text-transform: uppercase; }
+.capacity-ticks { display: flex; justify-content: space-between; }
 
 /* Next: the closing band */
 .cs-next { margin-top: var(--section); padding-block: var(--section); background: var(--paper-2); border-top: 1px solid var(--hair); text-align: center; }
 .cs-next .wrap { display: flex; flex-direction: column; align-items: center; }
-.cs-next a.t-title { margin-top: var(--stack-label); text-decoration: none; transition: color .2s; }
+.cs-next a.t-title { text-decoration: none; transition: color var(--dur-hover); }
 .cs-next a.t-title:hover { color: var(--accent-ink); }
 .cs-next .actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: clamp(28px, 3vw, 40px); }
 .cs-next footer { width: 100%; justify-content: center; padding-bottom: 0; margin-top: clamp(40px, 5vw, 64px); }
@@ -741,20 +760,16 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
    8. Password gate
    -------------------------------------------------------------------------- */
 .gate-wrap { min-height: 100vh; display: grid; place-items: center; padding: 40px var(--gutter); position: relative; }
-.gate { position: relative; width: 100%; max-width: 470px; background: var(--surface); border: 1px solid var(--hair); border-radius: var(--radius); padding: clamp(28px, 5vw, 42px); display: flex; flex-direction: column; gap: 14px; box-shadow: var(--shadow-lift); }
-.gate .brand { margin-bottom: 20px; }
-.gate h1 { font-family: var(--font-display); font-weight: 400; font-size: var(--t-title); line-height: var(--lh-title); letter-spacing: var(--ls-title); margin: 10px 0 0; }
-.gate-lede { margin: 0; color: var(--ink-2); font-size: var(--t-body); }
-.gate-lede a { color: var(--accent-ink); font-weight: 600; }
-.gate-form { display: flex; flex-direction: column; gap: 18px; margin-top: 18px; }
-.gate-form input { font: inherit; font-size: var(--t-body); padding: 14px 16px; border-radius: 12px; border: 1px solid var(--hair-2); background: var(--surface-2); color: var(--ink); }
-.gate-form input::placeholder { color: var(--ink-3); }
+.gate { position: relative; width: 100%; max-width: 470px; background: var(--surface); border: 1px solid var(--hair); border-radius: var(--radius); padding: clamp(28px, 5vw, 42px); box-shadow: var(--shadow-lift); }
+.gate .brand { margin-bottom: var(--sp-5); }
+.gate-form { display: flex; flex-direction: column; gap: 18px; margin-top: var(--sp-5); }
+.gate-form input { padding: 14px 16px; border-radius: 12px; border: 1px solid var(--hair-2); background: var(--surface-2); color: var(--ink); }
 .gate-form input:focus { outline: 2px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
 .gate-form input[aria-invalid="true"] { border-color: var(--danger); }
 .gate-form input[aria-invalid="true"]:focus { outline-color: var(--danger); }
 .gate-form .btn { justify-content: center; padding: 15px 20px; }
-.gate-error { margin: -6px 0 0; color: var(--danger); font-size: var(--t-small); }
-.gate .back { margin: 16px 0 0; }
+.gate-error { margin-top: -8px; color: var(--danger); }   /* pulls up under the field it describes, inside the form's gap */
+.gate .back { margin-top: var(--sp-4); }
 
 /* --------------------------------------------------------------------------
    9. Motion
@@ -775,6 +790,7 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
   .layer, .layer-tabs::after { transition: none; }
   .case-media img, .work-cta::after, .tooltip { transition: none; transform: none; }
   .btn:hover, .btn:active, .icon-btn:active, .layer-tab:active, .testimonial-controls button:active { transform: none; }
+  .btn[data-link="resume"] .icon-swap svg, .btn[data-link="email"] .icon-swap svg, .btn[data-link="linkedin"] .icon-swap svg, .btn-browse svg { transition: none; }
   .walk .play:active { transform: translate(-50%, -50%); }
   .nav.open .nav-links { animation: none; }
 }
@@ -865,9 +881,9 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
   .table-wrap tbody tr { padding: 18px 16px; border-bottom: 1px solid var(--hair); }
   .table-wrap tbody tr:last-child { border-bottom: 0; }
   .table-wrap tbody th, .table-wrap tbody td { padding: 0; border: 0; white-space: normal; }
-  .table-wrap tbody th { font-size: var(--t-body); line-height: var(--lh-body); margin-bottom: var(--sp-3); }
+  .table-wrap tbody th { font-size: var(--t-body); line-height: var(--lh-body); margin-bottom: var(--sp-3); }   /* the row's label steps up to body, as the card's heading */
   .table-wrap tbody td + td { margin-top: var(--sp-3); }
-  .table-wrap td[data-label]::before { content: attr(data-label); display: block; font-size: var(--t-micro); line-height: var(--lh-micro); letter-spacing: var(--ls-micro); text-transform: uppercase; font-weight: 500; color: var(--ink-3); margin-bottom: 3px; }
+  .table-wrap td[data-label]::before { content: attr(data-label); display: block; margin-bottom: 3px; }
   .table-wrap td.hl { padding: 10px 12px; border-radius: 8px; }
   .table-wrap td.hl::before { color: var(--accent-ink); }
 }
@@ -939,13 +955,13 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
   .row.full .panel { padding: 20px; }
   .tensions { margin-top: 24px; }
 
-  /* Testimonials: the quote steps down one size and the mark drops under the name */
-  .testimonial .quote p { font-size: var(--t-quote); line-height: var(--lh-quote); letter-spacing: var(--ls-quote); max-width: none; }
+  /* Testimonials: the mark drops under the name */
+  .testimonial .t-quote { max-width: none; }
   .testimonial .quote { padding-bottom: 24px; }
   .testimonial-foot { flex-wrap: wrap; gap: 12px 14px; padding-top: 20px; }
   .testimonial-foot .avatar { width: 44px; height: 44px; }
   .testimonial-foot cite { flex: 1; }
-  .testimonial-mark { margin-left: 0; flex-basis: 100%; padding-left: 58px; font-size: var(--t-small); }
+  .testimonial-mark { margin-left: 0; flex-basis: 100%; padding-left: 58px; }
 
   /* Proof, note, next */
   .proof { padding: 20px 18px; }

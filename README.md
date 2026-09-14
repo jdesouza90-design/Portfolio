@@ -61,29 +61,49 @@ before any file is served. The home page and the work index stay public.
 
 ## Type system
 
-Every piece of text on the site takes one of ten roles, defined as tokens at the
-top of `styles.css` (`--t-display` … `--t-quote`, with matching `--lh-*` and
-`--ls-*`). Nothing sets a font size outside them. The serif speaks (display,
-title, heading, quote, stat); the sans does the work (subhead, lede, body,
+Every piece of text on the site takes exactly one of ten roles, defined as
+tokens at the top of `styles.css` (`--t-display` … `--t-quote`, with matching
+`--lh-*`, `--ls-*` and `--m-*`) and turned into rules in section 2. A role
+sets all of type at once: face, size, weight, line-height, letter-spacing,
+colour, measure and a zero margin. The serif speaks (display, title, heading,
+stat, quote) and is never bold; the sans does the work (subhead, lede, body,
 small, micro).
 
-| Role | Use | Size (phone → desktop) |
-|---|---|---|
-| Display | The page statement, one per page | 42 → 68 |
-| Title | A section's heading | 32 → 46 |
-| Heading | A row or panel headline inside a section | 24 → 30 |
-| Subhead | A column, card or fact heading | 20 |
-| Lede | The paragraph under a display or title | 18 → 21 |
-| Body | Running text | 17 |
-| Small | Captions, facts, tables, buttons, nav | 15 |
-| Micro | Eyebrows and labels, small caps | 12 |
-| Stat | A headline number | 44 → 64 |
-| Quote | A pull quote | 22 → 28 |
+| Role | Class | Use | Size (phone → desktop) |
+|---|---|---|---|
+| Display | `.t-display` | The page statement, one per page | 42 → 68 |
+| Title | `.t-title` | A section's heading | 32 → 46 |
+| Heading | `.t-heading` | A row, card or ledger headline; the wordmark; a fact value | 24 → 30 |
+| Subhead | `.t-subhead` | A column or card sub-heading, a name | 20, weight 500 |
+| Lede | `.t-lede` | The paragraph under a display or title | 18 → 21 |
+| Body | `.t-body` | Running text, tabs, the work CTA | 17 |
+| Small | `.t-small` | Captions, facts, tables, buttons, chips, nav, cites | 15 |
+| Micro | `.eyebrow` | Eyebrows, table heads, ticks, dates: small caps | 12, weight 500 |
+| Stat | `.t-stat` | A headline number | 44 → 64 |
+| Quote | `.t-quote` | A pull quote | 22 → 28 |
 
-Each role is also a class (`.t-title`, `.t-body` …), and the component rules
-assign roles by context, so plain markup gets the right one. Spacing follows
-the `--sp-*` scale (4 to 128) and three rhythm tokens: `--section` between
-sections, `--row` between rows, `--panel-h` for a visual beside copy.
+Two rules keep it that way:
+
+- **Headings and paragraphs carry their role as a class in the markup.**
+  Inline and structural text (a cell, a cite, a button, a chip) is listed
+  under its role in section 2, so it needs no class.
+- **Nothing after section 2 sets a face, size, weight, line-height or
+  letter-spacing.** The exceptions are `.btn` and `.chip`, whose line-height
+  is a box metric; the chart, whose text is in SVG units; and the phone rules,
+  which move a menu row and a stacked table label up to body size.
+
+Colour is three tones and weight is two, both set in section 2 and nowhere
+else: ink for what leads, ink-2 for what runs, ink-3 for what sits beside on
+paper (captions, cites, the footer; it is under 4.5:1 on the panel grounds);
+400 runs and 500 names or acts (labels, buttons, `strong`, links in text).
+Google Fonts serves only those faces: Crimson Pro 400, DM Sans 400 and 500.
+
+The distances between roles are fixed by the stack rules at the end of
+section 2 (eyebrow → title 16, title → lede 24, heading → body 16, subhead →
+body 12, stat → caption 8, paragraph → paragraph 16), so a component never
+sets them itself. Layout spacing follows the `--sp-*` scale (4 to 128) and
+three rhythm tokens: `--section` between sections, `--row` between rows,
+`--panel-h` for a visual beside copy.
 
 ## Case study skeleton
 

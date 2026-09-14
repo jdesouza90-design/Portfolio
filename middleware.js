@@ -31,9 +31,9 @@ const headers = {
 
 function page({ path, error, unconfigured }) {
   const msg = unconfigured
-    ? '<p class="gate-error" id="gate-error" role="alert">The case-study password isn\'t configured yet. Set CASE_STUDY_PASSWORD in the Vercel project and redeploy.</p>'
+    ? '<p class="gate-error t-small" id="gate-error" role="alert">The case-study password isn\'t configured yet. Set CASE_STUDY_PASSWORD in the Vercel project and redeploy.</p>'
     : error
-      ? '<p class="gate-error" id="gate-error" role="alert">That password didn\'t match. Check for extra spaces and try again.</p>'
+      ? '<p class="gate-error t-small" id="gate-error" role="alert">That password didn\'t match. Check for extra spaces and try again.</p>'
       : '';
   const describe = msg ? ' aria-describedby="gate-error"' : '';
   return `<!doctype html>
@@ -46,15 +46,15 @@ function page({ path, error, unconfigured }) {
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600&family=DM+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/styles.css?v=6">
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css?v=7">
 </head>
 <body>
 <main class="gate-wrap"><div class="gate">
   <a class="brand" href="/"><span>John DeSouza</span></a>
   <p class="eyebrow">Case studies</p>
-  <h1>This case study is password protected.</h1>
-  <p class="gate-lede">Enter the password I shared with you. Don't have it yet? <a href="https://www.linkedin.com/in/johndesouza-/" target="_blank" rel="noopener">Message me on LinkedIn</a> and I'll send it over.</p>
+  <h1 class="t-title">This case study is password protected.</h1>
+  <p class="t-body">Enter the password I shared with you. Don't have it yet? <a href="https://www.linkedin.com/in/johndesouza-/" target="_blank" rel="noopener">Message me on LinkedIn</a> and I'll send it over.</p>
   <form method="post" action="${esc(path)}" class="gate-form">
     <label class="sr-only" for="password">Password</label>
     <input id="password" name="password" type="password" autocomplete="current-password" autofocus required placeholder="Password"${error ? ' aria-invalid="true"' : ''}${describe}>${msg}
