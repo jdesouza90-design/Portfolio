@@ -564,7 +564,7 @@ footer a:hover { color: var(--ink); }
 .testimonial { grid-area: 1 / 1; display: flex; flex-direction: column; opacity: 0; visibility: hidden; transition: opacity .5s var(--ease), visibility 0s .5s; }
 .testimonial.active { opacity: 1; visibility: visible; transition: opacity .5s var(--ease), visibility 0s; }
 .testimonial .quote { flex: 1; padding-bottom: var(--sp-6); border-bottom: 1px solid var(--hair-2); }
-.testimonial .quote p { font-size: var(--t-title); line-height: var(--lh-title); letter-spacing: var(--ls-title); max-width: 34ch; text-wrap: pretty; }
+.testimonial .quote p { font-size: var(--t-heading); line-height: var(--lh-quote); letter-spacing: var(--ls-heading); max-width: 44ch; text-wrap: pretty; }
 .testimonial-foot { display: flex; align-items: center; gap: var(--sp-4); padding-top: var(--sp-5); }
 .testimonial-foot .avatar { flex: none; width: 48px; height: 48px; border-radius: 12px; display: grid; place-items: center; background: var(--paper-2); color: var(--ink); font-family: var(--font-body); font-size: var(--t-small); font-weight: 500; letter-spacing: .02em; }
 .testimonial-foot .avatar.glyph { font-family: var(--font-display); font-size: var(--t-heading); line-height: 1; padding-top: .35em; }
