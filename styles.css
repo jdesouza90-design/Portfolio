@@ -108,7 +108,7 @@
   { font-size: var(--t-heading); line-height: var(--lh-heading); letter-spacing: var(--ls-heading); max-width: var(--m-heading); text-wrap: balance; }
 .t-subhead, .lead-points h4, .col h3, .col h4, .col dt, .about-who strong, .flow-caption
   { font-family: var(--font-body); font-size: var(--t-subhead); line-height: var(--lh-subhead); letter-spacing: var(--ls-subhead); font-weight: 500; color: var(--ink); margin: 0; }
-.t-lede, .lede, .section-head > p, .contact h2 + p
+.t-lede, .lede, .contact h2 + p
   { font-family: var(--font-body); font-size: var(--t-lede); line-height: var(--lh-lede); letter-spacing: var(--ls-lede); font-weight: 400; color: var(--ink-2); max-width: var(--m-lede); margin: 0; }
 .t-body
   { font-family: var(--font-body); font-size: var(--t-body); line-height: var(--lh-body); font-weight: 400; color: var(--ink-2); max-width: var(--m-body); margin: 0; }
@@ -344,8 +344,6 @@ thead .hl { color: var(--accent-ink); }
 .section.tight { padding-top: 0; }
 .section.alt { border-block: 1px solid var(--hair); background: var(--paper-2); }
 .section.alt > .wrap { position: relative; z-index: 1; }
-.section-head { display: flex; align-items: end; justify-content: space-between; gap: var(--sp-5) var(--sp-8); margin-bottom: clamp(36px, 4vw, 60px); flex-wrap: wrap; }
-.section-head > p { max-width: 44ch; }
 
 /* Selected work: an editorial index, each row led by the company's wordmark */
 .cases { display: flex; flex-direction: column; border-top: 1px solid var(--hair); }
@@ -453,7 +451,7 @@ thead .hl { color: var(--accent-ink); }
 @media (max-width: 900px) { .framework { grid-template-columns: minmax(0, 1fr); } }   /* minmax(0), or the tab strip widens the column */
 
 /* About: portrait beside a single statement */
-.about-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 6vw, 88px); align-items: center; margin-top: 26px; }
+.about-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 6vw, 88px); align-items: center; }
 .portrait { margin: 0; border-radius: 14px; overflow: hidden; background: #DFD9CD; }
 .portrait img { width: 100%; height: auto; display: block; }
 .about-who { margin: clamp(28px, 3vw, 40px) 0 0; }
