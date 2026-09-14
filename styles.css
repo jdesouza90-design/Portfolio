@@ -217,9 +217,21 @@ main, .nav { position: relative; z-index: 1; }
 .btn-ghost:hover { border-color: var(--accent); color: var(--accent-ink); }
 .btn-sm { padding: 10px 16px; }
 .btn svg { width: 16px; height: 16px; }
+/* Reach-out buttons: a leading icon settles into a second one on hover —
+   download becomes a check, an envelope becomes a send arrow, the LinkedIn
+   mark becomes an external-link cue. Two icons stacked in place, crossfaded. */
+.btn[data-link="resume"] .icon-swap, .btn[data-link="email"] .icon-swap, .btn[data-link="linkedin"] .icon-swap { position: relative; width: 16px; height: 16px; }
+.btn[data-link="resume"] .icon-swap svg, .btn[data-link="email"] .icon-swap svg, .btn[data-link="linkedin"] .icon-swap svg { position: absolute; inset: 0; transition: opacity var(--dur-hover), transform var(--dur-hover) var(--ease); }
+.btn[data-link="resume"] .icon-swap svg:last-child, .btn[data-link="email"] .icon-swap svg:last-child, .btn[data-link="linkedin"] .icon-swap svg:last-child { opacity: 0; transform: scale(.5); }
 @media (hover: hover) and (pointer: fine) {
+  .btn[data-link="resume"]:hover .icon-swap svg:first-child, .btn[data-link="email"]:hover .icon-swap svg:first-child, .btn[data-link="linkedin"]:hover .icon-swap svg:first-child { opacity: 0; transform: scale(.5); }
+  .btn[data-link="resume"]:hover .icon-swap svg:last-child, .btn[data-link="email"]:hover .icon-swap svg:last-child, .btn[data-link="linkedin"]:hover .icon-swap svg:last-child { opacity: 1; transform: scale(1); }
 }
+/* Browse-the-work buttons: a trailing arrow nudges forward on hover,
+   the same cue .work-cta already uses further down the page. */
+.btn-browse svg { transition: transform var(--dur-hover) var(--ease); }
 @media (hover: hover) and (pointer: fine) {
+  .btn-browse:hover svg { transform: translateX(3px); }
 }
 .icon-btn {
   width: 38px; height: 38px; border-radius: 999px; display: grid; place-items: center;
@@ -774,6 +786,7 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
   .layer, .layer-tabs::after { transition: none; }
   .case-media img, .work-cta::after, .tooltip { transition: none; transform: none; }
   .btn:hover, .btn:active, .icon-btn:active, .layer-tab:active, .testimonial-controls button:active { transform: none; }
+  .btn[data-link="resume"] .icon-swap svg, .btn[data-link="email"] .icon-swap svg, .btn[data-link="linkedin"] .icon-swap svg, .btn-browse svg { transition: none; }
   .walk .play:active { transform: translate(-50%, -50%); }
   .nav.open .nav-links { animation: none; }
 }
