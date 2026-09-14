@@ -270,6 +270,102 @@ const CONFIG = {
     });
   });
 
+  /* ---- AI card: the strands, in three dimensions ----
+     Eighty-odd strands lie on a horn that narrows to a single line. The horn
+     turns slowly about its axis and breathes in perspective, and every strand
+     sways on its own. It draws only while the card is on screen and the tab
+     is visible, never under reduced motion (the still SVG stays), and the
+     button in the corner is the WCAG 2.2.2 stop. */
+  $$("[data-strands]").forEach((fig) => {
+    const c = $("canvas", fig), btn = $(".art-ctl", fig);
+    const ctx = c && c.getContext && c.getContext("2d");
+    if (reduced || !ctx) return;
+    const N = 88, M = 48, X0 = -2, XM = .55, D = 3.2;   // strands, points each, start x, merge x, camera distance
+    let seed = 20260914;                                 // same strands every visit
+    const rnd = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+    const r = (a, b) => a + (b - a) * rnd();
+    const sm = (u) => { u = u < 0 ? 0 : u > 1 ? 1 : u; return u * u * (3 - 2 * u); };
+    const strands = [];
+    for (let i = 0; i < N; i++) strands.push({ phi: (i / N) * Math.PI * 2 + r(-.1, .1), r0: r(.55, 1), amp: r(.05, .16), lam: r(1.4, 3), p1: r(0, 6.28), p2: r(0, 6.28), sp: r(.5, 1.1), w: r(.6, 1.2), set: r(.004, .03) });
+    const green = { phi: 2.1, r0: .78, amp: .09, lam: 1.9, p1: 1.2, p2: 3.1, sp: .8, w: 2.2, set: 0 };
+    const axis = { phi: 0, r0: 0, amp: 0, lam: 1, p1: 0, p2: 0, sp: 1, set: 0 };
+
+    let W = 0, H = 0, dpr = 1;
+    const size = () => {
+      dpr = Math.min(2, window.devicePixelRatio || 1);
+      W = fig.clientWidth; H = fig.clientHeight;
+      c.width = Math.round(W * dpr); c.height = Math.round(H * dpr);
+    };
+
+    // a point on strand k at world x, time t: spin about the axis, yaw toward the camera, a touch of tilt, then project
+    const o = [0, 0, 0];
+    const point = (k, x, t, rot) => {
+      const s = sm((x + 1.15) / (XM + 1.15)), fade = 1 - s;
+      const R = k.set + k.r0 * Math.pow(fade, .9) + k.amp * fade * Math.sin(k.lam * 1.7 * x + k.p2 + t * k.sp * .8);
+      const a = k.phi + k.amp * 3 * fade * Math.sin(k.lam * x + k.p1 + t * k.sp);
+      const y = R * Math.cos(a), z = R * Math.sin(a);
+      const y1 = y * rot.cx - z * rot.sx, z1 = y * rot.sx + z * rot.cx;
+      const x2 = x * rot.cy + z1 * rot.sy, z2 = -x * rot.sy + z1 * rot.cy;
+      const x3 = x2 * rot.cz - y1 * rot.sz, y3 = x2 * rot.sz + y1 * rot.cz;
+      const p = D / (D - z2);
+      o[0] = W / 2 + rot.S * x3 * p; o[1] = H / 2 - rot.S * y3 * p; o[2] = z2;
+    };
+    const trace = (k, t, rot, to, n) => {
+      ctx.beginPath();
+      let zn = 0;
+      for (let j = 0; j <= n; j++) {
+        point(k, X0 + (to - X0) * j / n, t, rot);
+        if (j === 8) zn = o[2];                  // depth at the mouth sets weight and tone
+        j ? ctx.lineTo(o[0], o[1]) : ctx.moveTo(o[0], o[1]);
+      }
+      return Math.min(1, Math.max(0, (zn + 1) / 2));
+    };
+    const frame = (t) => {
+      const tx = t * .13, ty = .25 + .3 * Math.sin(t * .05), tz = -.06;
+      const rot = { cx: Math.cos(tx), sx: Math.sin(tx), cy: Math.cos(ty), sy: Math.sin(ty), cz: Math.cos(tz), sz: Math.sin(tz), S: Math.max(W / 2.3, H / 2) };
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, W, H);
+      ctx.lineCap = "round";
+      point(axis, XM, t, rot);                    // where the strands resolve, on screen, sets the fade
+      const g = ctx.createLinearGradient(0, 0, o[0] - W * .01, 0);
+      g.addColorStop(0, "rgba(20,16,12,1)"); g.addColorStop(.55, "rgba(20,16,12,.8)"); g.addColorStop(1, "rgba(20,16,12,0)");
+      ctx.strokeStyle = g;
+      for (const k of strands) {
+        const zn = trace(k, t, rot, XM + .3, M);
+        ctx.globalAlpha = .08 + .22 * zn;
+        ctx.lineWidth = k.w * (.7 + .6 * zn);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1; ctx.strokeStyle = "#3B6B44"; ctx.lineWidth = green.w;
+      trace(green, t, rot, 1.4, M + 16);          // the one that keeps going
+      ctx.stroke();
+    };
+
+    // the clock only runs while drawing, so a pause freezes the scene and resume picks it up
+    let raf = 0, acc = 0, since = 0, playing = true, seen = true;
+    const tick = (now) => { frame(acc + (now - since) / 1000); raf = requestAnimationFrame(tick); };
+    const sync = () => {
+      const run = playing && seen && !document.hidden;
+      if (run && !raf) { since = performance.now(); raf = requestAnimationFrame(tick); }
+      if (!run && raf) { cancelAnimationFrame(raf); raf = 0; acc += (performance.now() - since) / 1000; }
+      if (btn) {
+        btn.setAttribute("aria-pressed", String(!playing));
+        btn.setAttribute("aria-label", playing ? "Pause animation" : "Resume animation");
+      }
+    };
+    size();
+    fig.classList.add("live");
+    frame(0);
+    if (btn) { btn.hidden = false; btn.addEventListener("click", () => { playing = !playing; sync(); }); }
+    if ("ResizeObserver" in window) new ResizeObserver(() => { size(); frame(acc + (raf ? (performance.now() - since) / 1000 : 0)); }).observe(fig);
+    else window.addEventListener("resize", size);
+    document.addEventListener("visibilitychange", sync);
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(([en]) => { seen = en.isIntersecting; sync(); }, { threshold: .05 }).observe(fig);
+    }
+    sync();
+  });
+
   /* ---- Originations chart ----
      A line over a soft area, drawn in the pixels of its box so the type stays
      the same size on a phone. The lines are revealed left to right by a
@@ -545,6 +641,19 @@ const CONFIG = {
   stops();
   window.addEventListener("resize", () => { clearTimeout(stops.t); stops.t = setTimeout(stops, 120); });
   window.addEventListener("load", stops);
+
+  /* ---- About: the portrait stands as tall as the text beside it ----
+     Its column is the text's height at the photo's own ratio, so it scales
+     with the type instead of the row. CSS falls back to a fixed share of the
+     row without this, and the stacked layout under 900px ignores it. */
+  (() => {
+    const grid = $(".about-grid");
+    if (!grid || !("ResizeObserver" in window)) return;
+    const text = $(".about-text", grid), img = $(".portrait img", grid);
+    if (!text || !img) return;
+    const ratio = img.getAttribute("width") / img.getAttribute("height");
+    new ResizeObserver(([en]) => grid.style.setProperty("--portrait-w", `${en.contentRect.height * ratio}px`)).observe(text);
+  })();
 
   /* ---- Footer year ---- */
   $$("[data-year]").forEach((el) => (el.textContent = new Date().getFullYear()));
