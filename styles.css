@@ -275,9 +275,9 @@ main, .nav { position: relative; z-index: 1; }
 .stat .num { font-size: 2.2rem; }
 .stat small { color: var(--ink-2); }
 .tools { list-style: none; display: flex; flex-wrap: wrap; gap: clamp(18px, 2.4vw, 32px); padding: 0; margin: 26px 0 0; }
-.tools li { display: flex; align-items: center; gap: 13px; }
-.tools img { width: 52px; height: 52px; object-fit: contain; }
-.tools span { font-size: 1rem; font-weight: 500; color: var(--ink); }
+.tools li { display: flex; align-items: center; gap: 10px; }
+.tools img { width: 28px; height: 28px; object-fit: contain; }
+.tools span { font-size: .95rem; font-weight: 500; color: var(--ink); }
 
 /* Leadership: single AI panel */
 .lead-solo { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(28px, 5vw, 72px); padding: clamp(32px, 5vw, 56px); align-items: start; }
