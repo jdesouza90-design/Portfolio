@@ -485,9 +485,11 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .layer-chip svg { width: 15px; height: 15px; flex: none; }
 @media (max-width: 900px) { .framework { grid-template-columns: minmax(0, 1fr); } }   /* minmax(0), or the tab strip widens the column */
 
-/* About: portrait beside a single statement */
-/* the portrait takes 5 of 24 parts, half the 5-of-12 it started with; the title caps its own line length */
-.about-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 19fr); gap: clamp(32px, 6vw, 88px); align-items: center; }
+/* About: portrait beside a single statement. The portrait stands exactly as tall
+   as the text: main.js measures the text and sets --portrait-w at the photo's own
+   ratio; without it the portrait takes 5 of 24 parts. Items align to the top so
+   the photo's edges meet the eyebrow and the last line. */
+.about-grid { display: grid; grid-template-columns: var(--portrait-w, minmax(0, 5fr)) minmax(0, 19fr); gap: clamp(32px, 6vw, 88px); align-items: start; }
 .portrait { margin: 0; border-radius: 14px; overflow: hidden; background: #DFD9CD; }
 .portrait img { width: 100%; height: auto; display: block; }
 /* name and title are one lockup, closer than a subhead and its text */

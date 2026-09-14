@@ -367,6 +367,19 @@ const CONFIG = {
   window.addEventListener("resize", () => { clearTimeout(stops.t); stops.t = setTimeout(stops, 120); });
   window.addEventListener("load", stops);
 
+  /* ---- About: the portrait stands as tall as the text beside it ----
+     Its column is the text's height at the photo's own ratio, so it scales
+     with the type instead of the row. CSS falls back to a fixed share of the
+     row without this, and the stacked layout under 900px ignores it. */
+  (() => {
+    const grid = $(".about-grid");
+    if (!grid || !("ResizeObserver" in window)) return;
+    const text = $(".about-text", grid), img = $(".portrait img", grid);
+    if (!text || !img) return;
+    const ratio = img.getAttribute("width") / img.getAttribute("height");
+    new ResizeObserver(([en]) => grid.style.setProperty("--portrait-w", `${en.contentRect.height * ratio}px`)).observe(text);
+  })();
+
   /* ---- Footer year ---- */
   $$("[data-year]").forEach((el) => (el.textContent = new Date().getFullYear()));
 })();
