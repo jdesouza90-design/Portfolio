@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600&family=DM+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../styles.css?v=77c6c15a">
+<link rel="stylesheet" href="../styles.css?v=402d7f23">
 <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body class="case-siwe">
@@ -45,91 +45,127 @@
 <section class="cs-hero">
   <div class="wrap">
     <a class="back" href="../work.html">← All work</a>
-    <p class="eyebrow" data-rise style="--i:0">Auth0 · Identity · Web3 login</p>
-    <h1 data-rise style="--i:1">Sign-in with Ethereum</h1>
-    <p class="lede" data-rise style="--i:2">Sign-in with Ethereum lets people log in with an Ethereum wallet instead of a username and password, so their identity data stays under their control, not a provider's.</p>
-    <div class="meta" data-rise style="--i:3">
-      <div><span class="eyebrow">My role</span><strong>Product Design Manager. Led a cross-functional team through two rounds of user testing and delivery.</strong></div>
-      <div><span class="eyebrow">Team</span><strong>Design, engineering and identity product, across Auth0's consumer and developer-facing teams.</strong></div>
-      <div><span class="eyebrow">Validation</span><strong>2 rounds of user testing, fed back into roadmap decisions.</strong></div>
-      <div><span class="eyebrow">Type</span><strong>Wallet-based authentication for people new to web3.</strong></div>
+    <div class="cs-hero-copy">
+      <p class="eyebrow" data-rise style="--i:0">Auth0 · Identity · Web3 login</p>
+      <h1 data-rise style="--i:1">Sign-in with Ethereum</h1>
+      <p class="lede" data-rise style="--i:2">Sign-in with Ethereum lets people log in with an Ethereum wallet instead of a username and password, so their identity data stays under their control, not a provider's.</p>
     </div>
+    <figure class="panel hero-panel wide flat">
+      <img decoding="async" width="1187" height="768" src="../assets/siwe-illustration.webp?v=32c57c62" alt="Abstract illustration of a glowing hexagonal circuit, representing Ethereum-based identity">
+    </figure>
+    <dl class="cols facts">
+      <div class="col">
+        <svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9.5" cy="8" r="3.5"/><path d="M3 20c0-3.6 2.9-6 6.5-6 1.2 0 2.3.3 3.2.8"/><circle class="ac-fill" cx="17.5" cy="16.5" r="4"/><path class="ac" d="m15.8 16.5 1.2 1.2 2.4-2.4"/></svg>
+        <dt>My role</dt><dd>Product Design Manager. I led a cross-functional team through two rounds of user testing and delivery.</dd>
+      </div>
+      <div class="col">
+        <svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><circle class="ac-fill" cx="17" cy="9.5" r="2.75"/><path class="ac" d="M17.5 14.5c2.4.4 4 2.3 4 5"/></svg>
+        <dt>Team</dt><dd>Design, engineering and identity product, across Auth0's consumer and developer-facing teams.</dd>
+      </div>
+      <div class="col">
+        <svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path class="ac" d="m8 12.5 2.8 2.8L16.5 9"/></svg>
+        <dt>Validation</dt><dd>2 rounds of user testing, fed back into roadmap decisions.</dd>
+      </div>
+      <div class="col outcome">
+        <svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 3.5v17h17"/><path class="ac" d="m7 15 4-4 3 3 6-6"/><path class="ac" d="M16 8h4v4"/></svg>
+        <dt>Outcome</dt><dd>Shipped across Auth0's consumer and developer-facing surfaces. No published usage metrics.</dd>
+      </div>
+    </dl>
   </div>
 </section>
 
-<section class="exec-summary" data-reveal>
+<section class="cs-section" id="results">
   <div class="wrap">
-    <div class="box">
-      <h2>Summary</h2>
-        <p>Wallet-based login was, at the time, a pattern built for people already familiar with web3. We kept the shape of an ordinary login page instead: one button, a wallet prompt, a signed message. No seed phrases, no new vocabulary, and the profile metadata developers need arrives with the session. The design was validated over two rounds of user testing before shipping across Auth0's consumer and developer-facing surfaces. There are no published usage metrics for this project, so the outcome below is qualitative.</p>
+    <header class="section-intro">
+      <p class="eyebrow">Results</p>
+      <h2 class="t-title">What developers said when it shipped</h2>
+      <p class="t-lede">Wallet-based login was, at the time, a pattern built for people already familiar with web3. We kept the shape of an ordinary login page instead: one button, a wallet prompt, a signed message. The design was validated over two rounds of user testing before shipping across Auth0's consumer and developer-facing surfaces. There are no published usage metrics for this project, so the outcome is qualitative. Public posts from December 2021.</p>
+    </header>
+    <div class="quotes">
+      <blockquote class="quote"><p>"The profile meta is very handy, reduces complexity for developers and most likely better performance."</p><cite><b>Martin Walsh</b>@martin64k · Dec 10, 2021</cite></blockquote>
+      <blockquote class="quote"><p>"Sleek! You've done well pulling all relevant metadata quickly too."</p><cite><b>daws.eth</b>@DawsonBotsford · Dec 9, 2021</cite></blockquote>
+      <blockquote class="quote"><p>"Wow this is huge, it would be amazing if all authentication can be done with wallets instead of passwords."</p><cite><b>Oliver</b>@OliverIngle · Dec 9, 2021</cite></blockquote>
     </div>
   </div>
 </section>
 
+<section class="cs-section" id="story">
+  <div class="wrap">
+    <header class="section-intro">
+      <p class="eyebrow">How we got there</p>
+      <h2 class="t-title">A wallet login that reads like any other</h2>
+    </header>
 
-<div class="wrap" data-reveal>
-  <div class="cs-visual wide">
-    <img decoding="async" width="1187" height="768" src="../assets/siwe-illustration.webp?v=32c57c62" alt="Abstract illustration of a glowing hexagonal circuit, representing Ethereum-based identity">
-  </div>
-</div>
-
-<div class="wrap cs-main">
-
-  <div class="cs-body">
-    <section class="cs-section" id="problem" data-reveal>
-
-      <div class="split">
-        <div class="split-text">
-          <p class="eyebrow">The problem</p>
-          <h2>Wallet login assumed you already knew web3</h2>
-          <ul class="tensions">
+    <article class="row" id="problem">
+      <div class="row-copy">
+        <p class="eyebrow">The problem</p>
+        <h3 class="t-heading">Wallet login assumed you already knew web3</h3>
+        <p class="t-body">The existing pattern spoke in seed phrases and signatures. For anyone outside web3, it read as a different product, not a login.</p>
+        <ul class="tensions">
           <li><strong>Autonomy</strong><span>People should hold their own identity data and decide how it's used.</span></li>
           <li><strong>Safety</strong><span>The key never leaves the wallet: the user signs a message and the server only verifies the signature.</span></li>
           <li><strong>Adoption</strong><span>It had to look and behave like the login people already know.</span></li>
         </ul>
+      </div>
+      <figure class="panel wide"><img decoding="async" width="900" height="720" src="../assets/siwe-walkthrough-poster.jpg?v=0e74c331" alt="Login with Ethereum screen in the Auth0 universal login" loading="lazy"></figure>
+    </article>
+
+    <article class="row full" id="design">
+      <div class="row-copy">
+        <p class="eyebrow">The design</p>
+        <h3 class="t-heading">One button, a wallet prompt, a signed message</h3>
+        <p class="t-body">The flow keeps the familiar shape of a login page. No seed phrases, no new vocabulary, and the profile metadata developers need arrives with the session.</p>
+      </div>
+      <div>
+        <div class="walk">
+          <img decoding="async" width="900" height="720" src="../assets/siwe-walkthrough-poster.jpg?v=0e74c331" data-anim="../assets/siwe-walkthrough.webp" alt="Walkthrough of logging in with an Ethereum wallet" loading="lazy">
+          <button class="btn btn-sm play" type="button" aria-pressed="false"><svg viewBox="0 0 12 14" fill="currentColor" aria-hidden="true"><path d="M11.2 6.13 1.6.24A1 1 0 0 0 .1 1.1v11.8a1 1 0 0 0 1.5.86l9.6-5.9a1 1 0 0 0 0-1.72Z"/></svg> <span>Play walkthrough</span></button>
         </div>
-        <div class="device"><img decoding="async" width="900" height="720" src="../assets/siwe-walkthrough-poster.jpg?v=0e74c331" alt="Login with Ethereum screen in the Auth0 universal login" loading="lazy" style="width:100%;border-radius:12px"></div>
+        <p class="walk-note">Screen recording of the Login with Ethereum flow (about 5 MB, loads on play).</p>
       </div>
-    </section>
+    </article>
+  </div>
+</section>
 
-    <section class="cs-section" id="role" data-reveal>
+<section class="cs-section" id="role">
+  <div class="wrap">
+    <header class="section-intro">
       <p class="eyebrow">My role</p>
-      <h2>Direction, validation, advocacy</h2>
-      <div class="cols-3">
-        <div><h3>Design direction</h3><p>I led design, engineering and identity product through the core tension: wallet-based identity with no friction for people who'd never used a wallet. The consumer and developer-facing teams shipped one consistent experience.</p></div>
-        <div><h3>Validation and learning</h3><p>Two rounds of user testing ran alongside delivery. I synthesized the findings across designers and fed them back into the roadmap.</p></div>
-        <div><h3>User advocacy</h3><p>I set the principles for how we explained self-custodied identity to mainstream users, and reviewed every design decision against them before handoff.</p></div>
+      <h2 class="t-title">Direction, validation, advocacy</h2>
+    </header>
+    <div class="cols">
+      <div class="col">
+        <svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h13"/><path class="ac" d="m13 7 5 5-5 5"/></svg>
+        <h3>Design direction</h3>
+        <p>I led design, engineering and identity product through the core tension: wallet-based identity with no friction for people who'd never used a wallet. The consumer and developer-facing teams shipped one consistent experience.</p>
       </div>
-    </section>
-
-    <section class="cs-section" id="design" data-reveal>
-      <p class="eyebrow">The design</p>
-      <h2>A wallet login that reads like any other login</h2>
-      <p>The flow keeps the familiar shape of a login page. One button, a wallet prompt and a signed message: no seed phrases, no new vocabulary, and the profile metadata developers need arrives with the session.</p>
-      <div class="walk">
-        <img decoding="async" width="900" height="720" src="../assets/siwe-walkthrough-poster.jpg?v=0e74c331" data-anim="../assets/siwe-walkthrough.webp" alt="Walkthrough of logging in with an Ethereum wallet" loading="lazy">
-        <button class="btn btn-sm play" type="button" aria-pressed="false"><svg viewBox="0 0 12 14" fill="currentColor" aria-hidden="true"><path d="M11.2 6.13 1.6.24A1 1 0 0 0 .1 1.1v11.8a1 1 0 0 0 1.5.86l9.6-5.9a1 1 0 0 0 0-1.72Z"/></svg> <span>Play walkthrough</span></button>
+      <div class="col">
+        <svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6M10 3v6.2L4.6 18.6A2 2 0 0 0 6.3 21.5h11.4a2 2 0 0 0 1.7-2.9L14 9.2V3"/><path class="ac" d="M7.2 16h9.6"/><circle class="ac-fill" cx="12" cy="18.5" r="1"/></svg>
+        <h3>Validation and learning</h3>
+        <p>Two rounds of user testing ran alongside delivery. I synthesized the findings across designers and fed them back into the roadmap.</p>
       </div>
-      <p class="walk-note">Screen recording of the Login with Ethereum flow (about 5 MB, loads on play).</p>
-    </section>
-
-    <section class="cs-section" id="community" data-reveal>
-      <p class="eyebrow">Community reaction</p>
-      <h2>What developers said when it shipped</h2>
-      <p>Public posts from December 2021.</p>
-      <div class="quotes">
-        <div class="quote"><p>"The profile meta is very handy, reduces complexity for developers and most likely better performance."</p><cite><b>Martin Walsh</b>@martin64k · Dec 10, 2021</cite></div>
-        <div class="quote"><p>"Sleek! You've done well pulling all relevant metadata quickly too."</p><cite><b>daws.eth</b>@DawsonBotsford · Dec 9, 2021</cite></div>
-        <div class="quote"><p>"Wow this is huge, it would be amazing if all authentication can be done with wallets instead of passwords."</p><cite><b>Oliver</b>@OliverIngle · Dec 9, 2021</cite></div>
+      <div class="col">
+        <svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10v4a1 1 0 0 0 1 1h3l6.5 4V5L7 9H4a1 1 0 0 0-1 1zM7 15v4.5"/><path class="ac" d="M17 8.5a5 5 0 0 1 0 7M19.5 6a8.5 8.5 0 0 1 0 12"/></svg>
+        <h3>User advocacy</h3>
+        <p>I set the principles for how we explained self-custodied identity to mainstream users, and reviewed every design decision against them before handoff.</p>
       </div>
-    </section>
-
-    <div class="next-cs">
-      <div><p class="eyebrow">Next case study</p><a href="cross-sell.html"><span class="title">Cross-Sell: Vehicle Equity &amp; Home Secured Loans →</span></a></div>
-      <a class="btn btn-ghost btn-sm" href="../work.html">All work</a>
     </div>
   </div>
-</div>
+</section>
+
+<section class="cs-next">
+  <div class="wrap">
+    <p class="eyebrow">Next case study</p>
+    <a class="t-title" href="cross-sell.html">Cross-Sell: Vehicle Equity &amp; Home Secured Loans</a>
+    <div class="actions">
+      <a class="btn btn-ghost" href="../work.html">All work</a>
+      <a class="btn btn-primary" data-link="email" href="#">Contact me</a>
+    </div>
+    <footer>
+      <span>© <span data-year></span> John DeSouza</span>
+    </footer>
+  </div>
+</section>
 </main>
 <script src="../main.js?v=789cad0f"></script>
 </body>

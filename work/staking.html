@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600&family=DM+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../styles.css?v=77c6c15a">
+<link rel="stylesheet" href="../styles.css?v=402d7f23">
 <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body class="case-staking">
@@ -45,116 +45,152 @@
 <section class="cs-hero">
   <div class="wrap">
     <a class="back" href="../work.html">← All work</a>
-    <p class="eyebrow" data-rise style="--i:0">Chainlink Labs · Web3 · 0→1 launch</p>
-    <h1 data-rise style="--i:1">Staking v0.1</h1>
-    <p class="lede" data-rise style="--i:2">Staking v0.1 lets people stake LINK with pool capacity, reward rate and account status in view, so they can decide and act without leaving the page.</p>
-    <div class="meta" data-rise style="--i:3">
-      <div><span class="eyebrow">My role</span><strong>Senior Product Design Manager. Led design planning and reviews across four senior designers.</strong></div>
-      <div><span class="eyebrow">Team</span><strong>4 senior designers in 3 time zones, with engineering and protocol teams.</strong></div>
-      <div><span class="eyebrow">Timeline</span><strong>Launched December 2022 as an early-access release.</strong></div>
-      <div><span class="eyebrow">Type</span><strong>0→1 staking interface for LINK, from discovery to launch.</strong></div>
+    <div class="cs-hero-copy">
+      <p class="eyebrow" data-rise style="--i:0">Chainlink Labs · Web3 · 0→1 launch</p>
+      <h1 data-rise style="--i:1">Staking v0.1</h1>
+      <p class="lede" data-rise style="--i:2">Staking v0.1 lets people stake LINK with pool capacity, reward rate and account status in view, so they can decide and act without leaving the page.</p>
     </div>
+    <figure class="panel hero-panel wide">
+      <img decoding="async" width="1600" height="814" src="../assets/staking-overview.webp?v=d6f77d4a" alt="Chainlink Staking: stake LINK panel with reward rate, wallet balance and a community pool gauge at 40,875,000 LINK">
+    </figure>
+    <dl class="cols facts">
+      <div class="col">
+        <svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9.5" cy="8" r="3.5"/><path d="M3 20c0-3.6 2.9-6 6.5-6 1.2 0 2.3.3 3.2.8"/><circle class="ac-fill" cx="17.5" cy="16.5" r="4"/><path class="ac" d="m15.8 16.5 1.2 1.2 2.4-2.4"/></svg>
+        <dt>My role</dt><dd>Senior Product Design Manager. I led design planning and reviews across four senior designers.</dd>
+      </div>
+      <div class="col">
+        <svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><circle class="ac-fill" cx="17" cy="9.5" r="2.75"/><path class="ac" d="M17.5 14.5c2.4.4 4 2.3 4 5"/></svg>
+        <dt>Team</dt><dd>4 senior designers in 3 time zones, with engineering and protocol teams.</dd>
+      </div>
+      <div class="col">
+        <svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/><circle class="ac-fill" cx="15.5" cy="15.5" r="2"/></svg>
+        <dt>Timeline</dt><dd>Launched December 2022 as an early-access release.</dd>
+      </div>
+      <div class="col outcome">
+        <svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 3.5v17h17"/><path class="ac" d="m7 15 4-4 3 3 6-6"/><path class="ac" d="M16 8h4v4"/></svg>
+        <dt>Outcome</dt><dd>25M LINK staked. The pool hit full capacity within 3 hours of launch.</dd>
+      </div>
+    </dl>
   </div>
 </section>
 
-<section class="exec-summary" data-reveal>
+<section class="cs-section" id="results">
   <div class="wrap">
-    <div class="box">
-      <h2>Summary</h2>
-        <p>Staking LINK meant leaving the interface to check documentation, pool capacity or reward terms. We put pool capacity, reward rate and remaining allotment next to the stake action itself, so users could decide and commit without a detour. The v0.1 early-access pool reached 25M LINK staked and hit full capacity within three hours of launch in December 2022.</p>
+    <header class="section-intro">
+      <p class="eyebrow">Results</p>
+      <h2 class="t-title">Full capacity within three hours</h2>
+      <p class="t-lede">Staking LINK meant leaving the interface to check documentation, pool capacity or reward terms. We put pool capacity, reward rate and remaining allotment next to the stake action itself, so people could decide and commit without a detour.</p>
+    </header>
+    <div class="proof">
+      <div class="proof-head">
+        <div><div class="t-stat">25M LINK</div><small>staked, with the pool full within 3 hours of launch</small></div>
+        <span class="eyebrow">Pool capacity · hours after launch</span>
+      </div>
+      <div class="capacity-bar" role="img" aria-label="Pool capacity filled from 0 to 100 percent over the three hours after launch"><span></span></div>
+      <div class="capacity-ticks"><span>0 hr</span><span>1 hr</span><span>2 hr</span><span>3 hr · full</span></div>
     </div>
   </div>
 </section>
 
+<section class="cs-section" id="story">
+  <div class="wrap">
+    <header class="section-intro">
+      <p class="eyebrow">How we got there</p>
+      <h2 class="t-title">Everything needed to decide, on one page</h2>
+    </header>
 
-<div class="wrap" data-reveal>
-  <div class="cs-visual wide">
-    <img decoding="async" width="1600" height="814" src="../assets/staking-overview.webp?v=d6f77d4a" alt="Chainlink Staking: stake LINK panel with reward rate, wallet balance and a community pool gauge at 40,875,000 LINK">
-  </div>
-</div>
-
-<div class="wrap cs-main">
-
-  <div class="cs-body">
-    <section class="cs-section" id="problem" data-reveal>
-
-      <div class="split">
-        <div class="split-text">
-          <p class="eyebrow">The problem</p>
-          <h2>Deciding meant leaving the page</h2>
-          <ul class="tensions">
+    <article class="row" id="problem">
+      <div class="row-copy">
+        <p class="eyebrow">The problem</p>
+        <h3 class="t-heading">Deciding meant leaving the page</h3>
+        <p class="t-body">To stake, people read the docs in one place, checked the pool in another and took the reward terms on faith.</p>
+        <ul class="tensions">
           <li><strong>Clarity</strong><span>The docs and reward terms lived elsewhere, so the page couldn't explain what people were signing up for.</span></li>
           <li><strong>Trust</strong><span>People needed to see their rewards and account status at every step, not take them on faith.</span></li>
           <li><strong>Growth</strong><span>v0.1 had to be built so later pools and features could land without a redesign.</span></li>
         </ul>
+      </div>
+      <figure class="panel flat"><img decoding="async" width="1600" height="841" src="../assets/staking-illustration.webp?v=4d970bc7" alt="Illustration of a laptop connected to a secured vault, representing Chainlink Staking" loading="lazy"></figure>
+    </article>
+
+    <article class="row full" id="design">
+      <div class="row-copy">
+        <p class="eyebrow">The design</p>
+        <h3 class="t-heading">Capacity and rewards, visible before you commit</h3>
+        <p class="t-body">Three steps to early access: connect a wallet, sign a message, view your eligibility. Once in, the pool gauge, reward rate and remaining allotment sit next to the stake action so nobody has to leave the page to decide.</p>
+      </div>
+      <div>
+        <div class="walk">
+          <img decoding="async" width="932" height="720" src="../assets/staking-walkthrough-poster.jpg?v=c06c0b47" data-anim="../assets/staking-walkthrough.webp" alt="Walkthrough of the Chainlink Staking early-access flow" loading="lazy">
+          <button class="btn btn-sm play" type="button" aria-pressed="false"><svg viewBox="0 0 12 14" fill="currentColor" aria-hidden="true"><path d="M11.2 6.13 1.6.24A1 1 0 0 0 .1 1.1v11.8a1 1 0 0 0 1.5.86l9.6-5.9a1 1 0 0 0 0-1.72Z"/></svg> <span>Play walkthrough</span></button>
         </div>
-        <div class="device illus"><img decoding="async" width="1600" height="841" src="../assets/staking-illustration.webp?v=4d970bc7" alt="Illustration of a laptop connected to a secured vault, representing Chainlink Staking" loading="lazy"></div>
+        <p class="walk-note">Screen recording of the v0.1 early-access flow.</p>
       </div>
-    </section>
+    </article>
 
-    <section class="cs-section" id="role" data-reveal>
-      <p class="eyebrow">My role</p>
-      <h2>Alignment across design, engineering and protocol</h2>
-      <div class="cols-3">
-        <div><h3>Strategic alignment</h3><p>I led design planning for four designers across three time zones, and set the experience principles the team worked from with product and engineering leadership.</p></div>
-        <div><h3>Cross-functional leadership</h3><p>Where a design decision depended on the protocol, I got design, engineering and protocol into one review and settled it there. I represented design in cross-team planning.</p></div>
-        <div><h3>Design execution</h3><p>I directed the team from discovery through validation, reviewing at every stage and coordinating handoffs between designers. The result launched to 25M LINK staked in three hours.</p></div>
+    <article class="row flip" id="feeds">
+      <div class="row-copy">
+        <p class="eyebrow">Below the fold</p>
+        <h3 class="t-heading">See what your stake secures</h3>
+        <p class="t-body">Under the pool sit the data feeds it secures: each feed's latest answer, its node operators and whether each one responded.</p>
       </div>
-    </section>
+      <figure class="panel wide crop" style="--crop-pos: 30% 0"><img decoding="async" width="1600" height="813" src="../assets/staking-feeds.webp?v=0ecac92b" alt="Data feeds secured: ETH/USD feed details and node operator responses" loading="lazy"></figure>
+    </article>
 
-    <section class="cs-section" id="design" data-reveal>
-      <p class="eyebrow">The design</p>
-      <h2>Capacity, rewards and eligibility before you commit</h2>
-      <p>Three steps to early access: connect a wallet, sign a message, view your eligibility. Once in, the pool gauge, reward rate and remaining allotment sit next to the stake action so nobody has to leave the page to decide.</p>
-      <div class="walk">
-        <img decoding="async" width="932" height="720" src="../assets/staking-walkthrough-poster.jpg?v=c06c0b47" data-anim="../assets/staking-walkthrough.webp" alt="Walkthrough of the Chainlink Staking early-access flow" loading="lazy">
-        <button class="btn btn-sm play" type="button" aria-pressed="false"><svg viewBox="0 0 12 14" fill="currentColor" aria-hidden="true"><path d="M11.2 6.13 1.6.24A1 1 0 0 0 .1 1.1v11.8a1 1 0 0 0 1.5.86l9.6-5.9a1 1 0 0 0 0-1.72Z"/></svg> <span>Play walkthrough</span></button>
+    <article class="row full" id="community">
+      <div class="row-copy">
+        <p class="eyebrow">Community reaction</p>
+        <h3 class="t-heading">Launch day, including the hard parts</h3>
+        <p class="t-body">Public posts from December 6, 2022. The Ledger feedback fed directly into the next iteration's wallet-connect priorities.</p>
       </div>
-      <p class="walk-note">Screen recording of the v0.1 early-access flow.</p>
-    </section>
-
-    <section class="cs-section" data-reveal>
-      <div class="gallery one">
-        <figure><img decoding="async" width="1600" height="814" src="../assets/staking-overview.webp?v=d6f77d4a" alt="Stake LINK panel with community pool gauge" loading="lazy"><figcaption>Stake LINK, with pool capacity in view</figcaption></figure>
-      </div>
-    </section>
-
-    <section class="cs-section" data-reveal>
-      <div class="gallery one">
-        <figure><img decoding="async" width="1600" height="813" src="../assets/staking-feeds.webp?v=0ecac92b" alt="Data feeds secured: ETH/USD feed details and node operator responses" loading="lazy"><figcaption>Data feeds secured by the pool</figcaption></figure>
-      </div>
-    </section>
-
-    <section class="cs-section" id="results" data-reveal>
-      <p class="eyebrow">Launch</p>
-      <h2>Full capacity within three hours</h2>
-      <div class="capacity">
-        <div class="chart-head" style="margin-bottom:0">
-          <div><div class="num" style="font-size:clamp(2.4rem,5vw,3.6rem)">25M LINK</div><small>staked, with the pool full within 3 hours of launch</small></div>
-          <span class="eyebrow">Pool capacity · hours after launch</span>
-        </div>
-        <div class="capacity-bar" role="img" aria-label="Pool capacity filled from 0 to 100 percent over the three hours after launch"><span></span></div>
-        <div class="capacity-ticks"><span>0 hr</span><span>1 hr</span><span>2 hr</span><span>3 hr · full</span></div>
-      </div>
-    </section>
-
-    <section class="cs-section" id="community" data-reveal>
-      <p class="eyebrow">Community reaction</p>
-      <h2>What people said, including the hard parts</h2>
-      <p>Public posts from December 6, 2022. The Ledger feedback fed directly into the next iteration's wallet-connect priorities.</p>
       <div class="quotes">
-        <div class="quote"><p>"Woah this is LIT! 🔥 way to go Chainlink team!!"</p><cite><b>Jake Damon</b>@IAmJakeDamon · Dec 6, 2022</cite></div>
-        <div class="quote"><p>"No Ledger wallet connect option? Seriously?"</p><cite><b>5G Safeguard</b>@5GSafeguard · Dec 6, 2022</cite></div>
-        <div class="quote"><p>"For the future please add support for direct staking from Ledger. I for one will never use or interface with MM again."</p><cite><b>AncientMedicine</b>@AncientMedicin3 · Dec 6, 2022</cite></div>
+        <blockquote class="quote"><p>"Woah this is LIT! 🔥 way to go Chainlink team!!"</p><cite><b>Jake Damon</b>@IAmJakeDamon · Dec 6, 2022</cite></blockquote>
+        <blockquote class="quote"><p>"No Ledger wallet connect option? Seriously?"</p><cite><b>5G Safeguard</b>@5GSafeguard · Dec 6, 2022</cite></blockquote>
+        <blockquote class="quote"><p>"For the future please add support for direct staking from Ledger. I for one will never use or interface with MM again."</p><cite><b>AncientMedicine</b>@AncientMedicin3 · Dec 6, 2022</cite></blockquote>
       </div>
-    </section>
+    </article>
+  </div>
+</section>
 
-    <div class="next-cs">
-      <div><p class="eyebrow">Next case study</p><a href="no-code-tools.html"><span class="title">No-code tools →</span></a></div>
-      <a class="btn btn-ghost btn-sm" href="../work.html">All work</a>
+<section class="cs-section" id="role">
+  <div class="wrap">
+    <header class="section-intro">
+      <p class="eyebrow">My role</p>
+      <h2 class="t-title">Alignment across design, engineering and protocol</h2>
+    </header>
+    <div class="cols">
+      <div class="col">
+        <svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path class="ac-fill" d="m15.2 8.8-2 5.4-4.4 1 2-5.4z"/></svg>
+        <h3>Strategic alignment</h3>
+        <p>I led design planning for four designers across three time zones, and set the experience principles the team worked from with product and engineering leadership.</p>
+      </div>
+      <div class="col">
+        <svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><path class="ac-fill" d="m12 3 9 4.5-9 4.5-9-4.5z"/><path d="m3 12.5 9 4.5 9-4.5M3 17l9 4.5 9-4.5"/></svg>
+        <h3>Cross-functional leadership</h3>
+        <p>Where a design decision depended on the protocol, I got design, engineering and protocol into one review and settled it there. I represented design in cross-team planning.</p>
+      </div>
+      <div class="col">
+        <svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6.5 9.5-6.5 9.5 6.5 9.5 6.5-3.5 6.5-9.5 6.5S2.5 12 2.5 12z"/><circle class="ac-fill" cx="12" cy="12" r="3"/></svg>
+        <h3>Design execution</h3>
+        <p>I directed the team from discovery through validation, reviewing at every stage and coordinating handoffs between designers. The result launched to 25M LINK staked in three hours.</p>
+      </div>
     </div>
   </div>
-</div>
+</section>
+
+<section class="cs-next">
+  <div class="wrap">
+    <p class="eyebrow">Next case study</p>
+    <a class="t-title" href="no-code-tools.html">No-code tools</a>
+    <div class="actions">
+      <a class="btn btn-ghost" href="../work.html">All work</a>
+      <a class="btn btn-primary" data-link="email" href="#">Contact me</a>
+    </div>
+    <footer>
+      <span>© <span data-year></span> John DeSouza</span>
+    </footer>
+  </div>
+</section>
 </main>
 <script src="../main.js?v=789cad0f"></script>
 </body>
