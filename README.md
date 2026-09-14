@@ -93,13 +93,18 @@ All five case studies are the same document, in this order:
    them, the project's screens on its own tinted panel, then four facts
    (role, team, timeline, launch) as a `.facts` stat strip: a small label
    above the value at heading size, cells divided by hairlines.
-2. **Results**: centred title and lede, then the proof (chart, capacity meter,
-   A/B table, or quotes where there are no published numbers).
+2. **Results**: centred title and lede, then one `.proof` frame: the headline
+   stat top-left, a label top-right, and under it the evidence (chart,
+   capacity meter, A/B table, or a hairline list of what shipped where there
+   are no published numbers).
 3. **My role**: hairline ledger rows (`.ledger`), heading left and paragraph
    right, so a hiring manager reads the leadership story before the work.
-4. **How we got there**: rows that alternate copy and a fixed-height panel
-   (`.row`, `.row.flip`), or run full width for flows and walkthroughs
-   (`.row.full`). Each row is one eyebrow, one heading, one short paragraph.
+4. **How we got there**, always in this order: the problem (copy with a
+   tensions list beside an illustration or the old screen), the design (a
+   `.row.full` with one framed panel or walkthrough under centred copy), any
+   supporting rows (`.row.flip`), then the quotes last (`.row.full.start`
+   with an intro line saying where they came from). Each row is one eyebrow,
+   one heading, one short paragraph.
 5. **What I'd do differently**: one narrow note with run-in labels, where a
    retro exists.
 6. **Next**: the closing band with the next case study and contact.

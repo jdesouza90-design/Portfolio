@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../styles.css?v=5c326b00">
+<link rel="stylesheet" href="../styles.css?v=f211fb84">
 <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body class="case-siwe">
@@ -54,10 +54,10 @@
       <h1 data-rise style="--i:1">Sign-in with Ethereum</h1>
       <p class="lede" data-rise style="--i:2">Sign-in with Ethereum lets people log in with an Ethereum wallet instead of a username and password, so their identity data stays under their control, not a provider's.</p>
     </div>
-      <div class="outcome-stat"><p class="eyebrow">Outcome</p><p class="t-heading">Shipped across Auth0’s consumer and developer-facing surfaces</p><p class="t-small">No published usage metrics. 2 rounds of user testing fed back into the roadmap</p></div>
+      <div class="outcome-stat"><p class="eyebrow">Outcome</p><div class="t-stat">1 button</div><p class="t-small">To log in with a wallet. Shipped across Auth0's consumer and developer surfaces</p></div>
     </div>
-    <figure class="panel hero-panel wide flat">
-      <img decoding="async" width="1187" height="768" src="../assets/siwe-illustration.webp?v=32c57c62" alt="Abstract illustration of a glowing hexagonal circuit, representing Ethereum-based identity">
+    <figure class="panel hero-panel wide">
+      <img decoding="async" width="900" height="720" src="../assets/siwe-walkthrough-poster.jpg?v=0e74c331" alt="Auth0 universal login with a Login with Ethereum button beneath the usual email and password fields">
     </figure>
     <dl class="facts">
       <div><dt>Role</dt><dd>Product Design Manager</dd></div>
@@ -72,37 +72,20 @@
   <div class="wrap">
     <header class="section-intro">
       <p class="eyebrow">Results</p>
-      <h2 class="t-title">What developers said when it shipped</h2>
-      <p class="t-lede">Wallet-based login was, at the time, a pattern built for people already familiar with web3. We kept the shape of an ordinary login page instead: one button, a wallet prompt, a signed message. The design was validated over two rounds of user testing before shipping across Auth0's consumer and developer-facing surfaces. There are no published usage metrics for this project, so the outcome is qualitative. Public posts from December 2021.</p>
+      <h2 class="t-title">Shipped on every Auth0 login surface</h2>
+      <p class="t-lede">Wallet login was a pattern built for people already in web3. We kept the shape of an ordinary login page instead: one button, a wallet prompt, a signed message. There are no published usage metrics, so the outcome is qualitative.</p>
     </header>
-    <section class="testimonials" data-carousel aria-label="Developer feedback">
-      <div class="testimonial-track">
-        <div class="testimonial active" role="group" aria-label="1 of 3">
-          <blockquote class="quote"><p>"The profile meta is very handy, reduces complexity for developers and most likely better performance."</p></blockquote>
-          <div class="testimonial-foot">
-            <span class="avatar" aria-hidden="true">MW</span>
-            <cite><b>Martin Walsh</b>@martin64k · Dec 10, 2021</cite>
-            <span class="testimonial-mark">Auth0</span>
-          </div>
-        </div>
-        <div class="testimonial" role="group" aria-label="2 of 3">
-          <blockquote class="quote"><p>"Sleek! You've done well pulling all relevant metadata quickly too."</p></blockquote>
-          <div class="testimonial-foot">
-            <span class="avatar" aria-hidden="true">D</span>
-            <cite><b>daws.eth</b>@DawsonBotsford · Dec 9, 2021</cite>
-            <span class="testimonial-mark">Auth0</span>
-          </div>
-        </div>
-        <div class="testimonial" role="group" aria-label="3 of 3">
-          <blockquote class="quote"><p>"Wow this is huge, it would be amazing if all authentication can be done with wallets instead of passwords."</p></blockquote>
-          <div class="testimonial-foot">
-            <span class="avatar" aria-hidden="true">O</span>
-            <cite><b>Oliver</b>@OliverIngle · Dec 9, 2021</cite>
-            <span class="testimonial-mark">Auth0</span>
-          </div>
-        </div>
+    <div class="proof">
+      <div class="proof-head">
+        <div><div class="t-stat">1 button</div><small>to log in with an Ethereum wallet, with no seed phrase or new vocabulary</small></div>
+        <span class="eyebrow">What shipped · December 2021</span>
       </div>
-    </section>
+      <ul class="tensions">
+        <li><strong>Surfaces</strong><span>One consistent experience across Auth0's consumer and developer-facing logins.</span></li>
+        <li><strong>Validation</strong><span>Two rounds of user testing ran alongside delivery and fed back into the roadmap.</span></li>
+        <li><strong>Developers</strong><span>Profile metadata arrives with the session, so there is less to build on their side.</span></li>
+      </ul>
+    </div>
   </div>
 </section>
 
@@ -138,7 +121,7 @@
           <li><strong>Adoption</strong><span>It had to look and behave like the login people already know.</span></li>
         </ul>
       </div>
-      <figure class="panel wide"><img decoding="async" width="900" height="720" src="../assets/siwe-walkthrough-poster.jpg?v=0e74c331" alt="Login with Ethereum screen in the Auth0 universal login" loading="lazy"></figure>
+      <figure class="panel flat"><img decoding="async" width="1187" height="768" src="../assets/siwe-illustration.webp?v=32c57c62" alt="Abstract illustration of a glowing hexagonal circuit, representing Ethereum-based identity" loading="lazy"></figure>
     </article>
 
     <article class="row full" id="design">
@@ -154,6 +137,42 @@
         </div>
         <p class="walk-note">Screen recording of the Login with Ethereum flow (about 5 MB, loads on play).</p>
       </div>
+    </article>
+
+    <article class="row full start" id="reaction">
+      <div class="row-copy">
+        <p class="eyebrow">Developer reaction</p>
+        <h3 class="t-heading">What developers said when it shipped</h3>
+        <p class="t-body">Public posts from December 2021, the week it launched.</p>
+      </div>
+      <section class="testimonials" data-carousel aria-label="Developer reaction">
+        <div class="testimonial-track">
+          <div class="testimonial active" role="group" aria-label="1 of 3">
+            <blockquote class="quote"><p>"The profile meta is very handy, reduces complexity for developers and most likely better performance."</p></blockquote>
+            <div class="testimonial-foot">
+              <span class="avatar" aria-hidden="true">MW</span>
+              <cite><b>Martin Walsh</b>@martin64k · Dec 10, 2021</cite>
+              <span class="testimonial-mark">Auth0</span>
+            </div>
+          </div>
+          <div class="testimonial" role="group" aria-label="2 of 3">
+            <blockquote class="quote"><p>"Sleek! You've done well pulling all relevant metadata quickly too."</p></blockquote>
+            <div class="testimonial-foot">
+              <span class="avatar" aria-hidden="true">D</span>
+              <cite><b>daws.eth</b>@DawsonBotsford · Dec 9, 2021</cite>
+              <span class="testimonial-mark">Auth0</span>
+            </div>
+          </div>
+          <div class="testimonial" role="group" aria-label="3 of 3">
+            <blockquote class="quote"><p>"Wow this is huge, it would be amazing if all authentication can be done with wallets instead of passwords."</p></blockquote>
+            <div class="testimonial-foot">
+              <span class="avatar" aria-hidden="true">O</span>
+              <cite><b>Oliver</b>@OliverIngle · Dec 9, 2021</cite>
+              <span class="testimonial-mark">Auth0</span>
+            </div>
+          </div>
+        </div>
+      </section>
     </article>
   </div>
 </section>
