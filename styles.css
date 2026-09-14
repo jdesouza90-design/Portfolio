@@ -25,10 +25,10 @@
   --ink-3: #6F675D;   /* 4.7:1 on paper-2, the darkest ground it sits on; #8A8279 was 3.2:1 */
   --hair: #E3DFD7;
   --hair-2: #CFC9BF;
-  --accent: #1D4CFF;
-  --accent-ink: #1438CC;
-  --accent-2: #0E7C9B;
-  --glow: rgba(29, 76, 255, .10);
+  --accent: #3B6B44;
+  --accent-ink: #2B5233;
+  --accent-2: #6E9A5A;
+  --glow: rgba(59, 107, 68, .12);
   --danger: #C0392B;
   --shadow-lift: 0 30px 60px -34px rgba(20, 16, 12, .30);
   --shadow-screen: 0 18px 40px -22px rgba(20, 16, 12, .45), 0 0 0 1px rgba(20, 16, 12, .06);
@@ -302,9 +302,9 @@ thead .hl { color: var(--accent-ink); }
 .hero > .wrap { position: relative; z-index: 1; }
 .hero-bg { position: absolute; inset: -15% -10% auto; height: 145%; z-index: 0; pointer-events: none; }
 .hero-bg span { position: absolute; display: block; border-radius: 50%; filter: blur(60px); will-change: transform; mix-blend-mode: multiply; }
-.hero-bg span:nth-child(1) { width: 46vw; height: 36vw; top: -10%; left: 0%; background: radial-gradient(closest-side, rgba(29, 76, 255, .30), transparent 70%); animation: hero-drift-a 17s ease-in-out infinite alternate; }
+.hero-bg span:nth-child(1) { width: 46vw; height: 36vw; top: -10%; left: 0%; background: radial-gradient(closest-side, rgba(118, 176, 82, .40), transparent 70%); animation: hero-drift-a 17s ease-in-out infinite alternate; }
 .hero-bg span:nth-child(2) { width: 42vw; height: 34vw; top: 12%; right: -2%; background: radial-gradient(closest-side, rgba(201, 143, 62, .34), transparent 70%); animation: hero-drift-b 21s ease-in-out infinite alternate; }
-.hero-bg span:nth-child(3) { width: 50vw; height: 34vw; bottom: -18%; left: 18%; background: radial-gradient(closest-side, rgba(29, 76, 255, .18), transparent 70%); animation: hero-drift-c 19s ease-in-out infinite alternate; }
+.hero-bg span:nth-child(3) { width: 50vw; height: 34vw; bottom: -18%; left: 18%; background: radial-gradient(closest-side, rgba(118, 176, 82, .26), transparent 70%); animation: hero-drift-c 19s ease-in-out infinite alternate; }
 .hero-bg span:nth-child(4) { width: 34vw; height: 30vw; top: 30%; left: 34%; background: radial-gradient(closest-side, rgba(201, 143, 62, .22), transparent 70%); animation: hero-drift-d 24s ease-in-out infinite alternate; }
 @keyframes hero-drift-a { from { transform: translate3d(-6vw, -3vh, 0) scale(.9); } to { transform: translate3d(14vw, 9vh, 0) scale(1.3); } }
 @keyframes hero-drift-b { from { transform: translate3d(5vw, 2vh, 0) scale(1.25); } to { transform: translate3d(-13vw, 11vh, 0) scale(.92); } }
@@ -589,12 +589,12 @@ footer a:hover { color: var(--ink); }
 @media (max-width: 640px) { .gallery { grid-template-columns: 1fr; } }
 
 /* Walkthrough player: poster first, frames on demand */
-.walk { position: relative; border-radius: 16px; overflow: hidden; border: 1px solid var(--hair); background: #0B0F1A; max-width: 932px; margin-inline: auto; width: 100%; }
+.walk { position: relative; border-radius: 16px; overflow: hidden; border: 1px solid var(--hair); background: #14100C; max-width: 932px; margin-inline: auto; width: 100%; }
 .walk img { width: 100%; height: auto; display: block; }
 /* A scrim marks the poster as a video still, so the control reads as "play" */
-.walk::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 1; background: linear-gradient(180deg, rgba(11, 15, 26, .12), rgba(11, 15, 26, .34)); transition: opacity .35s var(--ease); }
-.walk .play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 2; display: inline-flex; align-items: center; gap: 9px; padding: 12px 20px 12px 17px; border: 0; border-radius: 999px; background: rgba(255, 255, 255, .97); color: var(--ink); box-shadow: 0 10px 34px rgba(11, 15, 26, .34); transition: background .2s var(--ease), box-shadow .2s var(--ease), opacity .3s var(--ease); }
-.walk .play:hover { background: #fff; box-shadow: 0 14px 40px rgba(11, 15, 26, .42); }
+.walk::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 1; background: linear-gradient(180deg, rgba(20, 16, 12, .12), rgba(20, 16, 12, .34)); transition: opacity .35s var(--ease); }
+.walk .play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 2; display: inline-flex; align-items: center; gap: 9px; padding: 12px 20px 12px 17px; border: 0; border-radius: 999px; background: rgba(255, 255, 255, .97); color: var(--ink); box-shadow: 0 10px 34px rgba(20, 16, 12, .34); transition: background .2s var(--ease), box-shadow .2s var(--ease), opacity .3s var(--ease); }
+.walk .play:hover { background: #fff; box-shadow: 0 14px 40px rgba(20, 16, 12, .42); }
 .walk .play:focus-visible { outline-color: #fff; }
 .walk.loading .play { cursor: progress; }
 .walk.loading .play svg { animation: walk-spin 1s linear infinite; transform-origin: 50% 50%; }
@@ -692,20 +692,20 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
     repeating-linear-gradient(66deg, rgba(20,16,12,.035) 0 1px, transparent 1px 36px);
 }
 .case-verifications {
-  --panel-base: #E4EAF2;
-  --panel: linear-gradient(155deg, #EDF1F6 0%, #D6DFEC 100%);
+  --panel-base: #E9E7D3;
+  --panel: linear-gradient(155deg, #F1F0E1 0%, #DDDABF 100%);
   /* ruled lines: a stack of documents waiting to be checked off */
   --panel-art: repeating-linear-gradient(180deg, rgba(20,16,12,.055) 0 1px, transparent 1px 24px);
 }
 .case-staking {
-  --panel-base: #E6E3F2;
-  --panel: linear-gradient(155deg, #EFEDF8 0%, #D8D4EE 100%);
+  --panel-base: #EBE0D8;
+  --panel: linear-gradient(155deg, #F2EAE5 0%, #E1CFC4 100%);
   /* concentric rings rising from below: a pool filling to capacity */
   --panel-art: repeating-radial-gradient(circle at 50% 116%, rgba(20,16,12,.05) 0 1px, transparent 1px 42px);
 }
 .case-no-code {
-  --panel-base: #DFEAE3;
-  --panel: linear-gradient(155deg, #E9F1EC 0%, #D2E2D8 100%);
+  --panel-base: #E2E9DC;
+  --panel: linear-gradient(155deg, #EBF0E6 0%, #D5E0CE 100%);
   /* a lattice of nodes: the flow builder's canvas */
   --panel-art: radial-gradient(rgba(20,16,12,.10) 1.2px, transparent 1.4px);
   --panel-size: 28px 28px;
