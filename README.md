@@ -90,9 +90,10 @@ Two rules keep it that way:
   Inline and structural text (a cell, a cite, a button, a chip) is listed
   under its role in section 2, so it needs no class.
 - **Nothing after section 2 sets a face, size, weight, line-height or
-  letter-spacing.** The exceptions are `.btn` and `.chip`, whose line-height
-  is a box metric; the chart, whose text is in SVG units; and the phone rules,
-  which move a menu row and a stacked table label up to body size.
+  letter-spacing.** The exceptions are `.btn`, `.chip` and `.chart-pill`,
+  whose line-height is a box metric; the chart's axis and milestone text,
+  set in pixels inside the SVG; and the phone rules, which move a menu row
+  and a stacked table label up to body size.
 
 Colour is three tones and weight is two, both set in section 2 and nowhere
 else: ink for what leads, ink-2 for what runs, ink-3 for what sits beside on
@@ -112,7 +113,8 @@ three rhythm tokens: `--section` between sections, `--row` between rows,
 All six case studies are the same document, in this order:
 
 1. **Hero**: eyebrow, title and one-sentence lede with the outcome stat beside
-   them, the project's screens on its own tinted panel, then four facts
+   them (`data-flow`: it rolls into place digit by digit, lit from above with
+   the accent), the project's screens on its own tinted panel, then four facts
    (role, team, timeline, launch) as a `.facts` stat strip: a small label
    above the value at heading size, cells divided by hairlines.
 2. **Results**: centred title and lede, then one `.proof` frame: the headline
@@ -152,8 +154,9 @@ phone layer fixes what a collapse alone gets wrong:
   cropped desktop screens keep the 4:3 box.
 - The A/B table stacks into one card per metric, each cell labelled by its
   column through `data-label` on the `<td>`.
-- The bar chart draws a 360-wide variant with short month labels, since the
-  720-wide drawing scaled its type to 5px.
+- The chart is drawn in the pixels of its box, so its type stays 13px on a
+  phone; the month labels keep the year only where it starts or changes, and
+  two milestone notes stack in rows above the plot.
 - The facts strip loses its box and tightens to label-over-value rows; the
   tab strip scrolls; the testimonial quote steps down to quote size and the
   product mark drops under the name; the phone menu carries Contact.
@@ -180,8 +183,10 @@ The rules that shape the code:
   reports `aria-expanded`, Escape closes it and hands focus back.
 - The layer tabs follow the tablist pattern: arrows, Home and End move the
   selection; hidden panels leave the tab order.
-- The walkthrough control leaves the tab order when it fades out. The chart
-  carries a text alternative and a data table.
+- The walkthrough control leaves the tab order when it fades out. The chart's
+  plot is a labelled, focusable group: left and right arrows, Home and End
+  step through the months and read each one into a live card; the data table
+  stays below it. A rolled stat keeps its plain text for screen readers.
 - Tables have header scopes. A table that scrolls sideways is a labelled,
   focusable region.
 - Icons are `aria-hidden`; every image has an alt; logos used as decoration
@@ -194,8 +199,14 @@ The rules that shape the code:
 - Copy follows [VOICE.md](VOICE.md). Read it before writing or rewriting any text on the site.
 - Case-study copy lives directly in each `work/*.html` file.
 - The originations chart on the Cross-Sell page reads its numbers from the
-  `data-series` attribute on the `.chart` element; the table below it is the
-  accessible fallback.
+  `data-series` attribute on the `.chart` element and its milestones from
+  `data-annotations`; the table below it is the accessible fallback. The
+  line is swept open left to right when the card scrolls in and the closing
+  value lands in a pill at the right edge.
+- A headline stat with `data-flow` rolls in like an odometer: main.js turns
+  each digit into a column of 0 to 9 behind a soft mask; signs, units and
+  words stand still. Write the stat as plain text and the script does the
+  rest, or leave the attribute off for a stat that should not move.
 - Company logos in `assets/logo-*.svg` are the companies' own vector files. Each
   is sized in `styles.css` so the wordmark text matches across all three, since
   the three lockups have different icon-to-text proportions.

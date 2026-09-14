@@ -366,85 +366,264 @@ const CONFIG = {
     sync();
   });
 
-  /* ---- Single-series bar chart ----
-     Drawn at 720 wide, or 360 on a phone, where the wide drawing scaled its
-     labels to 5px. The narrow drawing keeps the same type, shortens the month
-     labels and anchors the annotations so they stay inside the frame. */
+  /* ---- Originations chart ----
+     A line over a soft area, drawn in the pixels of its box so the type stays
+     the same size on a phone. The lines are revealed left to right by a
+     clip-path sweep when the card scrolls in, and the closing value lands in a
+     pill at the right edge as the sweep does. Hovering, touching or arrowing
+     through the plot drops a marker on the nearest month with a card of its
+     numbers. The grid, the axes and the table below never move. */
   $$("[data-chart]").forEach((el) => {
     const data = JSON.parse(el.dataset.series);
     const annos = JSON.parse(el.dataset.annotations || "[]");
-    const fmt = (v) => v >= 1e6 ? `$${(v / 1e6).toFixed(2)}M` : v >= 1e3 ? `$${(v / 1e3).toFixed(0)}K` : `$${v}`;
+    const fmt = (v) => v >= 1e6 ? `$${(v / 1e6).toFixed(2).replace(/\.?0+$/, "")}M` : v >= 1e3 ? `$${(v / 1e3).toFixed(0)}K` : `$${v}`;
     const full = (v) => "$" + v.toLocaleString("en-US");
+    const short = (label, k, narrow) => {   // "Oct 2025" reads "Oct ’25" on the axis; a phone
+      const [mo, yr] = label.split(" ");     // keeps the year only where it starts or changes
+      if (!yr) return label;
+      const prev = k > 0 ? data[k - 1].label.split(" ")[1] : null;
+      return narrow && prev === yr ? mo : `${mo} \u2019${yr.slice(-2)}`;
+    };
     const ns = "http://www.w3.org/2000/svg";
-    let drawn = null;
+    const svgEl = (tag, attrs, parent, text) => {
+      const n = document.createElementNS(ns, tag);
+      Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, v));
+      if (text != null) n.textContent = text;
+      if (parent) parent.appendChild(n);
+      return n;
+    };
+    const div = (cls, parent, attrs = {}) => {
+      const n = document.createElement("div");
+      n.className = cls;
+      Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, v));
+      parent.appendChild(n);
+      return n;
+    };
+
+    // A shape-preserving curve (Fritsch–Carlson): it bends through every
+    // point without ever dipping below a month or overshooting the next.
+    const curve = (pts) => {
+      const n = pts.length;
+      if (n < 2) return "";
+      const dx = [], m = [], t = [];
+      for (let i = 0; i < n - 1; i++) { dx[i] = pts[i + 1].x - pts[i].x; m[i] = (pts[i + 1].y - pts[i].y) / dx[i]; }
+      t[0] = m[0]; t[n - 1] = m[n - 2];
+      for (let i = 1; i < n - 1; i++) t[i] = m[i - 1] * m[i] <= 0 ? 0 : (m[i - 1] + m[i]) / 2;
+      for (let i = 0; i < n - 1; i++) {
+        if (m[i] === 0) { t[i] = 0; t[i + 1] = 0; continue; }
+        const a = t[i] / m[i], b = t[i + 1] / m[i], s = a * a + b * b;
+        if (s > 9) { const k = 3 / Math.sqrt(s); t[i] = k * a * m[i]; t[i + 1] = k * b * m[i]; }
+      }
+      let d = `M${pts[0].x},${pts[0].y}`;
+      for (let i = 0; i < n - 1; i++) {
+        const h = dx[i] / 3;
+        d += ` C${pts[i].x + h},${pts[i].y + t[i] * h} ${pts[i + 1].x - h},${pts[i + 1].y - t[i + 1] * h} ${pts[i + 1].x},${pts[i + 1].y}`;
+      }
+      return d;
+    };
+
+    // Scaffold, built once
+    const shell = div("chart-shell", el);
+    el.insertBefore(shell, el.querySelector("details"));
+    const grid = svgEl("svg", { class: "chart-grid", "aria-hidden": "true", focusable: "false" }, shell);
+    const lines = div("chart-lines", shell);
+    const linesSvg = svgEl("svg", { "aria-hidden": "true", focusable: "false" }, lines);
+    const pill = div("chart-pill", shell, { "aria-hidden": "true" });
+    const marker = div("chart-marker", shell, { "aria-hidden": "true" });
+    const node = div("chart-node", shell, { "aria-hidden": "true" });
+    const tip = div("tooltip", shell, { "aria-live": "polite" });
+    const hit = div("chart-hit", shell, {
+      tabindex: "0", role: "group",
+      "aria-label": (el.dataset.label || "Chart") + ". Left and right arrows step through the months.",
+    });
+    const gradId = "chart-area-" + Math.random().toString(36).slice(2, 7);
+
+    let geo = null;                       // the last drawing's points and margins
+    let played = reduced || !("animate" in lines);
+    let active = -1;
+
     const draw = () => {
-      const narrow = el.clientWidth < 520;
-      if (drawn === narrow) return;
-      drawn = narrow;
-      el.querySelectorAll("svg, .tooltip").forEach((n) => n.remove());
-      const W = narrow ? 360 : 720, H = narrow ? 250 : 300;
-      const m = narrow ? { t: 48, r: 10, b: 44, l: 46 } : { t: 44, r: 16, b: 44, l: 52 };
+      const W = shell.clientWidth;
+      if (!W) return;
+      const narrow = W < 520;
+      const H = shell.clientHeight;
+      const m = { t: narrow && annos.length > 1 ? 36 : 22, r: 0, b: 34, l: narrow ? 40 : 48 };   // a phone stacks two milestone rows
       const iw = W - m.l - m.r, ih = H - m.t - m.b;
       const max = Math.max(...data.map((d) => d.value));
       const step = Math.pow(10, Math.floor(Math.log10(max)));
       const top = Math.ceil(max / step) * step;
       const y = (v) => m.t + ih - (v / top) * ih;
-      const bw = Math.min(narrow ? 36 : 64, (iw / data.length) * 0.5);
-      const x = (k) => m.l + (iw / data.length) * (k + 0.5) - bw / 2;
-      const svg = document.createElementNS(ns, "svg");
-      svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
-      svg.setAttribute("role", "img");
-      svg.setAttribute("aria-label", el.dataset.label || "Bar chart");
-      const add = (tag, attrs, parent = svg, text) => {
-        const n = document.createElementNS(ns, tag);
-        Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, v));
-        if (text != null) n.textContent = text;
-        parent.appendChild(n); return n;
-      };
-      const axis = add("g", { class: "axis" });
-      for (let g = 0; g <= 4; g++) {
-        const v = (top / 4) * g;
-        add("line", { class: "grid", x1: m.l, x2: W - m.r, y1: y(v), y2: y(v) }, axis);
-        add("text", { x: m.l - 8, y: y(v) + 4, "text-anchor": "end" }, axis, fmt(v).replace(".00", ""));
+      const x = (k) => m.l + (iw * k) / (data.length - 1);
+      const pts = data.map((d, k) => ({ x: x(k), y: y(d.value) }));
+      geo = { m, iw, ih, pts, W, H };
+
+      [grid, linesSvg].forEach((s) => { s.setAttribute("viewBox", `0 0 ${W} ${H}`); s.setAttribute("width", W); s.setAttribute("height", H); s.innerHTML = ""; });
+
+      // Grid and axes: one dashed rule per step, months along the bottom
+      const ticks = top / step;
+      for (let g = 0; g <= ticks; g++) {
+        const v = step * g, gy = y(v);
+        svgEl("line", { class: "grid", x1: m.l, x2: W - m.r, y1: gy, y2: gy }, grid);
+        svgEl("text", { class: "axis", x: m.l - 10, y: gy + 4, "text-anchor": "end" }, grid, fmt(v));
       }
-      const tip = document.createElement("div");
-      tip.className = "tooltip";
-      el.appendChild(tip);
       data.forEach((d, k) => {
-        const bx = x(k), by = y(d.value), h = Math.max(2, m.t + ih - by);
-        const r = Math.min(4, h);
-        const path = `M${bx},${m.t + ih} v${-(h - r)} a${r},${r} 0 0 1 ${r},${-r} h${bw - 2 * r} a${r},${r} 0 0 1 ${r},${r} v${h - r} z`;
-        const bar = add("path", { class: "bar", d: path });
-        // "Oct 2025" becomes "Oct" over "'25" on a phone
-        const parts = d.label.split(" ");
-        const label = narrow && parts.length > 1 ? parts[0] : d.label;
-        const sub = narrow && parts.length > 1 ? "'" + parts[1].slice(-2) : d.sub;
-        add("text", { x: bx + bw / 2, y: m.t + ih + 18, "text-anchor": "middle" }, axis, label);
-        if (sub) add("text", { x: bx + bw / 2, y: m.t + ih + 32, "text-anchor": "middle", style: narrow ? "" : "font-size:9.5px" }, axis, sub);
-        if (k === data.length - 1 || d.callout) add("text", { class: "val", x: bx + bw / 2, y: by - 8, "text-anchor": "middle" }, svg, fmt(d.value));
-        const hit = add("rect", { class: "hit", x: bx - 12, y: m.t, width: bw + 24, height: ih });
-        const showTip = () => {
-          tip.innerHTML = `<b>${full(d.value)}</b>${d.label}${d.sub ? " · " + d.sub : ""}`;
-          const box = el.getBoundingClientRect(), sb = svg.getBoundingClientRect();
-          const sx = sb.width / W;
-          tip.style.left = `${sb.left - box.left + (bx + bw / 2) * sx}px`;
-          tip.style.top = `${sb.top - box.top + by * sx}px`;
-          tip.classList.add("show"); bar.classList.add("hover");
-        };
-        const hideTip = () => { tip.classList.remove("show"); bar.classList.remove("hover"); };
-        [hit, bar].forEach((n) => { n.addEventListener("mouseenter", showTip); n.addEventListener("mousemove", showTip); n.addEventListener("mouseleave", hideTip); });
+        const anchor = k === 0 ? "start" : k === data.length - 1 ? "end" : "middle";
+        svgEl("text", { class: "axis", x: pts[k].x, y: H - 8, "text-anchor": anchor }, grid, short(d.label, k, narrow));
       });
+
+      // Area and line
+      const defs = svgEl("defs", {}, linesSvg);
+      const lg = svgEl("linearGradient", { id: gradId, x1: 0, y1: 0, x2: 0, y2: 1 }, defs);
+      svgEl("stop", { offset: "0%", "stop-color": "var(--accent)", "stop-opacity": ".22" }, lg);
+      svgEl("stop", { offset: "55%", "stop-color": "var(--accent)", "stop-opacity": ".08" }, lg);
+      svgEl("stop", { offset: "100%", "stop-color": "var(--accent)", "stop-opacity": "0" }, lg);
+      const d = curve(pts);
+      svgEl("path", { class: "area", d: `${d} L${pts[pts.length - 1].x},${m.t + ih} L${pts[0].x},${m.t + ih} Z`, fill: `url(#${gradId})` }, linesSvg);
+      svgEl("path", { class: "line", d }, linesSvg);
+
+      // Milestones ride the sweep with the line
       annos.forEach((a, i) => {
-        const ax = x(a.at) + bw / 2;
-        const right = narrow && ax > W / 2;          // anchor to the left of the line so the text stays in frame
-        const ty = narrow ? 12 + (i % 2) * 14 : 12;  // stagger rows on a phone so two notes never collide
-        add("line", { class: "anno-line", x1: ax, x2: ax, y1: ty + 4, y2: y(data[a.at].value) - 18 });
-        add("text", { class: "anno", x: ax + (right ? -6 : 6), y: ty, "text-anchor": right ? "end" : "start" }, svg, a.text);
+        const ax = pts[a.at].x;
+        const right = ax > W / 2;                    // anchor the text so it stays inside the frame
+        const ty = narrow ? 10 + (i % 2) * 14 : 10;  // stagger rows on a phone so two notes never collide
+        svgEl("line", { class: "anno-line", x1: ax, x2: ax, y1: ty + 6, y2: pts[a.at].y - 10 }, linesSvg);
+        svgEl("text", { class: "anno", x: ax + (right ? -6 : 6), y: ty + 4, "text-anchor": right ? "end" : "start" }, linesSvg, a.text);
       });
-      el.insertBefore(svg, el.querySelector("details"));
+
+      // Closing value, on the line at the right edge
+      const last = pts[pts.length - 1];
+      pill.textContent = fmt(data[data.length - 1].value);
+      pill.style.top = `${last.y}px`;
+
+      Object.assign(hit.style, { left: `${m.l}px`, top: `${m.t}px`, width: `${iw}px`, height: `${ih}px` });
+      marker.style.top = `${m.t}px`; marker.style.height = `${ih}px`;
+      lines.style.clipPath = played ? "" : "inset(0 100% 0 0)";
+      if (active >= 0) place(active);
     };
+
+    const play = () => {
+      if (played) return;
+      played = true;
+      lines.animate([{ clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)" }],
+        { duration: 1400, easing: "cubic-bezier(.19, 1, .22, 1)", fill: "both" })
+        .finished.then(() => { lines.style.clipPath = ""; }, () => {});
+      pill.animate([{ opacity: 0 }, { opacity: 1 }], { delay: 1300, duration: 300, easing: "ease-out", fill: "both" });
+    };
+    if (!played) {
+      pill.style.opacity = "0";
+      if ("IntersectionObserver" in window) {
+        const io = new IntersectionObserver(([e]) => {
+          if (!e.isIntersecting) return;
+          io.disconnect();
+          setTimeout(play, 120);          // let the card's own reveal lead
+        }, { threshold: 0.35 });
+        io.observe(shell);
+      }
+      setTimeout(() => { if (!played) { played = true; lines.style.clipPath = ""; pill.style.opacity = ""; } }, 4000);
+    }
+
+    // Reading a month: marker, dot and a card of its numbers
+    const place = (k) => {
+      const { pts, m, ih, W } = geo;
+      const p = pts[k], d = data[k];
+      const note = annos.find((a) => a.at === k);
+      tip.innerHTML = `<b>${d.label}</b><span class="tip-row"><span class="dot"></span>Originations<span class="tip-val">${full(d.value)}</span></span>${note ? `<span class="tip-note">${note.text}</span>` : ""}`;
+      marker.style.left = `${p.x}px`;
+      node.style.left = `${p.x}px`; node.style.top = `${p.y}px`;
+      const tw = tip.offsetWidth || 220, th = tip.offsetHeight || 80;
+      const tx = Math.min(Math.max(p.x, tw / 2), W - tw / 2);
+      const above = p.y - th - 16;
+      tip.style.left = `${tx}px`;
+      tip.style.top = `${above >= 0 ? above : Math.min(p.y + 16, m.t + ih - th)}px`;
+      [tip, marker, node].forEach((n) => n.classList.add("show"));
+      active = k;
+    };
+    const clear = () => { [tip, marker, node].forEach((n) => n.classList.remove("show")); active = -1; };
+    const nearest = (clientX) => {
+      const r = hit.getBoundingClientRect();
+      const k = Math.round(((clientX - r.left) / r.width) * (data.length - 1));
+      return Math.max(0, Math.min(data.length - 1, k));
+    };
+    hit.addEventListener("pointermove", (e) => place(nearest(e.clientX)));
+    hit.addEventListener("pointerdown", (e) => place(nearest(e.clientX)));
+    hit.addEventListener("pointerleave", (e) => { if (e.pointerType !== "touch") clear(); });   // a tap keeps its card
+    document.addEventListener("pointerdown", (e) => { if (active >= 0 && !shell.contains(e.target)) clear(); });
+    hit.addEventListener("keydown", (e) => {
+      const n = data.length;
+      if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+        e.preventDefault();
+        const dir = e.key === "ArrowRight" ? 1 : -1;
+        place(active < 0 ? (dir > 0 ? 0 : n - 1) : (active + dir + n) % n);
+      } else if (e.key === "Home") { e.preventDefault(); place(0); }
+      else if (e.key === "End") { e.preventDefault(); place(n - 1); }
+      else if (e.key === "Escape") clear();
+    });
+    hit.addEventListener("blur", clear);
+
     draw();
-    let t; window.addEventListener("resize", () => { clearTimeout(t); t = setTimeout(draw, 120); });
+    if ("ResizeObserver" in window) {
+      let w = shell.clientWidth;
+      new ResizeObserver(() => { if (shell.clientWidth !== w) { w = shell.clientWidth; draw(); } }).observe(shell);
+    } else {
+      let t; window.addEventListener("resize", () => { clearTimeout(t); t = setTimeout(draw, 120); });
+    }
+  });
+
+  /* ---- Number flow ----
+     A headline stat rolls into place like an odometer: every digit is a
+     column of 0 to 9 behind a soft mask, and each column turns once around
+     to its digit when the stat comes into view. The rest of the string (a
+     currency sign, a unit) stands still. Screen readers get the plain text.
+     Under reduced motion the stat is left as it was written. */
+  const flowEase = CSS.supports?.("animation-timing-function", "linear(0, 1)")
+    ? "linear(0, 0.0033 0.2%, 0.0263 2.27%, 0.0896 4.99%, 0.4108 12.34%, 0.5757 16.93%, 0.7011 21.7%, 0.7983 26.68%, 0.8721 31.98%, 0.9258 37.73%, 0.9637 44.19%, 0.9877 51.72%, 0.9992 60.71%, 1 100%)"
+    : "cubic-bezier(.23, 1, .32, 1)";
+  $$("[data-flow]").forEach((el) => {
+    const text = el.textContent.trim();
+    if (reduced || !/\d/.test(text) || !("animate" in el)) return;   // "No code" has nothing to roll
+    el.textContent = "";
+    const sr = document.createElement("span");
+    sr.className = "sr-only"; sr.textContent = text;
+    el.appendChild(sr);
+    const cols = [];
+    for (const ch of text) {
+      const s = document.createElement("span");
+      s.setAttribute("aria-hidden", "true");
+      if (/\d/.test(ch)) {
+        s.className = "flow-digit";
+        const strip = document.createElement("span");
+        strip.className = "flow-strip";
+        for (let i = 0; i < 20; i++) {
+          const n = document.createElement("span");
+          n.className = "flow-num"; n.textContent = String(i % 10);
+          strip.appendChild(n);
+        }
+        s.appendChild(strip);
+        cols.push({ strip, n: Number(ch) });
+      } else {
+        s.className = "flow-char"; s.textContent = ch === " " ? " " : ch;
+      }
+      el.appendChild(s);
+    }
+    el.classList.add("flow-on");
+    let done = false;
+    const settle = (animate) => {
+      if (done) return;
+      done = true;
+      cols.forEach((c, i) => {
+        const end = `translateY(${-(10 + c.n)}em)`;     // one full turn, then the digit
+        if (animate) {
+          c.strip.animate([{ transform: "translateY(0)" }, { transform: end }],
+            { duration: 1100, delay: 200 + i * 45, easing: flowEase, fill: "both" })
+            .finished.then(() => { c.strip.style.transform = end; }, () => { c.strip.style.transform = end; });
+        } else c.strip.style.transform = end;
+      });
+    };
+    if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { io.disconnect(); settle(true); } }, { threshold: 0.5 });
+      io.observe(el);
+      setTimeout(() => settle(false), 4000);            // never leave a stat reading zero
+    } else settle(true);
   });
 
   /* ---- Swipe strips ----
