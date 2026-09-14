@@ -20,27 +20,37 @@ const CONFIG = {
     if (key !== "email") { el.target = "_blank"; el.rel = "noopener"; }
   });
 
-  /* ---- Nav ---- */
+  /* ---- Nav ----
+     The phone menu is a disclosure: the button reports its state, Escape
+     closes it and hands focus back, and following a link closes it. */
   const nav = $(".nav");
   const onScroll = () => nav && nav.classList.toggle("scrolled", window.scrollY > 8);
   onScroll();
   window.addEventListener("scroll", onScroll, { passive: true });
   const toggle = $(".nav-toggle");
   if (toggle && nav) {
-    toggle.addEventListener("click", () => {
-      const open = nav.classList.toggle("open");
+    const setOpen = (open) => {
+      nav.classList.toggle("open", open);
       toggle.setAttribute("aria-expanded", String(open));
+      toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    };
+    toggle.addEventListener("click", () => setOpen(!nav.classList.contains("open")));
+    nav.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape" || !nav.classList.contains("open")) return;
+      setOpen(false);
+      toggle.focus();
     });
-    $$(".nav-links a", nav).forEach((a) => a.addEventListener("click", () => nav.classList.remove("open")));
+    $$(".nav-links a", nav).forEach((a) => a.addEventListener("click", () => setOpen(false)));
   }
 
   /* ---- Scroll reveal ----
      Content is visible by default. JS opts into the animation by marking the
      document, so a failed, blocked or throttled script can never hide a section.
-     A failsafe reveals anything still hidden after 2.5s. */
-  /* ---- Tag every major block on the page so sections animate in ----
-     Anything already marked keeps its own order; otherwise each direct child
-     of a section gets the next index, which drives the stagger in CSS. */
+     A failsafe drops the animation if nothing has revealed after 2.5s.
+
+     Every major block is tagged so sections animate in. Anything already
+     marked keeps its own order; otherwise each direct child of a section gets
+     the next index, which drives the stagger in CSS. */
   $$("main > section, main > div.wrap").forEach((section) => {
     const host = section.querySelector(":scope > .wrap") || section;
     const kids = Array.from(host.children).filter((k) => k.nodeType === 1);
@@ -157,26 +167,10 @@ const CONFIG = {
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(place);
   });
 
-  /* ---- Case study: table of contents scroll-spy ---- */
-  const toc = $(".toc");
-  if (toc && "IntersectionObserver" in window) {
-    const links = $$("a", toc);
-    const sections = links.map((a) => $(a.getAttribute("href"))).filter(Boolean);
-    const spy = new IntersectionObserver((entries) => {
-      entries.forEach((e) => {
-        if (e.isIntersecting) {
-          links.forEach((a) => a.classList.toggle("active", a.getAttribute("href") === `#${e.target.id}`));
-        }
-      });
-    }, { rootMargin: "-35% 0px -55% 0px", threshold: 0 });
-    sections.forEach((s) => spy.observe(s));
-  }
-
   /* ---- Walkthrough animations: poster first, animate on demand ---- */
   $$(".walk").forEach((w) => {
     const img = $("img", w), btn = $(".play", w);
     if (!img || !btn) return;
-    const label = btn.querySelector("span") || btn;
     btn.addEventListener("click", () => {
       if (btn.dataset.busy) return;
       // These animations are several megabytes; hold the control in a loading
@@ -265,17 +259,6 @@ const CONFIG = {
     });
     el.insertBefore(svg, el.querySelector("details"));
   });
-
-  /* ---- Pointer spotlight on work cards ---- */
-  if (!reduced && window.matchMedia("(pointer: fine)").matches) {
-    $$(".work-card").forEach((card) => {
-      card.addEventListener("pointermove", (e) => {
-        const r = card.getBoundingClientRect();
-        card.style.setProperty("--mx", ((e.clientX - r.left) / r.width) * 100 + "%");
-        card.style.setProperty("--my", ((e.clientY - r.top) / r.height) * 100 + "%");
-      });
-    });
-  }
 
   /* ---- Footer year ---- */
   $$("[data-year]").forEach((el) => (el.textContent = new Date().getFullYear()));

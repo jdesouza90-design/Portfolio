@@ -271,8 +271,9 @@ thead .hl { color: var(--accent-ink); }
 .nav-links { margin-left: auto; }
 .nav-links ul { display: flex; gap: 28px; list-style: none; padding: 0; margin: 0; }
 .nav-links a { text-decoration: none; color: var(--ink-2); font-weight: 500; font-size: var(--t-small); transition: color .2s; }
-.nav-links a.nav-icon { display: inline-flex; align-items: center; padding-block: 2px; }
+.nav-links a.nav-icon { display: inline-flex; align-items: center; gap: 10px; padding-block: 2px; }
 .nav-links a.nav-icon svg { width: 17px; height: 17px; display: block; }
+.nav-links a.nav-icon span { display: none; }   /* the icon alone in the bar; icon + word in the phone menu */
 .nav-links a:hover, .nav-links a[aria-current="page"] { color: var(--ink); }
 .nav-actions { display: flex; gap: 10px; align-items: center; }
 .nav-toggle { display: none; }
@@ -285,6 +286,8 @@ thead .hl { color: var(--accent-ink); }
   }
   .nav-links ul { flex-direction: column; gap: 0; }
   .nav-links a { display: block; padding: 12px 0; font-size: var(--t-body); }
+  .nav-links a.nav-icon { display: flex; padding: 12px 0; }
+  .nav-links a.nav-icon span { display: inline; }
   .nav.open .nav-links { display: block; }
   .nav-toggle { display: grid; margin-left: auto; }
   .nav-actions .btn { display: none; }

@@ -31,10 +31,11 @@ const headers = {
 
 function page({ path, error, unconfigured }) {
   const msg = unconfigured
-    ? '<p class="gate-error" role="alert">The case-study password isn\'t configured yet. Set CASE_STUDY_PASSWORD in the Vercel project and redeploy.</p>'
+    ? '<p class="gate-error" id="gate-error" role="alert">The case-study password isn\'t configured yet. Set CASE_STUDY_PASSWORD in the Vercel project and redeploy.</p>'
     : error
-      ? '<p class="gate-error" role="alert">That password didn\'t match. Check for extra spaces and try again.</p>'
+      ? '<p class="gate-error" id="gate-error" role="alert">That password didn\'t match. Check for extra spaces and try again.</p>'
       : '';
+  const describe = msg ? ' aria-describedby="gate-error"' : '';
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -45,7 +46,7 @@ function page({ path, error, unconfigured }) {
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;500;600&family=DM+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600&family=DM+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
@@ -56,7 +57,7 @@ function page({ path, error, unconfigured }) {
   <p class="gate-lede">Enter the password John shared with you. Don't have it yet? <a href="https://www.linkedin.com/in/johndesouza-/" target="_blank" rel="noopener">Message him on LinkedIn</a> and he'll send it over.</p>
   <form method="post" action="${esc(path)}" class="gate-form">
     <label class="sr-only" for="password">Password</label>
-    <input id="password" name="password" type="password" autocomplete="current-password" autofocus required placeholder="Password"${error ? ' aria-invalid="true"' : ''}>
+    <input id="password" name="password" type="password" autocomplete="current-password" autofocus required placeholder="Password"${error ? ' aria-invalid="true"' : ''}${describe}>
     <button class="btn btn-primary" type="submit">Open case study</button>
   </form>${msg}
   <a class="back" href="/work.html">← Back to all work</a>
