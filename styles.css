@@ -226,7 +226,7 @@ main, .nav { position: relative; z-index: 1; }
 /* Section intro: a centred label + title (+ lede), the way a section opens */
 .section-intro { display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: clamp(40px, 5vw, 64px); }
 .section-intro > * { margin-inline: auto; }
-.section-intro .t-title + .t-lede { margin-top: var(--sp-4); }
+.section-intro .t-title + .t-lede, .row.full .row-copy .t-title + .t-lede { margin-top: var(--sp-4); }
 
 /* Columns: icon, heading, text. A dashed rule divides the columns, with a
    solid accent segment beside each heading. Used for the facts beneath a
@@ -569,6 +569,7 @@ footer a:hover { color: var(--ink); }
 .row.flip > .row-copy { order: 2; }
 .row-copy { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
 .row-copy .t-heading { margin-top: var(--sp-3); }
+.row-copy .t-title { margin-top: var(--stack-label); }
 .row-copy .t-body { margin-top: var(--sp-4); }
 .row .panel { height: var(--panel-h); }
 .row .panel img { max-height: 100%; }
@@ -581,8 +582,6 @@ footer a:hover { color: var(--ink); }
 .row.full .row-copy > * { margin-inline: auto; }
 .row.full .panel { height: auto; aspect-ratio: auto; } /* the visual sets the height, not --panel-h */
 .row.full .cols { margin-top: clamp(12px, 2vw, 24px); text-align: left; }
-.row.full.start > .row-copy { align-items: flex-start; text-align: left; margin-inline: 0; }
-.row.full.start .row-copy > * { margin-inline: 0; }
 @media (max-width: 820px) {
   .row, .row.flip { grid-template-columns: minmax(0, 1fr); gap: var(--sp-6); }   /* minmax(0): a swipe strip must not widen the column */
   .row.flip > .row-copy { order: 0; }
@@ -606,18 +605,18 @@ footer a:hover { color: var(--ink); }
    longest quote and nothing below it jumps as they cross-fade. */
 .testimonials { width: 100%; margin-top: var(--sp-6); }
 .testimonial-track { display: grid; }
-.testimonial { grid-area: 1 / 1; display: flex; flex-direction: column; opacity: 0; visibility: hidden; filter: blur(3px); transition: opacity .3s var(--ease), filter .3s var(--ease), visibility 0s .3s; }
+.testimonial { grid-area: 1 / 1; display: flex; flex-direction: column; align-items: center; text-align: center; opacity: 0; visibility: hidden; filter: blur(3px); transition: opacity .3s var(--ease), filter .3s var(--ease), visibility 0s .3s; }
 /* a touch of blur while the quotes cross so the eye reads one thing changing, not two overlapping */
 .testimonial.active { opacity: 1; visibility: visible; filter: none; transition: opacity .4s var(--ease), filter .4s var(--ease), visibility 0s; }
-.testimonial .quote { flex: 1; padding-bottom: var(--sp-6); border-bottom: 1px solid var(--hair-2); }
-.testimonial .quote p { font-size: var(--t-heading); line-height: var(--lh-quote); letter-spacing: var(--ls-heading); max-width: 44ch; text-wrap: pretty; }
-.testimonial-foot { display: flex; align-items: center; gap: var(--sp-4); padding-top: var(--sp-5); }
+.testimonial .quote { flex: 1; width: 100%; padding-bottom: var(--sp-6); border-bottom: 1px solid var(--hair-2); }
+.testimonial .quote p { font-size: var(--t-heading); line-height: var(--lh-quote); letter-spacing: var(--ls-heading); max-width: 44ch; margin-inline: auto; text-wrap: pretty; }
+.testimonial-foot { display: flex; align-items: center; justify-content: center; gap: var(--sp-4); padding-top: var(--sp-5); text-align: left; }
 .testimonial-foot .avatar { flex: none; width: 48px; height: 48px; border-radius: 12px; display: grid; place-items: center; background: var(--paper-2); color: var(--ink); font-family: var(--font-body); font-size: var(--t-small); font-weight: 500; letter-spacing: .02em; }
 .testimonial-foot .avatar.glyph { font-family: var(--font-display); font-size: var(--t-heading); line-height: 1; padding-top: .35em; }
 .testimonial-foot cite { display: block; min-width: 0; font-style: normal; font-size: var(--t-small); line-height: var(--lh-small); color: var(--ink-3); }
 .testimonial-foot cite b { display: block; font-weight: 500; color: var(--ink); font-size: var(--t-subhead); line-height: var(--lh-subhead); }
-.testimonial-mark { margin-left: auto; font-family: var(--font-display); font-size: var(--t-subhead); font-weight: 500; color: var(--ink); white-space: nowrap; }
-.testimonial-controls { display: flex; align-items: center; gap: var(--sp-3); margin-top: var(--sp-5); }
+.testimonial-mark { margin-left: var(--sp-3); padding-left: var(--sp-4); border-left: 1px solid var(--hair-2); font-family: var(--font-display); font-size: var(--t-subhead); font-weight: 400; color: var(--ink); white-space: nowrap; }
+.testimonial-controls { display: flex; align-items: center; justify-content: center; gap: var(--sp-3); margin-top: var(--sp-5); }
 .testimonial-controls .dots { display: flex; margin-inline: var(--sp-1); }
 /* each dot is a 24px button (WCAG 2.2 target size) drawing an 8px mark; the current one stretches */
 .testimonial-controls .dot { position: relative; width: 24px; height: 24px; padding: 0; border: 0; background: none; cursor: pointer; transition: width var(--dur-ui) var(--ease), transform var(--dur-press) var(--ease); }
@@ -627,7 +626,7 @@ footer a:hover { color: var(--ink); }
 .testimonial-controls .ctl { width: 40px; height: 40px; padding: 0; border: 1px solid var(--hair-2); border-radius: 999px; background: transparent; color: var(--ink); cursor: pointer; display: grid; place-items: center; transition: transform var(--dur-press) var(--ease), border-color var(--dur-hover), color var(--dur-hover); }
 .testimonial-controls .ctl:hover { border-color: var(--accent); color: var(--accent-ink); }
 .testimonial-controls .ctl svg { width: 16px; height: 16px; }
-.testimonial-controls .pause { margin-left: auto; }
+.testimonial-controls .pause { margin-left: var(--sp-2); }
 .testimonial-controls .pause .i-pause, .testimonial-controls .pause[aria-pressed="true"] .i-play { display: block; }
 .testimonial-controls .pause .i-play, .testimonial-controls .pause[aria-pressed="true"] .i-pause { display: none; }
 /* Rotation keeps running for reduced-motion users too (the CSS above already drops the
@@ -883,6 +882,11 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
   .section-intro, .cs-hero-copy, .row.full > .row-copy { align-items: flex-start; text-align: left; margin-inline: 0; }
   .section-intro > *, .row.full .row-copy > * { margin-inline: 0; }
   .cs-hero-copy h1 { max-width: none; }
+  .testimonial { align-items: flex-start; text-align: left; }
+  .testimonial .quote p { margin-inline: 0; }
+  .testimonial-foot { justify-content: flex-start; flex-wrap: wrap; }
+  .testimonial-mark { flex-basis: 100%; margin-left: 0; padding-left: 0; border-left: 0; }
+  .testimonial-controls { justify-content: flex-start; }
 
   /* Work index: the phone screens get a taller ground so they stay legible;
      desktop screens keep a wide one so the ground does not swallow them */
