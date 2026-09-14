@@ -520,9 +520,12 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 [data-tabs].instant .layer, [data-tabs].instant .layer-tabs::after { transition-duration: 0s; transition-delay: 0s; }
 .layer-head { padding: clamp(24px, 3.2vw, 40px); }
 .layer-head .point-icon { margin-bottom: var(--sp-5); }
+/* a ledger row: the label states the clause, the tag on the right finishes
+   it ("It shows up as" · "a design decision"), so the two halves read as
+   one sentence instead of a floating word beside a floating tag */
 .layer-foot {
-  margin-top: auto; display: flex; align-items: center; gap: 10px;
-  padding: clamp(20px, 2.6vw, 32px) clamp(24px, 3.2vw, 40px);
+  margin-top: auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 8px 16px; padding: clamp(20px, 2.6vw, 32px) clamp(24px, 3.2vw, 40px);
   background: var(--paper); border-top: 1px solid var(--hair);
 }
 /* the tag is the site's chip in the accent tint, with the layer's signal
