@@ -121,14 +121,14 @@
 
 /* The sans does the work: subhead, lede, body, small, micro */
 .t-subhead, .t-lede, .t-body, .t-small, .t-micro, .eyebrow,
-.flow-arrow, .testimonial-foot cite b,
+.testimonial-foot cite b,
 .layer-tab, .work-cta, .about-logos strong, .gate-form input,
 .btn, .chip, .nav-links a, .back, .tools span, .layer-out > span:first-child, .about-logos span, footer,
 .facts dt, table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
 .gallery figcaption, .proof-head small, .tooltip, details.data,
 thead th, .about-logos time, .capacity-ticks, .table-wrap td[data-label]::before
   { font-family: var(--font-body); margin: 0; }
-.t-subhead, .flow-arrow, .testimonial-foot cite b
+.t-subhead, .testimonial-foot cite b
   { font-size: var(--t-subhead); line-height: var(--lh-subhead); letter-spacing: var(--ls-subhead); font-weight: 500; color: var(--ink); }
 .t-lede
   { font-size: var(--t-lede); line-height: var(--lh-lede); letter-spacing: var(--ls-lede); font-weight: 400; color: var(--ink-2); max-width: var(--m-lede); }
@@ -241,7 +241,7 @@ main, .nav { position: relative; z-index: 1; }
 .icon-btn:hover { border-color: var(--accent); color: var(--accent-ink); }
 .icon-btn svg { width: 17px; height: 17px; }
 
-/* Chip: one shape for every tag on the site (.layer-chip and .flow-label are chips with a tone) */
+/* Chip: one shape for every tag on the site */
 .chip {
   display: inline-block; line-height: 1.25;
   background: color-mix(in srgb, var(--surface) 92%, var(--paper));
@@ -662,20 +662,6 @@ footer a:hover { color: var(--ink); }
    cross-fade); the pause button is the one stop, so it shouldn't itself be inert. */
 @media (prefers-reduced-motion: reduce) { .testimonial-controls .dot, .testimonial-controls .dot::before { transition: none; } }
 
-/* Flow diagrams: before / after */
-.flow-pair { display: flex; flex-direction: column; gap: clamp(36px, 5vw, 64px); width: 100%; }
-.flow-caption { margin: 0 0 var(--sp-4); }
-.flow { display: grid; grid-template-columns: 1fr 28px 1fr 28px 1fr; gap: 12px; align-items: start; }
-.flow.four { grid-template-columns: 1fr 28px 1fr 28px 1fr 28px 1fr; }
-.flow-step { text-align: center; }
-.flow-step img { border-radius: 22px; border: 0; box-shadow: 0 0 0 1px var(--hair); width: 100%; height: auto; background: #fff; }
-.flow-step.bad img { box-shadow: 0 0 0 2px var(--danger); }
-.flow-step.new img { box-shadow: 0 0 0 2px var(--accent), 0 14px 30px -18px var(--glow); }
-.flow-arrow { display: grid; place-items: center; height: 100%; min-height: 120px; color: var(--accent); }
-.flow-label { margin-top: 14px; }
-.bad .flow-label { color: var(--danger); }
-.new .flow-label { color: var(--accent-ink); }
-
 /* Shots: the exact piece of UI a decision refers to, cut from the real screen
    and set on the case study's panel ground so the three read as one set.
     The pieces are cut from the source screens in assets/BE (cs-piece-*.webp). */
@@ -867,17 +853,14 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 }
 
 @media (max-width: 640px) {
-  /* Sequences stay in order: the flow, the gallery and the three-up hero become
+  /* Sequences stay in order: the gallery and the three-up hero become
      swipe strips, one screen at a time with the next one peeking in. */
-  .flow, .flow.four, .gallery, .hero-panel.three {
+  .gallery, .hero-panel.three {
     display: flex; flex-wrap: nowrap; justify-content: flex-start; align-items: flex-start;
     overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch; scrollbar-width: none;
   }
-  .flow::-webkit-scrollbar, .gallery::-webkit-scrollbar, .hero-panel.three::-webkit-scrollbar { display: none; }
-  .flow { gap: 12px; padding-bottom: 4px; }
-  .flow-step { flex: 0 0 60%; min-width: 0; scroll-snap-align: start; scroll-snap-stop: always; }
-  .flow-arrow { flex: 0 0 auto; height: auto; min-height: 0; align-self: center; }
+  .gallery::-webkit-scrollbar, .hero-panel.three::-webkit-scrollbar { display: none; }
   .gallery { gap: 16px; }
   .gallery figure { flex: 0 0 76%; scroll-snap-align: start; scroll-snap-stop: always; }
   .panel .gallery img { max-height: 520px; }
