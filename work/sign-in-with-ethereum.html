@@ -47,11 +47,11 @@
     <a class="back" href="../work.html">← All work</a>
     <p class="eyebrow" data-rise style="--i:0">Auth0 · Identity · Web3 login</p>
     <h1 data-rise style="--i:1">Sign-in with Ethereum</h1>
-    <p class="lede" data-rise style="--i:2">Sign-in with Ethereum lets a user log in with their Ethereum wallet instead of a username and password, so their identity data stays under their control rather than a provider's.</p>
+    <p class="lede" data-rise style="--i:2">Sign-in with Ethereum lets people log in with an Ethereum wallet instead of a username and password, so their identity data stays under their control, not a provider's.</p>
     <div class="meta" data-rise style="--i:3">
       <div><span class="eyebrow">My role</span><strong>Product Design Manager. Led a cross-functional team through two rounds of user testing and delivery.</strong></div>
       <div><span class="eyebrow">Team</span><strong>Design, engineering and identity product, across Auth0's consumer and developer-facing teams.</strong></div>
-      <div><span class="eyebrow">Validation</span><strong>Two rounds of user testing, fed back into roadmap decisions.</strong></div>
+      <div><span class="eyebrow">Validation</span><strong>2 rounds of user testing, fed back into roadmap decisions.</strong></div>
       <div><span class="eyebrow">Type</span><strong>Wallet-based authentication for people new to web3.</strong></div>
     </div>
   </div>
@@ -61,7 +61,7 @@
   <div class="wrap">
     <div class="box">
       <h2>Summary</h2>
-        <p>Wallet-based login was, at the time, a pattern built for people already familiar with web3. We kept the shape of an ordinary login page instead: one button, a wallet prompt, a signed message, no seed phrases and no new vocabulary, with the profile metadata developers need arriving alongside the session. The design was validated over two rounds of user testing before shipping across Auth0's consumer and developer-facing surfaces. There are no published usage metrics for this project; the outcome below is stated qualitatively.</p>
+        <p>Wallet-based login was, at the time, a pattern built for people already familiar with web3. We kept the shape of an ordinary login page instead: one button, a wallet prompt, a signed message. No seed phrases, no new vocabulary, and the profile metadata developers need arrives with the session. The design was validated over two rounds of user testing before shipping across Auth0's consumer and developer-facing surfaces. There are no published usage metrics for this project, so the outcome below is qualitative.</p>
     </div>
   </div>
 </section>
@@ -81,11 +81,11 @@
       <div class="split">
         <div class="split-text">
           <p class="eyebrow">The problem</p>
-          <h2>Putting users in control</h2>
+          <h2>Wallet login assumed you already knew web3</h2>
           <ul class="tensions">
-          <li><strong>Autonomy</strong><span>Giving users complete control over their identity data and how it's used.</span></li>
-          <li><strong>Safety</strong><span>Protecting wallet keys with zero-risk architecture and encryption.</span></li>
-          <li><strong>Adoption</strong><span>Meeting users where they are with familiar login patterns and seamless flows.</span></li>
+          <li><strong>Autonomy</strong><span>People should hold their own identity data and decide how it's used.</span></li>
+          <li><strong>Safety</strong><span>The key never leaves the wallet: the user signs a message and the server only verifies the signature.</span></li>
+          <li><strong>Adoption</strong><span>It had to look and behave like the login people already know.</span></li>
         </ul>
         </div>
         <div class="device"><img decoding="async" width="900" height="720" src="../assets/siwe-walkthrough-poster.jpg?v=0e74c331" alt="Login with Ethereum screen in the Auth0 universal login" loading="lazy" style="width:100%;border-radius:12px"></div>
@@ -96,16 +96,16 @@
       <p class="eyebrow">My role</p>
       <h2>Direction, validation, advocacy</h2>
       <div class="cols-3">
-        <div><h3>Design direction</h3><p>Led a cross-functional team, design, engineering, and identity product, through the core tension of making wallet-based identity low-friction for users unfamiliar with web3. Coordinated across Auth0's consumer and developer-facing teams to maintain a consistent experience across the integration surface.</p></div>
-        <div><h3>Validation &amp; learning</h3><p>Led the team through two rounds of user testing, synthesizing findings across designers and feeding conclusions back into roadmap decisions. Managed the testing cadence alongside active delivery, keeping the team aligned and moving.</p></div>
-        <div><h3>User advocacy</h3><p>Directed the design team's approach to education and clarity throughout implementation. Set the principles governing how the team communicated self-custodied identity to mainstream users, and reviewed all design decisions against those principles before handoff to engineering.</p></div>
+        <div><h3>Design direction</h3><p>I led design, engineering and identity product through the core tension: wallet-based identity with no friction for people who'd never used a wallet. The consumer and developer-facing teams shipped one consistent experience.</p></div>
+        <div><h3>Validation and learning</h3><p>Two rounds of user testing ran alongside delivery. I synthesized the findings across designers and fed them back into the roadmap.</p></div>
+        <div><h3>User advocacy</h3><p>I set the principles for how we explained self-custodied identity to mainstream users, and reviewed every design decision against them before handoff.</p></div>
       </div>
     </section>
 
     <section class="cs-section" id="design" data-reveal>
       <p class="eyebrow">The design</p>
       <h2>A wallet login that reads like any other login</h2>
-      <p>The flow keeps the familiar shape of a login page. One button, a wallet prompt, and a signed message: no seed phrases, no new vocabulary, and the profile metadata developers need arrives with the session.</p>
+      <p>The flow keeps the familiar shape of a login page. One button, a wallet prompt and a signed message: no seed phrases, no new vocabulary, and the profile metadata developers need arrives with the session.</p>
       <div class="walk">
         <img decoding="async" width="900" height="720" src="../assets/siwe-walkthrough-poster.jpg?v=0e74c331" data-anim="../assets/siwe-walkthrough.webp" alt="Walkthrough of logging in with an Ethereum wallet" loading="lazy">
         <button class="btn btn-sm play" type="button" aria-pressed="false"><svg viewBox="0 0 12 14" fill="currentColor" aria-hidden="true"><path d="M11.2 6.13 1.6.24A1 1 0 0 0 .1 1.1v11.8a1 1 0 0 0 1.5.86l9.6-5.9a1 1 0 0 0 0-1.72Z"/></svg> <span>Play walkthrough</span></button>

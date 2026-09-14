@@ -34,7 +34,7 @@ Every section on the site has the same three parts, in this order.
 | Part | Job | Rules |
 |---|---|---|
 | Eyebrow | Says what kind of section this is | One to three words: The problem, My role, Results, What I'd do differently |
-| Heading | Says the point of the section | Sentence case, no full stop, under eight words. Never repeats a number shown right below it |
+| Heading | Says the point of the section | Sentence case, under eight words. Never repeats a number shown right below it. Home page headings are statements and end in a full stop; case-study section headings are fragments and don't |
 | Body | Gives the specifics | One to three sentences, then stop |
 
 Cards and triads: a one- or two-word label, then one full sentence with a subject. Not a gerund fragment ("Minimizing cognitive load at key decision points").
@@ -55,7 +55,7 @@ Cards and triads: a one- or two-word label, then one full sentence with a subjec
 - **Sentence case** for everything: headings, eyebrows, buttons, labels, tags.
 - **Numbers.** In prose, spell out one to nine and use numerals from 10 up: two designers, 13 years, 25M LINK, $7.56M. Spell out any number that opens a sentence. In meta lines, stats, charts and tables, always numerals: 2 designers · 5 months.
 - **Lists** have no serial comma: product, engineering and compliance.
-- **Punctuation** is full stops, commas and colons. No em dashes, semicolons or exclamation marks outside a quote. The one exception is the page-title separator (Verifications — John DeSouza). Arrows belong in diagrams and the metric chain, not in prose.
+- **Punctuation** is full stops, commas and colons. No em dashes, semicolons or exclamation marks outside a quote. The one exception is the page-title separator (Verifications — John DeSouza). Arrows belong in diagrams and the metric chain, not in prose. 0→1 is a term, not an arrow, and is fine anywhere.
 - **Abbreviations** are spelled out on first use on each page. Vehicle Equity and Home Secured, not VEL and HSL. General manager, not GM. Tickers (LINK) and A/B are fine.
 - **Names** as the company writes them: Best Egg, Chainlink Labs, Auth0, Sign-in with Ethereum, Staking v0.1.
 - **Quotes** keep the speaker's grammar. Attribution is a label plus a source (Product confusion · Applicant interview). Public posts get the handle and the date.
