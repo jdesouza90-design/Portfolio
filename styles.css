@@ -528,6 +528,7 @@ footer a:hover { color: var(--ink); }
 .row.full { grid-template-columns: 1fr; gap: clamp(28px, 4vw, 44px); }
 .row.full > .row-copy { align-items: center; text-align: center; margin-inline: auto; }
 .row.full .row-copy > * { margin-inline: auto; }
+.row.full .panel { height: auto; aspect-ratio: auto; } /* the visual sets the height, not --panel-h */
 .row.full .cols { margin-top: clamp(12px, 2vw, 24px); text-align: left; }
 @media (max-width: 820px) {
   .row, .row.flip { grid-template-columns: 1fr; gap: var(--sp-6); }
@@ -577,7 +578,7 @@ footer a:hover { color: var(--ink); }
 /* Gallery: several screens on one ground */
 .gallery { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
 .gallery figure { margin: 0; position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; min-width: 0; }
-.gallery img { max-height: 720px; }
+.panel .gallery img { max-height: 720px; } /* outranks .row .panel img */
 .gallery figcaption { margin-top: var(--sp-4); text-align: center; font-size: var(--t-small); color: var(--ink-2); }
 @media (max-width: 640px) { .gallery { grid-template-columns: 1fr; } }
 
