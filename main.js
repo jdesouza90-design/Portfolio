@@ -178,17 +178,6 @@ const CONFIG = {
         select((next + n) % n, true);
       });
     });
-    // the step on each card selects the next layer; focus follows onto the
-    // new card's own step, so a reader can walk the chain without leaving it
-    $$("[data-next]", root).forEach((b) => {
-      b.addEventListener("click", () => {
-        const i = tabs.findIndex((t) => t.id === b.dataset.next);
-        if (i < 0) return;
-        select(i);
-        const step = panels[i] && $(".btn", panels[i]);
-        (step || tabs[i]).focus({ preventScroll: true });
-      });
-    });
     select(current);
     window.addEventListener("resize", place, { passive: true });
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(place);

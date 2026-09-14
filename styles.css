@@ -123,7 +123,7 @@
 .t-subhead, .t-lede, .t-body, .t-small, .t-micro, .eyebrow,
 .testimonial-foot cite b,
 .layer-tab, .work-cta, .about-logos strong, .gate-form input,
-.btn, .chip, .nav-links a, .back, .tools span, .about-logos span, footer,
+.btn, .chip, .nav-links a, .back, .tools span, .layer-label, .about-logos span, footer,
 .facts dt, table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
 .gallery figcaption, .proof-head small, .tooltip, .chart-pill, details.data,
 thead th, .about-logos time, .gauge .lbl, .table-wrap td[data-label]::before
@@ -134,7 +134,7 @@ thead th, .about-logos time, .gauge .lbl, .table-wrap td[data-label]::before
   { font-size: var(--t-lede); line-height: var(--lh-lede); letter-spacing: var(--ls-lede); font-weight: 400; color: var(--ink-2); max-width: var(--m-lede); }
 .t-body, .layer-tab, .work-cta, .about-logos strong, .gate-form input
   { font-size: var(--t-body); line-height: var(--lh-body); font-weight: 400; color: var(--ink-2); max-width: var(--m-body); }
-.t-small, .btn, .chip, .nav-links a, .back, .tools span, .about-logos span, footer,
+.t-small, .btn, .chip, .nav-links a, .back, .tools span, .layer-label, .about-logos span, footer,
 .facts dt, table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
 .gallery figcaption, .proof-head small, .tooltip, .chart-pill, details.data
   { font-size: var(--t-small); line-height: var(--lh-small); font-weight: 400; color: var(--ink-2); }
@@ -155,7 +155,7 @@ strong, b, tbody th, .about-logos strong, .t-body a, .t-lede a,
 strong, b, tbody th, .about-logos strong, .chip, .tools span, .avatar, .testimonial-mark, .tooltip b, .tip-val { color: var(--ink); }
 .chart-pill { color: var(--surface); }
 footer, .walk-note, .testimonial-foot cite, .gate-form input::placeholder { color: var(--ink-3); }
-.work-cta, .t-body a, .t-lede a, .outcome-stat .t-stat, .proof-head .t-stat, thead .hl { color: var(--accent-ink); }
+.work-cta, .t-body a, .t-lede a, .outcome-stat .t-stat, .proof-head .t-stat, thead .hl, .layer-chip { color: var(--accent-ink); }
 
 /* Number flow: a headline stat that main.js rolls in digit by digit. Each
    digit is a column of 0 to 9 behind a soft mask, and the whole stat is lit
@@ -482,9 +482,9 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
    picks which of the three layers is showing. Panels are stacked in one grid
    cell so the block keeps the height of the tallest and never jumps. Each card
    is two bands: the head on white carries the layer's mark, title and text;
-   the foot on paper carries its signal as a value over a label, and the step
-   to the next layer (the last one goes to the work). The foot is pushed to
-   the bottom, so it lands at the same height on all three cards. */
+   the foot on paper carries its signal as the one accent tag on the card,
+   with a live dot. The foot is pushed to the bottom, so it lands at the same
+   height on all three cards. */
 .framework { margin-top: clamp(80px, 10vw, 148px); display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 5vw, 72px); align-items: start; }
 .framework-intro .t-body { max-width: 44ch; }
 /* Each tab carries its own slice of the track, and there is no gap between
@@ -521,11 +521,22 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .layer-head { padding: clamp(24px, 3.2vw, 40px); }
 .layer-head .point-icon { margin-bottom: var(--sp-5); }
 .layer-foot {
-  margin-top: auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
-  gap: var(--sp-4) var(--sp-5); padding: clamp(20px, 2.6vw, 32px) clamp(24px, 3.2vw, 40px);
+  margin-top: auto; display: flex; align-items: center; gap: 10px;
+  padding: clamp(20px, 2.6vw, 32px) clamp(24px, 3.2vw, 40px);
   background: var(--paper); border-top: 1px solid var(--hair);
 }
-.layer-signal .t-small { margin-top: var(--sp-2); }
+/* the tag is the site's chip in the accent tint, with the layer's signal
+   marked live: a dot that sends out a ring every two seconds while the card
+   is showing. Under reduced motion the dot just sits. */
+.layer-chip {
+  display: inline-flex; align-items: center; gap: 9px;
+  background: var(--glow); border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+}
+.layer-dot { position: relative; flex: none; width: 8px; height: 8px; border-radius: 999px; background: var(--accent); }
+.layer-dot::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: var(--accent); opacity: 0; }
+.layer.active .layer-dot::before { animation: layer-pulse 2s ease-out infinite; }   /* the ring needs the whole beat to read, not the site's snap */
+@keyframes layer-pulse { from { transform: scale(1); opacity: .6; } to { transform: scale(3); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .layer.active .layer-dot::before { animation: none; } }
 @media (max-width: 900px) { .framework { grid-template-columns: minmax(0, 1fr); } }   /* minmax(0), or the tab strip widens the column */
 
 /* About: portrait beside a single statement. The portrait stands exactly as tall
