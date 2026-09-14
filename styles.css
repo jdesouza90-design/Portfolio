@@ -289,6 +289,8 @@ thead .hl { color: var(--accent-ink); }
 .nav-links a.nav-icon { display: inline-flex; align-items: center; gap: 10px; padding-block: 2px; }
 .nav-links a.nav-icon svg { width: 17px; height: 17px; display: block; }
 .nav-links a.nav-icon span { display: none; }   /* the icon alone in the bar; icon + word in the phone menu */
+.nav-links a.nav-download { display: inline-flex; align-items: center; gap: 6px; padding-block: 2px; }   /* the word plus a download arrow, so it reads as a file, not a page */
+.nav-links a.nav-download svg { width: 15px; height: 15px; display: block; }
 .nav-links a:hover, .nav-links a[aria-current="page"] { color: var(--ink); }
 .nav-actions { display: flex; gap: 10px; align-items: center; }
 .nav-toggle { display: none; }
@@ -304,6 +306,7 @@ thead .hl { color: var(--accent-ink); }
   .nav-links a { display: block; padding: 12px 0; font-size: var(--t-body); }
   .nav-links a.nav-icon { display: flex; padding: 12px 0; }
   .nav-links a.nav-icon span { display: inline; }
+  .nav-links a.nav-download { display: flex; padding: 12px 0; }
   .nav.open .nav-links { display: block; animation: menu-in var(--dur-ui) var(--ease) both; }
   @keyframes menu-in { from { opacity: 0; transform: translateY(-6px); } }
   .nav-toggle { display: grid; margin-left: auto; }
