@@ -361,15 +361,11 @@ thead .hl { color: var(--accent-ink) !important; }
   .about-logos { grid-template-columns: 1fr; grid-template-rows: none; }
   .about-logos li { grid-row: auto; grid-template-rows: none; }
 }
-.about-more {
-  margin-top: clamp(52px, 7vw, 92px); padding-top: 34px; border-top: 1px solid var(--hair);
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(24px, 3vw, 44px);
-}
-.about-more p { margin: 0; color: var(--ink-2); font-size: .97rem; }
+.about-more { margin-top: clamp(52px, 7vw, 92px); padding-top: clamp(34px, 4vw, 48px); border-top: 1px solid var(--hair); }
+.about-more > .eyebrow { margin-bottom: clamp(24px, 3vw, 32px); }
 @media (max-width: 900px) {
   .about-grid { grid-template-columns: 1fr; gap: 32px; }
   .portrait { max-width: 420px; }
-  .about-more { grid-template-columns: 1fr; gap: 18px; }
 }
 
 /* Contact: the one dark block, closing the page */
