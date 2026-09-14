@@ -309,6 +309,9 @@ thead .hl { color: var(--accent-ink); }
   .nav-links a.nav-download { display: flex; padding: 12px 0; }
   .nav.open .nav-links { display: block; animation: menu-in var(--dur-ui) var(--ease) both; }
   @keyframes menu-in { from { opacity: 0; transform: translateY(-6px); } }
+  /* iOS Safari lets the page rubber-band behind the fixed menu, flashing a gap
+     of page content at its edge; freezing body scroll while open stops it. */
+  body.nav-locked { position: fixed; left: 0; right: 0; overflow: hidden; }
   .nav-toggle { display: grid; margin-left: auto; }
   .nav-actions .btn { display: none; }
   .nav-contact { display: block; padding-top: 12px; }
