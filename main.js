@@ -38,6 +38,30 @@ const CONFIG = {
      Content is visible by default. JS opts into the animation by marking the
      document, so a failed, blocked or throttled script can never hide a section.
      A failsafe reveals anything still hidden after 2.5s. */
+  /* ---- Tag every major block on the page so sections animate in ----
+     Anything already marked keeps its own order; otherwise each direct child
+     of a section gets the next index, which drives the stagger in CSS. */
+  $$("main > section, main > div.wrap").forEach((section) => {
+    const host = section.querySelector(":scope > .wrap") || section;
+    const kids = Array.from(host.children).filter((k) => k.nodeType === 1);
+    const list = kids.length ? kids : [section];
+    list.forEach((el) => {
+      if (el.closest("[data-reveal]") && el.closest("[data-reveal]") !== el) return;
+      if (!el.hasAttribute("data-reveal")) el.setAttribute("data-reveal", "");
+    });
+  });
+  // stagger siblings within each parent
+  $$("[data-reveal]").forEach((el) => {
+    const declared = el.getAttribute("data-reveal");
+    const n = declared && /^\d+$/.test(declared)
+      ? parseInt(declared, 10) - 1
+      : Array.from(el.parentElement ? el.parentElement.children : [])
+          .filter((c) => c.hasAttribute && c.hasAttribute("data-reveal"))
+          .indexOf(el);
+    const i = Number.isFinite(n) ? Math.max(0, Math.min(n, 4)) : 0;
+    el.style.setProperty("--reveal-i", String(i));
+  });
+
   const revealEls = $$("[data-reveal]");
   if (!reduced && "IntersectionObserver" in window && revealEls.length) {
     document.documentElement.classList.add("anim");
