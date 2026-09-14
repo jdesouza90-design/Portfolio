@@ -820,10 +820,9 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 .case-cross-sell {
   --panel-base: #EFE8DB;
   --panel: linear-gradient(155deg, #F4EFE5 0%, #E4DAC6 100%);
-  /* two diagonals that cross: a funnel that forks instead of ending */
-  --panel-art:
-    repeating-linear-gradient(114deg, rgba(20,16,12,.05) 0 1px, transparent 1px 36px),
-    repeating-linear-gradient(66deg, rgba(20,16,12,.035) 0 1px, transparent 1px 36px);
+  /* a grid of registration marks: every decline checked against a second product */
+  --panel-art: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44'%3E%3Cpath d='M19 22.5h7M22.5 19v7' stroke='rgba(20,16,12,.11)'/%3E%3C/svg%3E");
+  --panel-size: 44px 44px;
 }
 .case-verifications {
   --panel-base: #E9E7D3;
@@ -853,10 +852,9 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 .case-siwe {
   --panel-base: #E7E3DC;
   --panel: linear-gradient(155deg, #F0EDE9 0%, #DDD8D0 100%);
-  /* interlocking diagonals: a key exchanged between two parties */
-  --panel-art:
-    repeating-linear-gradient(60deg, rgba(20,16,12,.045) 0 1px, transparent 1px 32px),
-    repeating-linear-gradient(-60deg, rgba(20,16,12,.045) 0 1px, transparent 1px 32px);
+  /* dashed rulings: sign on the dotted line */
+  --panel-art: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='32'%3E%3Cpath d='M0 .5h14' stroke='rgba(20,16,12,.09)'/%3E%3C/svg%3E");
+  --panel-size: 24px 32px;
 }
 
 /* --------------------------------------------------------------------------
