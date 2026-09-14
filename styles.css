@@ -280,7 +280,7 @@ main, .nav { position: relative; z-index: 1; }
 .tools span { font-size: .95rem; font-weight: 500; color: var(--ink); }
 
 /* Leadership: single AI panel */
-.lead-solo + .lead-solo, .framework + .lead-solo { margin-top: clamp(44px, 6vw, 80px); }
+.lead-solo + .lead-solo, .framework + .lead-solo { margin-top: clamp(80px, 10vw, 148px); }
 .lead-solo { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(28px, 5vw, 72px); padding: clamp(32px, 5vw, 56px); align-items: start; }
 .lead-solo-intro h3 { font-family: var(--font-display); font-weight: 400; font-size: clamp(1.5rem, 2.4vw, 1.9rem); line-height: 1.12; letter-spacing: -.012em; margin: 12px 0 12px; }
 .lead-solo-intro p { color: var(--ink-2); margin: 0; }
@@ -688,7 +688,7 @@ details.data table { min-width: 0; margin-top: 10px; }
 @media (max-width: 900px) { .metrics { grid-template-columns: 1fr; gap: 20px; } }
 
 /* Three layers of design tracking, drawn as a connected node chain */
-.framework { margin-top: clamp(44px, 6vw, 80px); display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 5vw, 72px); align-items: start; }
+.framework { margin-top: clamp(80px, 10vw, 148px); display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 5vw, 72px); align-items: start; }
 .framework-intro h3.h2 {
   font-family: var(--font-display); font-weight: 400;
   font-size: clamp(1.875rem, 4vw, 3rem); line-height: 1.05; letter-spacing: -.01em;
