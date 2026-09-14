@@ -2,7 +2,7 @@
    1. CONFIG: the only thing you need to edit. Empty values hide their buttons. */
 const CONFIG = {
   linkedin: "https://www.linkedin.com/in/johndesouza-/",
-  email: "",            // e.g. "you@domain.com"  → shows "Email me" buttons
+  email: "jdesouza90@gmail.com",
   resume: "",           // e.g. "assets/john-desouza-resume.pdf" → shows "Resume" links
 };
 
@@ -116,6 +116,7 @@ const CONFIG = {
     if (!img || !btn) return;
     btn.addEventListener("click", () => {
       img.src = img.dataset.anim;
+      w.classList.add("playing");          // fades the scrim with the control
       btn.classList.add("playing");
       btn.setAttribute("aria-pressed", "true");
     });

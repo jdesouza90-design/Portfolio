@@ -643,8 +643,26 @@ footer a:hover { color: var(--ink); }
   max-width: 932px; margin-inline: auto;      /* never upscale past native resolution */
 }
 .walk img { width: 100%; height: auto; display: block; image-rendering: auto; }
-.walk .play { position: absolute; left: 16px; bottom: 16px; }
-.walk .play.playing { display: none; }
+/* A scrim marks the poster as a video still, so the control reads as "play"
+   rather than a button dropped on top of the screenshot's own content. */
+.walk::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  background: linear-gradient(180deg, rgba(11, 15, 26, .12), rgba(11, 15, 26, .34));
+  transition: opacity .35s var(--ease);
+}
+.walk .play {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  z-index: 2; display: inline-flex; align-items: center; gap: 9px;
+  padding: 12px 20px 12px 17px; border: 0; border-radius: 999px;
+  background: rgba(255, 255, 255, .97); color: var(--ink);
+  box-shadow: 0 10px 34px rgba(11, 15, 26, .34);
+  transition: background .2s var(--ease), box-shadow .2s var(--ease), opacity .3s var(--ease);
+}
+.walk .play:hover { background: #fff; box-shadow: 0 14px 40px rgba(11, 15, 26, .42); }
+.walk .play svg { width: 13px; height: 13px; flex: none; }
+.walk.playing::after, .walk.playing .play { opacity: 0; }
+.walk.playing .play { pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { .walk::after, .walk .play { transition: none; } }
 .walk-note { margin: 12px 0 0; font-size: .875rem; color: var(--ink-3); }
 
 /* Chart */
