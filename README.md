@@ -102,8 +102,10 @@ All five case studies are the same document, in this order:
 4. **How we got there**, always in this order: the problem (copy with a
    tensions list beside an illustration or the old screen), the design (a
    `.row.full` with one framed panel or walkthrough under centred copy), any
-   supporting rows (`.row.flip`), then the quotes last (`.row.full.start`
-   with an intro line saying where they came from). Each row is one eyebrow,
+   supporting rows (`.row.flip`), then the quotes last (a `.row.full` with an
+   intro line saying where they came from). A full-width row is centred and
+   its headline takes the Title role with a Lede beneath, the same as a
+   section intro; a side-by-side row keeps the Heading role. Each row is one eyebrow,
    one heading, one short paragraph.
 5. **What I'd do differently**: one narrow note with run-in labels, where a
    retro exists.
