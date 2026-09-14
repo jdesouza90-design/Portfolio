@@ -101,7 +101,7 @@ All five case studies are the same document, in this order:
 5. **What I'd do differently**: same three columns, where a retro exists.
 6. **Next**: the closing band with the next case study and contact.
 
-Icons are inline SVG, 24-unit, 1.5 stroke, ink with one cobalt detail
+Icons are inline SVG, 24-unit, 1.5 stroke, ink with one green accent detail
 (`class="ac"` for an accent stroke, `ac-fill` for a tinted shape).
 
 ## Accessibility
