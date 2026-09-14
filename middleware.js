@@ -47,19 +47,19 @@ function page({ path, error, unconfigured }) {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600&family=DM+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="/styles.css?v=6">
 </head>
 <body>
 <main class="gate-wrap"><div class="gate">
   <a class="brand" href="/"><span>John DeSouza</span></a>
   <p class="eyebrow">Case studies</p>
   <h1>This case study is password protected.</h1>
-  <p class="gate-lede">Enter the password John shared with you. Don't have it yet? <a href="https://www.linkedin.com/in/johndesouza-/" target="_blank" rel="noopener">Message him on LinkedIn</a> and he'll send it over.</p>
+  <p class="gate-lede">Enter the password I shared with you. Don't have it yet? <a href="https://www.linkedin.com/in/johndesouza-/" target="_blank" rel="noopener">Message me on LinkedIn</a> and I'll send it over.</p>
   <form method="post" action="${esc(path)}" class="gate-form">
     <label class="sr-only" for="password">Password</label>
-    <input id="password" name="password" type="password" autocomplete="current-password" autofocus required placeholder="Password"${error ? ' aria-invalid="true"' : ''}${describe}>
+    <input id="password" name="password" type="password" autocomplete="current-password" autofocus required placeholder="Password"${error ? ' aria-invalid="true"' : ''}${describe}>${msg}
     <button class="btn btn-primary" type="submit">Open case study</button>
-  </form>${msg}
+  </form>
   <a class="back" href="/work.html">← Back to all work</a>
 </div></main>
 </body>
