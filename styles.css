@@ -511,7 +511,14 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
   --ink-2: color-mix(in srgb, var(--paper) 70%, transparent);
   --ink-3: color-mix(in srgb, var(--paper) 56%, transparent);
   --hair-2: color-mix(in srgb, var(--paper) 36%, transparent);
-  position: relative; overflow: hidden; background: var(--ink); color: var(--paper);
+  --contact-origin: 100% 50%;
+  position: relative; overflow: hidden; color: var(--paper);
+  /* the panel ground in its dark register: a lifted corner fading to ink,
+     and rings in paper rippling out from behind the buttons */
+  background-color: var(--ink);
+  background-image:
+    repeating-radial-gradient(circle at var(--contact-origin), rgba(246,244,240,.07) 0 1px, transparent 1px 42px),
+    linear-gradient(155deg, #241D17 0%, #14100C 58%, #100D0A 100%);
   border-radius: var(--radius); padding: clamp(44px, 7vw, 88px);
   display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 36px; align-items: center;
 }
@@ -524,7 +531,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .contact .btn-ghost { border-color: var(--hair-2); color: var(--paper); background: transparent; }
 .contact .btn-ghost:hover { border-color: var(--paper); color: var(--paper); }
 .contact :focus-visible { outline-color: var(--paper); }   /* the accent ring is only 3.2:1 on ink */
-@media (max-width: 720px) { .contact { grid-template-columns: 1fr; } }
+@media (max-width: 720px) { .contact { --contact-origin: 100% 100%; grid-template-columns: 1fr; } }   /* stacked, the buttons sit at the bottom */
 footer { padding: 30px 0 44px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 footer a { color: var(--ink-2); text-decoration: none; }
 footer a:hover { color: var(--ink); }
