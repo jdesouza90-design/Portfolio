@@ -52,7 +52,7 @@ before any file is served. The home page and the work index stay public.
    const CONFIG = {
      linkedin: "https://www.linkedin.com/in/johndesouza-/",
      email: "",     // add your email to show the "Email me" buttons
-     resume: "",    // e.g. "assets/john-desouza-resume.pdf" to show "Resume" links
+     resume: "/assets/john-desouza-resume.pdf",  // empty hides the "Resume" links
    };
    ```
    Empty values hide their buttons, so nothing looks broken while they're blank.

@@ -3,7 +3,7 @@
 const CONFIG = {
   linkedin: "https://www.linkedin.com/in/johndesouza-/",
   email: "jdesouza90@gmail.com",
-  resume: "",           // e.g. "assets/john-desouza-resume.pdf" → shows "Resume" links
+  resume: "/assets/john-desouza-resume.pdf",  // empty hides the "Resume" links
 };
 
 (function () {
@@ -17,6 +17,7 @@ const CONFIG = {
     const val = CONFIG[key];
     if (!val) { (el.closest("li") || el).hidden = true; return; }
     el.href = key === "email" ? `mailto:${val}` : val;
+    if (key === "resume") { el.download = "John_DeSouza_Resume.pdf"; return; }
     if (key !== "email") { el.target = "_blank"; el.rel = "noopener"; }
   });
 
