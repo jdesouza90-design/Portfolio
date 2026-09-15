@@ -228,7 +228,9 @@ The rules that shape the code:
   `assets/ver-documents.webp`, cut from the 2x sources in `assets/BE/` with
   sharp and their corners keyed); `.cutout.bleed` blows a taller one up until
   it runs off the bottom; `.emerge` sets a whole screen large, coming out of
-  the ground's bottom-right corner. Desktop screens keep `.wide`.
+  a bottom corner of the ground (`--x`/`--y`/`--w` per row set beside the
+  rule; `.right` shows the screen's top-right corner instead). Sign-in with
+  Ethereum keeps the plain `.wide` ground.
 - The three walkthrough recordings are 2.8–7.8 MB and only load when a visitor
   presses Play. They come from the deck's GIFs, so their resolution is capped;
   replace them if you still have the original screen recordings.
