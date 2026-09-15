@@ -206,8 +206,9 @@ Fills every `src`, `alt`, `width` and `height`.
    the index thumbnail, at reading size, not the whole screen shrunk to fit. Propose the
    composition from the table in `wiring.md` ("The thumbnail"): a card keyed out of its
    screen (`cutout`, `cutout bleed`) or a whole screen coming out of a corner (`emerge`,
-   `wide emerge`). Every ground fades its content at the edges, so plan to run the screen
-   off the ground and keep the part that has to read clear of the fade band. `AskUserQuestion`
+   `wide emerge`). A screen that runs off the ground fades into it at the edges, so plan
+   to run it off on purpose and keep the part that has to read clear of the fade band; a
+   card that sits whole on the ground stays crisp. `AskUserQuestion`
    only if two compositions are genuinely open; otherwise say which one and why.
 
 ---

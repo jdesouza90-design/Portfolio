@@ -471,13 +471,14 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .case-cross-sell .case-media.emerge { --x: 12%; --y: 10%; --w: 92%; }
 .case-no-code .case-media.emerge { --x: 14%; --y: 12%; --w: 150%; }
 .case-staking .case-media.emerge { --x: 14%; --y: 12%; --w: 140%; }
-/* Fade: over the last stretch before each edge the ground reasserts itself, so a
-   screen that runs off the ground dissolves into it instead of stopping at a hard
-   line. The overlay is the ground itself (base, art and gradient at the same size
-   and origin as the one beneath), masked to a band along each edge: where no
-   image sits it is pixel-identical to the ground, so only the image fades. */
+/* Fade: where a screen runs off the ground (.emerge, .bleed) the ground reasserts
+   itself over the last stretch before each edge, so the screen dissolves into it
+   instead of stopping at a hard line. The overlay is the ground itself (base, art
+   and gradient at the same size and origin as the one beneath), masked to a band
+   along each edge: where no image sits it is pixel-identical to the ground, so
+   only the image fades. A contained image (.cutout, .wide) keeps its crisp edges. */
 .case-media { --fade: clamp(40px, 6vw, 80px); }
-.case-media::after {
+.case-media.emerge::after, .case-media.bleed::after {
   content: ""; position: absolute; inset: 0; pointer-events: none;
   background-color: var(--panel-base);
   background-image: var(--panel-art), var(--panel);

@@ -118,12 +118,15 @@ place the screen's visible corner, `--w` its zoom. Copy the nearest live row's v
 adjust by eye. Cutouts come from the 2x sources (`assets/BE/`), cut sharp with their corners
 keyed, then converted with `webp.sh`.
 
-**The edge fade.** Every `.case-media` fades what sits on it over the last stretch before
-each edge (`--fade`, 40 px on a phone up to 80 px on desktop). The `::after` overlay paints
-the ground itself (base, art and gradient from the same `--panel-*` tokens, so a new ground
-is picked up with nothing to add) masked to a band along the edges: where nothing sits on the
-ground it is invisible, and where a screen runs off the ground it dissolves into it instead
-of stopping at the clip line. Compose for it:
+**The edge fade.** Where a screen runs off the ground (`emerge`, `bleed`) the ground fades
+it out over the last stretch before each edge (`--fade`, 40 px on a phone up to 80 px on
+desktop). The `::after` overlay paints the ground itself (base, art and gradient from the
+same `--panel-*` tokens, so a new ground is picked up with nothing to add) masked to a band
+along the edges: where nothing sits on the ground it is invisible, and where the screen runs
+off the ground it dissolves into it instead of stopping at the clip line. Contained images
+(`cutout`, `wide`) get no fade; John took it off Refinance offers and Sign-in with Ethereum
+because a card or illustration that sits whole on the ground should keep its crisp edges.
+Compose for it:
 
 - Run the screen off the ground on purpose. `emerge` and `bleed` exist for it; the hard
   clip is never seen, so a phone screen can carry on past the bottom and a desktop screen
@@ -132,8 +135,8 @@ of stopping at the clip line. Compose for it:
   about) clear of the band on every side: more than `--fade` from each edge. Set `--x`/`--y`
   so the screen's visible corner sits just inside the band, not deep in it, or its top edge
   goes soft too.
-- A contained image (`cutout`, `wide`) only softens at its outer edges, which is the intended
-  look; nothing to do.
+- A contained image (`cutout`, `wide`) is not faded, so it needs the ground's padding to
+  breathe: the whole piece inside the inset, nothing touching an edge.
 - Check it at 1280 and 390 wide (the phone layer changes the ground's aspect ratio) and
   look at the faded edge specifically, not just the row.
 
