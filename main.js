@@ -354,6 +354,21 @@ const CONFIG = {
         select((next + n) % n, true);
       });
     });
+    // Figure A answers the pointer as well: a click inside a ring picks its
+    // tab (the innermost ring wins where they overlap) and the ring under the
+    // pointer darkens. The hit test is the circle, not its box, so the corner
+    // of an inner ring's box never steals the band around it.
+    const nest = rings.length ? rings[0].parentElement : null;
+    if (nest) {
+      const ringAt = (e) => rings.filter((r) => {
+        const b = r.getBoundingClientRect();
+        return Math.hypot(e.clientX - (b.left + b.width / 2), e.clientY - (b.top + b.height / 2)) <= b.width / 2;
+      }).pop();   // rings are in DOM order outer to inner; the last hit is the smallest
+      const hover = (r) => { rings.forEach((x) => x.classList.toggle("hover", x === r)); nest.style.cursor = r ? "pointer" : ""; };
+      nest.addEventListener("pointermove", (e) => hover(ringAt(e)));
+      nest.addEventListener("pointerleave", () => hover(null));
+      nest.addEventListener("click", (e) => { const r = ringAt(e); if (r) select(Number(r.dataset.ring)); });
+    }
     select(current);
     window.addEventListener("resize", place, { passive: true });
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(place);
