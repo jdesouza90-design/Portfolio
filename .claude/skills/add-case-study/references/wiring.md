@@ -47,7 +47,7 @@ Sizes the site uses:
 |---|---|---|
 | Phone screen | 450 | `cs-*.webp` are 450×1200; Verifications screens vary in width because they were cropped |
 | Wide product shot | 1600 or 1800 | `staking-overview.webp` 1600×814, `nocode-customization.webp` 1800×839 |
-| Illustration | as supplied, up to 1600 | `staking-illustration.webp` |
+| UI card cutout | the card at 1× page width, transparent rounded corners | `refi-card.webp` 666×252, `staking-stake-card.webp` 501×500 |
 | Walkthrough poster | as the recording | `.jpg`, first frame of the recording |
 
 Name files by what they show, not by their place on the page (`ver-upload-list`, not
