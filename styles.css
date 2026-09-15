@@ -592,7 +592,9 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
   .exp { --exp-gap: var(--sp-6); --sx: 1; --sy: 0; grid-template-columns: minmax(0, 1fr); }
   .exp-item { padding: 0 0 0 28px; }
   .exp-item::before, .exp-item::after { top: 15px; left: 4px; width: 1px; height: calc(100% + var(--exp-gap)); }
-  .exp-item:last-child::before { height: calc(100% - 15px); }
+  /* the last item's track is 1px here too: the desktop rule above it is the same
+     specificity, so without the width the hairline fills the item as a block */
+  .exp-item:last-child::before { width: 1px; height: calc(100% - 15px); }
   .exp-mark { top: 10px; }
   .exp-dates { padding-top: var(--sp-4); }
 }
