@@ -134,8 +134,9 @@ gets its `cs-prev-link` pointed back at the new page. Inserting first means the 
 sits between `sign-in-with-ethereum` and `cross-sell`: its prev is `sign-in-with-ethereum`,
 its next is `cross-sell`, and those two pages' next and prev links move to the new page.
 The next link's text is the full project name with `&amp;` escaped. Keep the ring in the
-same order as `work.html`; `check.py` verifies the next links form a single ring that
-covers every page, but it does not check the prev links, so walk them by hand.
+same order as `work.html`; `check.py` verifies both directions: the next links form a
+single ring that covers every page, and every page's prev link points back at the page
+whose next link points to it.
 
 ---
 
