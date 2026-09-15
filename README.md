@@ -356,8 +356,11 @@ The rules that shape the code:
   band for its label; the panel is a size container, so the figure fits
   whichever of the panel's width and height is tighter while the copy sets
   the height. `initTabs` lights the ring (`[data-ring]`) for the selected
-  tab. Under 1100px the card is one column with the figure as a cover, and on
-  a phone the ring names step down to the Small role.
+  tab. As the card arrives the figure draws itself from the centre (the inner
+  disc, then each ring growing out of it, labels fading in as they settle),
+  timed off the reveal like the experience track. Under 1100px the card is
+  one column with the figure as a cover, and on a phone the ring names step
+  down to the Small role.
 - The abstract beside "AI in the process" on the homepage is drawn live by
   `main.js` on a canvas: the same strands in three dimensions, turning slowly,
   with a pause button in the corner. `assets/ai-process.svg` is the still it

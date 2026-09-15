@@ -564,9 +564,9 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .fig-panel { --fig-pad: clamp(20px, 2.6vw, 32px); container-type: size; display: grid; place-items: center; padding: var(--fig-pad) var(--fig-pad) calc(var(--fig-pad) + 60px); border-radius: var(--radius-sm); }
 .fig-nest { position: relative; width: min(100%, 460px); width: min(100cqw, 100cqh, 460px); aspect-ratio: 1; }
 .nest { position: absolute; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--ink) 34%, transparent); transition: border-color var(--dur-ui), box-shadow var(--dur-ui); }
-.nest[data-ring="2"] { inset: 0; }
-.nest[data-ring="1"] { left: 13%; top: 26%; width: 74%; height: 74%; }
-.nest[data-ring="0"] { left: 30%; top: 60%; width: 40%; height: 40%; }
+.nest[data-ring="2"] { inset: 0; transform-origin: 50% 80%; --from: .4; }
+.nest[data-ring="1"] { left: 13%; top: 26%; width: 74%; height: 74%; transform-origin: 50% 73%; --from: .54; }
+.nest[data-ring="0"] { left: 30%; top: 60%; width: 40%; height: 40%; transform-origin: 50% 50%; --from: .5; }
 /* each label sits in the lower half of its ring's band, where the chord is
    wide, with a clear 6% of the figure between it and the next ring below;
    the innermost is centred in its disc */
@@ -579,6 +579,20 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .nest.on .eyebrow { color: var(--accent-ink); }
 .nest.on .t-subhead { color: var(--ink); }
 .fig-cap { position: absolute; left: var(--fig-pad); bottom: var(--fig-pad); display: flex; flex-direction: column; gap: 2px; }
+/* As the card arrives, Figure A draws itself from the centre: the inner disc
+   lands first, then each ring grows out of it (its transform origin is the
+   inner disc's centre and its first size, --from, the disc's own), and each
+   label fades in as its ring settles. Timed off the card's reveal, like the
+   experience track; under reduced motion or without JS the figure is still. */
+.anim .lead-fig .nest, .anim .lead-fig .nlbl { opacity: 0; }
+.anim .lead-fig.in .nest { animation: nest-grow .6s var(--ease-soft) var(--dur-reveal) both; }
+.anim .lead-fig.in .nest[data-ring="1"] { animation-delay: calc(var(--dur-reveal) + .22s); }
+.anim .lead-fig.in .nest[data-ring="2"] { animation-delay: calc(var(--dur-reveal) + .44s); }
+.anim .lead-fig.in .nlbl { animation: nest-label .4s var(--ease) calc(var(--dur-reveal) + .3s) both; }
+.anim .lead-fig.in .nest[data-ring="1"] .nlbl { animation-delay: calc(var(--dur-reveal) + .52s); }
+.anim .lead-fig.in .nest[data-ring="2"] .nlbl { animation-delay: calc(var(--dur-reveal) + .74s); }
+@keyframes nest-grow { from { opacity: 0; transform: scale(var(--from, .5)); } 30% { opacity: 1; } to { opacity: 1; transform: none; } }
+@keyframes nest-label { from { opacity: 0; } to { opacity: 1; } }
 /* Each tab carries its own slice of the track, and there is no gap between
    them, so the track reads as one line and still works if the strip wraps. */
 .layer-tabs { position: relative; display: flex; flex-wrap: wrap; }
