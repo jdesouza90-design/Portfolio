@@ -653,15 +653,16 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 /* name and title are one lockup, closer than a subhead and its text */
 .about-who { margin-top: clamp(28px, 3vw, 40px); }
 .about-who .t-body { margin-top: var(--sp-1); }
-/* Experience: three roles on one track, oldest first. Each item draws the
+/* Experience: four roles on one track, oldest first, under one eyebrow. Each item draws the
    run of track from its own marker to the next (the last runs to the edge),
    and the roles already held draw theirs again in ink on top, so the ink
    ends at the current role. Once the list has faded in, the ink sweeps
    along one segment after another and each marker lands as it arrives.
    Without JS or under reduced motion the track is simply drawn. */
 .exp { --exp-gap: clamp(24px, 4vw, 56px); --exp-seg: .7s; --exp-wait: var(--dur-reveal); --sx: 0; --sy: 1;
-  list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--exp-gap);
-  padding: 0; margin: clamp(44px, 6vw, 72px) 0 0; }
+  list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--exp-gap);
+  padding: 0; margin: var(--sp-5) 0 0; }
+.exp-head { margin-top: clamp(44px, 6vw, 72px); }
 .exp-item { position: relative; min-width: 0; display: flex; flex-direction: column; padding-top: 32px; }
 .exp-item::before, .exp-item::after { content: ""; position: absolute; top: 4px; left: 0; height: 1px; width: calc(100% + var(--exp-gap)); }
 .exp-item::before { background: var(--hair); }
@@ -674,19 +675,24 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .anim .exp .exp-mark { transform: scale(0); }
 .anim .exp.in .exp-item::after { animation: exp-sweep var(--exp-seg) var(--ease-in-out) var(--exp-wait) both; }
 .anim .exp.in .exp-item:nth-child(2)::after { animation-delay: calc(var(--exp-wait) + var(--exp-seg)); }
+.anim .exp.in .exp-item:nth-child(3)::after { animation-delay: calc(var(--exp-wait) + 2 * var(--exp-seg)); }
 .anim .exp.in .exp-mark { animation: exp-land var(--dur-ui) var(--ease) var(--exp-wait) both; }
 .anim .exp.in .exp-item:nth-child(2) .exp-mark { animation-delay: calc(var(--exp-wait) + var(--exp-seg)); }
 .anim .exp.in .exp-item:nth-child(3) .exp-mark { animation-delay: calc(var(--exp-wait) + 2 * var(--exp-seg)); }
+.anim .exp.in .exp-item:nth-child(4) .exp-mark { animation-delay: calc(var(--exp-wait) + 3 * var(--exp-seg)); }
 @keyframes exp-sweep { from { transform: scale(var(--sx), var(--sy)); } to { transform: none; } }
 @keyframes exp-land { from { transform: scale(0); } to { transform: none; } }
 /* the label is the company's own lockup, standing on the ground; the row is
-   the tallest lockup's height so the titles below line up across all three */
+   the tallest lockup's height so the titles below line up across all four */
 .exp-label { display: flex; align-items: flex-end; height: 29px; margin: 0 0 var(--sp-5); }
-.exp-label img { width: auto; }
-/* official vector lockups, sized so the wordmark text matches across all three */
+.exp-label img { width: auto; max-width: 100%; object-fit: contain; object-position: left bottom; }   /* a narrow column shrinks a lockup, never squeezes it */
+/* official vector lockups, sized so the wordmark text matches across the row;
+   the Charm lockup is the widest, so it gives way to its column before the
+   others do rather than run under the next one */
 .exp-label img[alt="Best Egg"] { height: 23px; }
 .exp-label img[alt="Chainlink Labs"] { height: 29px; }
 .exp-label img[alt="Auth0"] { height: 29px; }
+.exp-label img[alt="Charm Solutions"] { width: min(226px, 100%); height: auto; }
 .exp-item .t-body { margin-top: var(--sp-2); }
 .exp-dates { margin-top: auto; padding-top: var(--sp-5); }
 .exp-dates time { white-space: nowrap; }
@@ -1216,7 +1222,7 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
   /* About */
   .about-grid { gap: 24px; }
   .portrait { max-width: 150px; }
-  .exp { margin-top: 40px; }
+  .exp-head { margin-top: 40px; }
   .kudos { margin-top: 40px; }
   .kudo-mark { height: 19px; }
 
