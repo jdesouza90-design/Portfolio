@@ -544,14 +544,55 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 }
 @media (max-width: 760px) { .lead-points { grid-template-columns: 1fr; } .lead-points .point-icon { margin: 0 auto 20px 0; } }
 
-/* Three layers of design tracking: intro on the left; on the right a tab strip
-   picks which of the three layers is showing. Panels are stacked in one grid
-   cell so the block keeps the height of the tallest and never jumps. Each
-   card closes with its signal as the last line of the same paragraph flow
-   ("It shows up as a design decision"), the value itself lit like marker
-   ink instead of set apart in its own band or tagged with a pill. */
-.framework { margin-top: clamp(80px, 10vw, 148px); display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 5vw, 72px); align-items: start; }
-.framework-intro .t-body { max-width: 44ch; }
+/* Three layers of design tracking: one card like the AI card, mirrored. Figure A
+   on the left, three nested rings on the panel ground; on the right the copy,
+   then a tab strip that picks which layer is showing and lights its ring. The
+   rings share a bottom point rather than a centre so each has a tall band at
+   the top for its label. Panels are stacked in one grid cell so the block
+   keeps the height of the tallest and never jumps. Each layer closes with its
+   signal as the last line of the same paragraph flow ("It shows up as a design
+   decision"), the value itself lit like marker ink instead of set apart in its
+   own band or tagged with a pill. */
+.lead-fig { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: stretch; }
+.lead-fig .layer-tabs { margin-top: var(--sp-6); }
+.lead-fig .layer-stage { margin-top: 0; }
+.lead-fig .layer { background: none; border: 0; border-radius: 0; box-shadow: none; }
+.lead-fig .layer-head { padding: clamp(24px, 3vw, 32px) 0 0; }
+/* The panel is a size container, so the figure sizes to whichever of the
+   panel's width and height is tighter, and the copy column sets the height.
+   The caption keeps a band at the bottom (the extra padding). */
+.fig-panel { --fig-pad: clamp(20px, 2.6vw, 32px); container-type: size; display: grid; place-items: center; padding: var(--fig-pad) var(--fig-pad) calc(var(--fig-pad) + 60px); border-radius: var(--radius-sm); }
+.fig-nest { position: relative; width: min(100%, 460px); width: min(100cqw, 100cqh, 460px); aspect-ratio: 1; }
+.nest { position: absolute; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--ink) 34%, transparent); transition: border-color var(--dur-ui), box-shadow var(--dur-ui); }
+.nest[data-ring="2"] { inset: 0; transform-origin: 50% 80%; --from: .4; }
+.nest[data-ring="1"] { left: 13%; top: 26%; width: 74%; height: 74%; transform-origin: 50% 73%; --from: .54; }
+.nest[data-ring="0"] { left: 30%; top: 60%; width: 40%; height: 40%; transform-origin: 50% 50%; --from: .5; }
+/* each label sits in the lower half of its ring's band, where the chord is
+   wide, with a clear 6% of the figure between it and the next ring below;
+   the innermost is centred in its disc */
+.nlbl { position: absolute; left: 50%; transform: translate(-50%, -100%); text-align: center; white-space: nowrap; }
+.nest[data-ring="2"] .nlbl { top: 20%; }
+.nest[data-ring="1"] .nlbl { top: 37.8%; }
+.nest[data-ring="0"] .nlbl { top: 50%; transform: translate(-50%, -50%); white-space: normal; width: 8ch; }
+.nest .t-subhead { color: var(--ink-2); transition: color var(--dur-ui); }
+.nest.on { border-color: var(--accent); box-shadow: 0 0 0 8px var(--glow); }
+.nest.on .eyebrow { color: var(--accent-ink); }
+.nest.on .t-subhead { color: var(--ink); }
+.fig-cap { position: absolute; left: var(--fig-pad); bottom: var(--fig-pad); display: flex; flex-direction: column; gap: 2px; }
+/* As the card arrives, Figure A draws itself from the centre: the inner disc
+   lands first, then each ring grows out of it (its transform origin is the
+   inner disc's centre and its first size, --from, the disc's own), and each
+   label fades in as its ring settles. Timed off the card's reveal, like the
+   experience track; under reduced motion or without JS the figure is still. */
+.anim .lead-fig .nest, .anim .lead-fig .nlbl { opacity: 0; }
+.anim .lead-fig.in .nest { animation: nest-grow .6s var(--ease-soft) var(--dur-reveal) both; }
+.anim .lead-fig.in .nest[data-ring="1"] { animation-delay: calc(var(--dur-reveal) + .22s); }
+.anim .lead-fig.in .nest[data-ring="2"] { animation-delay: calc(var(--dur-reveal) + .44s); }
+.anim .lead-fig.in .nlbl { animation: nest-label .4s var(--ease) calc(var(--dur-reveal) + .3s) both; }
+.anim .lead-fig.in .nest[data-ring="1"] .nlbl { animation-delay: calc(var(--dur-reveal) + .52s); }
+.anim .lead-fig.in .nest[data-ring="2"] .nlbl { animation-delay: calc(var(--dur-reveal) + .74s); }
+@keyframes nest-grow { from { opacity: 0; transform: scale(var(--from, .5)); } 30% { opacity: 1; } to { opacity: 1; transform: none; } }
+@keyframes nest-label { from { opacity: 0; } to { opacity: 1; } }
 /* Each tab carries its own slice of the track, and there is no gap between
    them, so the track reads as one line and still works if the strip wraps. */
 .layer-tabs { position: relative; display: flex; flex-wrap: wrap; }
@@ -588,7 +629,13 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 /* the signal's value sits inside its closing sentence, lit like a line of
    marker ink rather than pulled out into its own tag or band */
 .layer-mark { background: var(--glow); color: var(--accent-ink); font-weight: 500; padding: .05em .35em; border-radius: 4px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
-@media (max-width: 900px) { .framework { grid-template-columns: minmax(0, 1fr); } }   /* minmax(0), or the tab strip widens the column */
+/* Under 1100px the card goes to one column early (the tab strip needs the
+   width): the figure becomes a cover above the copy, sized by its width alone. */
+@media (max-width: 1100px) {
+  .lead-fig { grid-template-columns: minmax(0, 1fr); }
+  .fig-panel { container-type: inline-size; }
+  .fig-nest { width: min(100cqw, 460px); }
+}
 
 /* About: portrait beside a single statement. The portrait stands exactly as tall
    as the text: main.js measures the text and sets --portrait-w at the photo's own
@@ -1021,7 +1068,7 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
   .open-body > * { opacity: 1; }                          /* the opener shows still, then goes */
   .open-seam { transform: none; }
   .gauge .fill, .gauge .needle { animation: none !important; }
-  .layer, .layer-tabs::after { transition: none; }
+  .layer, .layer-tabs::after, .nest, .nest .t-subhead { transition: none; }
   .case-media img, .work-cta::after, .tooltip, .chart-marker, .chart-node { transition: none; transform: none; }
   .tooltip { transform: translate(-50%, 0); }
   .btn:hover, .btn:active, .icon-btn:active, .layer-tab:active, .testimonial-controls button:active { transform: none; }
@@ -1149,13 +1196,16 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
   .lead-grid { padding: 0; }
   .lead-solo-intro { padding: 24px 20px 20px; }
   .lead-points > div { padding: 24px 20px 28px; }
-  .framework { margin-top: 64px; }
   .lead-solo + .lead-solo { margin-top: 64px; }
   /* the tab strip scrolls instead of wrapping onto a broken second line */
   .layer-tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
   .layer-tabs::-webkit-scrollbar { display: none; }
   .layer-tab { flex: 0 0 auto; }
   .layer-head { padding: 22px 20px; }
+  .lead-fig .layer-head { padding: 20px 0 0; }
+  /* the ring names step down a role so they clear the rings on a narrow figure */
+  .nest .t-subhead { font-size: var(--t-small); line-height: var(--lh-small); }
+  .nest[data-ring="0"] .nlbl { width: 7ch; }
 
   /* About */
   .about-grid { gap: 24px; }
