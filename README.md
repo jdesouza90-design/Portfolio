@@ -208,7 +208,7 @@ The rules that shape the code:
   words stand still. Write the stat as plain text and the script does the
   rest, or leave the attribute off for a stat that should not move.
 - Experience on the homepage is three roles on one track, oldest first
-  (`ol.exp`): a chip holding the company's lockup, the title, team size and
+  (`ol.exp`): the company's lockup, the title, team size and
   location, and the dates. Each item draws its own run of track and the roles
   already held draw theirs in ink, so the ink ends at the current role; the
   ink sweeps along once the list has scrolled in. Under 700px the track turns
