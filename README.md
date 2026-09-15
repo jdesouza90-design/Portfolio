@@ -70,9 +70,12 @@ views can be followed. Raw IP addresses are never stored or sent; crawlers and
 link previewers are skipped.
 
 **The dashboard** at `/admin/` (the "Sign in" link in the home page footer)
-shows it live: views and visitors today, where people are coming from, which
-pages and which referrers over the last seven days, and a feed that updates
-every few seconds as people arrive. It needs two things set up in Vercel:
+shows it live: views and visitors today, a zoomable map of where people are
+(Leaflet on Esri's light-grey tiles, one dot per place sized by visits, placed
+from Vercel's IP coordinates so it is accurate to about the city), the
+where-from / pages / referrers tallies over the last seven days, and a feed
+that updates every few seconds as people arrive. It needs two things set up
+in Vercel:
 
 1. **A store.** Vercel → Project → Storage → Create Database → Upstash Redis
    (the free plan is plenty), connected to this project. That adds

@@ -41,7 +41,11 @@ globalThis.fetch = async (url, init) => {
 };
 
 // ---- Sample history so the tallies have something to show ----
-const PLACES = [['New York', 'NY', 'US'], ['Brooklyn', 'NY', 'US'], ['San Francisco', 'CA', 'US'], ['Austin', 'TX', 'US'], ['Chicago', 'IL', 'US'], ['London', 'ENG', 'GB'], ['Toronto', 'ON', 'CA'], ['Berlin', 'BE', 'DE'], ['Lisbon', '11', 'PT'], ['Sydney', 'NSW', 'AU']];
+const PLACES = [
+  ['New York', 'NY', 'US', 40.713, -74.006], ['Brooklyn', 'NY', 'US', 40.678, -73.944], ['San Francisco', 'CA', 'US', 37.775, -122.419],
+  ['Austin', 'TX', 'US', 30.267, -97.743], ['Chicago', 'IL', 'US', 41.878, -87.630], ['London', 'ENG', 'GB', 51.507, -0.128],
+  ['Toronto', 'ON', 'CA', 43.653, -79.383], ['Berlin', 'BE', 'DE', 52.520, 13.405], ['Lisbon', '11', 'PT', 38.722, -9.139], ['Sydney', 'NSW', 'AU', -33.869, 151.209],
+];
 const PAGES = ['/', '/', '/', '/work.html', '/work.html', '/work/staking.html', '/work/cross-sell.html', '/work/verifications.html', '/work/refinance-offers.html', '/work/no-code-tools.html', '/work/sign-in-with-ethereum.html'];
 const REFS = ['direct', 'direct', 'https://www.linkedin.com/', 'https://www.linkedin.com/feed/', 'https://www.google.com/', '/', '/work.html', 'https://mail.google.com/mail/u/0/'];
 const DEVICES = ['Chrome on macOS', 'Safari on iOS', 'Safari on macOS', 'Chrome on Windows', 'Firefox on macOS', 'Chrome on Android'];
@@ -53,7 +57,7 @@ if (process.env.SEED !== '0') {
     const t = now - Math.floor(Math.random() ** 1.6 * 7 * 86400000);
     const p = pick(PLACES), page = pick(PAGES);
     const kind = page.startsWith('/work/') && Math.random() < .25 ? (Math.random() < .8 ? 'unlocked' : 'wrong password') : 'viewed';
-    rows.push({ t, kind, page, where: p.join(', '), country: p[2], ref: pick(REFS), device: pick(DEVICES), visitor: Math.random().toString(16).slice(2, 8) });
+    rows.push({ t, kind, page, where: p.slice(0, 3).join(', '), country: p[2], lat: p[3], lon: p[4], ref: pick(REFS), device: pick(DEVICES), visitor: Math.random().toString(16).slice(2, 8) });
   }
   rows.sort((a, b) => b.t - a.t);
   lists.set('activity', rows.map((r) => JSON.stringify(r)));
@@ -84,6 +88,7 @@ const server = http.createServer(async (req, res) => {
   const h = new Headers();
   for (const [k, v] of Object.entries(req.headers)) if (typeof v === 'string') h.set(k, v);
   h.set('x-vercel-ip-city', encodeURIComponent(p[0])); h.set('x-vercel-ip-country-region', p[1]); h.set('x-vercel-ip-country', p[2]);
+  h.set('x-vercel-ip-latitude', String(p[3])); h.set('x-vercel-ip-longitude', String(p[4]));
   h.set('x-forwarded-for', `10.0.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`);
   const body = req.method === 'POST' ? await new Promise((ok) => { const c = []; req.on('data', (d) => c.push(d)); req.on('end', () => ok(Buffer.concat(c))); }) : undefined;
   const request = new Request(url, { method: req.method, headers: h, body });
