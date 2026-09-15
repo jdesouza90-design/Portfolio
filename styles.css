@@ -553,8 +553,14 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
    signal as the last line of the same paragraph flow ("It shows up as a design
    decision"), the value itself lit like marker ink instead of set apart in its
    own band or tagged with a pill. */
-.lead-fig { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: stretch; }
+.lead-fig { align-items: stretch; }
+.lead-fig { grid-template-columns: minmax(0, 9fr) minmax(0, 14fr); }   /* the strip needs the width */
 .lead-fig .layer-tabs { margin-top: var(--sp-6); }
+/* each tab carries its layer's icon, lit in the accent when selected */
+.lead-fig .layer-tab { display: inline-flex; align-items: center; gap: 6px; padding-inline: 12px; }
+.lead-fig .layer-tab:first-child { padding-left: 2px; }
+.lead-fig .layer-tab svg { width: 16px; height: 16px; flex: none; }
+.lead-fig .layer-tab[aria-selected="true"] svg { color: var(--accent); }
 .lead-fig .layer-stage { margin-top: 0; }
 .lead-fig .layer { background: none; border: 0; border-radius: 0; box-shadow: none; }
 .lead-fig .layer-head { padding: clamp(24px, 3vw, 32px) 0 0; }
@@ -571,7 +577,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
    wide, with a clear 6% of the figure between it and the next ring below;
    the innermost is centred in its disc */
 .nlbl { position: absolute; left: 50%; transform: translate(-50%, -100%); text-align: center; white-space: nowrap; }
-.nest[data-ring="2"] .nlbl { top: 18.5%; }
+.nest[data-ring="2"] .nlbl { top: 22%; }
 .nest[data-ring="1"] .nlbl { top: 35.8%; }
 .nest[data-ring="0"] .nlbl { top: 50%; transform: translate(-50%, -50%); white-space: normal; width: 8ch; }
 .nest .t-subhead { color: var(--ink-2); transition: color var(--dur-ui); }
