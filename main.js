@@ -478,7 +478,7 @@ const CONFIG = {
     dots: ({ ctx, ink, accent }) => {
       const S = 12, R = 150, F = 10, K = .018, DAMP = .8;   // pitch, push radius, push force, spring, damping
       const RS = 420, RW = 500, RF = 10, RD = 2.2;          // ripple: px/s, ring width, force, decay
-      const A = .375, MOVED = 1.2;                          // strength on paper (John: light), px of travel that turns a dot green
+      const A = .25, MOVED = 1.2;                           // strength on paper (John: 25%, light), px of travel that turns a dot green
       let W = 0, H = 0, n = 0, hx, hy, ox, oy, vx, vy, k, sprites, sw = 0, energy = 0;
       const hash = (i) => { const s = Math.sin(i * 12.9898) * 43758.5453; return s - Math.floor(s); };
       const sprite = (colour, dpr) => {
