@@ -545,29 +545,32 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 /* Experience: three roles on one track, oldest first. Each item draws the
    run of track from its own marker to the next (the last runs to the edge),
    and the roles already held draw theirs again in ink on top, so the ink
-   ends at the current role. When the list reveals, the ink sweeps in one
-   segment after another and each marker lands as the sweep reaches it. */
-.exp { --exp-gap: clamp(24px, 4vw, 56px); --exp-seg: .55s;
+   ends at the current role. Once the list has faded in, the ink sweeps
+   along one segment after another and each marker lands as it arrives.
+   Without JS or under reduced motion the track is simply drawn. */
+.exp { --exp-gap: clamp(24px, 4vw, 56px); --exp-seg: .7s; --exp-wait: .4s; --sx: 0; --sy: 1;
   list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--exp-gap);
   padding: 0; margin: clamp(44px, 6vw, 72px) 0 0; }
 .exp-item { position: relative; min-width: 0; display: flex; flex-direction: column; padding-top: 32px; }
 .exp-item::before, .exp-item::after { content: ""; position: absolute; top: 4px; left: 0; height: 1px; width: calc(100% + var(--exp-gap)); }
 .exp-item::before { background: var(--hair); }
 .exp-item:last-child::before { width: 100%; }
-.exp-item::after { background: var(--ink); transform-origin: 0 0; transition: transform var(--exp-seg) var(--ease-in-out); }
-.exp-item:nth-child(2)::after { transition-delay: var(--exp-seg); }
+.exp-item::after { background: var(--ink); transform-origin: 0 0; }
 .exp-item:last-child::after { display: none; }
-.exp-mark { position: absolute; top: 0; left: 0; width: 9px; height: 9px; border-radius: 2px; background: var(--ink); z-index: 1;
-  transition: transform var(--dur-ui) var(--ease); }
-.exp-item:nth-child(2) .exp-mark { transition-delay: var(--exp-seg); }
-.exp-item:nth-child(3) .exp-mark { transition-delay: calc(2 * var(--exp-seg)); }
+.exp-mark { position: absolute; top: 0; left: 0; width: 9px; height: 9px; border-radius: 2px; background: var(--ink); z-index: 1; }
 .exp-item:last-child .exp-mark { background: var(--accent); }   /* the role held now */
-.anim .exp:not(.in) .exp-item::after { transform: scaleX(0); }
-.anim .exp:not(.in) .exp-mark { transform: scale(0); }
-/* the label is a chip with a numbered cell and the company's own lockup */
-.exp-label { display: inline-flex; align-self: flex-start; align-items: stretch; padding: 0; overflow: hidden; margin-bottom: var(--sp-5); }
-.exp-num { display: flex; align-items: center; justify-content: center; width: 38px; padding-block: 7px; border-right: 1px solid rgba(20, 16, 12, .10); font-variant-numeric: tabular-nums; }
-.exp-label img { width: auto; align-self: center; margin-inline: 12px; }
+.anim .exp .exp-item::after { transform: scale(var(--sx), var(--sy)); }
+.anim .exp .exp-mark { transform: scale(0); }
+.anim .exp.in .exp-item::after { animation: exp-sweep var(--exp-seg) var(--ease-in-out) var(--exp-wait) both; }
+.anim .exp.in .exp-item:nth-child(2)::after { animation-delay: calc(var(--exp-wait) + var(--exp-seg)); }
+.anim .exp.in .exp-mark { animation: exp-land var(--dur-ui) var(--ease) var(--exp-wait) both; }
+.anim .exp.in .exp-item:nth-child(2) .exp-mark { animation-delay: calc(var(--exp-wait) + var(--exp-seg)); }
+.anim .exp.in .exp-item:nth-child(3) .exp-mark { animation-delay: calc(var(--exp-wait) + 2 * var(--exp-seg)); }
+@keyframes exp-sweep { from { transform: scale(var(--sx), var(--sy)); } to { transform: none; } }
+@keyframes exp-land { from { transform: scale(0); } to { transform: none; } }
+/* the label is a chip holding the company's own lockup */
+.exp-label { display: inline-flex; align-items: center; align-self: flex-start; min-height: 35px; margin-bottom: var(--sp-5); }
+.exp-label img { width: auto; }
 /* official vector lockups, sized so the wordmark text matches across all three */
 .exp-label img[alt="Best Egg"] { height: 14px; }
 .exp-label img[alt="Chainlink Labs"] { height: 17px; }
@@ -577,11 +580,10 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .exp-dates time { white-space: nowrap; }
 @media (max-width: 700px) {
   /* the track turns down the left and the markers sit level with each label */
-  .exp { --exp-gap: var(--sp-6); grid-template-columns: minmax(0, 1fr); }
+  .exp { --exp-gap: var(--sp-6); --sx: 1; --sy: 0; grid-template-columns: minmax(0, 1fr); }
   .exp-item { padding: 0 0 0 28px; }
   .exp-item::before, .exp-item::after { top: 17px; left: 4px; width: 1px; height: calc(100% + var(--exp-gap)); }
   .exp-item:last-child::before { height: calc(100% - 17px); }
-  .anim .exp:not(.in) .exp-item::after { transform: scaleY(0); }
   .exp-mark { top: 13px; }
   .exp-dates { padding-top: var(--sp-4); }
 }
