@@ -6,10 +6,11 @@ Run from the repo root after adding or editing a case study:
     python3 .claude/skills/add-case-study/scripts/check.py [--no-validate]
 
 It reads work/*.html, work.html, index.html, styles.css, README.md and the skill's own
-template, and reports the things that break silently: a next-link ring with a gap, a page
-with no ground, an image with no size, an asset that isn't there, nav drift between pages,
-a stale count in the README, a placeholder left in. Then it runs html-validate on every
-page unless --no-validate is given. Exit status is 1 if anything is an error.
+template, and reports the things that break silently: a next-link ring with a gap, a prev
+arrow that doesn't point back, a page with no ground, an image with no size, an asset that
+isn't there, nav drift between pages, a stale count in the README, a placeholder left in.
+Then it runs html-validate on every page unless --no-validate is given. Exit status is 1 if
+anything is an error.
 """
 import glob
 import os
@@ -60,8 +61,8 @@ for p, s in list(html.items()) + [("work.html", work_html), ("index.html", index
     for m in sorted(set(re.findall(r"\{\{[A-Z0-9_]+\}\}", s))):
         err(f"{p}: placeholder {m} left in")
 
-# ---- Each page: class, ground, images, assets, next link --------------------------------
-next_of = {}
+# ---- Each page: class, ground, images, assets, next and prev links ----------------------
+next_of, prev_of = {}, {}
 for p, s in html.items():
     slug = os.path.splitext(os.path.basename(p))[0]
     m = re.search(r'<body class="(case-[a-z0-9-]+)"', s)
@@ -86,6 +87,15 @@ for p, s in html.items():
             err(f"{p}: next link points to missing page {nm.group(1)}.html")
         if nm.group(1) == slug:
             err(f"{p}: next link points to itself")
+
+    # Prev link: the bare-arrow <a class="cs-prev-link"> that opens the same <p>
+    pm = re.search(r'<p class="t-title cs-next-title">\s*<a class="cs-prev-link" href="([a-z0-9-]+)\.html"', s)
+    if not pm:
+        err(f"{p}: no previous-case-study link")
+    else:
+        prev_of[slug] = pm.group(1)
+        if pm.group(1) not in slugs:
+            err(f"{p}: prev link points to missing page {pm.group(1)}.html")
 
     # Images
     hero_end = s.find("</section>", s.find('class="cs-hero"'))
@@ -141,6 +151,10 @@ if next_of and len(next_of) == len(slugs):
         missing = sorted(set(slugs) - set(seen))
         err("next-case-study links do not form one ring over every page; "
             f"followed {' → '.join(seen)} → {cur}; not reached: {missing or 'none'}")
+for slug, prev in prev_of.items():
+    if prev in next_of and next_of[prev] != slug:
+        err(f"work/{slug}.html: prev link points to {prev}.html, whose next link is "
+            f"{next_of[prev]}.html, not this page")
 
 # ---- Index rows -------------------------------------------------------------------------
 for name, s, root_rel in (("work.html", work_html, ""), ("index.html", index_html, "")):
