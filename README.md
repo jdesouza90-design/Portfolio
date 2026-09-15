@@ -218,6 +218,13 @@ The rules that shape the code:
   rather than editing the file.
 - Each case study has its own background, set by a `case-*` class on `<body>`
   and on its row in the work index.
+- A work-index thumbnail shows the one piece of the design the case study is
+  about, not the whole screen shrunk to fit. `.case-media.cutout` floats a
+  component keyed out of its screen (`assets/refi-card.webp`,
+  `assets/ver-documents.webp`, cut from the 2x sources in `assets/BE/` with
+  sharp and their corners keyed); `.cutout.bleed` blows a taller one up until
+  it runs off the bottom; `.emerge` sets a whole screen large, coming out of
+  the ground's bottom-right corner. Desktop screens keep `.wide`.
 - The three walkthrough recordings are 2.8–7.8 MB and only load when a visitor
   presses Play. They come from the deck's GIFs, so their resolution is capped;
   replace them if you still have the original screen recordings.
