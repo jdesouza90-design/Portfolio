@@ -475,11 +475,14 @@ const CONFIG = {
   const fields = {
     // A grid of ink dots breathing on three slow waves. The cursor pushes the
     // dots within reach, they spring home, and a dot in motion turns green.
-    dots: ({ ctx, ink, accent }) => {
+    // The copy sits on clean paper: dots fade out over a soft edge around the
+    // box the statement and its buttons occupy, measured from the markup.
+    dots: ({ ctx, el, ink, accent }) => {
       const S = 12, R = 150, F = 10, K = .018, DAMP = .8;   // pitch, push radius, push force, spring, damping
       const RS = 420, RW = 500, RF = 10, RD = 2.2;          // ripple: px/s, ring width, force, decay
       const A = .25, MOVED = 1.2;                           // strength on paper (John: 25%, light), px of travel that turns a dot green
-      let W = 0, H = 0, n = 0, hx, hy, ox, oy, vx, vy, k, sprites, sw = 0, energy = 0;
+      const PAD = 24, FEATHER = 72;                         // clear paper around the copy, and the width of its soft edge
+      let W = 0, H = 0, n = 0, hx, hy, ox, oy, vx, vy, k, hf, sprites, sw = 0, energy = 0, hush = "", frames = 0;
       const hash = (i) => { const s = Math.sin(i * 12.9898) * 43758.5453; return s - Math.floor(s); };
       const sprite = (colour, dpr) => {
         const r = 1.15, d = Math.ceil(r * 2 * dpr) + 2, s = document.createElement("canvas");
@@ -500,6 +503,30 @@ const CONFIG = {
           hx[i] = x0 + c * S; hy[i] = y0 + r * S; k[i] = K * (.8 + hash(c * 1.7 + r * 73) * .4);
         }
         sprites = [sprite(ink(1), dpr), sprite(accent, dpr)];
+        hf = new Float32Array(n).fill(1); hush = "";
+        clear();
+      };
+      // the box the copy occupies, in the block's pixels; each dot's share of the field from its distance to it.
+      // Text is measured by its line boxes and a row of buttons by the buttons, since the blocks themselves span the wrap.
+      const clear = () => {
+        const kids = el.querySelectorAll(":scope > .wrap > *");
+        if (!kids.length) return;
+        const h = el.getBoundingClientRect(), range = document.createRange();
+        let l = 1e9, t = 1e9, r = -1e9, b = -1e9;
+        const add = (q) => { if (!q.width) return; l = Math.min(l, q.left - h.left); t = Math.min(t, q.top - h.top); r = Math.max(r, q.right - h.left); b = Math.max(b, q.bottom - h.top); };
+        kids.forEach((kid) => {
+          if (getComputedStyle(kid).display === "flex") Array.from(kid.children).forEach((c) => add(c.getBoundingClientRect()));
+          else { range.selectNodeContents(kid); add(range.getBoundingClientRect()); }
+        });
+        if (r < l) return;
+        const key = [l, t, r, b].map(Math.round).join();
+        if (key === hush) return;
+        hush = key; l -= PAD; t -= PAD; r += PAD; b += PAD;
+        for (let i = 0; i < n; i++) {
+          const dx = Math.max(l - hx[i], 0, hx[i] - r), dy = Math.max(t - hy[i], 0, hy[i] - b), d = Math.sqrt(dx * dx + dy * dy);
+          const u = d < FEATHER ? d / FEATHER : 1;
+          hf[i] = u * u * (3 - 2 * u);
+        }
       };
       const step = (p) => {
         const push = p.active > .001, r2 = R * R, rips = p.ripples, nr = rips.length;
@@ -526,16 +553,18 @@ const CONFIG = {
         if (live && (p.active > .001 || p.ripples.length || energy > 1e-3)) {
           for (let s = Math.max(1, Math.min(3, Math.round(dt * 60))); s > 0; s--) step(p);
         }
+        if (++frames % 30 === 0) clear();                 // the copy reflows with fonts and the rise; keep up without measuring every frame
         ctx.clearRect(0, 0, W, H);
         const h = sw / 2;
         for (let i = 0; i < n; i++) {
+          if (hf[i] <= 0) continue;
           const x = hx[i], y = hy[i];
           let a = .6;
           if (live) {
             const fl = (Math.sin(x * .018 + y * .009 + t * .55) + Math.sin(y * .016 - x * .012 + t * .38) + Math.sin(x * .006 - y * .014 + t * .22)) / 3;
             a = .35 + .65 * (.5 + .5 * fl);
           }
-          ctx.globalAlpha = a * A;
+          ctx.globalAlpha = a * A * hf[i];
           ctx.drawImage(sprites[Math.abs(ox[i]) + Math.abs(oy[i]) > MOVED ? 1 : 0], x + ox[i] - h, y + oy[i] - h, sw, sw);
         }
         ctx.globalAlpha = 1;

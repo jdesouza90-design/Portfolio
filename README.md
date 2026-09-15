@@ -243,7 +243,9 @@ scrolls to it, and every page gets it the same way:
   travel; a click or tap sends a ring out through them. It is ramp.com's
   hero on the site's paper, with their measured values (push 10 with a
   square falloff, spring .018, damping .8, ripple at 420px/s) and the dots
-  at a quarter strength. Get in touch keeps its rings (paper hairlines at 42px
+  at a quarter strength, fading out over a soft edge around the box the
+  statement and its buttons occupy so the copy sits on clean paper (`PAD`
+  and `FEATHER` in the dots block). Get in touch keeps its rings (paper hairlines at 42px
   from behind the buttons) but draws them live: still at rest and identical
   to the stylesheet's, travelling outward while the cursor is over the band,
   brightening and bulging around it, carrying a wave on a click. Both ignore
