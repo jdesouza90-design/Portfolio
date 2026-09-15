@@ -364,8 +364,8 @@ const CONFIG = {
      button is the WCAG 2.2.2 stop, and the track only announces slides while
      paused so a screen reader isn't interrupted by the timer. */
   const initCarousels = () => $$("[data-carousel]").forEach((c) => {
-    const track = $(".testimonial-track", c);
-    const slides = $$(".testimonial", c);
+    const track = $(".testimonial-track, .kudo-stack", c);
+    const slides = $$(".testimonial, .kudo", c);
     const prev = $(".prev", c), next = $(".next", c), pause = $(".pause", c);
     const dots = $$(".dot", c);
     if (slides.length < 2 || !track) return;
@@ -373,8 +373,18 @@ const CONFIG = {
     let i = 0, timer = null, playing = true, focus = false, seen = true;
 
     const show = (k) => {
+      const was = i;
       i = (k + slides.length) % slides.length;
-      slides.forEach((s, n) => s.classList.toggle("active", n === i));
+      slides.forEach((s, n) => {
+        s.classList.toggle("active", n === i);
+        s.style.setProperty("--pos", (n - i + slides.length) % slides.length);   // depth in a deck; a flat track ignores it
+      });
+      // in a deck the front card lifts away as the next rises; stepping back, the last card drops in on top
+      if (was !== i && track.classList.contains("kudo-stack")) {
+        const fwd = (was + 1) % slides.length === i, card = slides[fwd ? was : i];
+        card.classList.add(fwd ? "leaving" : "arriving");
+        card.addEventListener("animationend", () => card.classList.remove("leaving", "arriving"), { once: true });
+      }
       dots.forEach((d, n) => d.setAttribute("aria-current", n === i ? "true" : "false"));
     };
     const stop = () => { clearInterval(timer); timer = null; };

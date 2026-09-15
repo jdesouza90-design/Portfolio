@@ -342,6 +342,15 @@ The rules that shape the code:
   ink sweeps along once the list has scrolled in. Under 700px the track turns
   down the left. Company logos in `assets/logo-*.svg` are the companies' own vector
   files, sized in `styles.css` so the wordmark text matches across all three.
+- Under the track, five lines senior leaders and peers wrote about John sit
+  in a deck of cards (`.kudos`): one shows at a time with the next two
+  peeking out beneath it, and the deck runs on the same carousel code as the
+  case-study quotes (previous, dots, next, pause; a card every 7 s while on
+  screen). `main.js` gives each card its depth as `--pos`; moving on lifts
+  the front card away and the one behind rises. The quotes are verbatim with
+  the project sentences cut, the people left out by John's choice, so the
+  company mark stands in for the byline and the source line says only
+  "Senior leader" or "Peer feedback".
 - The abstract beside "AI in the process" on the homepage is drawn live by
   `main.js` on a canvas: the same strands in three dimensions, turning slowly,
   with a pause button in the corner. `assets/ai-process.svg` is the still it
