@@ -6,7 +6,7 @@
    imagery, not by the page; the one accent is a forest green.
 
    Order: tokens → type roles → base → primitives → nav → home → case study
-          → gate → motion → per-project grounds → phone
+          → gate → unlock opener → motion → per-project grounds → phone
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -964,6 +964,34 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 .back:hover { color: var(--accent-ink); }
 
 /* --------------------------------------------------------------------------
+   8b. Unlock opener
+   The moment after the password. The case study opens behind a sheet of its
+   own ground split by one green seam: the seam draws, the title rises on the
+   sheet, then the seam becomes two edges and the halves part like doors with
+   the hero rising in behind them. main.js builds it (initUnlock) when the
+   gate sends the reader here with ?unlocked, and the one-line script in each
+   case study's head sets html.unlock before first paint so the page is never
+   seen before the sheet is. The hold is an animation so it can never outlast
+   a script that fails: after 3s the page shows regardless.
+   -------------------------------------------------------------------------- */
+html.unlock { background: var(--panel-base, #EFE8DB); }
+html.unlock:not(.unlock-on) body { animation: unlock-hold 3s step-end both; }
+@keyframes unlock-hold { from { visibility: hidden; } to { visibility: visible; } }
+html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascade waits for the doors */
+.open { position: fixed; inset: 0; z-index: 80; overflow: hidden; display: grid; place-items: center; padding: var(--gutter); visibility: visible; cursor: pointer; }
+/* Each half shows its half of one viewport-wide gradient, so the ground reads as one sheet across the seam. */
+.open-half { position: absolute; inset: 0; background: var(--panel, linear-gradient(155deg, #F4EFE5 0%, #E4DAC6 100%)) 0 0 / 200% 100% var(--panel-base, #EFE8DB); }
+.open-half.l { right: 50%; }
+.open-half.r { left: 50%; background-position: 100% 0; }
+.open.part .open-half.l { border-right: 1px solid var(--accent); }
+.open.part .open-half.r { border-left: 1px solid var(--accent); }
+.open-seam { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; margin-left: -.5px; background: var(--accent); transform: scaleY(0); }
+.open-body { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; width: min(100%, 60ch); }
+.open-body > * { opacity: 0; }                            /* main.js rises each line in */
+.open-body .t-display { margin-top: var(--stack-label); max-width: 16ch; }
+.open-note { margin-top: var(--sp-6); color: var(--ink-2); max-width: 44ch; text-wrap: balance; }
+
+/* --------------------------------------------------------------------------
    9. Motion
    -------------------------------------------------------------------------- */
 /* A block waits below its place and rises into it once the reader reaches
@@ -982,6 +1010,8 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .anim [data-reveal], [data-rise] { opacity: 1; transform: none; transition: none; animation: none; }
+  .open-body > * { opacity: 1; }                          /* the opener shows still, then goes */
+  .open-seam { transform: none; }
   .gauge .fill, .gauge .needle { animation: none !important; }
   .layer, .layer-tabs::after { transition: none; }
   .case-media img, .work-cta::after, .tooltip, .chart-marker, .chart-node { transition: none; transform: none; }
