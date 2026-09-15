@@ -127,7 +127,7 @@
 .t-subhead, .t-lede, .t-body, .t-small, .t-micro, .eyebrow,
 .testimonial-foot cite b,
 .layer-tab, .work-cta, .gate-form input,
-.btn, .chip, .nav-links a, .back, .tools span, footer,
+.btn, .chip, .nav-links a, .back, .crumbs, .tools span, footer,
 .facts dt, table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
 .gallery figcaption, .proof-head small, .tooltip, .chart-pill, details.data,
 thead th, .gauge .lbl, .table-wrap td[data-label]::before
@@ -138,7 +138,7 @@ thead th, .gauge .lbl, .table-wrap td[data-label]::before
   { font-size: var(--t-lede); line-height: var(--lh-lede); letter-spacing: var(--ls-lede); font-weight: 400; color: var(--ink-2); max-width: var(--m-lede); }
 .t-body, .layer-tab, .work-cta, .gate-form input
   { font-size: var(--t-body); line-height: var(--lh-body); font-weight: 400; color: var(--ink-2); max-width: var(--m-body); }
-.t-small, .btn, .chip, .nav-links a, .back, .tools span, footer,
+.t-small, .btn, .chip, .nav-links a, .back, .crumbs, .tools span, footer,
 .facts dt, table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
 .gallery figcaption, .proof-head small, .tooltip, .chart-pill, details.data
   { font-size: var(--t-small); line-height: var(--lh-small); font-weight: 400; color: var(--ink-2); }
@@ -148,7 +148,7 @@ thead th, .gauge .lbl, .table-wrap td[data-label]::before
 
 /* Weight: 500 is the one emphasis, for whatever names or acts. */
 strong, b, tbody th, .t-body a, .t-lede a,
-.btn, .chip, .chart-pill, .tooltip b, .tip-val, .nav-links a, .back, .tools span, .layer-tab, .work-cta, .avatar, .testimonial-mark
+.btn, .chip, .chart-pill, .tooltip b, .tip-val, .nav-links a, .back, .crumbs, .tools span, .layer-tab, .work-cta, .avatar, .testimonial-mark
   { font-weight: 500; }
 
 /* Tone: ink for what leads, ink-2 for what runs (the roles' default), ink-3
@@ -156,9 +156,9 @@ strong, b, tbody th, .t-body a, .t-lede a,
    4.7:1 on paper-2 and under 4.5:1 on the panel grounds, so a caption inside
    a panel (.gallery figcaption) keeps ink-2. The accent marks the one action
    or number in a block. */
-strong, b, tbody th, .chip, .tools span, .avatar, .testimonial-mark, .tooltip b, .tip-val { color: var(--ink); }
+strong, b, tbody th, .chip, .tools span, .avatar, .testimonial-mark, .tooltip b, .tip-val, .crumbs [aria-current] { color: var(--ink); }
 .chart-pill { color: var(--surface); }
-footer, .walk-note, .testimonial-foot cite, .exp-dates, .gate-form input::placeholder { color: var(--ink-3); }
+footer, .walk-note, .testimonial-foot cite, .exp-dates, .crumb-sep, .gate-form input::placeholder { color: var(--ink-3); }
 .work-cta, .t-body a, .t-lede a, .outcome-stat .t-stat, .proof-head .t-stat, thead .hl { color: var(--accent-ink); }
 
 /* Number flow: a headline stat that main.js rolls in digit by digit. Each
@@ -641,12 +641,22 @@ footer a:hover { color: var(--ink); }
    roles above, so all five read as chapters of the same document.
    -------------------------------------------------------------------------- */
 .cs-hero { padding-top: calc(var(--nav-h) + clamp(40px, 7vw, 88px)); }
-.cs-hero .back { margin-bottom: clamp(28px, 4vw, 44px); }
 .cs-hero.solo { padding-bottom: clamp(48px, 7vw, 96px); }
 .cs-hero-copy { display: flex; flex-direction: column; align-items: center; text-align: center; margin-inline: auto; }
 .cs-hero-copy h1 { max-width: 22ch; }
-.back { display: flex; width: fit-content; align-items: center; gap: 7px; text-decoration: none; transition: color var(--dur-hover); }
-.back:hover { color: var(--accent-ink); }
+
+/* Breadcrumb: where the page sits, Home / Work / this study. The links run
+   in ink-2 and darken to the accent on hover; the current page is plain ink
+   and not a link; the slash between items is hidden from screen readers.
+   The trail keeps to one line and the current page's name clips with an
+   ellipsis, since the full title sits right under it. */
+.cs-hero .crumbs { margin-bottom: clamp(28px, 4vw, 44px); }
+.crumbs ol { display: flex; list-style: none; margin: 0; padding: 0; }
+.crumbs li { flex: none; white-space: nowrap; }
+.crumbs li:last-child { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.crumbs a { text-decoration: none; transition: color var(--dur-hover); }
+.crumbs a:hover { color: var(--accent-ink); }
+.crumb-sep { margin-inline: 8px; }
 
 /* Hero panel: the project's screens on its own ground, full content width */
 .hero-panel { margin-top: clamp(40px, 5vw, 64px); min-height: clamp(320px, 40vw, 600px); padding: clamp(28px, 5vw, 64px); }
@@ -902,7 +912,8 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 .gate-form input[aria-invalid="true"]:focus { outline-color: var(--danger); }
 .gate-form .btn { justify-content: center; padding: 15px 20px; }
 .gate-error { margin-top: -8px; color: var(--danger); }   /* pulls up under the field it describes, inside the form's gap */
-.gate .back { margin-top: var(--sp-4); }
+.back { display: flex; width: fit-content; align-items: center; gap: 7px; margin-top: var(--sp-4); text-decoration: none; transition: color var(--dur-hover); }
+.back:hover { color: var(--accent-ink); }
 
 /* --------------------------------------------------------------------------
    9. Motion
@@ -1077,7 +1088,7 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 
   /* Case study hero and facts */
   .cs-hero { padding-top: calc(var(--nav-h) + 28px); }
-  .cs-hero .back { margin-bottom: 24px; }
+  .cs-hero .crumbs { margin-bottom: 24px; }
   .hero-lead { gap: 24px; }
   .outcome-stat { padding-top: 20px; }
   .outcome-stat .t-stat { margin-top: var(--sp-2); }
