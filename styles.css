@@ -820,15 +820,15 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 /* Next: the closing band */
 .cs-next { margin-top: var(--section); padding-block: var(--section); background: var(--paper-2); border-top: 1px solid var(--hair); text-align: center; }
 .cs-next .wrap { display: flex; flex-direction: column; align-items: center; }
-.cs-pager { display: flex; gap: 12px; margin-bottom: clamp(28px, 3vw, 40px); }
-.cs-pager svg { transition: transform var(--dur-hover) var(--ease); }
-.cs-next a.t-title { text-decoration: none; transition: color var(--dur-hover); }
-.cs-next a.t-title:hover { color: var(--accent-ink); }
+/* One title line, two links: a leading arrow back to the previous case study and the next title with its trailing arrow. Both arrows sit inline so they ride the first and last words when the title wraps. */
+.cs-next-title a { text-decoration: none; transition: color var(--dur-hover); }
+.cs-next-title a:hover { color: var(--accent-ink); }
 .cs-next-arrow { width: .6em; height: .6em; margin-left: .3em; vertical-align: -.05em; transition: transform var(--dur-hover) var(--ease); }
+.cs-prev-link { position: relative; z-index: 1; }   /* axe unions a wrapped neighbour's lines into one rect and reads it as covering the arrow; painting the arrow above says what is true */
+.cs-prev-link .cs-next-arrow { margin-left: 0; margin-right: .3em; }
 @media (hover: hover) and (pointer: fine) {
-  .cs-next a.t-title:hover .cs-next-arrow { transform: translateX(6px); }
-  .cs-pager .pager-prev:hover svg { transform: translateX(-3px); }
-  .cs-pager .pager-next:hover svg { transform: translateX(3px); }
+  .cs-next-title a:hover .cs-next-arrow { transform: translateX(6px); }
+  .cs-next-title .cs-prev-link:hover .cs-next-arrow { transform: translateX(-6px); }
 }
 .cs-next .actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: clamp(28px, 3vw, 40px); }
 .cs-next footer { width: 100%; justify-content: center; padding-bottom: 0; margin-top: clamp(40px, 5vw, 64px); }
@@ -868,7 +868,7 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
   .case-media img, .work-cta::after, .tooltip, .chart-marker, .chart-node { transition: none; transform: none; }
   .tooltip { transform: translate(-50%, 0); }
   .btn:hover, .btn:active, .icon-btn:active, .layer-tab:active, .testimonial-controls button:active { transform: none; }
-  .btn[data-link="resume"] .icon-swap svg, .btn[data-link="email"] .icon-swap svg, .btn[data-link="linkedin"] .icon-swap svg, .btn-browse svg, .cs-next-arrow, .cs-pager svg { transition: none; }
+  .btn[data-link="resume"] .icon-swap svg, .btn[data-link="email"] .icon-swap svg, .btn[data-link="linkedin"] .icon-swap svg, .btn-browse svg, .cs-next-arrow { transition: none; }
   .walk .play:active { transform: translate(-50%, -50%); }
   .nav.open .nav-links { animation: none; }
 }
