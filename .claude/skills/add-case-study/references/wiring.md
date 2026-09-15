@@ -119,18 +119,23 @@ Labs and Auth0"); if the new case study is from a new company, add it there and 
 
 ## 5. The next-case-study ring
 
-Each page's `.cs-next` links to the next one, and the last links back to the first, so a
-reader who starts anywhere sees everything. Today:
+Each page's `.cs-next` links forward to the next page and back to the previous one, and
+the last links forward to the first, so a reader who starts anywhere sees everything. The
+next link is the page's full name with a right arrow; the previous link is a bare left
+arrow with `aria-label="Previous case study"` (markup in `page-anatomy.md` §7). Today:
 
 ```
-cross-sell → verifications → staking → no-code-tools → sign-in-with-ethereum → cross-sell
+cross-sell → verifications → refinance-offers → staking → no-code-tools → sign-in-with-ethereum → cross-sell
 ```
 
-Inserting after X means two edits: X's link now points to the new page, and the new page
-points to X's old next. Inserting first means the new page points to `cross-sell` and
-`sign-in-with-ethereum` points to the new page. The link text is the full project name with
-`&amp;` escaped. Keep the ring in the same order as `work.html`; `check.py` verifies it is a
-single ring that covers every page.
+Inserting a page after X means three pages change: the new page's `PREV_SLUG` is X and its
+`NEXT_SLUG` is X's old next; X's next link now points to the new page; and X's old next
+gets its `cs-prev-link` pointed back at the new page. Inserting first means the new page
+sits between `sign-in-with-ethereum` and `cross-sell`: its prev is `sign-in-with-ethereum`,
+its next is `cross-sell`, and those two pages' next and prev links move to the new page.
+The next link's text is the full project name with `&amp;` escaped. Keep the ring in the
+same order as `work.html`; `check.py` verifies the next links form a single ring that
+covers every page, but it does not check the prev links, so walk them by hand.
 
 ---
 

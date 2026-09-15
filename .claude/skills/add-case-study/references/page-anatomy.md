@@ -461,15 +461,18 @@ The title lists the labels: "Research timing, sequencing and what held".
 
 ## 7. Next
 
-The closing band. `NEXT_SLUG` and `NEXT_NAME` come from the ring in `wiring.md`.
+The closing band. `PREV_SLUG`, `NEXT_SLUG` and `NEXT_NAME` come from the ring in
+`wiring.md` §5: the previous page is a bare left arrow with an `aria-label`, the next page
+is its full name with a right arrow, both inside one `p.t-title.cs-next-title`. The SVGs
+and the two buttons are copied from a live page; only the three slots change.
 ```html
 <section class="cs-next">
   <div class="wrap">
     <p class="eyebrow">Next case study</p>
-    <a class="t-title" href="{{NEXT_SLUG}}.html">{{NEXT_NAME}}</a>
+    <p class="t-title cs-next-title"><a class="cs-prev-link" href="{{PREV_SLUG}}.html" aria-label="Previous case study"><svg class="cs-next-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg></a><a href="{{NEXT_SLUG}}.html">{{NEXT_NAME}}<svg class="cs-next-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a></p>
     <div class="actions">
-      <a class="btn btn-ghost" href="../work.html">All work</a>
-      <a class="btn btn-primary" data-link="email" href="#">Contact me</a>
+      <a class="btn btn-ghost btn-browse" href="../work.html">All work<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+      <a class="btn btn-primary" data-link="email" href="#"><span class="icon-swap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>Contact me</a>
     </div>
     <footer>
       <span>© <span data-year></span> John DeSouza</span>
