@@ -1,0 +1,9 @@
+# Repo tooling, not the site. Vercel serves everything else in the tree as a static file.
+.claude
+.git*
+.htmlvalidate.json
+README.md
+VOICE.md
+stamp.py
+ai-process-art.mjs
+assets/BE

@@ -174,7 +174,7 @@ The recipe:
 - Copy the values from `main`'s `styles.css` when in doubt; that is where the warm set lives.
 
 Contrast: the ground carries no text of its own, so it has no contrast requirement, but
-`.flow-label`, `.gallery figcaption` and `.walk-note` sit on or near it. Run the axe pass.
+`.gallery figcaption` and `.walk-note` sit on or near it. Run the axe pass.
 
 ---
 

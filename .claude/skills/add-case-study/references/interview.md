@@ -120,9 +120,9 @@ and expect some to be "no".
    a file lands."
 
 2. **Was there a before and after worth showing side by side?**
-   If yes → `.flow-pair` with steps and labels (Application → Decisioning → Declined; then the
-   new path). Get the step labels and which screen goes with each. Mark the bad step and the
-   new ones.
+   If yes → the design row's `.gallery` runs the old screen first and the new ones after it,
+   each figcaption starting "Before:" or "After:" (refinance-offers.html). Get which screen
+   goes with each caption.
 
 3. **Two or three decisions inside the flow that a hiring manager should notice?**
    Slot: `DECISIONS`, the three-column grid. Each is a two-word label, one sentence, and

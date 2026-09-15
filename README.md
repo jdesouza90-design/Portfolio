@@ -18,9 +18,12 @@ work/staking.html               Chainlink Labs · Staking v0.1
 work/no-code-tools.html         Auth0 · No-code tools
 work/sign-in-with-ethereum.html Auth0 · Sign-in with Ethereum
 styles.css                      Tokens, the ten type roles, components, case-study layout
-main.js                         CONFIG links, nav, scroll reveal, scroll-spy, chart, walkthroughs, AI strands, About portrait height
-middleware.js                   Vercel Edge Middleware: the password gate for /work/*
+main.js                         CONFIG links, then one function per feature: nav, scroll reveal, tabs, carousel,
+                                walkthroughs, AI strands, chart, number flow, swipe strips, About portrait height
+middleware.js                   Vercel Edge Middleware: the password gate for /work/*, and the access log
 vercel.json                     Cache and security headers
+.vercelignore                   Keeps the repo's tooling (this file, VOICE.md, stamp.py, .claude/) off the deployment
+stamp.py                        Re-stamps every ?v= cache hash; run it before committing
 ai-process-art.mjs              Draws assets/ai-process.svg, the abstract on the AI card
 assets/                         Mockups, logos, walkthrough recordings exported from the deck
 og-image.png                    Social preview image used when the link is shared
@@ -29,7 +32,9 @@ og-image.png                    Social preview image used when the link is share
 ## Deploying
 
 Push to `main` and Vercel builds and publishes automatically. For a one-off
-manual deploy, run `npx vercel --prod` from this folder.
+manual deploy, run `npx vercel --prod` from this folder. `.vercelignore` keeps
+everything that is not the site (this README, `VOICE.md`, `stamp.py`, the
+validator config, `.claude/`) out of the deployment, so none of it is served.
 
 ## The case-study password
 
@@ -169,8 +174,8 @@ phone layer fixes what a collapse alone gets wrong:
 
 - Section openers and case-study heroes are left-aligned; the homepage hero
   stays centred.
-- Sequences keep their order: the before/after flow, the gallery and a
-  three-screen hero become swipe strips (`overflow-x: auto` with scroll snap),
+- Sequences keep their order: the gallery and a three-screen hero become
+  swipe strips (`overflow-x: auto` with scroll snap),
   one screen at a time with the next peeking in. `main.js` gives a strip a
   tab stop only while it actually overflows.
 - Story panels take the height of their screen instead of a landscape box;
@@ -315,5 +320,7 @@ The rules that shape the code:
 - The three walkthrough recordings are 2.8–7.8 MB and only load when a visitor
   presses Play. They come from the deck's GIFs, so their resolution is capped;
   replace them if you still have the original screen recordings.
-- Image URLs carry a `?v=` content hash. If you replace a file in `assets/`,
-  update that hash (or any changed value) so visitors stop seeing the old one.
+- Image, stylesheet, script, icon and social-image URLs carry a `?v=` content
+  hash. After replacing any of them run `python3 stamp.py`, which restamps every
+  page and the password gate in `middleware.js`, so visitors and link
+  unfurlers stop seeing the old file.

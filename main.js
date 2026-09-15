@@ -6,30 +6,66 @@ const CONFIG = {
   resume: "/assets/john-desouza-resume.pdf",  // empty hides the "Resume" links
 };
 
+/* 2. Everything else. Each feature is one function below; the list at the end
+   runs them in order, each on its own, so a feature that throws (a browser
+   without some API, a block of markup that moved) leaves the rest working. */
 (function () {
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  /* ---- Helpers ---- */
+  // A colour token from styles.css, as #rrggbb, so the canvas draws in the
+  // same ink and accent as the page. The fallback is the token's value today.
+  const styles = getComputedStyle(document.documentElement);
+  const token = (name, fallback) => {
+    const v = styles.getPropertyValue(name).trim();
+    return /^#[0-9a-f]{6}$/i.test(v) ? v : fallback;
+  };
+  const debounce = (fn, ms) => { let t; return () => { clearTimeout(t); t = setTimeout(fn, ms); }; };
+  // Calls fn on the next frame after anything that can move content on screen
+  // (scroll, resize, load, a jump to a hash, the tab coming back), at most once
+  // a frame. Returns the throttled call itself, with a .stop() that detaches it.
+  const VIEWPORT_EVENTS = ["scroll", "resize", "load", "pageshow", "hashchange"];
+  const onViewportChange = (fn) => {
+    let queued = false;
+    const tick = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(() => { queued = false; fn(); });
+    };
+    VIEWPORT_EVENTS.forEach((ev) => window.addEventListener(ev, tick, { passive: true }));
+    document.addEventListener("visibilitychange", tick);
+    tick.stop = () => {
+      VIEWPORT_EVENTS.forEach((ev) => window.removeEventListener(ev, tick));
+      document.removeEventListener("visibilitychange", tick);
+    };
+    return tick;
+  };
+
   /* ---- Links from CONFIG ---- */
-  $$("[data-link]").forEach((el) => {
-    const key = el.dataset.link;
-    const val = CONFIG[key];
-    if (!val) { (el.closest("li") || el).hidden = true; return; }
-    el.href = key === "email" ? `mailto:${val}` : val;
-    if (key === "resume") { el.download = "John_DeSouza_Resume.pdf"; return; }
-    if (key !== "email") { el.target = "_blank"; el.rel = "noopener"; }
-  });
+  const initLinks = () => {
+    $$("[data-link]").forEach((el) => {
+      const key = el.dataset.link;
+      const val = CONFIG[key];
+      if (!val) { (el.closest("li") || el).hidden = true; return; }
+      el.href = key === "email" ? `mailto:${val}` : val;
+      if (key === "resume") { el.download = "John_DeSouza_Resume.pdf"; return; }
+      if (key !== "email") { el.target = "_blank"; el.rel = "noopener"; }
+    });
+  };
 
   /* ---- Nav ----
      The phone menu is a disclosure: the button reports its state, Escape
      closes it and hands focus back, and following a link closes it. */
-  const nav = $(".nav");
-  const onScroll = () => nav && nav.classList.toggle("scrolled", window.scrollY > 8);
-  onScroll();
-  window.addEventListener("scroll", onScroll, { passive: true });
-  const toggle = $(".nav-toggle");
-  if (toggle && nav) {
+  const initNav = () => {
+    const nav = $(".nav");
+    if (!nav) return;
+    const onScroll = () => nav.classList.toggle("scrolled", window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    const toggle = $(".nav-toggle");
+    if (!toggle) return;
     let lockY = 0;
     const setOpen = (open) => {
       nav.classList.toggle("open", open);
@@ -54,7 +90,7 @@ const CONFIG = {
       toggle.focus();
     });
     $$(".nav-links a", nav).forEach((a) => a.addEventListener("click", () => setOpen(false)));
-  }
+  };
 
   /* ---- Scroll reveal ----
      Content is visible by default. JS opts into the animation by marking the
@@ -68,20 +104,21 @@ const CONFIG = {
      line drops to the bottom edge as the page runs out of scroll, so the last
      blocks never wait for room that isn't there. Blocks that cross together
      follow each other 60ms apart, in document order. */
-  $$("main > section, main > div.wrap").forEach((section) => {
-    const host = section.querySelector(":scope > .wrap") || section;
-    const kids = Array.from(host.children).filter((k) => k.nodeType === 1);
-    const list = kids.length ? kids : [section];
-    list.forEach((el) => {
-      if (el.closest("[data-reveal]") && el.closest("[data-reveal]") !== el) return;
-      if (el.querySelector("[data-reveal]")) return;   // its children rise on their own
-      if (!el.hasAttribute("data-reveal")) el.setAttribute("data-reveal", "");
+  const initReveal = () => {
+    $$("main > section").forEach((section) => {
+      const host = section.querySelector(":scope > .wrap") || section;
+      const kids = Array.from(host.children).filter((k) => k.nodeType === 1);
+      const list = kids.length ? kids : [section];
+      list.forEach((el) => {
+        if (el.closest("[data-reveal]") && el.closest("[data-reveal]") !== el) return;
+        if (el.querySelector("[data-reveal]")) return;   // its children rise on their own
+        if (!el.hasAttribute("data-reveal")) el.setAttribute("data-reveal", "");
+      });
     });
-  });
 
-  const revealEls = $$("[data-reveal]");
-  const LINE = 0.7;
-  if (!reduced && "IntersectionObserver" in window && revealEls.length) {
+    const revealEls = $$("[data-reveal]");
+    const LINE = 0.7;
+    if (reduced || !("IntersectionObserver" in window) || !revealEls.length) return;
     document.documentElement.classList.add("anim");
     // Everything shown in one pass is one batch; the stagger counts within it.
     // The batch settles on a microtask (not a frame: frames stop in a background
@@ -112,13 +149,7 @@ const CONFIG = {
     // paying for a full measure pass on every scroll tick for the rest of the visit.
     // On first paint the whole viewport counts (nothing on the first screen
     // should wait for a scroll); after that the line applies.
-    const EVENTS = ["scroll", "resize", "load", "pageshow", "hashchange"];
     let pending = revealEls.slice();
-    const detach = () => {
-      EVENTS.forEach((ev) => window.removeEventListener(ev, onMove));
-      document.removeEventListener("visibilitychange", onMove);
-      io.disconnect();
-    };
     const sweep = (firstPaint) => {
       if (!pending.length) return;
       const vh = window.innerHeight;
@@ -132,16 +163,9 @@ const CONFIG = {
         else still.push(el);
       }
       pending = still;
-      if (!pending.length) detach();
+      if (!pending.length) { move.stop(); io.disconnect(); }
     };
-    let waiting = false;
-    const onMove = () => {
-      if (waiting) return;
-      waiting = true;
-      requestAnimationFrame(() => { waiting = false; sweep(false); });
-    };
-    EVENTS.forEach((ev) => window.addEventListener(ev, onMove, { passive: true }));
-    document.addEventListener("visibilitychange", onMove);
+    const move = onViewportChange(() => sweep(false));
     sweep(true);
     setTimeout(() => sweep(true), 400);
     // Failsafe: if nothing ever revealed, the observer is broken - drop the
@@ -152,14 +176,57 @@ const CONFIG = {
         document.documentElement.classList.remove("anim");
       }
     }, 2500);
-  }
+  };
+
+  /* ---- Once in view ----
+     Fires the callback once, when the element is on screen. The observer does
+     the work; a scroll and resize sweep backs it up; and the timer only steps
+     in for an element that is already in view but never fired (a blocked
+     observer), never for one the reader simply hasn't scrolled to yet, so a
+     block below the fold still animates however long it takes to reach it.
+     The callback gets true when it can animate and false when it should just
+     settle. Elements already on screen fire on the next frame. An element
+     inside a block that reveals on scroll also waits for that block's reveal
+     (the "reveal" event), so nothing draws while its block is still hidden. */
+  const onceInView = (el, threshold, cb, fallbackMs = 4000) => {
+    let done = false, io = null, timer = 0;
+    const block = el.closest("[data-reveal]");
+    const revealed = () => !block || block.classList.contains("in") || !document.documentElement.classList.contains("anim");
+    const inView = () => {
+      const r = el.getBoundingClientRect(), edge = r.height * threshold;
+      return r.top + edge <= window.innerHeight && r.bottom - edge >= 0;
+    };
+    const fire = (animate) => {
+      if (done) return;
+      done = true;
+      if (io) io.disconnect();
+      clearTimeout(timer);
+      move.stop();
+      document.removeEventListener("reveal", move);
+      cb(animate);
+    };
+    const move = onViewportChange(() => { if (!done && revealed() && inView()) fire(true); });
+    if ("IntersectionObserver" in window) {
+      io = new IntersectionObserver(([e]) => { if (e.isIntersecting && revealed()) fire(true); }, { threshold });
+      io.observe(el);
+    }
+    document.addEventListener("reveal", move);
+    move();
+    // Stuck in view with nothing pending: settle. Still waiting on the block's
+    // reveal (it sits below the line): check again later rather than settle.
+    const stuck = () => {
+      if (done || !inView()) return;
+      if (revealed()) fire(false); else timer = setTimeout(stuck, fallbackMs);
+    };
+    timer = setTimeout(stuck, fallbackMs);
+  };
 
   /* ---- Tabs: the three tracking layers ----
      Standard tablist keyboarding (arrows, Home, End; selection follows focus).
      The underline is one element positioned from the selected tab's box, so
      it slides rather than blinks; it is re-measured on resize and once the
      web fonts land, since both change tab widths. */
-  $$("[data-tabs]").forEach((root) => {
+  const initTabs = () => $$("[data-tabs]").forEach((root) => {
     const list = $('[role="tablist"]', root);
     const tabs = $$('[role="tab"]', root);
     const panels = tabs.map((t) => document.getElementById(t.getAttribute("aria-controls")));
@@ -208,7 +275,7 @@ const CONFIG = {
      cross-fade, they don't move; the CSS drops the fade there). The pause
      button is the WCAG 2.2.2 stop, and the track only announces slides while
      paused so a screen reader isn't interrupted by the timer. */
-  $$("[data-carousel]").forEach((c) => {
+  const initCarousels = () => $$("[data-carousel]").forEach((c) => {
     const track = $(".testimonial-track", c);
     const slides = $$(".testimonial", c);
     const prev = $(".prev", c), next = $(".next", c), pause = $(".pause", c);
@@ -259,7 +326,7 @@ const CONFIG = {
   });
 
   /* ---- Walkthrough animations: poster first, animate on demand ---- */
-  $$(".walk").forEach((w) => {
+  const initWalkthroughs = () => $$(".walk").forEach((w) => {
     const img = $("img", w), btn = $(".play", w);
     if (!img || !btn) return;
     btn.addEventListener("click", () => {
@@ -295,7 +362,7 @@ const CONFIG = {
      sways on its own. It draws only while the card is on screen and the tab
      is visible, never under reduced motion (the still SVG stays), and the
      button in the corner is the WCAG 2.2.2 stop. */
-  $$("[data-strands]").forEach((fig) => {
+  const initStrands = () => $$("[data-strands]").forEach((fig) => {
     const c = $("canvas", fig), btn = $(".art-ctl", fig);
     const ctx = c && c.getContext && c.getContext("2d");
     if (reduced || !ctx) return;
@@ -308,6 +375,10 @@ const CONFIG = {
     for (let i = 0; i < N; i++) strands.push({ phi: (i / N) * Math.PI * 2 + r(-.1, .1), r0: r(.55, 1), amp: r(.05, .16), lam: r(1.4, 3), p1: r(0, 6.28), p2: r(0, 6.28), sp: r(.5, 1.1), w: r(.6, 1.2), set: r(.004, .03) });
     const green = { phi: 2.1, r0: .78, amp: .09, lam: 1.9, p1: 1.2, p2: 3.1, sp: .8, w: 2.2, set: 0 };
     const axis = { phi: 0, r0: 0, amp: 0, lam: 1, p1: 0, p2: 0, sp: 1, set: 0 };
+    // the page's own ink and accent, so the strands match the type and the green line the links
+    const accent = token("--accent", "#3B6B44");
+    const inkRgb = token("--ink", "#14100C").match(/\w\w/g).map((h) => parseInt(h, 16)).join(",");
+    const ink = (alpha) => `rgba(${inkRgb},${alpha})`;
 
     let W = 0, H = 0, dpr = 1;
     const size = () => {
@@ -347,7 +418,7 @@ const CONFIG = {
       ctx.lineCap = "round";
       point(axis, XM, t, rot);                    // where the strands resolve, on screen, sets the fade
       const g = ctx.createLinearGradient(0, 0, o[0] - W * .01, 0);
-      g.addColorStop(0, "rgba(20,16,12,1)"); g.addColorStop(.55, "rgba(20,16,12,.8)"); g.addColorStop(1, "rgba(20,16,12,0)");
+      g.addColorStop(0, ink(1)); g.addColorStop(.55, ink(.8)); g.addColorStop(1, ink(0));
       ctx.strokeStyle = g;
       for (const k of strands) {
         const zn = trace(k, t, rot, XM + .3, M);
@@ -355,7 +426,7 @@ const CONFIG = {
         ctx.lineWidth = k.w * (.7 + .6 * zn);
         ctx.stroke();
       }
-      ctx.globalAlpha = 1; ctx.strokeStyle = "#3B6B44"; ctx.lineWidth = green.w;
+      ctx.globalAlpha = 1; ctx.strokeStyle = accent; ctx.lineWidth = green.w;
       trace(green, t, rot, 1.4, M + 16);          // the one that keeps going
       ctx.stroke();
     };
@@ -385,57 +456,6 @@ const CONFIG = {
     sync();
   });
 
-  /* ---- Once in view ----
-     Fires the callback once, when the element is on screen. The observer does
-     the work; a scroll and resize sweep backs it up; and the timer only steps
-     in for an element that is already in view but never fired (a blocked
-     observer), never for one the reader simply hasn't scrolled to yet, so a
-     block below the fold still animates however long it takes to reach it.
-     The callback gets true when it can animate and false when it should just
-     settle. Elements already on screen fire on the next frame. An element
-     inside a block that reveals on scroll also waits for that block's reveal
-     (the "reveal" event), so nothing draws while its block is still hidden. */
-  const onceInView = (el, threshold, cb, fallbackMs = 4000) => {
-    let done = false, io = null, timer = 0, queued = false;
-    const EVENTS = ["scroll", "resize", "load", "pageshow"];
-    const block = el.closest("[data-reveal]");
-    const revealed = () => !block || block.classList.contains("in") || !document.documentElement.classList.contains("anim");
-    const inView = () => {
-      const r = el.getBoundingClientRect(), edge = r.height * threshold;
-      return r.top + edge <= window.innerHeight && r.bottom - edge >= 0;
-    };
-    const fire = (animate) => {
-      if (done) return;
-      done = true;
-      if (io) io.disconnect();
-      clearTimeout(timer);
-      EVENTS.forEach((ev) => window.removeEventListener(ev, onMove));
-      document.removeEventListener("visibilitychange", onMove);
-      document.removeEventListener("reveal", onMove);
-      cb(animate);
-    };
-    const onMove = () => {
-      if (queued) return;
-      queued = true;
-      requestAnimationFrame(() => { queued = false; if (!done && revealed() && inView()) fire(true); });
-    };
-    if ("IntersectionObserver" in window) {
-      io = new IntersectionObserver(([e]) => { if (e.isIntersecting && revealed()) fire(true); }, { threshold });
-      io.observe(el);
-    }
-    EVENTS.forEach((ev) => window.addEventListener(ev, onMove, { passive: true }));
-    document.addEventListener("visibilitychange", onMove);
-    document.addEventListener("reveal", onMove);
-    onMove();
-    // Stuck in view with nothing pending: settle. Still waiting on the block's
-    // reveal (it sits below the line): check again later rather than settle.
-    const stuck = () => {
-      if (done || !inView()) return;
-      if (revealed()) fire(false); else timer = setTimeout(stuck, fallbackMs);
-    };
-    timer = setTimeout(stuck, fallbackMs);
-  };
-
   /* ---- Originations chart ----
      A line over a soft area, drawn in the pixels of its box so the type stays
      the same size on a phone. The lines are revealed left to right by a
@@ -443,7 +463,7 @@ const CONFIG = {
      pill at the right edge as the sweep does. Hovering, touching or arrowing
      through the plot drops a marker on the nearest month with a card of its
      numbers. The grid, the axes and the table below never move. */
-  $$("[data-chart]").forEach((el) => {
+  const initCharts = () => $$("[data-chart]").forEach((el) => {
     const data = JSON.parse(el.dataset.series);
     const annos = JSON.parse(el.dataset.annotations || "[]");
     const fmt = (v) => v >= 1e6 ? `$${(v / 1e6).toFixed(2).replace(/\.?0+$/, "")}M` : v >= 1e3 ? `$${(v / 1e3).toFixed(0)}K` : `$${v}`;
@@ -452,7 +472,7 @@ const CONFIG = {
       const [mo, yr] = label.split(" ");     // keeps the year only where it starts or changes
       if (!yr) return label;
       const prev = k > 0 ? data[k - 1].label.split(" ")[1] : null;
-      return narrow && prev === yr ? mo : `${mo} \u2019${yr.slice(-2)}`;
+      return narrow && prev === yr ? mo : `${mo} ’${yr.slice(-2)}`;
     };
     const ns = "http://www.w3.org/2000/svg";
     const svgEl = (tag, attrs, parent, text) => {
@@ -511,6 +531,29 @@ const CONFIG = {
     let geo = null;                       // the last drawing's points and margins
     let played = reduced || !("animate" in lines);
     let active = -1;
+
+    // Reading a month: marker, dot and a card of its numbers
+    const place = (k) => {
+      const { pts, m, ih, W } = geo;
+      const p = pts[k], d = data[k];
+      const note = annos.find((a) => a.at === k);
+      tip.innerHTML = `<b>${d.label}</b><span class="tip-row"><span class="dot"></span>Originations<span class="tip-val">${full(d.value)}</span></span>${note ? `<span class="tip-note">${note.text}</span>` : ""}`;
+      marker.style.left = `${p.x}px`;
+      node.style.left = `${p.x}px`; node.style.top = `${p.y}px`;
+      const tw = tip.offsetWidth || 220, th = tip.offsetHeight || 80;
+      const tx = Math.min(Math.max(p.x, tw / 2), W - tw / 2);
+      const above = p.y - th - 16;
+      tip.style.left = `${tx}px`;
+      tip.style.top = `${above >= 0 ? above : Math.min(p.y + 16, m.t + ih - th)}px`;
+      [tip, marker, node].forEach((n) => n.classList.add("show"));
+      active = k;
+    };
+    const clear = () => { [tip, marker, node].forEach((n) => n.classList.remove("show")); active = -1; };
+    const nearest = (clientX) => {
+      const r = hit.getBoundingClientRect();
+      const k = Math.round(((clientX - r.left) / r.width) * (data.length - 1));
+      return Math.max(0, Math.min(data.length - 1, k));
+    };
 
     const draw = () => {
       const W = shell.clientWidth;
@@ -588,28 +631,6 @@ const CONFIG = {
       });
     }
 
-    // Reading a month: marker, dot and a card of its numbers
-    const place = (k) => {
-      const { pts, m, ih, W } = geo;
-      const p = pts[k], d = data[k];
-      const note = annos.find((a) => a.at === k);
-      tip.innerHTML = `<b>${d.label}</b><span class="tip-row"><span class="dot"></span>Originations<span class="tip-val">${full(d.value)}</span></span>${note ? `<span class="tip-note">${note.text}</span>` : ""}`;
-      marker.style.left = `${p.x}px`;
-      node.style.left = `${p.x}px`; node.style.top = `${p.y}px`;
-      const tw = tip.offsetWidth || 220, th = tip.offsetHeight || 80;
-      const tx = Math.min(Math.max(p.x, tw / 2), W - tw / 2);
-      const above = p.y - th - 16;
-      tip.style.left = `${tx}px`;
-      tip.style.top = `${above >= 0 ? above : Math.min(p.y + 16, m.t + ih - th)}px`;
-      [tip, marker, node].forEach((n) => n.classList.add("show"));
-      active = k;
-    };
-    const clear = () => { [tip, marker, node].forEach((n) => n.classList.remove("show")); active = -1; };
-    const nearest = (clientX) => {
-      const r = hit.getBoundingClientRect();
-      const k = Math.round(((clientX - r.left) / r.width) * (data.length - 1));
-      return Math.max(0, Math.min(data.length - 1, k));
-    };
     hit.addEventListener("pointermove", (e) => place(nearest(e.clientX)));
     hit.addEventListener("pointerdown", (e) => place(nearest(e.clientX)));
     hit.addEventListener("pointerleave", (e) => { if (e.pointerType !== "touch") clear(); });   // a tap keeps its card
@@ -631,7 +652,7 @@ const CONFIG = {
       let w = shell.clientWidth;
       new ResizeObserver(() => { if (shell.clientWidth !== w) { w = shell.clientWidth; draw(); } }).observe(shell);
     } else {
-      let t; window.addEventListener("resize", () => { clearTimeout(t); t = setTimeout(draw, 120); });
+      window.addEventListener("resize", debounce(draw, 120));
     }
   });
 
@@ -641,82 +662,90 @@ const CONFIG = {
      to its digit when the stat comes into view. The rest of the string (a
      currency sign, a unit) stands still. Screen readers get the plain text.
      Under reduced motion the stat is left as it was written. */
-  const flowEase = CSS.supports?.("animation-timing-function", "linear(0, 1)")
-    ? "linear(0, 0.0033 0.2%, 0.0263 2.27%, 0.0896 4.99%, 0.4108 12.34%, 0.5757 16.93%, 0.7011 21.7%, 0.7983 26.68%, 0.8721 31.98%, 0.9258 37.73%, 0.9637 44.19%, 0.9877 51.72%, 0.9992 60.71%, 1 100%)"
-    : "cubic-bezier(.23, 1, .32, 1)";
-  $$("[data-flow]").forEach((el) => {
-    const text = el.textContent.trim();
-    if (reduced || !/\d/.test(text) || !("animate" in el)) return;   // "No code" has nothing to roll
-    el.textContent = "";
-    const sr = document.createElement("span");
-    sr.className = "sr-only"; sr.textContent = text;
-    el.appendChild(sr);
-    const cols = [];
-    for (const ch of text) {
-      const s = document.createElement("span");
-      s.setAttribute("aria-hidden", "true");
-      if (/\d/.test(ch)) {
-        s.className = "flow-digit";
-        const strip = document.createElement("span");
-        strip.className = "flow-strip";
-        for (let i = 0; i < 20; i++) {
-          const n = document.createElement("span");
-          n.className = "flow-num"; n.textContent = String(i % 10);
-          strip.appendChild(n);
+  const initFlows = () => {
+    const flowEase = CSS.supports?.("animation-timing-function", "linear(0, 1)")
+      ? "linear(0, 0.0033 0.2%, 0.0263 2.27%, 0.0896 4.99%, 0.4108 12.34%, 0.5757 16.93%, 0.7011 21.7%, 0.7983 26.68%, 0.8721 31.98%, 0.9258 37.73%, 0.9637 44.19%, 0.9877 51.72%, 0.9992 60.71%, 1 100%)"
+      : "cubic-bezier(.23, 1, .32, 1)";
+    $$("[data-flow]").forEach((el) => {
+      const text = el.textContent.trim();
+      if (reduced || !/\d/.test(text) || !("animate" in el)) return;   // "No code" has nothing to roll
+      el.textContent = "";
+      const sr = document.createElement("span");
+      sr.className = "sr-only"; sr.textContent = text;
+      el.appendChild(sr);
+      const cols = [];
+      for (const ch of text) {
+        const s = document.createElement("span");
+        s.setAttribute("aria-hidden", "true");
+        if (/\d/.test(ch)) {
+          s.className = "flow-digit";
+          const strip = document.createElement("span");
+          strip.className = "flow-strip";
+          for (let i = 0; i < 20; i++) {
+            const n = document.createElement("span");
+            n.className = "flow-num"; n.textContent = String(i % 10);
+            strip.appendChild(n);
+          }
+          s.appendChild(strip);
+          cols.push({ strip, n: Number(ch) });
+        } else {
+          s.className = "flow-char"; s.textContent = ch === " " ? "\u00a0" : ch;   // a plain space would collapse in the flex row
         }
-        s.appendChild(strip);
-        cols.push({ strip, n: Number(ch) });
-      } else {
-        s.className = "flow-char"; s.textContent = ch === " " ? " " : ch;
+        el.appendChild(s);
       }
-      el.appendChild(s);
-    }
-    el.classList.add("flow-on");
-    let done = false;
-    const settle = (animate) => {
-      if (done) return;
-      done = true;
-      cols.forEach((c, i) => {
-        const end = `translateY(${-(10 + c.n)}em)`;     // one full turn, then the digit
-        if (animate) {
-          c.strip.animate([{ transform: "translateY(0)" }, { transform: end }],
-            { duration: 1100, delay: 200 + i * 45, easing: flowEase, fill: "both" })
-            .finished.then(() => { c.strip.style.transform = end; }, () => { c.strip.style.transform = end; });
-        } else c.strip.style.transform = end;
-      });
-    };
-    onceInView(el, 0.5, settle);                        // never leave a visible stat reading zero
-  });
+      el.classList.add("flow-on");
+      let done = false;
+      const settle = (animate) => {
+        if (done) return;
+        done = true;
+        cols.forEach((c, i) => {
+          const end = `translateY(${-(10 + c.n)}em)`;     // one full turn, then the digit
+          if (animate) {
+            c.strip.animate([{ transform: "translateY(0)" }, { transform: end }],
+              { duration: 1100, delay: 200 + i * 45, easing: flowEase, fill: "both" })
+              .finished.then(() => { c.strip.style.transform = end; }, () => { c.strip.style.transform = end; });
+          } else c.strip.style.transform = end;
+        });
+      };
+      onceInView(el, 0.5, settle);                        // never leave a visible stat reading zero
+    });
+  };
 
   /* ---- Swipe strips ----
      On a phone the gallery and three-up hero scroll sideways. A region that
      scrolls has to be reachable from the keyboard, so it gets a tab stop only
      while it actually overflows. */
-  const strips = $$(".gallery, .hero-panel.three");
-  const stops = () => strips.forEach((s) => {
-    if (s.scrollWidth > s.clientWidth + 1) {
-      s.tabIndex = 0;
-      if (s.tagName !== "FIGURE") s.setAttribute("role", "group");
-      s.setAttribute("aria-label", "Screens, scroll sideways");
-    } else { s.removeAttribute("tabindex"); s.removeAttribute("aria-label"); if (s.tagName !== "FIGURE") s.removeAttribute("role"); }
-  });
-  stops();
-  window.addEventListener("resize", () => { clearTimeout(stops.t); stops.t = setTimeout(stops, 120); });
-  window.addEventListener("load", stops);
+  const initStrips = () => {
+    const strips = $$(".gallery, .hero-panel.three");
+    if (!strips.length) return;
+    const stops = () => strips.forEach((s) => {
+      if (s.scrollWidth > s.clientWidth + 1) {
+        s.tabIndex = 0;
+        if (s.tagName !== "FIGURE") s.setAttribute("role", "group");
+        s.setAttribute("aria-label", "Screens, scroll sideways");
+      } else { s.removeAttribute("tabindex"); s.removeAttribute("aria-label"); if (s.tagName !== "FIGURE") s.removeAttribute("role"); }
+    });
+    stops();
+    window.addEventListener("resize", debounce(stops, 120));
+    window.addEventListener("load", stops);
+  };
 
   /* ---- About: the portrait stands as tall as the text beside it ----
      Its column is the text's height at the photo's own ratio, so it scales
      with the type instead of the row. CSS falls back to a fixed share of the
      row without this, and the stacked layout under 900px ignores it. */
-  (() => {
+  const initPortrait = () => {
     const grid = $(".about-grid");
     if (!grid || !("ResizeObserver" in window)) return;
     const text = $(".about-text", grid), img = $(".portrait img", grid);
     if (!text || !img) return;
     const ratio = img.getAttribute("width") / img.getAttribute("height");
     new ResizeObserver(([en]) => grid.style.setProperty("--portrait-w", `${en.contentRect.height * ratio}px`)).observe(text);
-  })();
+  };
 
   /* ---- Footer year ---- */
-  $$("[data-year]").forEach((el) => (el.textContent = new Date().getFullYear()));
+  const initYear = () => $$("[data-year]").forEach((el) => (el.textContent = new Date().getFullYear()));
+
+  [initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initCharts, initFlows, initStrips, initPortrait, initYear]
+    .forEach((init) => { try { init(); } catch (err) { console.error(`main.js: ${init.name} failed`, err); } });
 })();

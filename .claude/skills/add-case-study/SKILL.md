@@ -90,7 +90,7 @@ on size.
 
 Copy `.claude/skills/add-case-study/assets/case-study.template.html` to `work/<slug>.html` and fill the `{{SLOTS}}`.
 Delete the optional blocks you are not using, whole, comments included. Pull variant markup
-(chart, A/B table, capacity bar, quotes grid, gallery, before/after flow, decisions grid,
+(chart, A/B table, capacity bar, quotes grid, gallery, before/after gallery, decisions grid,
 walkthrough, cropped panel) from `references/page-anatomy.md`; the snippets there are copied
 from live pages, so use them as they are and only change the content.
 

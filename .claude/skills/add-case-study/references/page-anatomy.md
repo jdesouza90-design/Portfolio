@@ -39,8 +39,7 @@ Contents
 - **Inline styles** are only allowed for `--i` and `--crop-pos` (html-validate enforces it).
 - **Icons** are inline SVG on a 24-unit viewBox, 1.5 stroke, `aria-hidden="true"`, ink with
   one accent detail: `class="ac"` on a stroked path or `class="ac-fill"` on a filled shape.
-- **Arrows in prose** are not allowed (VOICE.md); `→` appears only inside `.flow-arrow`
-  with `aria-hidden` and in the eyebrow term 0→1.
+- **Arrows in prose** are not allowed (VOICE.md); `→` appears only in the eyebrow term 0→1.
 - **Quotes** keep the speaker's grammar. `<blockquote class="quote"><p class="t-quote">"…"</p><cite><b>Label</b>Source</cite></blockquote>`.
 
 ---
@@ -277,39 +276,23 @@ floating on the ground with a drop shadow that follows the alpha.
   </div>
   <div class="panel">
     <div class="gallery">
-      <figure><img decoding="async" width="262" height="1200" src="../assets/ver-upload-list.webp" alt="Upload documents checklist: W-2, paystub, identification, 0 of 3 complete" loading="lazy"><figcaption>Document checklist</figcaption></figure>
-      <figure><img decoding="async" width="239" height="1200" src="../assets/ver-w2-empty.webp" alt="W-2 upload screen with guidance and an empty state" loading="lazy"><figcaption>Per-document upload</figcaption></figure>
-      <figure><img decoding="async" width="393" height="1200" src="../assets/ver-id-uploaded.webp" alt="Identification upload with a submitted file and accepted document types listed" loading="lazy"><figcaption>Submitted state</figcaption></figure>
+      <figure><img decoding="async" width="780" height="2000" src="../assets/ver-upload-list.webp" alt="Upload documents checklist: W-2, paystub, identification, 0 of 3 complete" loading="lazy"><figcaption>Document checklist</figcaption></figure>
+      <figure><img decoding="async" width="780" height="2000" src="../assets/ver-w2-empty.webp" alt="W-2 upload screen with guidance and an empty state" loading="lazy"><figcaption>Per-document upload</figcaption></figure>
+      <figure><img decoding="async" width="780" height="2000" src="../assets/ver-w2-submitted.webp" alt="W-2 upload screen with a submitted file listed and a Done button" loading="lazy"><figcaption>Submitted state</figcaption></figure>
     </div>
   </div>
 </article>
 ```
 
-**Design row, before/after flow** (`.row.full`, the `.flow-pair`). `.bad` marks the dead end,
-`.new` marks the added steps. `four` on the second flow fits four steps.
+**Design row, before and after** (`.row.full`, the same `.gallery`): the old screen first,
+then the new ones, each figcaption starting "Before:" or "After:" so the sequence reads on a
+phone where the gallery becomes a swipe strip. From refinance-offers.html:
 ```html
-<div class="flow-pair">
-  <div>
-    <p class="flow-caption t-subhead">Before: a dead-end funnel</p>
-    <div class="flow">
-      <div class="flow-step"><img decoding="async" width="450" height="1200" src="../assets/cs-app-start.webp" alt="Application start: what are your needs?" loading="lazy"><span class="chip flow-label">Application</span></div>
-      <div class="flow-arrow" aria-hidden="true">→</div>
-      <div class="flow-step"><img decoding="async" width="450" height="1200" src="../assets/cs-checking.webp" alt="Checking your rates" loading="lazy"><span class="chip flow-label">Decisioning</span></div>
-      <div class="flow-arrow" aria-hidden="true">→</div>
-      <div class="flow-step bad"><img decoding="async" width="450" height="1200" src="../assets/cs-decline.webp" alt="Declined" loading="lazy"><span class="chip flow-label">Declined</span></div>
-    </div>
-  </div>
-  <div>
-    <p class="flow-caption t-subhead">After: a new path forward</p>
-    <div class="flow four">
-      <div class="flow-step"><img decoding="async" width="450" height="1200" src="../assets/cs-app-start.webp" alt="Application start" loading="lazy"><span class="chip flow-label">Application</span></div>
-      <div class="flow-arrow" aria-hidden="true">→</div>
-      <div class="flow-step"><img decoding="async" width="450" height="1200" src="../assets/cs-checking.webp" alt="Checking your rates" loading="lazy"><span class="chip flow-label">Decisioning</span></div>
-      <div class="flow-arrow" aria-hidden="true">→</div>
-      <div class="flow-step new"><img decoding="async" width="450" height="1200" src="../assets/cs-vehicle-details.webp" alt="Almost there, we just need a few details about your vehicle" loading="lazy"><span class="chip flow-label">Qualifying questions</span></div>
-      <div class="flow-arrow" aria-hidden="true">→</div>
-      <div class="flow-step new"><img decoding="async" width="450" height="1200" src="../assets/cs-offer.webp" alt="Congrats, you're approved for a secured loan" loading="lazy"><span class="chip flow-label">Offer</span></div>
-    </div>
+<div class="panel">
+  <div class="gallery">
+    <figure><img decoding="async" width="750" height="2000" src="../assets/refi-home-before.webp" alt="Before: the home screen with the blue Personal Loan card offering another loan of up to $10,000" loading="lazy"><figcaption>Before: the generic invitation</figcaption></figure>
+    <figure><img decoding="async" width="750" height="1800" src="../assets/refi-home.webp" alt="After: the home screen with the refinance card under the loan, reading 'Refi might be right for you'" loading="lazy"><figcaption>After: the card on Home</figcaption></figure>
+    <figure><img decoding="async" width="750" height="1624" src="../assets/refi-offers.webp" alt="After: the Offers tab with the same refinance card and the eligibility disclosures link" loading="lazy"><figcaption>After: the same card on Offers</figcaption></figure>
   </div>
 </div>
 ```

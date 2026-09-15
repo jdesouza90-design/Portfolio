@@ -49,11 +49,11 @@ function page({ path, error, unconfigured, ref }) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Password required — John DeSouza</title>
 <meta name="robots" content="noindex">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.svg?v=fb53733d" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/styles.css?v=7">
+<link rel="stylesheet" href="/styles.css?v=809d0757">
 </head>
 <body>
 <main class="gate-wrap"><div class="gate">

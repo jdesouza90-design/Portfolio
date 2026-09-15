@@ -32,6 +32,14 @@
   --danger: #C0392B;
   --shadow-lift: 0 30px 60px -34px rgba(20, 16, 12, .30);
   --shadow-screen: 0 18px 40px -22px rgba(20, 16, 12, .45), 0 0 0 1px rgba(20, 16, 12, .06);
+  --shadow-cutout: drop-shadow(0 18px 28px rgba(20, 16, 12, .18));   /* a piece of UI keyed out of its screen */
+
+  /* panel ground: the warm sand every screenshot sits on. Each case study
+     overrides these from its own subject matter (section 10). */
+  --panel-base: #EFE8DB;
+  --panel: linear-gradient(155deg, #F4EFE5 0%, #E4DAC6 100%);
+  --panel-art: none;
+  --panel-size: auto;
 
   /* faces */
   --font-display: "Crimson Pro", "Iowan Old Style", Georgia, serif;
@@ -236,7 +244,7 @@ main, .nav { position: relative; z-index: 1; }
   .btn:hover:active { transform: translateY(-2px) scale(.97); }
 }
 .btn-primary { background: var(--ink); color: var(--paper); }
-.btn-primary:hover { background: var(--accent); color: #fff; box-shadow: 0 10px 30px -10px var(--glow); }
+.btn-primary:hover { background: var(--accent); color: var(--surface); box-shadow: 0 10px 30px -10px var(--glow); }
 .btn-ghost { border-color: var(--hair-2); color: var(--ink); background: var(--surface); }
 .btn-ghost:hover { border-color: var(--accent); color: var(--accent-ink); }
 .btn-sm { padding: 10px 16px; }
@@ -244,12 +252,12 @@ main, .nav { position: relative; z-index: 1; }
 /* Reach-out buttons: a leading icon settles into a second one on hover —
    download becomes a check, an envelope becomes a send arrow, the LinkedIn
    mark becomes an external-link cue. Two icons stacked in place, crossfaded. */
-.btn[data-link="resume"] .icon-swap, .btn[data-link="email"] .icon-swap, .btn[data-link="linkedin"] .icon-swap { position: relative; width: 16px; height: 16px; }
-.btn[data-link="resume"] .icon-swap svg, .btn[data-link="email"] .icon-swap svg, .btn[data-link="linkedin"] .icon-swap svg { position: absolute; inset: 0; transition: opacity var(--dur-hover), transform var(--dur-hover) var(--ease); }
-.btn[data-link="resume"] .icon-swap svg:last-child, .btn[data-link="email"] .icon-swap svg:last-child, .btn[data-link="linkedin"] .icon-swap svg:last-child { opacity: 0; transform: scale(.5); }
+.icon-swap { position: relative; width: 16px; height: 16px; }
+.icon-swap svg { position: absolute; inset: 0; transition: opacity var(--dur-hover), transform var(--dur-hover) var(--ease); }
+.icon-swap svg:last-child { opacity: 0; transform: scale(.5); }
 @media (hover: hover) and (pointer: fine) {
-  .btn[data-link="resume"]:hover .icon-swap svg:first-child, .btn[data-link="email"]:hover .icon-swap svg:first-child, .btn[data-link="linkedin"]:hover .icon-swap svg:first-child { opacity: 0; transform: scale(.5); }
-  .btn[data-link="resume"]:hover .icon-swap svg:last-child, .btn[data-link="email"]:hover .icon-swap svg:last-child, .btn[data-link="linkedin"]:hover .icon-swap svg:last-child { opacity: 1; transform: scale(1); }
+  .btn:hover .icon-swap svg:first-child { opacity: 0; transform: scale(.5); }
+  .btn:hover .icon-swap svg:last-child { opacity: 1; transform: scale(1); }
 }
 /* Browse-the-work buttons: a trailing arrow nudges forward on hover,
    the same cue .work-cta already uses further down the page. */
@@ -276,14 +284,14 @@ main, .nav { position: relative; z-index: 1; }
 }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
 
-/* Panel: the tinted ground every screenshot sits on. Each project sets its own
-   --panel-* (see the end of the file); the default is the warm sand of the site. */
+/* Panel: the tinted ground every screenshot sits on, from the --panel-* tokens
+   (the site's warm sand by default; each project sets its own in section 10). */
 .panel, .case-media {
   position: relative; overflow: hidden; margin: 0;
   border-radius: var(--radius);
-  background-color: var(--panel-base, #EFE8DB);
-  background-image: var(--panel-art, none), var(--panel, linear-gradient(155deg, #F4EFE5 0%, #E4DAC6 100%));
-  background-size: var(--panel-size, auto), auto;
+  background-color: var(--panel-base);
+  background-image: var(--panel-art), var(--panel);
+  background-size: var(--panel-size), auto;
   display: flex; align-items: center; justify-content: center;
   gap: clamp(16px, 2.6vw, 32px); padding: clamp(24px, 4vw, 48px);
 }
@@ -430,7 +438,6 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .section { padding-block: var(--section); position: relative; }
 .section.tight { padding-top: 0; }
 .section.alt { border-block: 1px solid var(--hair); background: var(--paper-2); }
-.section.alt > .wrap { position: relative; z-index: 1; }
 
 /* Selected work: an editorial index, each row led by the company's wordmark */
 .cases { display: flex; flex-direction: column; border-top: 1px solid var(--hair); }
@@ -451,7 +458,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 /* Cutout: the one piece of UI the case study is about, keyed out of its screen
    and floating alone on the ground at reading size, not the whole screen shrunk to fit.
    .bleed blows a taller piece up until it runs off the bottom. */
-.case-media.cutout img { width: 100%; max-width: 100%; height: auto; border-radius: 0; box-shadow: none; filter: drop-shadow(0 18px 28px rgba(20, 16, 12, .18)); }
+.case-media.cutout img { width: 100%; max-width: 100%; height: auto; border-radius: 0; box-shadow: none; filter: var(--shadow-cutout); }
 .case-media.cutout.bleed img { position: absolute; top: 5%; left: 17%; width: 66%; max-width: none; max-height: none; }
 /* Emerge: one screen, large, coming out of a bottom corner of the ground so the
    part that matters reads at size and the ground clips the rest. --x/--y set the
@@ -460,7 +467,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
    CSS radius and ring and takes the cutout's drop-shadow. */
 .case-media.emerge img { position: absolute; top: var(--y, 10%); left: var(--x, 14%); width: var(--w, 88%); max-width: none; max-height: none; }
 .case-media.emerge.right img { left: auto; right: var(--x, 14%); }
-.case-media.emerge:not(.wide) img { border-radius: 0; box-shadow: none; filter: drop-shadow(0 18px 28px rgba(20, 16, 12, .18)); }
+.case-media.emerge:not(.wide) img { border-radius: 0; box-shadow: none; filter: var(--shadow-cutout); }
 .case-cross-sell .case-media.emerge { --x: 12%; --y: 10%; --w: 92%; }
 .case-no-code .case-media.emerge { --x: 14%; --y: 12%; --w: 150%; }
 .case-staking .case-media.emerge { --x: 14%; --y: 12%; --w: 140%; }
@@ -481,18 +488,14 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .lead-solo + .lead-solo, .framework + .lead-solo { margin-top: clamp(80px, 10vw, 148px); }
 .lead-solo { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(28px, 5vw, 72px); padding: clamp(32px, 5vw, 56px); align-items: start; }
 .lead-solo-copy .t-body { max-width: 58ch; }
-.lead-points { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(24px, 3vw, 40px); }
-.lead-points > div { padding-top: 20px; border-top: 1px solid var(--hair-2); position: relative; }
-.lead-points > div::before { content: ""; position: absolute; top: -1px; left: 0; width: 28px; height: 1px; background: var(--accent); }
 .point-icon { width: 22px; height: 22px; display: block; margin: 0 0 14px; color: var(--accent); }
 /* Coaching: intro on top, then a 2x2 ledger of cells sharing hairlines.
    The 1px gap lets the card's hair colour show through as the rules. */
 .lead-grid { display: block; padding: 0; overflow: hidden; }
-.lead-grid .lead-solo-intro { padding: clamp(32px, 5vw, 56px) clamp(32px, 5vw, 56px) clamp(24px, 4vw, 40px); }
-.lead-grid .lead-points { gap: 1px; background: var(--hair); border-top: 1px solid var(--hair); }
-.lead-grid .lead-points > div { background: var(--surface); border: 0; padding: clamp(24px, 3vw, 36px) clamp(28px, 4vw, 48px) clamp(32px, 4.5vw, 56px); }
-.lead-grid .lead-points > div::before { content: none; }
-.lead-grid .point-icon { width: 44px; height: 44px; margin: 0 auto clamp(20px, 2.5vw, 32px) 0; }
+.lead-solo-intro { padding: clamp(32px, 5vw, 56px) clamp(32px, 5vw, 56px) clamp(24px, 4vw, 40px); }
+.lead-points { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--hair); border-top: 1px solid var(--hair); }
+.lead-points > div { background: var(--surface); padding: clamp(24px, 3vw, 36px) clamp(28px, 4vw, 48px) clamp(32px, 4.5vw, 56px); }
+.lead-points .point-icon { width: 44px; height: 44px; margin: 0 auto clamp(20px, 2.5vw, 32px) 0; }
 .tools { list-style: none; display: flex; flex-wrap: wrap; gap: clamp(18px, 2.4vw, 32px); padding: 0; margin: 26px 0 0; }
 .tools li { display: flex; align-items: center; gap: 10px; }
 .tools img { width: 28px; height: 28px; object-fit: contain; }
@@ -516,7 +519,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
   .lead-solo { grid-template-columns: minmax(0, 1fr); }
   .lead-art-panel { min-height: 0; aspect-ratio: 16 / 10; }
 }
-@media (max-width: 760px) { .lead-points { grid-template-columns: 1fr; } .lead-grid .point-icon { margin: 0 auto 20px 0; } }
+@media (max-width: 760px) { .lead-points { grid-template-columns: 1fr; } .lead-points .point-icon { margin: 0 auto 20px 0; } }
 
 /* Three layers of design tracking: intro on the left; on the right a tab strip
    picks which of the three layers is showing. Panels are stacked in one grid
@@ -645,7 +648,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .contact-actions { display: flex; flex-direction: column; gap: 10px; align-items: stretch; }
 .contact-actions .btn { justify-content: center; }
 .contact .btn-primary { background: var(--paper); color: var(--ink); }
-.contact .btn-primary:hover { background: #fff; color: var(--ink); box-shadow: none; }
+.contact .btn-primary:hover { background: var(--surface); color: var(--ink); box-shadow: none; }
 .contact .btn-ghost { border-color: var(--hair-2); color: var(--paper); background: transparent; }
 .contact .btn-ghost:hover { border-color: var(--paper); color: var(--paper); }
 .contact :focus-visible { outline-color: var(--paper); }   /* the accent ring is only 3.2:1 on ink */
@@ -683,7 +686,6 @@ footer a:hover { color: var(--ink); }
 .hero-panel img { max-height: min(620px, 62vh); }
 .hero-panel.two img { max-width: 40%; }
 .hero-panel.three img { max-width: 30%; }
-.hero-panel.wide img { max-width: 100%; }
 @media (max-width: 600px) {
   .hero-panel { min-height: 0; }
   .hero-panel.two img { max-width: 46%; max-height: 420px; }
@@ -740,7 +742,7 @@ footer a:hover { color: var(--ink); }
 .row .panel.crop { padding: clamp(24px, 4vw, 48px) 0 0 clamp(24px, 4vw, 48px); align-items: flex-start; justify-content: flex-start; }
 .row .panel.crop img { width: 100%; height: 100%; max-width: none; object-fit: cover; object-position: var(--crop-pos, 0 0); border-radius: 10px 0 0 0; }
 /* .panel.cutout holds one UI card cut out with transparent corners, floating on the ground */
-.row .panel.cutout img { border-radius: 0; box-shadow: none; filter: drop-shadow(0 18px 28px rgba(20, 16, 12, .18)); }
+.row .panel.cutout img { border-radius: 0; box-shadow: none; filter: var(--shadow-cutout); }
 
 /* A full row: copy centred above a visual that needs the whole width */
 .row.full { grid-template-columns: minmax(0, 1fr); gap: clamp(28px, 4vw, 44px); }
@@ -812,9 +814,9 @@ footer a:hover { color: var(--ink); }
 }
 @media (max-width: 900px) and (min-width: 561px) { .cols .col:nth-child(odd):last-child .shot { width: calc(100% - var(--col-pad)); } }
 .shot { position: relative; margin: var(--sp-5) 0 0; aspect-ratio: 1.7; border-radius: 12px; overflow: hidden; border: 1px solid var(--hair);
-  background-color: var(--panel-base, #EFE8DB); background-image: var(--panel, linear-gradient(155deg, #F4EFE5 0%, #E4DAC6 100%)); }
+  background-color: var(--panel-base); background-image: var(--panel); }
 /* The screen sits in from the top-left and runs off the right and bottom, so the frame breaks it. No shadow: the hairline is the edge. */
-.shot-frame { position: absolute; left: 8%; top: 10%; width: 100%; height: 100%; overflow: hidden; border-radius: 10px 0 0 0; background: #fff; border: 1px solid var(--hair); border-right: 0; border-bottom: 0; }
+.shot-frame { position: absolute; left: 8%; top: 10%; width: 100%; height: 100%; overflow: hidden; border-radius: 10px 0 0 0; background: var(--surface); border: 1px solid var(--hair); border-right: 0; border-bottom: 0; }
 .shot-frame img { display: block; width: 100%; height: auto; max-width: none; }
 
 /* Gallery: several screens on one ground */
@@ -824,13 +826,13 @@ footer a:hover { color: var(--ink); }
 .gallery figcaption { margin-top: var(--sp-4); text-align: center; }
 
 /* Walkthrough player: poster first, frames on demand */
-.walk { position: relative; border-radius: 16px; overflow: hidden; border: 1px solid var(--hair); background: #14100C; max-width: 932px; margin-inline: auto; width: 100%; }
+.walk { position: relative; border-radius: 16px; overflow: hidden; border: 1px solid var(--hair); background: var(--ink); max-width: 932px; margin-inline: auto; width: 100%; }
 .walk img { width: 100%; height: auto; display: block; }
 /* A scrim marks the poster as a video still, so the control reads as "play" */
 .walk::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 1; background: linear-gradient(180deg, rgba(20, 16, 12, .12), rgba(20, 16, 12, .34)); transition: opacity var(--dur-ui) var(--ease); }
 .walk .play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 2; display: inline-flex; align-items: center; gap: 9px; padding: 12px 20px 12px 17px; border: 0; border-radius: 999px; white-space: nowrap; background: rgba(255, 255, 255, .97); color: var(--ink); box-shadow: 0 10px 34px rgba(20, 16, 12, .34); transition: transform var(--dur-press) var(--ease), background var(--dur-hover), box-shadow var(--dur-hover), opacity var(--dur-ui) var(--ease); }
-.walk .play:hover { background: #fff; box-shadow: 0 14px 40px rgba(20, 16, 12, .42); }
-.walk .play:focus-visible { outline-color: #fff; }
+.walk .play:hover { background: var(--surface); box-shadow: 0 14px 40px rgba(20, 16, 12, .42); }
+.walk .play:focus-visible { outline-color: var(--surface); }
 .walk.loading .play { cursor: progress; }
 .walk.loading .play svg { animation: walk-spin .7s linear infinite; transform-origin: 50% 50%; }
 @keyframes walk-spin { to { transform: rotate(360deg); } }
@@ -959,7 +961,7 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
   .case-media img, .work-cta::after, .tooltip, .chart-marker, .chart-node { transition: none; transform: none; }
   .tooltip { transform: translate(-50%, 0); }
   .btn:hover, .btn:active, .icon-btn:active, .layer-tab:active, .testimonial-controls button:active { transform: none; }
-  .btn[data-link="resume"] .icon-swap svg, .btn[data-link="email"] .icon-swap svg, .btn[data-link="linkedin"] .icon-swap svg, .btn-browse svg, .cs-next-arrow { transition: none; }
+  .icon-swap svg, .btn-browse svg, .cs-next-arrow { transition: none; }
   .walk .play:active { transform: translate(-50%, -50%); }
   .nav.open .nav-links, .nav.open::before { animation: none; }
   .nav-toggle path { transition: none; }
@@ -972,9 +974,7 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
    the case study. Kept near-invisible so the screenshots stay the subject.
    -------------------------------------------------------------------------- */
 .case-cross-sell {
-  --panel-base: #EFE8DB;
-  --panel: linear-gradient(155deg, #F4EFE5 0%, #E4DAC6 100%);
-  /* a grid of registration marks: every decline checked against a second product */
+  /* the site's own sand, with a grid of registration marks: every decline checked against a second product */
   --panel-art: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44'%3E%3Cpath d='M19 22.5h7M22.5 19v7' stroke='rgba(20,16,12,.11)'/%3E%3C/svg%3E");
   --panel-size: 44px 44px;
 }
@@ -1088,8 +1088,8 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
   /* Leadership */
   .lead-solo { padding: 24px 20px; }
   .lead-grid { padding: 0; }
-  .lead-grid .lead-solo-intro { padding: 24px 20px 20px; }
-  .lead-grid .lead-points > div { padding: 24px 20px 28px; }
+  .lead-solo-intro { padding: 24px 20px 20px; }
+  .lead-points > div { padding: 24px 20px 28px; }
   .framework { margin-top: 64px; }
   .lead-solo + .lead-solo, .framework + .lead-solo { margin-top: 64px; }
   /* the tab strip scrolls instead of wrapping onto a broken second line */
