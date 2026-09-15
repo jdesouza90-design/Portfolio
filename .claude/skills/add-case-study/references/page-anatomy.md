@@ -33,6 +33,15 @@ Contents
   per child of `.wrap`, and never put `data-reveal` inside another `data-reveal`. Anything
   that plays inside a block (chart, `data-flow`, gauge) waits for the block's reveal on its
   own through `onceInView`.
+- **The unlock opener.** The first time a reader opens a case study after the password,
+  the page opens behind a sheet that parts like doors (`initUnlock` in `main.js`, section
+  8b of `styles.css`, Motion in the README). Two things on the page make it work, and both
+  come from the template: the one-line `<script>` in the `<head>` that sets `html.unlock`
+  when the address carries `?unlocked` (it must stay before the stylesheet link; without
+  it the page flashes before the sheet), and the `h1`, whose text is what the sheet shows
+  under "Unlocked". So the `h1` is the case study's name as plain text, no markup inside,
+  and a name over about 40 characters wraps to three lines on the sheet at desktop. The
+  sheet's copy is the same on every page; nothing per case study is written for it.
 - **Section ids** are stable across pages: `results`, `story`, `problem`, `design`,
   `decisions`, `research`, `role`, `retro`. Extra rows take a short id of their own
   (`feeds`, `community`, `customize`).

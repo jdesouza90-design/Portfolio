@@ -97,7 +97,9 @@ from live pages, so use them as they are and only change the content.
 Then diff the new page's `<head>` boilerplate and `<header class="nav">` against
 `work/verifications.html`. If the live site has moved on since the template was written, the
 live page wins: fix the new page and update the template in the same commit so the next
-addition starts from the right place.
+addition starts from the right place. The one-line `<script>` in the head that sets
+`html.unlock` is part of that boilerplate: it holds the page for the unlock opener, and a
+page without it flashes before the sheet (`references/page-anatomy.md`, conventions).
 
 ## Wire it in
 
@@ -118,7 +120,10 @@ Then the accessibility pass that only a browser can do: open the page in the Bro
 reveal-on-scroll doesn't hide text from the contrast check, inject axe-core from cdnjs and
 run it with the WCAG 2.x A/AA and best-practice tags. Zero violations is the bar every other
 page meets. Check the page at 375 and 320 wide for anything that scrolls sideways, and play
-the walkthrough if there is one. Take a screenshot of the hero and the proof block for John.
+the walkthrough if there is one. Then open the page once more with `?unlocked` on the
+address to play the unlock opener with the new title on its sheet, at desktop and at 390:
+the title should sit in three lines or fewer and the doors should part onto the hero. Take
+a screenshot of the hero and the proof block for John.
 
 ## Hand off
 

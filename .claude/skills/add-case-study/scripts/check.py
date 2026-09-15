@@ -189,6 +189,13 @@ for p, s in html.items():
     head = [strip_stamps(l) for l in s.split("\n") if l.startswith(("<link", "<script defer", '<meta name="twitter'))]
     if head != ref_head:
         err(f"{p}: head boilerplate (icons, fonts, stylesheet, insights) differs from {ref}")
+# The unlock opener's hold line: without it the page flashes before the sheet (see Motion in the README).
+HOLD = 'classList.add("unlock")'
+for p, s in html.items():
+    if HOLD not in (block(s, "<head>", "</head>") or ""):
+        err(f"{p}: the unlock hold line is missing from <head>; copy the <script> that sets html.unlock from {ref}")
+if HOLD not in (block(template, "<head>", "</head>") or ""):
+    warn("the skill's template is missing the unlock hold line in <head>; update assets/case-study.template.html")
 t_nav = strip_stamps(block(template, '<header class="nav">', "</header>"))
 if t_nav != ref_nav:
     warn("the skill's template nav differs from the live pages; update assets/case-study.template.html")

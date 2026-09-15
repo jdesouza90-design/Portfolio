@@ -282,6 +282,11 @@ of what works in this environment:
    fire buttons) and confirm the `walk` gets `playing`.
 6. Tab through the page once: the skip link, the nav, the table region if there is one, the
    Play button, the next link. Nothing should trap or vanish.
+6b. `navigate` to the same page with `?unlocked` on the address to play the unlock opener
+   (the sheet that parts like doors, about 2.6s). The new title sits on the sheet under
+   "Unlocked"; look at it at desktop and at 390, and confirm the page behind is hidden
+   until the doors part (no flash of the hero first). The param drops from the address as
+   it starts, so add it again to replay. Escape skips it.
 7. Screenshot the hero and the proof block for John. The pane's screenshots lag a beat after
    a programmatic scroll, so wait a second first.
 
