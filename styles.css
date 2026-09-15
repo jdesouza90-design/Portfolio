@@ -576,13 +576,14 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .anim .exp.in .exp-item:nth-child(3) .exp-mark { animation-delay: calc(var(--exp-wait) + 2 * var(--exp-seg)); }
 @keyframes exp-sweep { from { transform: scale(var(--sx), var(--sy)); } to { transform: none; } }
 @keyframes exp-land { from { transform: scale(0); } to { transform: none; } }
-/* the label is a chip holding the company's own lockup */
-.exp-label { display: inline-flex; align-items: center; align-self: flex-start; min-height: 35px; margin-bottom: var(--sp-5); }
+/* the label is the company's own lockup, standing on the ground; the row is
+   the tallest lockup's height so the titles below line up across all three */
+.exp-label { display: flex; align-items: flex-end; height: 29px; margin: 0 0 var(--sp-5); }
 .exp-label img { width: auto; }
 /* official vector lockups, sized so the wordmark text matches across all three */
-.exp-label img[alt="Best Egg"] { height: 14px; }
-.exp-label img[alt="Chainlink Labs"] { height: 17px; }
-.exp-label img[alt="Auth0"] { height: 17px; }
+.exp-label img[alt="Best Egg"] { height: 23px; }
+.exp-label img[alt="Chainlink Labs"] { height: 29px; }
+.exp-label img[alt="Auth0"] { height: 29px; }
 .exp-item .t-body { margin-top: var(--sp-2); }
 .exp-dates { margin-top: auto; padding-top: var(--sp-5); }
 .exp-dates time { white-space: nowrap; }
@@ -590,9 +591,9 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
   /* the track turns down the left and the markers sit level with each label */
   .exp { --exp-gap: var(--sp-6); --sx: 1; --sy: 0; grid-template-columns: minmax(0, 1fr); }
   .exp-item { padding: 0 0 0 28px; }
-  .exp-item::before, .exp-item::after { top: 17px; left: 4px; width: 1px; height: calc(100% + var(--exp-gap)); }
-  .exp-item:last-child::before { height: calc(100% - 17px); }
-  .exp-mark { top: 13px; }
+  .exp-item::before, .exp-item::after { top: 15px; left: 4px; width: 1px; height: calc(100% + var(--exp-gap)); }
+  .exp-item:last-child::before { height: calc(100% - 15px); }
+  .exp-mark { top: 10px; }
   .exp-dates { padding-top: var(--sp-4); }
 }
 @media (max-width: 900px) { .about-grid { grid-template-columns: 1fr; gap: 32px; } .portrait { max-width: 210px; } }
