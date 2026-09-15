@@ -19,7 +19,8 @@ work/no-code-tools.html         Auth0 · No-code tools
 work/sign-in-with-ethereum.html Auth0 · Sign-in with Ethereum
 styles.css                      Tokens, the ten type roles, components, case-study layout
 main.js                         CONFIG links, then one function per feature: nav, scroll reveal, tabs, carousel,
-                                walkthroughs, AI strands, chart, number flow, swipe strips, About portrait height
+                                walkthroughs, AI strands, fields (hero dots, contact rings), chart, number flow,
+                                swipe strips, About portrait height
 middleware.js                   Vercel Edge Middleware: the password gate for /work/*, and the access log
 vercel.json                     Cache and security headers
 .vercelignore                   Keeps the repo's tooling (this file, VOICE.md, stamp.py, .claude/) off the deployment
@@ -235,6 +236,24 @@ scrolls to it, and every page gets it the same way:
   event a block dispatches as it starts; `--exp-wait` is `--dur-reveal`),
   and the gauge is held paused by CSS until then. New in-view work goes
   through `onceInView`, never its own observer, so it inherits the wait.
+- **Two grounds answer the cursor** (`initFields` in `main.js`, over any
+  block with `data-field` and a `canvas.field`). The hero's is a grid of ink
+  dots at 12px, each breathing on three slow waves; the cursor pushes the
+  dots within 150px away and they spring home, turning green while they
+  travel; a click or tap sends a ring out through them. It is ramp.com's
+  hero on the site's paper, with their measured values (push 10 with a
+  square falloff, spring .018, damping .8, ripple at 420px/s) and the dots
+  at half strength. Get in touch keeps its rings (paper hairlines at 42px
+  from behind the buttons) but draws them live: still at rest and identical
+  to the stylesheet's, travelling outward while the cursor is over the band,
+  brightening and bulging around it, carrying a wave on a click. Both ignore
+  the cursor over links and buttons, fade their push out within a second of
+  it resting, draw at 30fps idle and 60 in play, only on screen, stop under
+  the hero's pause button, and draw one still frame under reduced motion;
+  the rings are not redrawn at all until something moves. To add a piece,
+  give `fields` a factory returning `{ resize, frame }` and name it in
+  `data-field`; a piece that returns `false` from `frame` when still is left
+  alone until the pointer or a ripple wakes it.
 - **Content is visible by default.** The hidden state is `.anim
   [data-reveal]`, and only the script adds `anim` to `<html>` after it has
   found the observer, so a blocked or failed script never hides a section;
@@ -261,7 +280,7 @@ The rules that shape the code:
 
 - Every colour pair is a token, and every token pair used for text passes
   4.5:1 on the darkest ground it sits on (`--ink-3` was darkened for this).
-  The hero lede is set in `--ink` because it sits over the colour wash.
+  The hero lede is set in `--ink` because it sits over the dot field.
 - The nav is a `<nav aria-label="Primary">` landmark; the phone menu button
   reports `aria-expanded`, Escape closes it and hands focus back. The case
   studies' breadcrumb is a second landmark, `<nav aria-label="Breadcrumb">`

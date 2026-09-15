@@ -456,6 +456,254 @@ const CONFIG = {
     sync();
   });
 
+  /* ---- Fields ----
+     A block's ground as a canvas that answers the cursor: `data-field` on the
+     block names which piece runs over its `canvas.field`. Two pieces: the
+     dots under the hero and the rings under Get in touch. Both share one
+     runner: the pointer is read on the document (the copy never blocks
+     it), ignored over links and controls, and its push fades out within a
+     second of the cursor resting, so the field only stirs when the reader
+     moves. A tap or click drops a ripple. The loop draws at 30fps while
+     nothing is happening and 60 while the cursor is in play, only while the
+     block is on screen, and stops under the block's pause button if it has
+     one; a piece whose rest is still (the rings) reports it and is not
+     redrawn until something moves. Under reduced motion each piece draws one
+     still frame. The runner and the dots are adapted from ramp.com's hero,
+     whose measured values are the defaults. Four other hero pieces (ruled
+     lines, waves, contours, a fluid wash) were built and set aside on Sep 15,
+     2026; branch hero-backgrounds up to ca9775b has them. */
+  const fields = {
+    // A grid of ink dots breathing on three slow waves. The cursor pushes the
+    // dots within reach, they spring home, and a dot in motion turns green.
+    dots: ({ ctx, ink, accent }) => {
+      const S = 12, R = 150, F = 10, K = .018, DAMP = .8;   // pitch, push radius, push force, spring, damping
+      const RS = 420, RW = 500, RF = 10, RD = 2.2;          // ripple: px/s, ring width, force, decay
+      const A = .5, MOVED = 1.2;                            // strength on paper (John's pick), px of travel that turns a dot green
+      let W = 0, H = 0, n = 0, hx, hy, ox, oy, vx, vy, k, sprites, sw = 0, energy = 0;
+      const hash = (i) => { const s = Math.sin(i * 12.9898) * 43758.5453; return s - Math.floor(s); };
+      const sprite = (colour, dpr) => {
+        const r = 1.15, d = Math.ceil(r * 2 * dpr) + 2, s = document.createElement("canvas");
+        s.width = s.height = d;
+        const g = s.getContext("2d");
+        g.fillStyle = colour; g.beginPath(); g.arc(d / 2, d / 2, r * dpr, 0, Math.PI * 2); g.fill();
+        sw = d / dpr;
+        return s;
+      };
+      const resize = (w, h, dpr) => {
+        W = w; H = h;
+        const x0 = (W % S) / 2 + 6, y0 = (H % S) / 2 + 6;
+        const cols = Math.ceil((W + S - x0) / S), rows = Math.ceil((H + S - y0) / S);
+        n = cols * rows;
+        hx = new Float32Array(n); hy = new Float32Array(n); k = new Float32Array(n);
+        ox = new Float32Array(n); oy = new Float32Array(n); vx = new Float32Array(n); vy = new Float32Array(n);
+        for (let r = 0, i = 0; r < rows; r++) for (let c = 0; c < cols; c++, i++) {
+          hx[i] = x0 + c * S; hy[i] = y0 + r * S; k[i] = K * (.8 + hash(c * 1.7 + r * 73) * .4);
+        }
+        sprites = [sprite(ink(1), dpr), sprite(accent, dpr)];
+      };
+      const step = (p) => {
+        const push = p.active > .001, r2 = R * R, rips = p.ripples, nr = rips.length;
+        let e = 0;
+        for (let i = 0; i < n; i++) {
+          let x = ox[i], y = oy[i], u = vx[i] - x * k[i], v = vy[i] - y * k[i];
+          if (push) {
+            const cx = hx[i] + x - p.x, cy = hy[i] + y - p.y, d2 = cx * cx + cy * cy;
+            if (d2 < r2 && d2 > .01) { const d = Math.sqrt(d2), q = 1 - d / R, f = q * q * F * p.active / d; u += cx * f; v += cy * f; }
+          }
+          for (let r = 0; r < nr; r++) {
+            const rp = rips[r], cx = hx[i] + x - rp.x, cy = hy[i] + y - rp.y, d = Math.sqrt(cx * cx + cy * cy), diff = d - rp.age * RS;
+            if (diff > 60 || diff < -60 || d < .01) continue;
+            const f = Math.exp(-diff * diff / RW) * Math.exp(-rp.age * RD) * RF / d;
+            u += cx * f; v += cy * f;
+          }
+          u *= DAMP; v *= DAMP; x += u; y += v;
+          ox[i] = x; oy[i] = y; vx[i] = u; vy[i] = v;
+          e += u * u + v * v;
+        }
+        energy = e;
+      };
+      const frame = (t, dt, p, live) => {
+        if (live && (p.active > .001 || p.ripples.length || energy > 1e-3)) {
+          for (let s = Math.max(1, Math.min(3, Math.round(dt * 60))); s > 0; s--) step(p);
+        }
+        ctx.clearRect(0, 0, W, H);
+        const h = sw / 2;
+        for (let i = 0; i < n; i++) {
+          const x = hx[i], y = hy[i];
+          let a = .6;
+          if (live) {
+            const fl = (Math.sin(x * .018 + y * .009 + t * .55) + Math.sin(y * .016 - x * .012 + t * .38) + Math.sin(x * .006 - y * .014 + t * .22)) / 3;
+            a = .35 + .65 * (.5 + .5 * fl);
+          }
+          ctx.globalAlpha = a * A;
+          ctx.drawImage(sprites[Math.abs(ox[i]) + Math.abs(oy[i]) > MOVED ? 1 : 0], x + ox[i] - h, y + oy[i] - h, sw, sw);
+        }
+        ctx.globalAlpha = 1;
+      };
+      return { resize, frame };
+    },
+
+    // Rings: the contact band's own ground, paper hairlines rippling out from
+    // behind the buttons, drawn to the same pitch and tone as the stylesheet
+    // so the band at rest is the design. While the cursor is over the band
+    // the rings travel outward and brighten around it, and the ones near it
+    // bulge away; a click sends a wave through them. Reports when it is
+    // still, so the runner leaves it alone until the next move.
+    rings: ({ ctx, el, paper }) => {
+      const PITCH = 42, ALPHA = .07, SPEED = 22, SIG = 130, AMP = 22, RING = 16, LIFT = .14;   // px, tone, travel px/s, lens radius, lens lift, ripple lift, tone lift
+      const RS = 420, RW = 500, RD = 2.2;
+      let W = 0, H = 0, ox = 0, oy = 0, R = 0, phase = 0, speed = 0;
+      const resize = (w, h) => {
+        W = w; H = h;
+        const o = getComputedStyle(el).getPropertyValue("--contact-origin").trim().split(/\s+/).map((v) => parseFloat(v) / 100);
+        ox = W * (isNaN(o[0]) ? 1 : o[0]); oy = H * (isNaN(o[1]) ? .5 : o[1]);
+        R = Math.hypot(Math.max(ox, W - ox), Math.max(oy, H - oy));
+      };
+      const frame = (t, dt, p, live) => {
+        if (live) { speed += ((p.inside ? SPEED : 0) - speed) * Math.min(1, dt * 3); phase = (phase + speed * dt) % PITCH; }
+        const lens = live ? p.active : 0, rips = p.ripples, nr = rips.length;
+        ctx.clearRect(0, 0, W, H);
+        ctx.lineWidth = 1;
+        if (lens > 0) {
+          const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 260);
+          g.addColorStop(0, paper(ALPHA + LIFT * lens)); g.addColorStop(1, paper(ALPHA));
+          ctx.strokeStyle = g;
+        } else ctx.strokeStyle = paper(ALPHA);
+        const bend = lens > 0 || nr > 0, s2 = 2 * SIG * SIG, lift = AMP * lens * 1.65 / SIG;
+        ctx.beginPath();
+        for (let r = phase; r < R; r += PITCH) {
+          if (!bend) { ctx.moveTo(ox + r, oy); ctx.arc(ox, oy, r, 0, Math.PI * 2); continue; }
+          const n = Math.max(24, Math.min(400, Math.round(r / 2.5)));
+          let pen = false;
+          for (let i = 0; i <= n; i++) {
+            const a = i / n * Math.PI * 2;
+            let x = ox + r * Math.cos(a), y = oy + r * Math.sin(a);
+            if (x < -40 || x > W + 40 || y < -40 || y > H + 40) { pen = false; continue; }   // the part of the ring off the band
+            if (lift > 0) { const dx = x - p.x, dy = y - p.y, d2 = dx * dx + dy * dy; if (d2 < s2 * 6) { const f = lift * Math.exp(-d2 / s2); x += dx * f; y += dy * f; } }
+            for (let k = 0; k < nr; k++) {
+              const rp = rips[k], dx = x - rp.x, dy = y - rp.y, d = Math.sqrt(dx * dx + dy * dy), diff = d - rp.age * RS;
+              if (diff > 60 || diff < -60 || d < .01) continue;
+              const f = RING * Math.exp(-diff * diff / RW) * Math.exp(-rp.age * RD) / d;
+              x += dx * f; y += dy * f;
+            }
+            pen ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+            pen = true;
+          }
+        }
+        ctx.stroke();
+        return live && (speed > .05 || lens > 0 || nr > 0);
+      };
+      return { resize, frame };
+    },
+  };
+
+  const initFields = () => $$("[data-field]").forEach((el) => {
+    const c = $("canvas.field", el), btn = $(".art-ctl", el);
+    const ctx = c && c.getContext && c.getContext("2d");
+    const make = fields[el.dataset.field];
+    if (!ctx || !make) return;
+    const colour = (name, fallback) => token(name, fallback).match(/\w\w/g).map((h) => parseInt(h, 16));   // a token as [r, g, b]
+    const inkRgb = colour("--ink", "#14100C").join(","), paperRgb = colour("--paper", "#F6F4F0").join(",");
+    const field = make({ ctx, el, ink: (alpha) => `rgba(${inkRgb},${alpha})`, paper: (alpha) => `rgba(${paperRgb},${alpha})`, accent: token("--accent", "#3B6B44") });
+
+    let W = 0, H = 0, dpr = 1;
+    const size = () => {
+      dpr = Math.min(2, window.devicePixelRatio || 1);
+      W = el.clientWidth; H = el.clientHeight;
+      c.width = Math.round(W * dpr); c.height = Math.round(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      field.resize(W, H, dpr);
+    };
+
+    // The pointer, in the el's pixels. `active` is 1 while the cursor moves
+    // and dies away within a second of it resting; the pieces scale their
+    // response by it, so a resting cursor leaves the field to settle.
+    const p = { x: -9999, y: -9999, vx: 0, vy: 0, active: 0, inside: false, ripples: [] };
+    let raf = 0, prev = 0, t = 0, fresh = true, playing = true, seen = true, stirring = true;
+    const box = { top: 0, left: 0, w: 0, h: 0 };
+    const measure = () => { const r = el.getBoundingClientRect(); box.top = r.top; box.left = r.left; box.w = r.width; box.h = r.height; };
+    const CONTROLS = "a, button, input, select, textarea, label, [role=button], form";
+    let tx = -9999, ty = -9999, on = false, over = false, checked = 0, moved = -1e6, touched = -1e6;
+    const move = (e) => {
+      if (e.timeStamp - prev > 40) measure();               // a still piece has not measured since its last frame
+      const x = e.clientX - box.left, y = e.clientY - box.top;
+      p.inside = x >= 0 && y >= 0 && x <= box.w && y <= box.h;
+      if (y < -150 || y > box.h + 150) { on = false; return; }
+      if (e.timeStamp - checked > 100) { over = e.target instanceof Element && !!e.target.closest(CONTROLS); checked = e.timeStamp; }
+      if (over) { on = false; return; }
+      tx = x; ty = y; on = true; moved = touched = e.timeStamp;
+    };
+    const leave = () => { on = false; p.inside = false; };
+    const down = (e) => {
+      if (!e.isPrimary || over) return;
+      if (e.timeStamp - prev > 40) measure();
+      const x = e.clientX - box.left, y = e.clientY - box.top;
+      if (x < 0 || y < 0 || x > box.w || y > box.h) return;
+      p.ripples.push({ x, y, born: e.timeStamp, age: 0 });
+      if (p.ripples.length > 6) p.ripples.shift();
+      touched = e.timeStamp;
+    };
+
+    const tick = (now) => {
+      raf = requestAnimationFrame(tick);
+      const busy = on || p.inside || p.ripples.length || now - touched < 2500;
+      if (!fresh && !busy && (!stirring || now - prev < 33)) return;   // idle: 30fps is plenty for the breathing, none for a still piece
+      const dt = fresh ? 0 : Math.min((now - prev) / 1000, .05);
+      fresh = false; prev = now; t += dt;
+      measure();
+      if (on) {
+        const x = p.x, y = p.y;
+        if (x < -9000) { p.x = tx; p.y = ty; }              // arriving: start where the cursor is, not off the page
+        else { p.x += (tx - x) * .8; p.y += (ty - y) * .8; if (dt > 0) { p.vx += ((p.x - x) / dt - p.vx) * .5; p.vy += ((p.y - y) / dt - p.vy) * .5; } }
+      } else { p.vx *= .8; p.vy *= .8; }
+      const rest = (now - moved) / 1000, aim = on && rest < 1 ? Math.exp(-7 * rest) : 0;
+      p.active += (aim - p.active) * Math.min(1, dt * 14);
+      if (p.active < .001) p.active = 0;
+      for (const rp of p.ripples) rp.age = (now - rp.born) / 1000;
+      p.ripples = p.ripples.filter((rp) => rp.age < 2);
+      stirring = field.frame(t, dt, p, true) !== false;
+    };
+    const sync = () => {
+      const run = playing && seen && !document.hidden;
+      if (run && !raf) { fresh = true; raf = requestAnimationFrame(tick); }
+      if (!run && raf) { cancelAnimationFrame(raf); raf = 0; }
+      if (btn) {
+        btn.setAttribute("aria-pressed", String(!playing));
+        btn.setAttribute("aria-label", playing ? "Pause animation" : "Resume animation");
+      }
+    };
+
+    size();
+    measure();
+    el.classList.add("live");
+    if (reduced) {
+      field.frame(0, 0, p, false);
+      if ("ResizeObserver" in window) new ResizeObserver(() => { size(); field.frame(0, 0, p, false); }).observe(el);
+      return;
+    }
+    field.frame(0, 0, p, true);
+    const toggle = () => { playing = !playing; sync(); };
+    if (btn) { btn.hidden = false; btn.addEventListener("click", toggle); }
+    document.addEventListener("pointermove", move, { passive: true });
+    document.addEventListener("pointerleave", leave);
+    document.addEventListener("pointerdown", down, { passive: true });
+    document.addEventListener("visibilitychange", sync);
+    const ro = "ResizeObserver" in window ? new ResizeObserver(() => { size(); stirring = true; if (!raf) field.frame(t, 0, p, true); }) : null;
+    if (ro) ro.observe(el); else window.addEventListener("resize", size);
+    const io = "IntersectionObserver" in window ? new IntersectionObserver(([en]) => { seen = en.isIntersecting; sync(); }, { threshold: 0 }) : null;
+    if (io) io.observe(el);
+    sync();
+    el.field = { stop() {
+      playing = false; sync();
+      document.removeEventListener("pointermove", move); document.removeEventListener("pointerleave", leave);
+      document.removeEventListener("pointerdown", down); document.removeEventListener("visibilitychange", sync);
+      if (ro) ro.disconnect(); if (io) io.disconnect();
+      if (btn) { btn.removeEventListener("click", toggle); btn.hidden = true; }
+      ctx.clearRect(0, 0, W, H);
+      el.classList.remove("live");
+    } };
+  });
+
   /* ---- Originations chart ----
      A line over a soft area, drawn in the pixels of its box so the type stays
      the same size on a phone. The lines are revealed left to right by a
@@ -746,6 +994,6 @@ const CONFIG = {
   /* ---- Footer year ---- */
   const initYear = () => $$("[data-year]").forEach((el) => (el.textContent = new Date().getFullYear()));
 
-  [initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initCharts, initFlows, initStrips, initPortrait, initYear]
+  [initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initFlows, initStrips, initPortrait, initYear]
     .forEach((init) => { try { init(); } catch (err) { console.error(`main.js: ${init.name} failed`, err); } });
 })();

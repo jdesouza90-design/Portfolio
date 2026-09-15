@@ -416,16 +416,15 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .hero { position: relative; isolation: isolate; overflow: hidden; text-align: center;
   padding-top: calc(var(--nav-h) + clamp(84px, 16vh, 190px)); padding-bottom: clamp(64px, 10vh, 130px); }
 .hero > .wrap { position: relative; z-index: 1; }
-.hero-bg { position: absolute; inset: -15% -10% auto; height: 145%; z-index: 0; pointer-events: none; }
-.hero-bg span { position: absolute; display: block; border-radius: 50%; filter: blur(60px); will-change: transform; mix-blend-mode: multiply; }
-.hero-bg span:nth-child(1) { width: 46vw; height: 36vw; top: -10%; left: 0%; background: radial-gradient(closest-side, rgba(118, 176, 82, .40), transparent 70%); animation: hero-drift-a 17s ease-in-out infinite alternate; }
-.hero-bg span:nth-child(2) { width: 42vw; height: 34vw; top: 12%; right: -2%; background: radial-gradient(closest-side, rgba(201, 143, 62, .34), transparent 70%); animation: hero-drift-b 21s ease-in-out infinite alternate; }
-.hero-bg span:nth-child(3) { width: 50vw; height: 34vw; bottom: -18%; left: 18%; background: radial-gradient(closest-side, rgba(118, 176, 82, .26), transparent 70%); animation: hero-drift-c 19s ease-in-out infinite alternate; }
-.hero-bg span:nth-child(4) { width: 34vw; height: 30vw; top: 30%; left: 34%; background: radial-gradient(closest-side, rgba(201, 143, 62, .22), transparent 70%); animation: hero-drift-d 24s ease-in-out infinite alternate; }
-@keyframes hero-drift-a { from { transform: translate3d(-6vw, -3vh, 0) scale(.9); } to { transform: translate3d(14vw, 9vh, 0) scale(1.3); } }
-@keyframes hero-drift-b { from { transform: translate3d(5vw, 2vh, 0) scale(1.25); } to { transform: translate3d(-13vw, 11vh, 0) scale(.92); } }
-@keyframes hero-drift-c { from { transform: translate3d(-4vw, 4vh, 0) scale(1.05); } to { transform: translate3d(12vw, -10vh, 0) scale(1.35); } }
-@keyframes hero-drift-d { from { transform: translate3d(8vw, 5vh, 0) scale(.85); } to { transform: translate3d(-10vw, -7vh, 0) scale(1.28); } }
+/* The field: a canvas over the whole block, drawn by main.js ("Fields"
+   there); the block names its piece in data-field. In the hero it fades out
+   under the nav and into the next section so the dots never end in a hard
+   edge. */
+.field { position: absolute; inset: 0; z-index: 0; display: block; width: 100%; height: 100%; pointer-events: none; }
+.hero .field {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, rgba(0, 0, 0, .4) 12%, #000 30%, #000 88%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, rgba(0, 0, 0, .4) 12%, #000 30%, #000 88%, transparent 100%); }
+.hero .art-ctl { right: var(--gutter); bottom: 20px; z-index: 2; }
 
 .hero h1 { margin-inline: auto; }
 @media (min-width: 900px) { .hero h1 { max-width: 34ch; } .hero h1 .nowrap-lg { white-space: nowrap; } }
@@ -676,6 +675,9 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .contact .btn-ghost { border-color: var(--hair-2); color: var(--paper); background: transparent; }
 .contact .btn-ghost:hover { border-color: var(--paper); color: var(--paper); }
 .contact :focus-visible { outline-color: var(--paper); }   /* the accent ring is only 3.2:1 on ink */
+/* live, the rings are drawn on the canvas (same pitch, same tone) and the stylesheet keeps only the ground */
+.contact.live { background-image: linear-gradient(155deg, #241D17 0%, #14100C 58%, #100D0A 100%); }
+.contact > :not(.field) { position: relative; z-index: 1; }
 @media (max-width: 720px) { .contact { --contact-origin: 100% 100%; grid-template-columns: 1fr; } }   /* stacked, the buttons sit at the bottom */
 footer { padding: 30px 0 44px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 footer a { color: var(--ink-2); text-decoration: none; }
@@ -980,7 +982,7 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .anim [data-reveal], [data-rise] { opacity: 1; transform: none; transition: none; animation: none; }
-  .gauge .fill, .gauge .needle, .hero-bg span { animation: none !important; }
+  .gauge .fill, .gauge .needle { animation: none !important; }
   .layer, .layer-tabs::after { transition: none; }
   .case-media img, .work-cta::after, .tooltip, .chart-marker, .chart-node { transition: none; transform: none; }
   .tooltip { transform: translate(-50%, 0); }
@@ -1047,11 +1049,6 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
   :root { --nav-h: 68px; }
   .btn { min-height: 44px; }
   .icon-btn { width: 42px; height: 42px; }
-  /* the hero wash is sized in vw; on a phone the blobs shrink to specks, so scale them back up */
-  .hero-bg span:nth-child(1) { width: 110vw; height: 80vw; }
-  .hero-bg span:nth-child(2) { width: 100vw; height: 76vw; }
-  .hero-bg span:nth-child(3) { width: 120vw; height: 80vw; }
-  .hero-bg span:nth-child(4) { width: 80vw; height: 70vw; }
 }
 
 @media (max-width: 640px) {
