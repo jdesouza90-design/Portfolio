@@ -182,7 +182,12 @@ phone layer fixes what a collapse alone gets wrong:
   two milestone notes stack in rows above the plot.
 - The facts strip loses its box and tightens to label-over-value rows; the
   tab strip scrolls; the testimonial quote steps down to quote size and the
-  product mark drops under the name; the phone menu carries Contact.
+  product mark drops under the name.
+- The phone menu is one sheet of paper hanging from the bar: the bar goes
+  solid while it is open, the three bars of the button turn into a cross,
+  Contact sits full width at the bottom, and an ink scrim covers the page
+  below (a tap on it closes the menu). The sheet and the scrim measure from
+  the bar itself, not from the `.wrap` centred inside it.
 
 Collapsed grids use `minmax(0, 1fr)`, never bare `1fr`: a swipe strip inside
 a `1fr` column widens the column to its content and the page scrolls sideways.

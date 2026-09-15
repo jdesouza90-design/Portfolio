@@ -46,6 +46,8 @@ const CONFIG = {
       }
     };
     toggle.addEventListener("click", () => setOpen(!nav.classList.contains("open")));
+    // A tap on the scrim (the nav's own ::before, so the event lands on the nav) closes it.
+    nav.addEventListener("click", (e) => { if (e.target === nav && nav.classList.contains("open")) setOpen(false); });
     nav.addEventListener("keydown", (e) => {
       if (e.key !== "Escape" || !nav.classList.contains("open")) return;
       setOpen(false);
