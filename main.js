@@ -456,6 +456,396 @@ const CONFIG = {
     sync();
   });
 
+  /* ---- Hero field ----
+     The hero's ground is a canvas that answers the cursor; `data-field` on the
+     section names which piece runs. Every piece shares one runner: the pointer
+     is read on the document (the copy never blocks it), ignored over links and
+     controls, and its push fades out within a second of the cursor resting,
+     so the field only stirs when the reader moves. A tap or click drops a
+     ripple. The loop draws at 30fps while nothing is happening and 60 while
+     the cursor is in play, only while the hero is on screen, and stops under
+     the pause button. Under reduced motion each piece draws one still frame.
+     The runner and the dots are adapted from ramp.com's hero, whose measured
+     values are the defaults. */
+  const heroFields = {
+    // A grid of ink dots breathing on three slow waves. The cursor pushes the
+    // dots within reach, they spring home, and a dot in motion turns green.
+    dots: ({ ctx, ink, accent }) => {
+      const S = 12, R = 150, F = 10, K = .018, DAMP = .8;   // pitch, push radius, push force, spring, damping
+      const RS = 420, RW = 500, RF = 10, RD = 2.2;          // ripple: px/s, ring width, force, decay
+      const A = .62, MOVED = 1.2;                           // strength on paper, px of travel that turns a dot green
+      let W = 0, H = 0, n = 0, hx, hy, ox, oy, vx, vy, k, sprites, sw = 0, energy = 0;
+      const hash = (i) => { const s = Math.sin(i * 12.9898) * 43758.5453; return s - Math.floor(s); };
+      const sprite = (colour, dpr) => {
+        const r = 1.15, d = Math.ceil(r * 2 * dpr) + 2, s = document.createElement("canvas");
+        s.width = s.height = d;
+        const g = s.getContext("2d");
+        g.fillStyle = colour; g.beginPath(); g.arc(d / 2, d / 2, r * dpr, 0, Math.PI * 2); g.fill();
+        sw = d / dpr;
+        return s;
+      };
+      const resize = (w, h, dpr) => {
+        W = w; H = h;
+        const x0 = (W % S) / 2 + 6, y0 = (H % S) / 2 + 6;
+        const cols = Math.ceil((W + S - x0) / S), rows = Math.ceil((H + S - y0) / S);
+        n = cols * rows;
+        hx = new Float32Array(n); hy = new Float32Array(n); k = new Float32Array(n);
+        ox = new Float32Array(n); oy = new Float32Array(n); vx = new Float32Array(n); vy = new Float32Array(n);
+        for (let r = 0, i = 0; r < rows; r++) for (let c = 0; c < cols; c++, i++) {
+          hx[i] = x0 + c * S; hy[i] = y0 + r * S; k[i] = K * (.8 + hash(c * 1.7 + r * 73) * .4);
+        }
+        sprites = [sprite(ink(1), dpr), sprite(accent, dpr)];
+      };
+      const step = (p) => {
+        const push = p.active > .001, r2 = R * R, rips = p.ripples, nr = rips.length;
+        let e = 0;
+        for (let i = 0; i < n; i++) {
+          let x = ox[i], y = oy[i], u = vx[i] - x * k[i], v = vy[i] - y * k[i];
+          if (push) {
+            const cx = hx[i] + x - p.x, cy = hy[i] + y - p.y, d2 = cx * cx + cy * cy;
+            if (d2 < r2 && d2 > .01) { const d = Math.sqrt(d2), q = 1 - d / R, f = q * q * F * p.active / d; u += cx * f; v += cy * f; }
+          }
+          for (let r = 0; r < nr; r++) {
+            const rp = rips[r], cx = hx[i] + x - rp.x, cy = hy[i] + y - rp.y, d = Math.sqrt(cx * cx + cy * cy), diff = d - rp.age * RS;
+            if (diff > 60 || diff < -60 || d < .01) continue;
+            const f = Math.exp(-diff * diff / RW) * Math.exp(-rp.age * RD) * RF / d;
+            u += cx * f; v += cy * f;
+          }
+          u *= DAMP; v *= DAMP; x += u; y += v;
+          ox[i] = x; oy[i] = y; vx[i] = u; vy[i] = v;
+          e += u * u + v * v;
+        }
+        energy = e;
+      };
+      const frame = (t, dt, p, live) => {
+        if (live && (p.active > .001 || p.ripples.length || energy > 1e-3)) {
+          for (let s = Math.max(1, Math.min(3, Math.round(dt * 60))); s > 0; s--) step(p);
+        }
+        ctx.clearRect(0, 0, W, H);
+        const h = sw / 2;
+        for (let i = 0; i < n; i++) {
+          const x = hx[i], y = hy[i];
+          let a = .6;
+          if (live) {
+            const fl = (Math.sin(x * .018 + y * .009 + t * .55) + Math.sin(y * .016 - x * .012 + t * .38) + Math.sin(x * .006 - y * .014 + t * .22)) / 3;
+            a = .35 + .65 * (.5 + .5 * fl);
+          }
+          ctx.globalAlpha = a * A;
+          ctx.drawImage(sprites[Math.abs(ox[i]) + Math.abs(oy[i]) > MOVED ? 1 : 0], x + ox[i] - h, y + oy[i] - h, sw, sw);
+        }
+        ctx.globalAlpha = 1;
+      };
+      return { resize, frame };
+    },
+
+    // Ruled paper: hairline rows at the site's ledger pitch, undulating a
+    // little. The cursor parts the rows like a lens and darkens the rules
+    // around it; a click sends a ring out through them.
+    ledger: ({ ctx, ink }) => {
+      const S = 24, STEP = 6, SIG = 130, AMP = 42, RING = 26;   // pitch, sample step, lens radius, lens lift, ripple lift
+      const BASE = .12;                                          // ink alpha of a rule at rest, between --hair and --hair-2 on paper
+      const RS = 420, RW = 500, RD = 2.2;
+      let W = 0, H = 0, y0 = 0, rows = 0, cols = 0;
+      const resize = (w, h) => { W = w; H = h; y0 = (H % S) / 2; rows = Math.ceil(H / S) + 1; cols = Math.ceil(W / STEP) + 1; };
+      const frame = (t, dt, p, live) => {
+        ctx.clearRect(0, 0, W, H);
+        ctx.lineWidth = 1;
+        // the rules sit at the hairline tone; a spotlight darkens them around a moving cursor
+        if (live && p.active > .001) {
+          const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 320);
+          g.addColorStop(0, ink(BASE + .32 * p.active)); g.addColorStop(1, ink(BASE));
+          ctx.strokeStyle = g;
+        } else ctx.strokeStyle = ink(BASE);
+        const s2 = 2 * SIG * SIG, lift = AMP * p.active * 1.65, rips = p.ripples, nr = rips.length;   // 1.65: the peak of x·e^(−x²/2) is .606
+        for (let r = 0; r < rows; r++) {
+          const y = y0 + r * S, dy = y - p.y;
+          ctx.beginPath();
+          for (let c = 0; c < cols; c++) {
+            const x = c * STEP;
+            let yy = y;
+            if (live) {
+              yy += 2.5 * Math.sin(x * .0045 + t * .35 + r * .4);
+              if (lift > .01) { const dx = x - p.x; yy += lift * (dy / SIG) * Math.exp(-(dx * dx + dy * dy) / s2); }
+              for (let r = 0; r < nr; r++) {
+                const rp = rips[r], dx = x - rp.x, d = Math.sqrt(dx * dx + dy * dy), diff = d - rp.age * RS;
+                if (diff > 60 || diff < -60 || d < .01) continue;
+                yy += (dy / d) * RING * Math.exp(-diff * diff / RW) * Math.exp(-rp.age * RD);
+              }
+            }
+            c ? ctx.lineTo(x, yy) : ctx.moveTo(x, yy);
+          }
+          ctx.stroke();
+        }
+      };
+      return { resize, frame };
+    },
+
+    // Contour lines over a few broad hills that drift. The cursor raises a
+    // hill of its own that the lines wrap around; a click sends a ring out.
+    // Every third line is heavier, the way an index contour is on a map.
+    contours: ({ ctx, ink }) => {
+      const CELL = 10, LEVELS = 13, TOP = 1.7, RS = 300, RW = 1400, RD = 1.6;   // cell px, lines, height of the top line, ripple px/s, width, decay
+      const hills = [
+        { x: .18, y: .35, r: 240, a: 1,   sx: .05, sy: .04, px: 0,   py: 1.2 },
+        { x: .78, y: .30, r: 210, a: .85, sx: .04, sy: .06, px: 2.1, py: .4 },
+        { x: .50, y: .80, r: 280, a: .9,  sx: .03, sy: .05, px: 4,   py: 2.6 },
+        { x: .30, y: .95, r: 180, a: .6,  sx: .06, sy: .03, px: 1,   py: 5 },
+        { x: .92, y: .85, r: 200, a: .7,  sx: .045, sy: .035, px: 3.3, py: .9 },
+      ];
+      let W = 0, H = 0, gw = 0, gh = 0, f;
+      const resize = (w, h) => { W = w; H = h; gw = Math.ceil(W / CELL); gh = Math.ceil(H / CELL); f = new Float32Array((gw + 1) * (gh + 1)); };
+      const frame = (t, dt, p, live) => {
+        const tt = live ? t : 0, cs = [];
+        for (const k of hills) cs.push({ x: W * (k.x + .12 * Math.sin(tt * k.sx + k.px)), y: H * (k.y + .14 * Math.sin(tt * k.sy + k.py)), s2: 2 * k.r * k.r, a: k.a });
+        const cur = live && p.active > .001 ? { x: p.x, y: p.y, s2: 2 * 170 * 170, a: .9 * p.active } : null;
+        const rips = p.ripples, nr = rips.length;
+        for (let j = 0, i = 0; j <= gh; j++) for (let ii = 0; ii <= gw; ii++, i++) {
+          const x = ii * CELL, y = j * CELL;
+          let v = 0;
+          for (const k of cs) { const dx = x - k.x, dy = y - k.y; v += k.a * Math.exp(-(dx * dx + dy * dy) / k.s2); }
+          if (cur) { const dx = x - cur.x, dy = y - cur.y; v += cur.a * Math.exp(-(dx * dx + dy * dy) / cur.s2); }
+          for (let r = 0; r < nr; r++) {
+            const rp = rips[r], dx = x - rp.x, dy = y - rp.y, diff = Math.sqrt(dx * dx + dy * dy) - rp.age * RS;
+            if (diff < 90 && diff > -90) v += .4 * Math.exp(-diff * diff / RW) * Math.exp(-rp.age * RD);
+          }
+          f[i] = v;
+        }
+        ctx.clearRect(0, 0, W, H);
+        ctx.lineWidth = 1;
+        const gw1 = gw + 1, seg = (x1, y1, x2, y2) => { ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); };
+        for (let l = 0; l < LEVELS; l++) {
+          const lv = (l + .6) / LEVELS * TOP;
+          ctx.strokeStyle = ink(l % 3 === 1 ? .34 : .17);
+          ctx.beginPath();
+          for (let j = 0; j < gh; j++) for (let i = 0; i < gw; i++) {
+            const a = f[i + gw1 * j], b = f[i + 1 + gw1 * j], c = f[i + 1 + gw1 * (j + 1)], d = f[i + gw1 * (j + 1)];
+            const code = (a > lv ? 8 : 0) | (b > lv ? 4 : 0) | (c > lv ? 2 : 0) | (d > lv ? 1 : 0);
+            if (!code || code === 15) continue;
+            const x = i * CELL, y = j * CELL;
+            // the crossing on each edge, interpolated
+            const tx = x + CELL * (lv - a) / (b - a), rx = y + CELL * (lv - b) / (c - b), bx = x + CELL * (lv - d) / (c - d), lx = y + CELL * (lv - a) / (d - a);
+            switch (code) {
+              case 1: case 14: seg(x, lx, bx, y + CELL); break;
+              case 2: case 13: seg(bx, y + CELL, x + CELL, rx); break;
+              case 3: case 12: seg(x, lx, x + CELL, rx); break;
+              case 4: case 11: seg(tx, y, x + CELL, rx); break;
+              case 5: seg(x, lx, tx, y); seg(bx, y + CELL, x + CELL, rx); break;
+              case 6: case 9: seg(tx, y, bx, y + CELL); break;
+              case 7: case 8: seg(x, lx, tx, y); break;
+              case 10: seg(tx, y, x + CELL, rx); seg(x, lx, bx, y + CELL); break;
+            }
+          }
+          ctx.stroke();
+        }
+      };
+      return { resize, frame };
+    },
+
+    // The colour wash as a fluid: green and amber dye drifting on slow
+    // currents, stirred by the cursor and pushed by a click. A stable-fluids
+    // solver on a coarse grid; the canvas is blurred and multiplied by CSS.
+    wash: ({ ctx }) => {
+      const N = 84, ITER = 14, GREEN = [118, 176, 82], AMBER = [201, 143, 62];
+      const flows = [
+        { dye: 0, x: .22, y: .28, sx: .11, sy: .09, px: 0,   py: 1.3, r: .22, ry: .30 },
+        { dye: 1, x: .76, y: .40, sx: .08, sy: .12, px: 2.4, py: .6,  r: .20, ry: .26 },
+        { dye: 0, x: .55, y: .82, sx: .09, sy: .07, px: 4.2, py: 2.9, r: .24, ry: .22 },
+        { dye: 1, x: .42, y: .55, sx: .13, sy: .10, px: 1.1, py: 4.4, r: .16, ry: .20 },
+      ];
+      let W = 0, H = 0, M = 0, cw = 1, ch = 1, u, v, u0, v0, g, g0, a, a0, off, octx, img;
+      const IX = (i, j) => i + (N + 2) * j;
+      const bnd = (b, x) => {
+        for (let i = 1; i <= N; i++) { x[IX(i, 0)] = b === 2 ? -x[IX(i, 1)] : x[IX(i, 1)]; x[IX(i, M + 1)] = b === 2 ? -x[IX(i, M)] : x[IX(i, M)]; }
+        for (let j = 1; j <= M; j++) { x[IX(0, j)] = b === 1 ? -x[IX(1, j)] : x[IX(1, j)]; x[IX(N + 1, j)] = b === 1 ? -x[IX(N, j)] : x[IX(N, j)]; }
+      };
+      const solve = (b, x, x0, k, c) => {
+        for (let it = 0; it < ITER; it++) {
+          for (let j = 1; j <= M; j++) for (let i = 1; i <= N; i++) {
+            const n = IX(i, j);
+            x[n] = (x0[n] + k * (x[n - 1] + x[n + 1] + x[n - N - 2] + x[n + N + 2])) / c;
+          }
+          bnd(b, x);
+        }
+      };
+      const advect = (b, d, d0, uu, vv, dt) => {
+        for (let j = 1; j <= M; j++) for (let i = 1; i <= N; i++) {
+          const n = IX(i, j);
+          let x = i - dt * uu[n], y = j - dt * vv[n];
+          x = x < .5 ? .5 : x > N + .5 ? N + .5 : x; y = y < .5 ? .5 : y > M + .5 ? M + .5 : y;
+          const i0 = x | 0, j0 = y | 0, s1 = x - i0, t1 = y - j0, s0 = 1 - s1, t0 = 1 - t1;
+          d[n] = s0 * (t0 * d0[IX(i0, j0)] + t1 * d0[IX(i0, j0 + 1)]) + s1 * (t0 * d0[IX(i0 + 1, j0)] + t1 * d0[IX(i0 + 1, j0 + 1)]);
+        }
+        bnd(b, d);
+      };
+      const project = () => {
+        for (let j = 1; j <= M; j++) for (let i = 1; i <= N; i++) {
+          const n = IX(i, j);
+          v0[n] = -.5 * (u[n + 1] - u[n - 1] + v[n + N + 2] - v[n - N - 2]); u0[n] = 0;
+        }
+        bnd(0, v0); bnd(0, u0);
+        solve(0, u0, v0, 1, 4);
+        for (let j = 1; j <= M; j++) for (let i = 1; i <= N; i++) {
+          const n = IX(i, j);
+          u[n] -= .5 * (u0[n + 1] - u0[n - 1]); v[n] -= .5 * (u0[n + N + 2] - u0[n - N - 2]);
+        }
+        bnd(1, u); bnd(2, v);
+      };
+      // pour into the grid around a point (cells), a gaussian of radius r cells
+      const pour = (arr, x, y, r, amt) => {
+        const i1 = Math.max(1, Math.floor(x - 3 * r)), i2 = Math.min(N, Math.ceil(x + 3 * r)), j1 = Math.max(1, Math.floor(y - 3 * r)), j2 = Math.min(M, Math.ceil(y + 3 * r));
+        for (let j = j1; j <= j2; j++) for (let i = i1; i <= i2; i++) { const dx = i - x, dy = j - y; arr[IX(i, j)] += amt * Math.exp(-(dx * dx + dy * dy) / (2 * r * r)); }
+      };
+      const resize = (w, h) => {
+        W = w; H = h; M = Math.max(8, Math.round(N * H / W)); cw = W / N; ch = H / M;
+        const size = (N + 2) * (M + 2);
+        u = new Float32Array(size); v = new Float32Array(size); u0 = new Float32Array(size); v0 = new Float32Array(size);
+        g = new Float32Array(size); g0 = new Float32Array(size); a = new Float32Array(size); a0 = new Float32Array(size);
+        off = document.createElement("canvas"); off.width = N; off.height = M; octx = off.getContext("2d"); img = octx.createImageData(N, M);
+        for (let s = 0; s < 60; s++) step(s * .05, .05, { active: 0, ripples: [] });   // so the first frame is already a wash
+      };
+      const centre = (k, t) => [N * (k.x + k.r * Math.sin(t * k.sx + k.px)), M * (k.y + k.ry * Math.sin(t * k.sy + k.py))];
+      const step = (t, dt, p) => {
+        for (const k of flows) {
+          const [x, y] = centre(k, t), [x1, y1] = centre(k, t + .5);
+          pour(k.dye ? a : g, x, y, 6.5, dt * .7);
+          pour(u, x, y, 6, (x1 - x) * 6 * dt); pour(v, x, y, 6, (y1 - y) * 6 * dt);   // the dye trails its source
+        }
+        if (p.active > .001) { const x = p.x / cw, y = p.y / ch, s = p.active * dt * 1.2; pour(u, x, y, 4.5, p.vx / cw * s); pour(v, x, y, 4.5, p.vy / ch * s); }
+        for (const rp of p.ripples) {
+          if (rp.age > .5) continue;
+          const x = rp.x / cw, y = rp.y / ch, s = 220 * dt * (1 - rp.age * 2);
+          for (let j = Math.max(1, y - 8 | 0); j <= Math.min(M, y + 8 | 0); j++) for (let i = Math.max(1, x - 8 | 0); i <= Math.min(N, x + 8 | 0); i++) {
+            const dx = i - x, dy = j - y, d = Math.sqrt(dx * dx + dy * dy) + .5, w = Math.exp(-d * d / 18) / d;
+            u[IX(i, j)] += dx * w * s; v[IX(i, j)] += dy * w * s;
+          }
+        }
+        const keep = Math.exp(-dt * .5), fade = Math.exp(-dt * .18);
+        for (let i = 0; i < u.length; i++) { u[i] *= keep; v[i] *= keep; g[i] *= fade; a[i] *= fade; }
+        project();
+        u0.set(u); v0.set(v);                               // the velocity carries itself, then the dyes
+        advect(1, u, u0, u0, v0, dt); advect(2, v, v0, u0, v0, dt);
+        project();
+        g0.set(g); a0.set(a); advect(0, g, g0, u, v, dt); advect(0, a, a0, u, v, dt);
+      };
+      const frame = (t, dt, p, live) => {
+        if (live) step(t, dt, p);
+        const px = img.data;
+        for (let j = 0, q = 0; j < M; j++) for (let i = 0; i < N; i++, q += 4) {
+          const n = IX(i + 1, j + 1), dg = Math.min(.42, g[n] * .3), da = Math.min(.38, a[n] * .28);   // capped: the wash stays a tint under the type
+          for (let k = 0; k < 3; k++) px[q + k] = 255 * (1 - dg * (1 - GREEN[k] / 255)) * (1 - da * (1 - AMBER[k] / 255));
+          px[q + 3] = 255;
+        }
+        octx.putImageData(img, 0, 0);
+        ctx.imageSmoothingEnabled = true;
+        ctx.clearRect(0, 0, W, H);
+        ctx.drawImage(off, 0, 0, W, H);
+      };
+      return { resize, frame };
+    },
+  };
+
+  const initHeroField = () => $$(".hero[data-field]").forEach((hero) => {
+    const c = $("canvas.hero-field", hero), btn = $(".art-ctl", hero);
+    const ctx = c && c.getContext && c.getContext("2d");
+    const make = heroFields[hero.dataset.field];
+    if (!ctx || !make) return;
+    const inkRgb = token("--ink", "#14100C").match(/\w\w/g).map((h) => parseInt(h, 16)).join(",");
+    const field = make({ ctx, ink: (alpha) => `rgba(${inkRgb},${alpha})`, accent: token("--accent", "#3B6B44") });
+
+    let W = 0, H = 0, dpr = 1;
+    const size = () => {
+      dpr = Math.min(2, window.devicePixelRatio || 1);
+      W = hero.clientWidth; H = hero.clientHeight;
+      c.width = Math.round(W * dpr); c.height = Math.round(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      field.resize(W, H, dpr);
+    };
+
+    // The pointer, in the hero's pixels. `active` is 1 while the cursor moves
+    // and dies away within a second of it resting; the pieces scale their
+    // response by it, so a resting cursor leaves the field to settle.
+    const p = { x: -9999, y: -9999, vx: 0, vy: 0, active: 0, ripples: [] };
+    const box = { top: 0, left: 0, w: 0, h: 0 };
+    const measure = () => { const r = hero.getBoundingClientRect(); box.top = r.top; box.left = r.left; box.w = r.width; box.h = r.height; };
+    const CONTROLS = "a, button, input, select, textarea, label, [role=button], form";
+    let tx = -9999, ty = -9999, on = false, over = false, checked = 0, moved = -1e6, touched = -1e6;
+    const move = (e) => {
+      if (e.clientY < box.top - 150 || e.clientY > box.top + box.h + 150) { on = false; return; }
+      if (e.timeStamp - checked > 100) { over = e.target instanceof Element && !!e.target.closest(CONTROLS); checked = e.timeStamp; }
+      if (over) { on = false; return; }
+      tx = e.clientX - box.left; ty = e.clientY - box.top; on = true; moved = touched = e.timeStamp;
+    };
+    const leave = () => { on = false; };
+    const down = (e) => {
+      if (!e.isPrimary || over) return;
+      const x = e.clientX - box.left, y = e.clientY - box.top;
+      if (x < 0 || y < 0 || x > box.w || y > box.h) return;
+      p.ripples.push({ x, y, born: e.timeStamp, age: 0 });
+      if (p.ripples.length > 6) p.ripples.shift();
+      touched = e.timeStamp;
+    };
+
+    let raf = 0, prev = 0, t = 0, fresh = true, playing = true, seen = true;
+    const tick = (now) => {
+      raf = requestAnimationFrame(tick);
+      const busy = on || p.ripples.length || now - touched < 2500;
+      if (!fresh && !busy && now - prev < 33) return;      // idle: 30fps is plenty for the breathing
+      const dt = fresh ? 0 : Math.min((now - prev) / 1000, .05);
+      fresh = false; prev = now; t += dt;
+      measure();
+      if (on) {
+        const x = p.x, y = p.y;
+        if (x < -9000) { p.x = tx; p.y = ty; }              // arriving: start where the cursor is, not off the page
+        else { p.x += (tx - x) * .8; p.y += (ty - y) * .8; if (dt > 0) { p.vx += ((p.x - x) / dt - p.vx) * .5; p.vy += ((p.y - y) / dt - p.vy) * .5; } }
+      } else { p.vx *= .8; p.vy *= .8; }
+      const rest = (now - moved) / 1000, aim = on && rest < 1 ? Math.exp(-7 * rest) : 0;
+      p.active += (aim - p.active) * Math.min(1, dt * 14);
+      if (p.active < .001) p.active = 0;
+      for (const rp of p.ripples) rp.age = (now - rp.born) / 1000;
+      p.ripples = p.ripples.filter((rp) => rp.age < 2);
+      field.frame(t, dt, p, true);
+    };
+    const sync = () => {
+      const run = playing && seen && !document.hidden;
+      if (run && !raf) { fresh = true; raf = requestAnimationFrame(tick); }
+      if (!run && raf) { cancelAnimationFrame(raf); raf = 0; }
+      if (btn) {
+        btn.setAttribute("aria-pressed", String(!playing));
+        btn.setAttribute("aria-label", playing ? "Pause animation" : "Resume animation");
+      }
+    };
+
+    size();
+    measure();
+    hero.classList.add("live");
+    if (reduced) {
+      field.frame(0, 0, p, false);
+      if ("ResizeObserver" in window) new ResizeObserver(() => { size(); field.frame(0, 0, p, false); }).observe(hero);
+      return;
+    }
+    field.frame(0, 0, p, true);
+    const toggle = () => { playing = !playing; sync(); };
+    if (btn) { btn.hidden = false; btn.addEventListener("click", toggle); }
+    document.addEventListener("pointermove", move, { passive: true });
+    document.addEventListener("pointerleave", leave);
+    document.addEventListener("pointerdown", down, { passive: true });
+    document.addEventListener("visibilitychange", sync);
+    const ro = "ResizeObserver" in window ? new ResizeObserver(() => { size(); if (!raf) field.frame(t, 0, p, true); }) : null;
+    if (ro) ro.observe(hero); else window.addEventListener("resize", size);
+    const io = "IntersectionObserver" in window ? new IntersectionObserver(([en]) => { seen = en.isIntersecting; sync(); }, { threshold: 0 }) : null;
+    if (io) io.observe(hero);
+    sync();
+    hero.heroField = { stop() {
+      playing = false; sync();
+      document.removeEventListener("pointermove", move); document.removeEventListener("pointerleave", leave);
+      document.removeEventListener("pointerdown", down); document.removeEventListener("visibilitychange", sync);
+      if (ro) ro.disconnect(); if (io) io.disconnect();
+      if (btn) { btn.removeEventListener("click", toggle); btn.hidden = true; }
+      ctx.clearRect(0, 0, W, H);
+      hero.classList.remove("live");
+    } };
+  });
+
   /* ---- Originations chart ----
      A line over a soft area, drawn in the pixels of its box so the type stays
      the same size on a phone. The lines are revealed left to right by a
@@ -746,6 +1136,6 @@ const CONFIG = {
   /* ---- Footer year ---- */
   const initYear = () => $$("[data-year]").forEach((el) => (el.textContent = new Date().getFullYear()));
 
-  [initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initCharts, initFlows, initStrips, initPortrait, initYear]
+  [initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initHeroField, initCharts, initFlows, initStrips, initPortrait, initYear]
     .forEach((init) => { try { init(); } catch (err) { console.error(`main.js: ${init.name} failed`, err); } });
 })();
