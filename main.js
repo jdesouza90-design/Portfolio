@@ -456,18 +456,20 @@ const CONFIG = {
     sync();
   });
 
-  /* ---- Hero field ----
-     The hero's ground is a canvas that answers the cursor; `data-field` on the
-     section names which piece runs. Every piece shares one runner: the pointer
-     is read on the document (the copy never blocks it), ignored over links and
-     controls, and its push fades out within a second of the cursor resting,
-     so the field only stirs when the reader moves. A tap or click drops a
-     ripple. The loop draws at 30fps while nothing is happening and 60 while
-     the cursor is in play, only while the hero is on screen, and stops under
-     the pause button. Under reduced motion each piece draws one still frame.
-     The runner and the dots are adapted from ramp.com's hero, whose measured
-     values are the defaults. */
-  const heroFields = {
+  /* ---- Fields ----
+     A block's ground as a canvas that answers the cursor: `data-field` on the
+     block names which piece runs over its `canvas.field`. Every piece shares
+     one runner: the pointer is read on the document (the copy never blocks
+     it), ignored over links and controls, and its push fades out within a
+     second of the cursor resting, so the field only stirs when the reader
+     moves. A tap or click drops a ripple. The loop draws at 30fps while
+     nothing is happening and 60 while the cursor is in play, only while the
+     block is on screen, and stops under the block's pause button if it has
+     one; a piece whose rest is still (the rings) reports it and is not
+     redrawn until something moves. Under reduced motion each piece draws one
+     still frame. The runner and the dots are adapted from ramp.com's hero,
+     whose measured values are the defaults. */
+  const fields = {
     // A grid of ink dots breathing on three slow waves. The cursor pushes the
     // dots within reach, they spring home, and a dot in motion turns green.
     dots: ({ ctx, ink, accent }) => {
@@ -687,6 +689,7 @@ const CONFIG = {
     // solver on a coarse grid; the canvas is blurred and multiplied by CSS.
     wash: ({ ctx }) => {
       const N = 84, ITER = 14, GREEN = [118, 176, 82], AMBER = [201, 143, 62];
+      const FLOOR = [.14, .09], CAP = [.3, .26], GAIN = [.16, .15];   // tint of green and amber everywhere, the most a dye can reach, dye to tint
       const flows = [
         { dye: 0, x: .22, y: .28, sx: .11, sy: .09, px: 0,   py: 1.3, r: .22, ry: .30 },
         { dye: 1, x: .76, y: .40, sx: .08, sy: .12, px: 2.4, py: .6,  r: .20, ry: .26 },
@@ -748,8 +751,8 @@ const CONFIG = {
       const step = (t, dt, p) => {
         for (const k of flows) {
           const [x, y] = centre(k, t), [x1, y1] = centre(k, t + .5);
-          pour(k.dye ? a : g, x, y, 6.5, dt * .7);
-          pour(u, x, y, 6, (x1 - x) * 6 * dt); pour(v, x, y, 6, (y1 - y) * 6 * dt);   // the dye trails its source
+          pour(k.dye ? a : g, x, y, 10, dt * .8);
+          pour(u, x, y, 7, (x1 - x) * 6 * dt); pour(v, x, y, 7, (y1 - y) * 6 * dt);   // the dye trails its source
         }
         if (p.active > .001) { const x = p.x / cw, y = p.y / ch, s = p.active * dt * 1.2; pour(u, x, y, 4.5, p.vx / cw * s); pour(v, x, y, 4.5, p.vy / ch * s); }
         for (const rp of p.ripples) {
@@ -772,7 +775,7 @@ const CONFIG = {
         if (live) step(t, dt, p);
         const px = img.data;
         for (let j = 0, q = 0; j < M; j++) for (let i = 0; i < N; i++, q += 4) {
-          const n = IX(i + 1, j + 1), dg = Math.min(.42, g[n] * .3), da = Math.min(.38, a[n] * .28);   // capped: the wash stays a tint under the type
+          const n = IX(i + 1, j + 1), dg = Math.min(CAP[0], FLOOR[0] + g[n] * GAIN[0]), da = Math.min(CAP[1], FLOOR[1] + a[n] * GAIN[1]);   // capped: the wash stays a tint under the type
           for (let k = 0; k < 3; k++) px[q + k] = 255 * (1 - dg * (1 - GREEN[k] / 255)) * (1 - da * (1 - AMBER[k] / 255));
           px[q + 3] = 255;
         }
@@ -783,42 +786,101 @@ const CONFIG = {
       };
       return { resize, frame };
     },
+
+    // Rings: the contact band's own ground, paper hairlines rippling out from
+    // behind the buttons, drawn to the same pitch and tone as the stylesheet
+    // so the band at rest is the design. While the cursor is over the band
+    // the rings travel outward and brighten around it, and the ones near it
+    // bulge away; a click sends a wave through them. Reports when it is
+    // still, so the runner leaves it alone until the next move.
+    rings: ({ ctx, el, paper }) => {
+      const PITCH = 42, ALPHA = .07, SPEED = 22, SIG = 130, AMP = 22, RING = 16, LIFT = .14;   // px, tone, travel px/s, lens radius, lens lift, ripple lift, tone lift
+      const RS = 420, RW = 500, RD = 2.2;
+      let W = 0, H = 0, ox = 0, oy = 0, R = 0, phase = 0, speed = 0;
+      const resize = (w, h) => {
+        W = w; H = h;
+        const o = getComputedStyle(el).getPropertyValue("--contact-origin").trim().split(/\s+/).map((v) => parseFloat(v) / 100);
+        ox = W * (isNaN(o[0]) ? 1 : o[0]); oy = H * (isNaN(o[1]) ? .5 : o[1]);
+        R = Math.hypot(Math.max(ox, W - ox), Math.max(oy, H - oy));
+      };
+      const frame = (t, dt, p, live) => {
+        if (live) { speed += ((p.inside ? SPEED : 0) - speed) * Math.min(1, dt * 3); phase = (phase + speed * dt) % PITCH; }
+        const lens = live ? p.active : 0, rips = p.ripples, nr = rips.length;
+        ctx.clearRect(0, 0, W, H);
+        ctx.lineWidth = 1;
+        if (lens > 0) {
+          const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 260);
+          g.addColorStop(0, paper(ALPHA + LIFT * lens)); g.addColorStop(1, paper(ALPHA));
+          ctx.strokeStyle = g;
+        } else ctx.strokeStyle = paper(ALPHA);
+        const bend = lens > 0 || nr > 0, s2 = 2 * SIG * SIG, lift = AMP * lens * 1.65 / SIG;
+        ctx.beginPath();
+        for (let r = phase; r < R; r += PITCH) {
+          if (!bend) { ctx.moveTo(ox + r, oy); ctx.arc(ox, oy, r, 0, Math.PI * 2); continue; }
+          const n = Math.max(24, Math.min(400, Math.round(r / 2.5)));
+          let pen = false;
+          for (let i = 0; i <= n; i++) {
+            const a = i / n * Math.PI * 2;
+            let x = ox + r * Math.cos(a), y = oy + r * Math.sin(a);
+            if (x < -40 || x > W + 40 || y < -40 || y > H + 40) { pen = false; continue; }   // the part of the ring off the band
+            if (lift > 0) { const dx = x - p.x, dy = y - p.y, d2 = dx * dx + dy * dy; if (d2 < s2 * 6) { const f = lift * Math.exp(-d2 / s2); x += dx * f; y += dy * f; } }
+            for (let k = 0; k < nr; k++) {
+              const rp = rips[k], dx = x - rp.x, dy = y - rp.y, d = Math.sqrt(dx * dx + dy * dy), diff = d - rp.age * RS;
+              if (diff > 60 || diff < -60 || d < .01) continue;
+              const f = RING * Math.exp(-diff * diff / RW) * Math.exp(-rp.age * RD) / d;
+              x += dx * f; y += dy * f;
+            }
+            pen ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+            pen = true;
+          }
+        }
+        ctx.stroke();
+        return live && (speed > .05 || lens > 0 || nr > 0);
+      };
+      return { resize, frame };
+    },
   };
 
-  const initHeroField = () => $$(".hero[data-field]").forEach((hero) => {
-    const c = $("canvas.hero-field", hero), btn = $(".art-ctl", hero);
+  const initFields = () => $$("[data-field]").forEach((el) => {
+    const c = $("canvas.field", el), btn = $(".art-ctl", el);
     const ctx = c && c.getContext && c.getContext("2d");
-    const make = heroFields[hero.dataset.field];
+    const make = fields[el.dataset.field];
     if (!ctx || !make) return;
-    const inkRgb = token("--ink", "#14100C").match(/\w\w/g).map((h) => parseInt(h, 16)).join(",");
-    const field = make({ ctx, ink: (alpha) => `rgba(${inkRgb},${alpha})`, accent: token("--accent", "#3B6B44") });
+    const rgb = (name, fallback) => token(name, fallback).match(/\w\w/g).map((h) => parseInt(h, 16)).join(",");
+    const inkRgb = rgb("--ink", "#14100C"), paperRgb = rgb("--paper", "#F6F4F0");
+    const field = make({ ctx, el: el, ink: (alpha) => `rgba(${inkRgb},${alpha})`, paper: (alpha) => `rgba(${paperRgb},${alpha})`, accent: token("--accent", "#3B6B44") });
 
     let W = 0, H = 0, dpr = 1;
     const size = () => {
       dpr = Math.min(2, window.devicePixelRatio || 1);
-      W = hero.clientWidth; H = hero.clientHeight;
+      W = el.clientWidth; H = el.clientHeight;
       c.width = Math.round(W * dpr); c.height = Math.round(H * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       field.resize(W, H, dpr);
     };
 
-    // The pointer, in the hero's pixels. `active` is 1 while the cursor moves
+    // The pointer, in the el's pixels. `active` is 1 while the cursor moves
     // and dies away within a second of it resting; the pieces scale their
     // response by it, so a resting cursor leaves the field to settle.
-    const p = { x: -9999, y: -9999, vx: 0, vy: 0, active: 0, ripples: [] };
+    const p = { x: -9999, y: -9999, vx: 0, vy: 0, active: 0, inside: false, ripples: [] };
+    let raf = 0, prev = 0, t = 0, fresh = true, playing = true, seen = true, stirring = true;
     const box = { top: 0, left: 0, w: 0, h: 0 };
-    const measure = () => { const r = hero.getBoundingClientRect(); box.top = r.top; box.left = r.left; box.w = r.width; box.h = r.height; };
+    const measure = () => { const r = el.getBoundingClientRect(); box.top = r.top; box.left = r.left; box.w = r.width; box.h = r.height; };
     const CONTROLS = "a, button, input, select, textarea, label, [role=button], form";
     let tx = -9999, ty = -9999, on = false, over = false, checked = 0, moved = -1e6, touched = -1e6;
     const move = (e) => {
-      if (e.clientY < box.top - 150 || e.clientY > box.top + box.h + 150) { on = false; return; }
+      if (e.timeStamp - prev > 40) measure();               // a still piece has not measured since its last frame
+      const x = e.clientX - box.left, y = e.clientY - box.top;
+      p.inside = x >= 0 && y >= 0 && x <= box.w && y <= box.h;
+      if (y < -150 || y > box.h + 150) { on = false; return; }
       if (e.timeStamp - checked > 100) { over = e.target instanceof Element && !!e.target.closest(CONTROLS); checked = e.timeStamp; }
       if (over) { on = false; return; }
-      tx = e.clientX - box.left; ty = e.clientY - box.top; on = true; moved = touched = e.timeStamp;
+      tx = x; ty = y; on = true; moved = touched = e.timeStamp;
     };
-    const leave = () => { on = false; };
+    const leave = () => { on = false; p.inside = false; };
     const down = (e) => {
       if (!e.isPrimary || over) return;
+      if (e.timeStamp - prev > 40) measure();
       const x = e.clientX - box.left, y = e.clientY - box.top;
       if (x < 0 || y < 0 || x > box.w || y > box.h) return;
       p.ripples.push({ x, y, born: e.timeStamp, age: 0 });
@@ -826,11 +888,10 @@ const CONFIG = {
       touched = e.timeStamp;
     };
 
-    let raf = 0, prev = 0, t = 0, fresh = true, playing = true, seen = true;
     const tick = (now) => {
       raf = requestAnimationFrame(tick);
-      const busy = on || p.ripples.length || now - touched < 2500;
-      if (!fresh && !busy && now - prev < 33) return;      // idle: 30fps is plenty for the breathing
+      const busy = on || p.inside || p.ripples.length || now - touched < 2500;
+      if (!fresh && !busy && (!stirring || now - prev < 33)) return;   // idle: 30fps is plenty for the breathing, none for a still piece
       const dt = fresh ? 0 : Math.min((now - prev) / 1000, .05);
       fresh = false; prev = now; t += dt;
       measure();
@@ -844,7 +905,7 @@ const CONFIG = {
       if (p.active < .001) p.active = 0;
       for (const rp of p.ripples) rp.age = (now - rp.born) / 1000;
       p.ripples = p.ripples.filter((rp) => rp.age < 2);
-      field.frame(t, dt, p, true);
+      stirring = field.frame(t, dt, p, true) !== false;
     };
     const sync = () => {
       const run = playing && seen && !document.hidden;
@@ -858,10 +919,10 @@ const CONFIG = {
 
     size();
     measure();
-    hero.classList.add("live");
+    el.classList.add("live");
     if (reduced) {
       field.frame(0, 0, p, false);
-      if ("ResizeObserver" in window) new ResizeObserver(() => { size(); field.frame(0, 0, p, false); }).observe(hero);
+      if ("ResizeObserver" in window) new ResizeObserver(() => { size(); field.frame(0, 0, p, false); }).observe(el);
       return;
     }
     field.frame(0, 0, p, true);
@@ -871,19 +932,19 @@ const CONFIG = {
     document.addEventListener("pointerleave", leave);
     document.addEventListener("pointerdown", down, { passive: true });
     document.addEventListener("visibilitychange", sync);
-    const ro = "ResizeObserver" in window ? new ResizeObserver(() => { size(); if (!raf) field.frame(t, 0, p, true); }) : null;
-    if (ro) ro.observe(hero); else window.addEventListener("resize", size);
+    const ro = "ResizeObserver" in window ? new ResizeObserver(() => { size(); stirring = true; if (!raf) field.frame(t, 0, p, true); }) : null;
+    if (ro) ro.observe(el); else window.addEventListener("resize", size);
     const io = "IntersectionObserver" in window ? new IntersectionObserver(([en]) => { seen = en.isIntersecting; sync(); }, { threshold: 0 }) : null;
-    if (io) io.observe(hero);
+    if (io) io.observe(el);
     sync();
-    hero.heroField = { stop() {
+    el.field = { stop() {
       playing = false; sync();
       document.removeEventListener("pointermove", move); document.removeEventListener("pointerleave", leave);
       document.removeEventListener("pointerdown", down); document.removeEventListener("visibilitychange", sync);
       if (ro) ro.disconnect(); if (io) io.disconnect();
       if (btn) { btn.removeEventListener("click", toggle); btn.hidden = true; }
       ctx.clearRect(0, 0, W, H);
-      hero.classList.remove("live");
+      el.classList.remove("live");
     } };
   });
 
@@ -1177,6 +1238,6 @@ const CONFIG = {
   /* ---- Footer year ---- */
   const initYear = () => $$("[data-year]").forEach((el) => (el.textContent = new Date().getFullYear()));
 
-  [initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initHeroField, initCharts, initFlows, initStrips, initPortrait, initYear]
+  [initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initFlows, initStrips, initPortrait, initYear]
     .forEach((init) => { try { init(); } catch (err) { console.error(`main.js: ${init.name} failed`, err); } });
 })();

@@ -416,14 +416,16 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .hero { position: relative; isolation: isolate; overflow: hidden; text-align: center;
   padding-top: calc(var(--nav-h) + clamp(84px, 16vh, 190px)); padding-bottom: clamp(64px, 10vh, 130px); }
 .hero > .wrap { position: relative; z-index: 1; }
-/* The field: a canvas over the whole section, drawn by main.js (see "Hero
-   field" there). It fades out under the nav and into the next section so the
-   piece never ends in a hard edge; the wash piece is blurred and multiplied
-   onto the paper the way the old colour blobs were. */
-.hero-field { position: absolute; inset: 0; z-index: 0; display: block; width: 100%; height: 100%; pointer-events: none;
+/* The field: a canvas over the whole block, drawn by main.js ("Fields"
+   there); the block names its piece in data-field. In the hero it fades out
+   under the nav and into the next section so the piece never ends in a hard
+   edge; the wash piece is blurred and multiplied onto the paper the way the
+   old colour blobs were. */
+.field { position: absolute; inset: 0; z-index: 0; display: block; width: 100%; height: 100%; pointer-events: none; }
+.hero .field {
   -webkit-mask-image: linear-gradient(to bottom, transparent 0, rgba(0, 0, 0, .4) 12%, #000 30%, #000 88%, transparent 100%);
   mask-image: linear-gradient(to bottom, transparent 0, rgba(0, 0, 0, .4) 12%, #000 30%, #000 88%, transparent 100%); }
-.hero[data-field="wash"] .hero-field { mix-blend-mode: multiply; }
+.hero[data-field="wash"] .field { mix-blend-mode: multiply; }
 .hero .art-ctl { right: var(--gutter); bottom: 20px; z-index: 2; }
 
 .hero h1 { margin-inline: auto; }
@@ -675,6 +677,9 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .contact .btn-ghost { border-color: var(--hair-2); color: var(--paper); background: transparent; }
 .contact .btn-ghost:hover { border-color: var(--paper); color: var(--paper); }
 .contact :focus-visible { outline-color: var(--paper); }   /* the accent ring is only 3.2:1 on ink */
+/* live, the rings are drawn on the canvas (same pitch, same tone) and the stylesheet keeps only the ground */
+.contact.live { background-image: linear-gradient(155deg, #241D17 0%, #14100C 58%, #100D0A 100%); }
+.contact > :not(.field) { position: relative; z-index: 1; }
 @media (max-width: 720px) { .contact { --contact-origin: 100% 100%; grid-template-columns: 1fr; } }   /* stacked, the buttons sit at the bottom */
 footer { padding: 30px 0 44px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 footer a { color: var(--ink-2); text-decoration: none; }
