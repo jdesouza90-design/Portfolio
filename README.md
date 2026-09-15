@@ -237,15 +237,16 @@ scrolls to it, and every page gets it the same way:
   and the gauge is held paused by CSS until then. New in-view work goes
   through `onceInView`, never its own observer, so it inherits the wait.
 - **Two grounds answer the cursor** (`initFields` in `main.js`, over any
-  block with `data-field` and a `canvas.field`). The hero's is a grid of ink
-  dots at 12px, each breathing on three slow waves; the cursor pushes the
+  block with `data-field` and a `canvas.field`). The hero's is a 24px grid of
+  4px ink circles, each breathing on three slow waves; the cursor pushes the
   dots within 150px away and they spring home, turning green while they
   travel; a click or tap sends a ring out through them. It is ramp.com's
   hero on the site's paper, with their measured values (push 10 with a
   square falloff, spring .018, damping .8, ripple at 420px/s) and the dots
-  at a quarter strength, fading out over a soft edge around the box the
-  statement and its buttons occupy so the copy sits on clean paper (`PAD`
-  and `FEATHER` in the dots block). Get in touch keeps its rings (paper hairlines at 42px
+  at a quarter strength, thinning to a third of that under the box the
+  statement and its buttons occupy over a long soft edge, so the copy reads
+  clean without a hole in the field (`PAD`, `FEATHER`, `UNDER` in the dots
+  block). Get in touch keeps its rings (paper hairlines at 42px
   from behind the buttons) but draws them live: still at rest and identical
   to the stylesheet's, travelling outward while the cursor is over the band,
   brightening and bulging around it, carrying a wave on a click. Both ignore
