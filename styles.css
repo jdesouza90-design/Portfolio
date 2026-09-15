@@ -575,6 +575,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .nest[data-ring="1"] .nlbl { top: 37.8%; }
 .nest[data-ring="0"] .nlbl { top: 50%; transform: translate(-50%, -50%); white-space: normal; width: 8ch; }
 .nest .t-subhead { color: var(--ink-2); transition: color var(--dur-ui); }
+.nest.hover, .nest.hover .t-subhead { border-color: var(--ink); color: var(--ink); }   /* the ring under the pointer; main.js hit-tests the circle */
 .nest.on { border-color: var(--accent); box-shadow: 0 0 0 8px var(--glow); }
 .nest.on .eyebrow { color: var(--accent-ink); }
 .nest.on .t-subhead { color: var(--ink); }
