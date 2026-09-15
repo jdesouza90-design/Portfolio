@@ -571,13 +571,12 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
    wide, with a clear 6% of the figure between it and the next ring below;
    the innermost is centred in its disc */
 .nlbl { position: absolute; left: 50%; transform: translate(-50%, -100%); text-align: center; white-space: nowrap; }
-.nest[data-ring="2"] .nlbl { top: 20%; }
-.nest[data-ring="1"] .nlbl { top: 37.8%; }
+.nest[data-ring="2"] .nlbl { top: 18.5%; }
+.nest[data-ring="1"] .nlbl { top: 35.8%; }
 .nest[data-ring="0"] .nlbl { top: 50%; transform: translate(-50%, -50%); white-space: normal; width: 8ch; }
 .nest .t-subhead { color: var(--ink-2); transition: color var(--dur-ui); }
 .nest.hover, .nest.hover .t-subhead { border-color: var(--ink); color: var(--ink); }   /* the ring under the pointer; main.js hit-tests the circle */
 .nest.on { border-color: var(--accent); box-shadow: 0 0 0 8px var(--glow); }
-.nest.on .eyebrow { color: var(--accent-ink); }
 .nest.on .t-subhead { color: var(--ink); }
 .fig-cap { position: absolute; left: var(--fig-pad); bottom: var(--fig-pad); display: flex; flex-direction: column; gap: 2px; }
 /* As the card arrives, Figure A draws itself from the centre: the inner disc
@@ -626,7 +625,6 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 /* arrow keys are repeated; a keyboard move swaps instantly and the underline just lands */
 [data-tabs].instant .layer, [data-tabs].instant .layer-tabs::after { transition-duration: 0s; transition-delay: 0s; }
 .layer-head { padding: clamp(24px, 3.2vw, 40px); }
-.layer-head .point-icon { margin-bottom: var(--sp-5); }
 /* the signal's value sits inside its closing sentence, lit like a line of
    marker ink rather than pulled out into its own tag or band */
 .layer-mark { background: var(--glow); color: var(--accent-ink); font-weight: 500; padding: .05em .35em; border-radius: 4px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
