@@ -21,10 +21,12 @@ styles.css                      Tokens, the ten type roles, components, case-stu
 main.js                         CONFIG links, then one function per feature: nav, scroll reveal, tabs, carousel,
                                 walkthroughs, AI strands, fields (hero dots, contact rings), chart, number flow,
                                 swipe strips, About portrait height
-middleware.js                   Vercel Edge Middleware: the password gate for /work/*, and the access log
+admin/index.html                Activity dashboard: who is on the site, live (its own password)
+middleware.js                   Vercel Edge Middleware: the two password gates, the activity log and its feed
 vercel.json                     Cache and security headers
-.vercelignore                   Keeps the repo's tooling (this file, VOICE.md, stamp.py, .claude/) off the deployment
+.vercelignore                   Keeps the repo's tooling (this file, VOICE.md, stamp.py, dev.mjs, .claude/) off the deployment
 stamp.py                        Re-stamps every ?v= cache hash; run it before committing
+dev.mjs                         Local stand-in for the edge: the gates and the dashboard without deploying
 ai-process-art.mjs              Draws assets/ai-process.svg, the abstract on the AI card
 assets/                         Mockups, logos, walkthrough recordings exported from the deck
 og-image.png                    Social preview image used when the link is shared
@@ -53,28 +55,51 @@ before any file is served. The home page and the work index stay public.
 - A correct password sends the reader on with `?unlocked`, which plays the
   opener once (see Motion) and is dropped from the address as it starts.
 - Running `python3 -m http.server` locally has no edge runtime, so the case
-  studies open without a password. Use `npx vercel dev` to exercise the gate.
+  studies open without a password. `node dev.mjs` serves the site through the
+  middleware instead, with an in-memory store and made-up cities (passwords
+  `cs` and `admin`), so the gates and the dashboard can be tried at
+  http://127.0.0.1:4174.
 
-## Who is reading the case studies
+## Who is on the site
 
-The same middleware logs every unlock, every case-study page view and every
-wrong password: which page, when, city/region/country (Vercel's IP geolocation),
-the referrer (the page that sent them, e.g. LinkedIn), browser and OS, and a
-short visitor id so one person's sequence of views can be followed. Raw IP
-addresses are never stored or sent.
+The same middleware records every page view on the site, every case-study
+unlock and every wrong password: which page, when, city/region/country
+(Vercel's IP geolocation), the referrer (the page that sent them, e.g.
+LinkedIn), browser and OS, and a short visitor id so one person's sequence of
+views can be followed. Raw IP addresses are never stored or sent; crawlers and
+link previewers are skipped.
 
-- Every entry goes to Vercel → Project → Logs (search `access`). Vercel keeps
-  those for one hour on Hobby, one day on Pro.
-- To get each entry as an email, set two more environment variables in Vercel:
-  `RESEND_API_KEY` (from resend.com → API Keys) and `ACCESS_LOG_TO` (the address
-  to notify — with Resend's free `onboarding@resend.dev` sender this must be the
-  address the Resend account was created with). Optional: `ACCESS_LOG_FROM` to
-  send from a verified domain, `ACCESS_LOG_TZ` for the timestamp (default
-  `America/New_York`). Without the two keys nothing is emailed and the gate
-  works as before.
-- Your own visits would flood the log, so open any case study once with
-  `?owner` on the URL (e.g. `/work/staking.html?owner`). That sets a year-long
-  cookie in that browser and mutes logging for it.
+**The dashboard** at `/admin/` (the "Sign in" link in the home page footer)
+shows it live: views and visitors today, where people are coming from, which
+pages and which referrers over the last seven days, and a feed that updates
+every few seconds as people arrive. It needs two things set up in Vercel:
+
+1. **A store.** Vercel → Project → Storage → Create Database → Upstash Redis
+   (the free plan is plenty), connected to this project. That adds
+   `KV_REST_API_URL` and `KV_REST_API_TOKEN` to the environment; the
+   middleware also accepts Upstash's own `UPSTASH_REDIS_REST_URL` /
+   `UPSTASH_REDIS_REST_TOKEN`. The last 2,000 events are kept, plus an
+   all-time count. Without a store nothing is kept and the dashboard says so.
+2. **A password.** `ADMIN_PASSWORD` in Vercel → Project → Settings →
+   Environment Variables. It is separate from the case-study password and,
+   like it, deliberately not in this repo. Signing in sets a 30-day cookie;
+   `/admin/?signout` clears it.
+
+Redeploy after adding either; environment variables only take effect on the
+next deployment.
+
+- Every entry also goes to Vercel → Project → Logs (search `access`). Vercel
+  keeps those for one hour on Hobby, one day on Pro.
+- To get case-study events as email as well, set `RESEND_API_KEY` (from
+  resend.com → API Keys) and `ACCESS_LOG_TO` (the address to notify — with
+  Resend's free `onboarding@resend.dev` sender this must be the address the
+  Resend account was created with). Optional: `ACCESS_LOG_FROM` to send from a
+  verified domain, `ACCESS_LOG_TZ` for the timestamp (default
+  `America/New_York`). Plain page views are never emailed.
+- Your own visits would flood the log. Signing in to the dashboard mutes
+  logging for that browser for a year; on a browser you don't sign in from,
+  open any page once with `?owner` on the URL (e.g. `/?owner`) for the same
+  effect.
 
 ## Before sending the link out
 

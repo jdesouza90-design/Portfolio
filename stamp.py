@@ -9,7 +9,7 @@ def h(p):
     return hashlib.md5(open(p, 'rb').read()).hexdigest()[:8]
 
 css_h, js_h = h('styles.css'), h('main.js')
-pages = ['index.html', 'work.html'] + sorted(glob.glob('work/*.html'))
+pages = ['index.html', 'work.html', 'admin/index.html'] + sorted(glob.glob('work/*.html'))
 for f in pages + ['middleware.js']:
     s = open(f).read()
     s = re.sub(r'href="((?:\.\./|/)?styles\.css)(?:\?v=[a-f0-9]+)?"', lambda m: 'href="%s?v=%s"' % (m.group(1), css_h), s)
