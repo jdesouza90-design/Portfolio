@@ -475,13 +475,14 @@ const CONFIG = {
   const fields = {
     // A grid of ink dots breathing on three slow waves. The cursor pushes the
     // dots within reach, they spring home, and a dot in motion turns green.
-    // The copy sits on clean paper: dots fade out over a soft edge around the
-    // box the statement and its buttons occupy, measured from the markup.
+    // The copy sits on quieter paper: dots thin to a third of their strength
+    // under the box the statement and its buttons occupy, measured from the
+    // markup, over a long soft edge.
     dots: ({ ctx, el, ink, accent }) => {
       const S = 12, R = 150, F = 10, K = .018, DAMP = .8;   // pitch, push radius, push force, spring, damping
       const RS = 420, RW = 500, RF = 10, RD = 2.2;          // ripple: px/s, ring width, force, decay
       const A = .25, MOVED = 1.2;                           // strength on paper (John: 25%, light), px of travel that turns a dot green
-      const PAD = 24, FEATHER = 72;                         // clear paper around the copy, and the width of its soft edge
+      const PAD = 16, FEATHER = 220, UNDER = .35;           // the copy's margin, the run of the fade around it, the dots' strength under the copy (ramp.com: .35 to 1 over the top 45%)
       let W = 0, H = 0, n = 0, hx, hy, ox, oy, vx, vy, k, hf, sprites, sw = 0, energy = 0, hush = "", frames = 0;
       const hash = (i) => { const s = Math.sin(i * 12.9898) * 43758.5453; return s - Math.floor(s); };
       const sprite = (colour, dpr) => {
@@ -525,7 +526,7 @@ const CONFIG = {
         for (let i = 0; i < n; i++) {
           const dx = Math.max(l - hx[i], 0, hx[i] - r), dy = Math.max(t - hy[i], 0, hy[i] - b), d = Math.sqrt(dx * dx + dy * dy);
           const u = d < FEATHER ? d / FEATHER : 1;
-          hf[i] = u * u * (3 - 2 * u);
+          hf[i] = UNDER + (1 - UNDER) * u * u * (3 - 2 * u);
         }
       };
       const step = (p) => {
@@ -557,7 +558,6 @@ const CONFIG = {
         ctx.clearRect(0, 0, W, H);
         const h = sw / 2;
         for (let i = 0; i < n; i++) {
-          if (hf[i] <= 0) continue;
           const x = hx[i], y = hy[i];
           let a = .6;
           if (live) {
