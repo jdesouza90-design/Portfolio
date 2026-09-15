@@ -207,9 +207,13 @@ The rules that shape the code:
   each digit into a column of 0 to 9 behind a soft mask; signs, units and
   words stand still. Write the stat as plain text and the script does the
   rest, or leave the attribute off for a stat that should not move.
-- Company logos in `assets/logo-*.svg` are the companies' own vector files. Each
-  is sized in `styles.css` so the wordmark text matches across all three, since
-  the three lockups have different icon-to-text proportions.
+- Experience on the homepage is three roles on one track, oldest first
+  (`ol.exp`): a numbered chip with the company's lockup, the title, one or two
+  sentences and the dates. Each item draws its own run of track and the roles
+  already held draw theirs in ink, so the ink ends at the current role; it
+  sweeps in when the list scrolls into view. Under 700px the track turns down
+  the left. Company logos in `assets/logo-*.svg` are the companies' own vector
+  files, sized in `styles.css` so the wordmark text matches across all three.
 - The abstract beside "AI in the process" on the homepage is drawn live by
   `main.js` on a canvas: the same strands in three dimensions, turning slowly,
   with a pause button in the corner. `assets/ai-process.svg` is the still it
