@@ -166,7 +166,7 @@ strong, b, tbody th, .t-body a, .t-lede a,
    or number in a block. */
 strong, b, tbody th, .chip, .tools span, .avatar, .testimonial-mark, .tooltip b, .tip-val, .crumbs [aria-current] { color: var(--ink); }
 .chart-pill { color: var(--surface); }
-footer, .walk-note, .testimonial-foot cite, .kudo cite, .exp-dates, .crumb-sep, .gate-form input::placeholder { color: var(--ink-3); }
+footer, .walk-note, .testimonial-foot cite, .kudos cite, .exp-dates, .crumb-sep, .gate-form input::placeholder { color: var(--ink-3); }
 .work-cta, .t-body a, .t-lede a, .outcome-stat .t-stat, .proof-head .t-stat, thead .hl { color: var(--accent-ink); }
 
 /* Number flow: a headline stat that main.js rolls in digit by digit. Each
@@ -637,35 +637,14 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .exp-item .t-body { margin-top: var(--sp-2); }
 .exp-dates { margin-top: auto; padding-top: var(--sp-5); }
 .exp-dates time { white-space: nowrap; }
-/* Senior-leader quotes: a deck of small cards under the experience track, one
-   showing at a time, the next two peeking out beneath it. main.js runs the
-   deck as a carousel and gives each card its depth as --pos (0 is the front);
-   a card is drawn smaller and lower the deeper it sits, and past the second
-   it is out of sight. Moving on lifts the front card away over the deck, and
-   the one behind rises into its place. Set in the body role so the deck
-   reads as a footnote to the track, not a block of its own. The people are
-   left out by John's choice, so the mark stands in for the byline. */
-.kudos { max-width: 600px; margin: clamp(40px, 5vw, 64px) auto 0; }
-.kudo-stack { display: grid; padding-bottom: 20px; }   /* room for the deck's edges below the front card */
-.kudo {
-  grid-area: 1 / 1; --pos: 0; --deep: min(var(--pos), 2);
-  display: flex; flex-direction: column; padding: clamp(20px, 2.4vw, 28px);
-  transform-origin: 50% 100%;
-  transform: translateY(calc(var(--deep) * 10px)) scale(calc(1 - var(--deep) * .04));
-  opacity: clamp(0, 3 - var(--pos), 1);
-  z-index: calc(10 - var(--pos));
-  transition: transform .5s var(--ease), opacity .35s var(--ease);
-}
-.kudo:not(.active):not(.leaving) > * { visibility: hidden; }   /* the deck shows only its edges */
-.kudo-mark { height: 17px; width: auto; align-self: flex-start; margin-bottom: var(--sp-5); }
-.kudo .quote { flex: 1; }
-.kudo .t-body { max-width: none; }
-.kudo cite { display: block; margin-top: var(--sp-5); font-style: normal; }
-.kudo.leaving { z-index: 20; animation: kudo-leave .5s var(--ease) both; }
-.kudo.arriving { z-index: 20; animation: kudo-leave .5s var(--ease) reverse both; }
-/* explicit start, since the card's own style has already moved it to the back of the deck */
-@keyframes kudo-leave { from { transform: none; opacity: 1; } to { transform: translateY(-28px) rotate(-3deg); opacity: 0; } }
-@media (prefers-reduced-motion: reduce) { .kudo { transition: none; } .kudo.leaving, .kudo.arriving { animation: none; } }
+/* Senior-leader and peer quotes under the experience track: the case-study
+   testimonial carousel (one quote at a time, cross-fading, the same control
+   strip) with the company mark centred above the quote and the source line
+   under it in place of a person, who is left out by John's choice. */
+.kudos { margin-top: clamp(48px, 6vw, 80px); }
+.kudo-mark { height: 22px; width: auto; margin-bottom: clamp(24px, 3vw, 40px); }
+.kudos .testimonial .quote { flex: none; padding-bottom: 0; border-bottom: 0; }   /* no rule and no stretch: the source sits right under the quote, like a byline */
+.kudos cite { display: block; margin-top: clamp(20px, 2.5vw, 32px); font-style: normal; }
 @media (max-width: 700px) {
   /* the track turns down the left and the markers sit level with each label */
   .exp { --exp-gap: var(--sp-6); --sx: 1; --sy: 0; grid-template-columns: minmax(0, 1fr); }
@@ -1182,8 +1161,8 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
   .about-grid { gap: 24px; }
   .portrait { max-width: 150px; }
   .exp { margin-top: 40px; }
-  .kudos { margin-top: 32px; }
-  .kudo { padding: 18px 20px; }
+  .kudos { margin-top: 40px; }
+  .kudo-mark { height: 19px; }
 
   /* Contact */
   .contact { padding: 32px 24px; gap: 28px; }
