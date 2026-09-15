@@ -11,7 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../styles.css?v=f0630e16">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" crossorigin>
+<link rel="stylesheet" href="../styles.css?v=a0ec537c">
 </head>
 <body class="dash-body">
 <a class="skip" href="#main">Skip to content</a>
@@ -47,6 +48,16 @@
       <div><dt>Case-study unlocks today</dt><dd id="s-unlocks">–</dd></div>
       <div><dt>Views all time</dt><dd id="s-total">–</dd></div>
     </dl>
+
+    <section class="card dash-map-card" aria-labelledby="h-map">
+      <div class="dash-map-head">
+        <h2 class="eyebrow" id="h-map">On the map · last 7 days</h2>
+        <p class="t-small">Scroll or pinch to zoom, drag to move. Placed by IP, so each dot is accurate to about the city.</p>
+        <button class="btn btn-ghost btn-sm" type="button" id="map-fit">Show everyone</button>
+      </div>
+      <section class="dash-map" id="map" aria-label="Map of where visitors are"></section>
+      <p class="t-small dash-empty dash-map-empty" id="map-empty" hidden>No visits with a location yet.</p>
+    </section>
 
     <div class="dash-grid">
       <section class="card dash-card" aria-labelledby="h-where">
@@ -87,6 +98,7 @@
 
 </main>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" crossorigin></script>
 <script>
 (() => {
   const $ = (id) => document.getElementById(id);
@@ -152,6 +164,65 @@
     empty.hidden = top.length > 0;
   }
 
+  // ---- The map: one dot per place, sized by visits; the newest arrival pulses ----
+  let map = null, dots = null, fitted = false;
+  const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  function ensureMap() {
+    if (map || !window.L) return map;
+    map = L.map('map', { worldCopyJump: true, minZoom: 1, maxZoom: 16, zoomControl: true, attributionControl: true });
+    // Esri's light grey canvas: no key needed, quiet enough to sit on the paper. Base, then the labels over the dots.
+    const esri = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_{layer}/MapServer/tile/{z}/{y}/{x}';
+    L.tileLayer(esri, { layer: 'Base', maxZoom: 16, attribution: 'Tiles &copy; Esri &mdash; Esri, HERE, Garmin, OpenStreetMap contributors' }).addTo(map);
+    map.createPane('labels').style.zIndex = 450;   // above the dots, below popups
+    L.tileLayer(esri, { layer: 'Reference', maxZoom: 16, pane: 'labels', opacity: .9 }).addTo(map);
+    map.setView([30, 0], 2);
+    dots = L.layerGroup().addTo(map);
+    $('map-fit').addEventListener('click', () => fitAll(true));
+    return map;
+  }
+  function fitAll(animate) {
+    if (!map || !dots) return;
+    const pts = dots.getLayers().map((d) => d.getLatLng());
+    if (!pts.length) { map.setView([30, 0], 2, { animate }); return; }
+    map.fitBounds(L.latLngBounds(pts), { padding: [40, 40], maxZoom: 10, animate });
+    fitted = true;
+  }
+  const marks = new Map();    // place key → its dot, updated in place so an open popup survives a poll
+  const escHtml = (t) => String(t).replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+  function renderMap(list, now) {
+    if (!ensureMap()) return;
+    const places = new Map();
+    for (const e of list) {
+      if (typeof e.lat !== 'number' || typeof e.lon !== 'number') continue;
+      const k = `${e.lat},${e.lon}`;
+      const p = places.get(k) || { lat: e.lat, lon: e.lon, where: e.where, n: 0, last: 0, visitors: new Set() };
+      p.n++; p.visitors.add(e.visitor); if (e.t > p.last) p.last = e.t;
+      places.set(k, p);
+    }
+    const newest = [...places.values()].sort((a, b) => b.last - a.last)[0];
+    const accent = css('--accent') || '#3B6B44', paper = css('--surface') || '#fff';
+    for (const [k, dot] of marks) if (!places.has(k)) { dots.removeLayer(dot); marks.delete(k); }
+    for (const [k, p] of places) {
+      const people = p.visitors.size;
+      const popup = `<b>${escHtml(p.where)}</b><br>${n(p.n)} view${p.n === 1 ? '' : 's'} from ${n(people)} visitor${people === 1 ? '' : 's'}<br>Last ${ago(p.last, now)}`;
+      const radius = Math.min(22, 6 + 3 * Math.sqrt(p.n));
+      const fresh = p === newest && now - p.last < 3600000;
+      let dot = marks.get(k);
+      if (!dot) {
+        dot = L.circleMarker([p.lat, p.lon], { radius, color: paper, weight: 1.5, fillColor: accent, fillOpacity: .6, className: 'visit-dot' });
+        dot.bindPopup(popup).addTo(dots);
+        marks.set(k, dot);
+      } else {
+        dot.setRadius(radius);
+        dot.setPopupContent(popup);
+      }
+      const el = dot.getElement();
+      if (el) el.classList.toggle('is-new', fresh);
+    }
+    $('map-empty').hidden = places.size > 0;
+    if (!fitted && places.size) fitAll(false);
+  }
+
   function renderStats(now) {
     const today = startOfToday();
     const todays = events.filter((e) => e.t >= today);
@@ -165,6 +236,7 @@
     renderList('where', tally(week, (e) => e.where || 'unknown'));
     renderList('pages', tally(week, (e) => pageName(e.page)));
     renderList('refs', tally(week, (e) => refName(e.ref)));
+    renderMap(week, now);
 
     const latest = events[0];
     $('summary').textContent = latest

@@ -1281,6 +1281,31 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 .dash-notice { margin-bottom: var(--sp-6); border-color: var(--accent); color: var(--ink-2); }
 .dash-facts { margin-top: 0; }
 
+/* The map: Leaflet on CARTO's light tiles, its chrome restyled to the tokens.
+   Dots are the accent green, sized by visits; the newest arrival pulses. */
+.dash-map-card { margin-top: var(--row); padding: 0; overflow: hidden; }
+.dash-map-head { display: flex; align-items: center; gap: 12px 20px; flex-wrap: wrap; padding: 22px 28px 18px; }
+.dash-map-head .eyebrow { margin: 0; }
+.dash-map-head .t-small { flex: 1; min-width: 24ch; margin: 0; color: var(--ink-3); }
+.dash-map { height: clamp(320px, 46vw, 540px); background: var(--surface-2); isolation: isolate; }
+.dash-map-empty { padding: 0 28px 22px; }
+.leaflet-container { font-family: var(--font-body); font-size: var(--t-small); background: var(--surface-2); }
+.leaflet-tile-pane, .leaflet-labels-pane { filter: sepia(.10); }   /* tiles pulled toward the paper */
+.leaflet-labels-pane { pointer-events: none; }
+.leaflet-bar { border: 1px solid var(--hair-2) !important; border-radius: 10px !important; box-shadow: var(--shadow-screen) !important; overflow: hidden; }
+.leaflet-bar a { color: var(--ink) !important; background: var(--surface) !important; border-bottom-color: var(--hair) !important; }
+.leaflet-bar a:hover, .leaflet-bar a:focus-visible { background: var(--surface-2) !important; color: var(--accent-ink) !important; }
+.leaflet-popup-content-wrapper { background: var(--surface); color: var(--ink); border-radius: 12px; box-shadow: var(--shadow-lift); }
+.leaflet-popup-tip { background: var(--surface); box-shadow: none; }
+.leaflet-popup-content { margin: 12px 16px; font-size: var(--t-small); line-height: var(--lh-small); }
+.leaflet-popup-content b { font-weight: 500; }
+.leaflet-container a.leaflet-popup-close-button { color: var(--ink-3); }
+.leaflet-control-attribution { background: color-mix(in srgb, var(--surface) 82%, transparent) !important; color: var(--ink-3) !important; font-size: 11px; }
+.leaflet-control-attribution a { color: var(--ink-2) !important; }
+.visit-dot { transition: r var(--dur-ui) var(--ease); }
+.visit-dot.is-new { animation: dot-pulse 2.2s var(--ease-soft) infinite; }
+@keyframes dot-pulse { from { stroke-width: 2; stroke-opacity: .9; } to { stroke-width: 18; stroke-opacity: 0; } }
+
 .dash-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-5); margin-top: var(--row); }
 .dash-card .eyebrow { margin-bottom: var(--sp-4); }
 .dash-list { list-style: none; margin: 0; padding: 0; }
@@ -1306,6 +1331,7 @@ tr[data-kind="wrong password"] .dash-kind { background: color-mix(in srgb, var(-
 @keyframes dash-new { from { background: var(--glow); } to { background: transparent; } }
 
 @media (max-width: 900px) { .dash-grid { grid-template-columns: 1fr; } }
+@media (max-width: 640px) { .dash-map-head { padding: 18px 20px 14px; } .dash-map { height: 340px; } .dash-map-empty { padding: 0 20px 18px; } }
 @media (max-width: 640px) {   /* the feed stacks (section 11): time and kind share the first line, the page is the card's heading */
   .dash-table tbody tr { padding: 16px; }
   .dash-table .c-time, .dash-table .c-kind { display: inline; }
@@ -1314,6 +1340,6 @@ tr[data-kind="wrong password"] .dash-kind { background: color-mix(in srgb, var(-
 }
 @media (max-width: 560px) { .dash-nav-actions { gap: 12px; } .live { font-size: var(--t-micro); } }
 @media (prefers-reduced-motion: reduce) {
-  .live[data-state="on"] .live-dot, .dash-table tr.is-new { animation: none; }
-  .dash-bar { transition: none; }
+  .live[data-state="on"] .live-dot, .dash-table tr.is-new, .visit-dot.is-new { animation: none; }
+  .dash-bar, .visit-dot { transition: none; }
 }

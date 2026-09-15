@@ -82,7 +82,7 @@ function page({ path, error, unconfigured, ref, admin }) {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/styles.css?v=f0630e16">
+<link rel="stylesheet" href="/styles.css?v=a0ec537c">
 </head>
 <body>
 <main class="gate-wrap"><div class="gate">
@@ -161,6 +161,11 @@ function whereFrom(h) {
   return [dec(h.get('x-vercel-ip-city')), h.get('x-vercel-ip-country-region'), h.get('x-vercel-ip-country')]
     .filter(Boolean).join(', ') || 'unknown';
 }
+// The same lookup's coordinates, for the dashboard's map: city-level accuracy, three decimals.
+function coordsOf(h) {
+  const lat = parseFloat(h.get('x-vercel-ip-latitude')), lon = parseFloat(h.get('x-vercel-ip-longitude'));
+  return Number.isFinite(lat) && Number.isFinite(lon) ? { lat: +lat.toFixed(3), lon: +lon.toFixed(3) } : {};
+}
 
 // Short stable id per visitor so one person's sequence of views can be followed.
 // Hashed with the gate token so the raw IP is never stored or sent.
@@ -200,6 +205,7 @@ async function logAccess(kind, request, url, salt, ref) {
       page: url.pathname,
       where: whereFrom(request.headers),
       country: request.headers.get('x-vercel-ip-country') || '',
+      ...coordsOf(request.headers),
       ref: ref || refOf(request, url) || 'direct',
       device: describeUA(ua),
       visitor: await visitorId(request, salt),
