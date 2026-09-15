@@ -53,7 +53,7 @@ function page({ path, error, unconfigured, ref }) {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/styles.css?v=809d0757">
+<link rel="stylesheet" href="/styles.css?v=03b5a7da">
 </head>
 <body>
 <main class="gate-wrap"><div class="gate">

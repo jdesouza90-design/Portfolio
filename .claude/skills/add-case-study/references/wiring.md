@@ -84,9 +84,8 @@ its own (see Motion in the README). Headings are `h2` here (the page's `h1` is t
     <div class="chips"><span class="chip">2 designers · 3 months</span></div>
     <span class="work-cta">Read the case study</span>
   </div>
-  <div class="case-media">
-    <img decoding="async" width="468" height="1200" src="assets/ver-step1.webp" alt="Verification step one: action required" loading="lazy">
-    <img decoding="async" width="376" height="1200" src="assets/ver-thankyou.webp" alt="Documents submitted confirmation screen" loading="lazy">
+  <div class="case-media cutout bleed">
+    <img decoding="async" width="700" height="822" src="assets/ver-documents.webp" alt="The upload documents checklist: W-2, Paystub and Identification, each a row with a status circle and a chevron, 0 of 3 complete" loading="lazy">
   </div>
 </a>
 ```
@@ -96,8 +95,47 @@ its own (see Motion in the README). Headings are `h2` here (the page's `h1` is t
 - The blurb: one or two sentences, outcome first, past tense, the number if there is one.
 - Chips: one or two. The shape of the work (`0→1`, `Web3 login`, `Phased delivery`) and
   the team and time (`2 designers · 5 months`, `4 senior designers · 3 time zones`).
-- Media: `case-media` with two phone screens, or `case-media wide` with one landscape image.
+- Media: one image in a `.case-media` ground, composed with the classes below.
 - Paths here are `assets/…` (no `../`), because the index is at the root.
+
+### The thumbnail
+
+A thumbnail shows the one piece of the design the case study is about, at reading size,
+not the whole screen shrunk to fit. Pick the composition in round 7 of the interview and
+say which one you chose:
+
+| Classes | What it does | Live example |
+|---|---|---|
+| `case-media cutout` | One UI card keyed out of its screen (transparent corners, drop shadow), floating alone on the ground at reading size | Refinance offers, `refi-card.webp` |
+| `case-media cutout bleed` | A taller keyed-out piece blown up until it runs off the bottom | Verifications, `ver-documents.webp` |
+| `case-media emerge` | One phone screen, large, coming out of the bottom-left corner of the ground | Cross-Sell, `cs-decline.webp` |
+| `case-media wide emerge` / `wide emerge right` | One desktop screen the same way; `.right` shows its top-right corner instead | No-code tools; Staking |
+| `case-media wide` | One landscape image contained inside the ground | Sign-in with Ethereum |
+
+`emerge` takes its offsets per project, beside the rule in `styles.css` section "Selected
+work" (`.case-<slug> .case-media.emerge { --x: 12%; --y: 10%; --w: 92%; }`): `--x`/`--y`
+place the screen's visible corner, `--w` its zoom. Copy the nearest live row's values and
+adjust by eye. Cutouts come from the 2x sources (`assets/BE/`), cut sharp with their corners
+keyed, then converted with `webp.sh`.
+
+**The edge fade.** Every `.case-media` fades what sits on it over the last stretch before
+each edge (`--fade`, 40 px on a phone up to 80 px on desktop). The `::after` overlay paints
+the ground itself (base, art and gradient from the same `--panel-*` tokens, so a new ground
+is picked up with nothing to add) masked to a band along the edges: where nothing sits on the
+ground it is invisible, and where a screen runs off the ground it dissolves into it instead
+of stopping at the clip line. Compose for it:
+
+- Run the screen off the ground on purpose. `emerge` and `bleed` exist for it; the hard
+  clip is never seen, so a phone screen can carry on past the bottom and a desktop screen
+  past the right.
+- Keep what has to read (the heading on the screen, the number, the control the case is
+  about) clear of the band on every side: more than `--fade` from each edge. Set `--x`/`--y`
+  so the screen's visible corner sits just inside the band, not deep in it, or its top edge
+  goes soft too.
+- A contained image (`cutout`, `wide`) only softens at its outer edges, which is the intended
+  look; nothing to do.
+- Check it at 1280 and 390 wide (the phone layer changes the ground's aspect ratio) and
+  look at the faded edge specifically, not just the row.
 
 The hero lede on `work.html` says "The case studies are password protected"; it doesn't
 mention a count, so it needs no change.

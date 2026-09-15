@@ -202,6 +202,13 @@ Fills every `src`, `alt`, `width` and `height`.
    W-2, paystub, identification, 0 of 3 complete") and confirm any product names.
    Illustrations get "Illustration of…"; decorative logos on index rows keep the company name
    as alt because they are the row's label.
+5. **The thumbnail.** Which one piece of the design is the case study about? That piece is
+   the index thumbnail, at reading size, not the whole screen shrunk to fit. Propose the
+   composition from the table in `wiring.md` ("The thumbnail"): a card keyed out of its
+   screen (`cutout`, `cutout bleed`) or a whole screen coming out of a corner (`emerge`,
+   `wide emerge`). Every ground fades its content at the edges, so plan to run the screen
+   off the ground and keep the part that has to read clear of the fade band. `AskUserQuestion`
+   only if two compositions are genuinely open; otherwise say which one and why.
 
 ---
 

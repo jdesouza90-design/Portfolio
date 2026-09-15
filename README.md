@@ -316,7 +316,11 @@ The rules that shape the code:
   it runs off the bottom; `.emerge` sets a whole screen large, coming out of
   a bottom corner of the ground (`--x`/`--y`/`--w` per row set beside the
   rule; `.right` shows the screen's top-right corner instead). Sign-in with
-  Ethereum keeps the plain `.wide` ground.
+  Ethereum keeps the plain `.wide` ground. Every ground fades what sits on it
+  over the last stretch before each edge (`--fade`, 40 to 80 px): the
+  `.case-media::after` overlay paints the ground itself, masked to a band along
+  the edges, so a screen that runs off the ground dissolves into it instead of
+  stopping at the clip line, and nothing inside the band is meant to be read.
 - The three walkthrough recordings are 2.8–7.8 MB and only load when a visitor
   presses Play. They come from the deck's GIFs, so their resolution is capped;
   replace them if you still have the original screen recordings.

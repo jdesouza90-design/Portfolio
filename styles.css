@@ -471,6 +471,29 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .case-cross-sell .case-media.emerge { --x: 12%; --y: 10%; --w: 92%; }
 .case-no-code .case-media.emerge { --x: 14%; --y: 12%; --w: 150%; }
 .case-staking .case-media.emerge { --x: 14%; --y: 12%; --w: 140%; }
+/* Fade: over the last stretch before each edge the ground reasserts itself, so a
+   screen that runs off the ground dissolves into it instead of stopping at a hard
+   line. The overlay is the ground itself (base, art and gradient at the same size
+   and origin as the one beneath), masked to a band along each edge: where no
+   image sits it is pixel-identical to the ground, so only the image fades. */
+.case-media { --fade: clamp(40px, 6vw, 80px); }
+.case-media::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background-color: var(--panel-base);
+  background-image: var(--panel-art), var(--panel);
+  background-size: var(--panel-size), auto;
+  --edge: #000, rgba(0, 0, 0, .55) 40%, rgba(0, 0, 0, .15) 75%, transparent;
+  -webkit-mask:
+    linear-gradient(to right, var(--edge)) left / var(--fade) 100% no-repeat,
+    linear-gradient(to left, var(--edge)) right / var(--fade) 100% no-repeat,
+    linear-gradient(to bottom, var(--edge)) top / 100% var(--fade) no-repeat,
+    linear-gradient(to top, var(--edge)) bottom / 100% var(--fade) no-repeat;
+  mask:
+    linear-gradient(to right, var(--edge)) left / var(--fade) 100% no-repeat,
+    linear-gradient(to left, var(--edge)) right / var(--fade) 100% no-repeat,
+    linear-gradient(to bottom, var(--edge)) top / 100% var(--fade) no-repeat,
+    linear-gradient(to top, var(--edge)) bottom / 100% var(--fade) no-repeat;
+}
 @media (hover: hover) and (pointer: fine) {
   .case-row:hover .case-media img { transform: translateY(-5px); }
   .case-row:hover .work-cta::after { transform: translateX(5px); }
