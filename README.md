@@ -47,6 +47,27 @@ before any file is served. The home page and the work index stay public.
 - Running `python3 -m http.server` locally has no edge runtime, so the case
   studies open without a password. Use `npx vercel dev` to exercise the gate.
 
+## Who is reading the case studies
+
+The same middleware logs every unlock, every case-study page view and every
+wrong password: which page, when, city/region/country (Vercel's IP geolocation),
+the referrer (the page that sent them, e.g. LinkedIn), browser and OS, and a
+short visitor id so one person's sequence of views can be followed. Raw IP
+addresses are never stored or sent.
+
+- Every entry goes to Vercel → Project → Logs (search `access`). Vercel keeps
+  those for one hour on Hobby, one day on Pro.
+- To get each entry as an email, set two more environment variables in Vercel:
+  `RESEND_API_KEY` (from resend.com → API Keys) and `ACCESS_LOG_TO` (the address
+  to notify — with Resend's free `onboarding@resend.dev` sender this must be the
+  address the Resend account was created with). Optional: `ACCESS_LOG_FROM` to
+  send from a verified domain, `ACCESS_LOG_TZ` for the timestamp (default
+  `America/New_York`). Without the two keys nothing is emailed and the gate
+  works as before.
+- Your own visits would flood the log, so open any case study once with
+  `?owner` on the URL (e.g. `/work/staking.html?owner`). That sets a year-long
+  cookie in that browser and mutes logging for it.
+
 ## Before sending the link out
 
 1. **Set your links** at the top of `main.js`:
