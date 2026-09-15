@@ -580,6 +580,47 @@ const CONFIG = {
       return { resize, frame };
     },
 
+    // Waves: fewer, lighter lines than the ledger, each a slow travelling
+    // wave the next row follows a beat behind, so the sheet flows. The cursor
+    // bends the lines away a little and lifts the tone a shade; a click
+    // sends a soft ring through them.
+    waves: ({ ctx, ink }) => {
+      const S = 36, STEP = 6, SIG = 150, AMP = 24, RING = 14;   // pitch, sample step, lens radius, lens lift, ripple lift
+      const BASE = .085, LIFT = .12;                             // ink alpha at rest (about --hair on paper), added near a moving cursor
+      const RS = 420, RW = 500, RD = 2.2;
+      let W = 0, H = 0, y0 = 0, rows = 0, cols = 0;
+      const resize = (w, h) => { W = w; H = h; y0 = (H % S) / 2; rows = Math.ceil(H / S) + 1; cols = Math.ceil(W / STEP) + 1; };
+      const frame = (t, dt, p, live) => {
+        ctx.clearRect(0, 0, W, H);
+        ctx.lineWidth = 1;
+        if (live && p.active > .001) {
+          const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 320);
+          g.addColorStop(0, ink(BASE + LIFT * p.active)); g.addColorStop(1, ink(BASE));
+          ctx.strokeStyle = g;
+        } else ctx.strokeStyle = ink(BASE);
+        const s2 = 2 * SIG * SIG, lift = AMP * p.active * 1.65, rips = p.ripples, nr = rips.length, tt = live ? t : 0;
+        for (let r = 0; r < rows; r++) {
+          const y = y0 + r * S, dy = y - p.y, ph = r * .22;
+          ctx.beginPath();
+          for (let c = 0; c < cols; c++) {
+            const x = c * STEP;
+            let yy = y + 9 * Math.sin(x * .0075 + tt * .32 + ph) + 5 * Math.sin(x * .019 - tt * .21 + ph * 1.7) + 2.5 * Math.sin(x * .041 + tt * .5 + r * .9);
+            if (live) {
+              if (lift > .01) { const dx = x - p.x; yy += lift * (dy / SIG) * Math.exp(-(dx * dx + dy * dy) / s2); }
+              for (let k = 0; k < nr; k++) {
+                const rp = rips[k], dx = x - rp.x, d = Math.sqrt(dx * dx + dy * dy), diff = d - rp.age * RS;
+                if (diff > 60 || diff < -60 || d < .01) continue;
+                yy += (dy / d) * RING * Math.exp(-diff * diff / RW) * Math.exp(-rp.age * RD);
+              }
+            }
+            c ? ctx.lineTo(x, yy) : ctx.moveTo(x, yy);
+          }
+          ctx.stroke();
+        }
+      };
+      return { resize, frame };
+    },
+
     // Contour lines over a few broad hills that drift. The cursor raises a
     // hill of its own that the lines wrap around; a click sends a ring out.
     // Every third line is heavier, the way an index contour is on a map.
