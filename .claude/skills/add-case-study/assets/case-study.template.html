@@ -50,7 +50,13 @@
 <!-- 1. Hero: outcome beside the title, the screens, four facts -->
 <section class="cs-hero">
   <div class="wrap">
-    <a class="back" href="../work.html">← All work</a>
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><span class="crumb-sep" aria-hidden="true">/</span><a href="/work.html">Work</a></li>
+        <li aria-current="page"><span class="crumb-sep" aria-hidden="true">/</span>{{NAME}}</li>
+      </ol>
+    </nav>
     <div class="hero-lead">
       <div class="cs-hero-copy">
       <p class="eyebrow" data-rise style="--i:0">{{EYEBROW}}</p>

@@ -47,13 +47,20 @@ Contents
 
 ## 2. Hero
 
-Slots: `EYEBROW`, `NAME`, `LEDE`, outcome (two variants), hero panel (four variants),
-four facts.
+Slots: `NAME` (twice: the breadcrumb's current item and the h1), `EYEBROW`, `LEDE`,
+outcome (two variants), hero panel (four variants), four facts. The breadcrumb's first
+two items never change; the last is plain text with `aria-current="page"`, not a link.
 
 ```html
 <section class="cs-hero">
   <div class="wrap">
-    <a class="back" href="../work.html">← All work</a>
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><span class="crumb-sep" aria-hidden="true">/</span><a href="/work.html">Work</a></li>
+        <li aria-current="page"><span class="crumb-sep" aria-hidden="true">/</span>{{NAME}}</li>
+      </ol>
+    </nav>
     <div class="hero-lead">
       <div class="cs-hero-copy">
       <p class="eyebrow" data-rise style="--i:0">{{EYEBROW}}</p>

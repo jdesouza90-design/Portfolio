@@ -133,7 +133,9 @@ three rhythm tokens: `--section` between sections, `--row` between rows,
 
 All six case studies are the same document, in this order:
 
-1. **Hero**: eyebrow, title and one-sentence lede with the outcome stat beside
+1. **Hero**: a breadcrumb trail (Home / Work / this study, the current page
+   in plain ink and not a link) and then the eyebrow, title and one-sentence
+   lede with the outcome stat beside
    them (`data-flow`: it rolls into place digit by digit, lit from above with
    the accent), the project's screens on its own tinted panel, then four facts
    (role, team, timeline, launch) as a `.facts` stat strip: a small label
@@ -251,7 +253,10 @@ The rules that shape the code:
   4.5:1 on the darkest ground it sits on (`--ink-3` was darkened for this).
   The hero lede is set in `--ink` because it sits over the colour wash.
 - The nav is a `<nav aria-label="Primary">` landmark; the phone menu button
-  reports `aria-expanded`, Escape closes it and hands focus back.
+  reports `aria-expanded`, Escape closes it and hands focus back. The case
+  studies' breadcrumb is a second landmark, `<nav aria-label="Breadcrumb">`
+  around an ordered list, the current page marked `aria-current="page"` and
+  the slashes `aria-hidden`.
 - The layer tabs follow the tablist pattern: arrows, Home and End move the
   selection; hidden panels leave the tab order.
 - The walkthrough control leaves the tab order when it fades out. The chart's
