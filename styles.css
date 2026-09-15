@@ -565,13 +565,14 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .fig-nest { position: relative; width: min(100%, 460px); width: min(100cqw, 100cqh, 460px); aspect-ratio: 1; }
 .nest { position: absolute; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--ink) 34%, transparent); transition: border-color var(--dur-ui), box-shadow var(--dur-ui); }
 .nest[data-ring="2"] { inset: 0; }
-.nest[data-ring="1"] { left: 14%; top: 28%; width: 72%; height: 72%; }
-.nest[data-ring="0"] { left: 29%; top: 58%; width: 42%; height: 42%; }
-/* each label sits low in its ring's band, where the chord is widest, its
-   bottom edge just above the next ring; the innermost is centred in its disc */
+.nest[data-ring="1"] { left: 13%; top: 26%; width: 74%; height: 74%; }
+.nest[data-ring="0"] { left: 30%; top: 60%; width: 40%; height: 40%; }
+/* each label sits in the lower half of its ring's band, where the chord is
+   wide, with a clear 6% of the figure between it and the next ring below;
+   the innermost is centred in its disc */
 .nlbl { position: absolute; left: 50%; transform: translate(-50%, -100%); text-align: center; white-space: nowrap; }
-.nest[data-ring="2"] .nlbl { top: 26%; }
-.nest[data-ring="1"] .nlbl { top: 39%; }
+.nest[data-ring="2"] .nlbl { top: 20%; }
+.nest[data-ring="1"] .nlbl { top: 37.8%; }
 .nest[data-ring="0"] .nlbl { top: 50%; transform: translate(-50%, -50%); white-space: normal; width: 8ch; }
 .nest .t-subhead { color: var(--ink-2); transition: color var(--dur-ui); }
 .nest.on { border-color: var(--accent); box-shadow: 0 0 0 8px var(--glow); }
