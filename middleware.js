@@ -63,10 +63,11 @@ function page({ path, error, unconfigured, ref, admin }) {
       ? '<p class="gate-error t-small" id="gate-error" role="alert">That password didn\'t match. Check for extra spaces and try again.</p>'
       : '';
   const describe = msg ? ' aria-describedby="gate-error"' : '';
-  const eyebrow = admin ? 'Activity' : 'Case studies';
-  const title = admin ? 'Sign in to see who\'s on the site.' : 'This case study is password protected.';
+  // The owner's gate says only "Sign in": what lies behind it is nobody else's business.
+  const eyebrow = admin ? '' : '<p class="eyebrow">Case studies</p>';
+  const title = admin ? 'Sign in' : 'This case study is password protected.';
   const body = admin
-    ? '<p class="t-body">This page is for the owner of the site.</p>'
+    ? ''
     : '<p class="t-body">Enter the password I shared with you. Don\'t have it yet? <a href="https://www.linkedin.com/in/johndesouza-/" target="_blank" rel="noopener">Message me on LinkedIn</a> and I\'ll send it over.</p>';
   const button = admin ? 'Sign in' : 'Open case study';
   const back = admin ? '<a class="back" href="/">← Back to the site</a>' : '<a class="back" href="/work.html">← Back to all work</a>';
@@ -86,7 +87,7 @@ function page({ path, error, unconfigured, ref, admin }) {
 <body>
 <main class="gate-wrap"><div class="gate">
   <a class="brand" href="/"><span>John DeSouza</span></a>
-  <p class="eyebrow">${eyebrow}</p>
+  ${eyebrow}
   <h1 class="t-title">${title}</h1>
   ${body}
   <form method="post" action="${esc(path)}" class="gate-form">
