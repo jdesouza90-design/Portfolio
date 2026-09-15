@@ -75,8 +75,9 @@ for p, s in html.items():
         if f'class="case-row {cls}"' not in work_html:
             err(f"{p}: work.html has no .case-row.{cls}")
 
-    # Next link
-    nm = re.search(r'<section class="cs-next">.*?<a class="t-title" href="([a-z0-9-]+)\.html">', s, re.S)
+    # Next link: the plain <a> in p.cs-next-title, after the .cs-prev-link one (which is "previous")
+    nm = re.search(r'<p class="t-title cs-next-title">(?:<a class="cs-prev-link"[^>]*>.*?</a>)?\s*'
+                   r'<a href="([a-z0-9-]+)\.html">', s, re.S)
     if not nm:
         err(f"{p}: no next-case-study link")
     else:
