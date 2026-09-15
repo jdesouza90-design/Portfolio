@@ -50,6 +50,8 @@ before any file is served. The home page and the work index stay public.
 - Changing the password invalidates every existing cookie, because the cookie
   value is derived from the password.
 - If the variable is missing the gate fails closed and says so.
+- A correct password sends the reader on with `?unlocked`, which plays the
+  opener once (see Motion) and is dropped from the address as it starts.
 - Running `python3 -m http.server` locally has no edge runtime, so the case
   studies open without a password. Use `npx vercel dev` to exercise the gate.
 
@@ -230,6 +232,21 @@ scrolls to it, and every page gets it the same way:
 - **The hero's copy has its own cascade** on load: eyebrow, `h1` and lede
   carry `data-rise style="--i:N"` (N = 0, 1, 2), a 12px rise at 70ms steps
   on top of the block's own reveal. Nothing else animates by attribute.
+- **A fresh unlock opens behind a sheet** (`initUnlock` in `main.js`,
+  section 8b of `styles.css`). The gate's redirect carries `?unlocked`; a
+  one-line script in each case study's head sets `html.unlock` before first
+  paint, which holds the page out of view (a 3s CSS animation, so a failed
+  script can never keep it hidden) and pauses the hero's cascade. The sheet
+  is the project's own ground with no pattern, split by a 1px accent seam
+  that draws in over 500ms; `Unlocked`, the page's `h1` and a two-sentence
+  note rise on it (220/320/460ms); at 1.6s the copy fades, the seam becomes
+  the two door edges and the halves part over 850ms on `--ease-in-out`; at
+  1.98s `unlock:open` fires, which starts the scroll reveal (`afterOpener`)
+  and releases the cascade, so the first screen rises as the doors part.
+  About 2.6s in all, the one thing on the site that runs past 300ms after a
+  user action; a click on the sheet or Escape jumps to the end. Under
+  reduced motion the sheet shows still for 1.4s and goes. The param is
+  dropped from the address as it starts, so a refresh never replays it.
 - **What plays inside a block waits for the block.** The chart sweep, the
   odometer (`data-flow`) and the experience timeline each start after their
   block has revealed (`onceInView` in `main.js` listens for the `reveal`

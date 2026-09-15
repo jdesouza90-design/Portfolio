@@ -1,6 +1,9 @@
 // Vercel Edge Middleware — password gate for the case studies.
 // Runs before the static files are served. Everything outside /work stays public.
 //
+// A correct password sends the reader on to the case study with ?unlocked, which
+// main.js answers with the opener (the sheet that parts) exactly once.
+//
 // Access log: every unlock, page view and wrong password is written to Vercel's
 // runtime logs, and emailed via Resend when RESEND_API_KEY and ACCESS_LOG_TO are set.
 // Open any /work URL with ?owner once to mute logging for your own browser.
@@ -53,7 +56,7 @@ function page({ path, error, unconfigured, ref }) {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/styles.css?v=07325370">
+<link rel="stylesheet" href="/styles.css?v=f4faa96b">
 </head>
 <body>
 <main class="gate-wrap"><div class="gate">
@@ -199,10 +202,12 @@ export default async function middleware(request, context) {
     } catch (_) {}
     if (submitted === password) {
       log('unlocked', ref);
+      url.searchParams.delete('unlocked');            // never doubled when the gate itself was reached with it
+      const rest = url.searchParams.toString();
       return new Response(null, {
         status: 303,
         headers: {
-          Location: path,
+          Location: `${url.pathname}?${rest ? `${rest}&` : ''}unlocked`,
           'Set-Cookie': `${COOKIE}=${expected}; Path=/work; Max-Age=${MAX_AGE}; HttpOnly; Secure; SameSite=Lax`,
           'Cache-Control': 'no-store',
         },

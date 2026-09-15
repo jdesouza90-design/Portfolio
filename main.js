@@ -42,6 +42,89 @@ const CONFIG = {
     };
     return tick;
   };
+  // A fresh unlock (initUnlock) holds the page behind its sheet. Work that
+  // should not start until the doors part waits here; on any other visit it
+  // runs at once. The timer is a backstop: the page must never stay hidden.
+  const afterOpener = (fn) => {
+    if (!document.documentElement.classList.contains("unlock")) { fn(); return; }
+    let done = false;
+    const go = () => { if (!done) { done = true; fn(); } };
+    document.addEventListener("unlock:open", go, { once: true });
+    setTimeout(go, 6000);
+  };
+
+  /* ---- Unlock opener ----
+     The gate answers a correct password by sending the reader to the case
+     study with ?unlocked, and the head's one-line script has already set
+     html.unlock so nothing paints before the sheet. The sheet is the
+     project's own ground split by one green seam: the seam draws, the title
+     rises, then the seam becomes two edges and the halves part like doors
+     while the hero rises in behind them (the reveal and the hero's cascade
+     both wait on "unlock:open"). It plays once: the param is dropped from
+     the address as it starts, so a refresh or a shared link never replays
+     it. A click on the sheet or Escape jumps to the end. */
+  const initUnlock = () => {
+    const root = document.documentElement;
+    const h1 = $(".cs-hero h1");
+    const wanted = /[?&]unlocked(?=&|$)/.test(location.search);
+    if (!wanted || !h1) { root.classList.remove("unlock"); return; }
+    root.classList.add("unlock");                        // a cached page without the head script still gets the sheet
+    try {
+      const clean = location.search.replace(/[?&]unlocked(?=&|$)/, "").replace(/^&/, "?");
+      history.replaceState(history.state, "", location.pathname + clean + location.hash);
+    } catch (_) {}
+
+    const EASE = "cubic-bezier(.23, 1, .32, 1)", EASE_IO = "cubic-bezier(.77, 0, .175, 1)";
+    const make = (tag, cls, text) => { const n = document.createElement(tag); n.className = cls; if (text) n.textContent = text; return n; };
+    const sheet = make("div", "open");
+    sheet.setAttribute("role", "status");
+    const left = make("div", "open-half l"), right = make("div", "open-half r"), seam = make("span", "open-seam");
+    const body = make("div", "open-body");
+    const eyebrow = make("p", "eyebrow", "Unlocked");
+    const title = make("p", "t-display", h1.textContent.trim());
+    const note = make("p", "t-small open-note", "Thanks for the password. The numbers in here aren't public, so please keep them between us.");
+    body.append(eyebrow, title, note);
+    sheet.append(left, right, seam, body);
+    document.body.appendChild(sheet);
+    root.classList.add("unlock-on");                     // the page shows under the sheet from here
+
+    let opened = false, finished = false;
+    const timers = [];
+    const at = (ms, fn) => timers.push(setTimeout(fn, ms));
+    const open = () => {                                 // the doors part: the page starts
+      if (opened) return;
+      opened = true;
+      root.classList.remove("unlock");
+      document.dispatchEvent(new CustomEvent("unlock:open"));
+    };
+    const finish = () => {
+      if (finished) return;
+      finished = true;
+      timers.forEach(clearTimeout);
+      sheet.getAnimations({ subtree: true }).forEach((a) => a.cancel());
+      sheet.remove();
+      open();
+      root.classList.remove("unlock-on");
+    };
+    sheet.addEventListener("click", finish);
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") finish(); });
+
+    if (reduced) { at(1400, finish); return; }           // the sheet shows still, then goes
+    const rise = (el, delay) => el.animate(
+      [{ opacity: 0, transform: "translateY(12px)" }, { opacity: 1, transform: "none" }],
+      { duration: 600, delay, easing: EASE, fill: "both" });
+    seam.animate([{ transform: "scaleY(0)" }, { transform: "scaleY(1)" }], { duration: 500, easing: EASE, fill: "both" });
+    rise(eyebrow, 220); rise(title, 320); rise(note, 460);
+    at(1600, () => body.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 220, easing: EASE, fill: "forwards" }));
+    at(1780, () => {
+      sheet.classList.add("part");                       // the seam becomes the two door edges
+      seam.style.opacity = "0";
+      left.animate([{ transform: "translateX(0)" }, { transform: "translateX(-100%)" }], { duration: 850, easing: EASE_IO, fill: "forwards" });
+      right.animate([{ transform: "translateX(0)" }, { transform: "translateX(100%)" }], { duration: 850, easing: EASE_IO, fill: "forwards" });
+    });
+    at(1980, open);
+    at(2640, finish);
+  };
 
   /* ---- Links from CONFIG ---- */
   const initLinks = () => {
@@ -120,6 +203,11 @@ const CONFIG = {
     const LINE = 0.7;
     if (reduced || !("IntersectionObserver" in window) || !revealEls.length) return;
     document.documentElement.classList.add("anim");
+    afterOpener(() => revealOnScroll(revealEls, LINE));  // after a fresh unlock, the first screen rises as the doors part
+  };
+  // The observer, its backstop and its failsafe. Split from initReveal only so
+  // a fresh unlock can hold all three until the opener's doors part.
+  const revealOnScroll = (revealEls, LINE) => {
     // Everything shown in one pass is one batch; the stagger counts within it.
     // The batch settles on a microtask (not a frame: frames stop in a background
     // tab, and the failsafe below would fire first).
@@ -1052,6 +1140,6 @@ const CONFIG = {
   /* ---- Footer year ---- */
   const initYear = () => $$("[data-year]").forEach((el) => (el.textContent = new Date().getFullYear()));
 
-  [initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initFlows, initStrips, initPortrait, initYear]
+  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initFlows, initStrips, initPortrait, initYear]
     .forEach((init) => { try { init(); } catch (err) { console.error(`main.js: ${init.name} failed`, err); } });
 })();
