@@ -318,6 +318,7 @@ const CONFIG = {
     const list = $('[role="tablist"]', root);
     const tabs = $$('[role="tab"]', root);
     const panels = tabs.map((t) => document.getElementById(t.getAttribute("aria-controls")));
+    const rings = $$("[data-ring]", root);   // Figure A: the ring for the selected tab lights up
     if (!list || !tabs.length) return;
     let current = Math.max(0, tabs.findIndex((t) => t.getAttribute("aria-selected") === "true"));
     const place = () => {
@@ -339,6 +340,7 @@ const CONFIG = {
         // means a quick Tab after an arrow key can't land on one mid-fade
         if (panels[k]) { panels[k].classList.toggle("active", on); panels[k].tabIndex = on ? 0 : -1; }
       });
+      rings.forEach((r) => r.classList.toggle("on", Number(r.dataset.ring) === i));
       place();
       if (focus) tabs[i].focus();
     };

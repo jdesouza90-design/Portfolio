@@ -349,6 +349,15 @@ The rules that shape the code:
   The quotes are verbatim with the project sentences cut and the people left
   out by John's choice, so the mark stands in for the byline and the source
   says only "Senior leader" or "Peer feedback".
+- "Three layers, one chain" on the homepage is one card mirroring the AI card:
+  Figure A on the left (`.fig-panel`, three nested rings on the panel ground,
+  after the figure on Mercury's About page), the copy and the layer tabs on
+  the right. The rings share a bottom point, not a centre, so each has a tall
+  band for its label; the panel is a size container, so the figure fits
+  whichever of the panel's width and height is tighter while the copy sets
+  the height. `initTabs` lights the ring (`[data-ring]`) for the selected
+  tab. Under 1100px the card is one column with the figure as a cover, and on
+  a phone the ring names step down to the Small role.
 - The abstract beside "AI in the process" on the homepage is drawn live by
   `main.js` on a canvas: the same strands in three dimensions, turning slowly,
   with a pause button in the corner. `assets/ai-process.svg` is the still it
