@@ -82,12 +82,16 @@
   --nav-h: 82px;
   /* Motion. Enter/exit and hover use the ease-out; movement that starts and
      ends on screen uses the in-out. Controls answer inside 200ms; nothing a
-     user triggers runs past 300ms. */
+     user triggers runs past 300ms. Sections arriving on scroll are the one
+     slow move: they glide up on the soft ease so the travel is seen. */
   --ease: cubic-bezier(.23, 1, .32, 1);
   --ease-in-out: cubic-bezier(.77, 0, .175, 1);
+  --ease-soft: cubic-bezier(.33, 1, .68, 1);
   --dur-press: 140ms;
   --dur-hover: 200ms;
   --dur-ui: 240ms;
+  --dur-reveal: 700ms;
+  --reveal-y: 48px;
 }
 
 /* --------------------------------------------------------------------------
@@ -556,7 +560,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
    ends at the current role. Once the list has faded in, the ink sweeps
    along one segment after another and each marker lands as it arrives.
    Without JS or under reduced motion the track is simply drawn. */
-.exp { --exp-gap: clamp(24px, 4vw, 56px); --exp-seg: .7s; --exp-wait: .4s; --sx: 0; --sy: 1;
+.exp { --exp-gap: clamp(24px, 4vw, 56px); --exp-seg: .7s; --exp-wait: var(--dur-reveal); --sx: 0; --sy: 1;
   list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--exp-gap);
   padding: 0; margin: clamp(44px, 6vw, 72px) 0 0; }
 .exp-item { position: relative; min-width: 0; display: flex; flex-direction: column; padding-top: 32px; }
@@ -903,11 +907,15 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 /* --------------------------------------------------------------------------
    9. Motion
    -------------------------------------------------------------------------- */
+/* A block waits below its place and rises into it once the reader reaches
+   it (main.js sets .in). The fade runs straight so the block is still
+   translucent while it travels and lands opaque; blocks that arrive in the
+   same frame follow each other 60ms apart (--reveal-i). */
 .anim [data-reveal] {
-  opacity: 0; transform: translateY(14px);
+  opacity: 0; transform: translateY(var(--reveal-y));
   transition:
-    opacity .5s var(--ease) calc(var(--reveal-i, 0) * 60ms),
-    transform .5s var(--ease) calc(var(--reveal-i, 0) * 60ms);
+    opacity var(--dur-reveal) linear calc(var(--reveal-i, 0) * 60ms),
+    transform var(--dur-reveal) var(--ease-soft) calc(var(--reveal-i, 0) * 60ms);
 }
 .anim [data-reveal].in { opacity: 1; transform: none; }
 [data-rise] { animation: rise .6s var(--ease) both; animation-delay: calc(var(--i, 0) * 70ms); }

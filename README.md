@@ -185,6 +185,56 @@ phone layer fixes what a collapse alone gets wrong:
 Collapsed grids use `minmax(0, 1fr)`, never bare `1fr`: a swipe strip inside
 a `1fr` column widens the column to its content and the page scrolls sideways.
 
+## Motion
+
+Section 9 of `styles.css` and the "Scroll reveal" block of `main.js`. The
+rule of the site is that controls answer inside 200ms and nothing a user
+triggers runs past 300ms (`--dur-press` 140, `--dur-hover` 200, `--dur-ui`
+240, all on `--ease`). The one slow move is a section arriving as the reader
+scrolls to it, and every page gets it the same way:
+
+- **Every block rises into place.** A block waits 48px below its position
+  at opacity 0 and travels up over 700ms: the fade runs straight (`linear`)
+  so the block is still translucent while it moves and lands opaque; the
+  travel is on `--ease-soft` (an out-cubic; `--ease` is too quick over
+  700ms to be seen). Tokens: `--reveal-y`, `--dur-reveal`, `--ease-soft`.
+- **A block starts once its top crosses a line 70% down the viewport**, so
+  the move happens where the reader is looking rather than at the bottom
+  edge. As the page runs out of scroll the line drops toward the bottom
+  edge, so the last blocks on a page (the closing band, the footer) never
+  wait for room that isn't there. On first paint everything already on
+  screen rises at once; nothing on the first screen waits for a scroll.
+- **Blocks that cross the line in the same frame follow each other 60ms
+  apart**, in document order (`--reveal-i`, capped at 240ms). The stagger
+  is per batch, so a block arriving alone never waits.
+- **The unit is a direct child of a section's `.wrap`** (`main > section >
+  .wrap > *`, or the section itself when it has no wrap). `main.js` tags
+  each with `data-reveal`; a new page built on the skeleton needs no
+  attribute at all. Put `data-reveal` on an element yourself only to change
+  the unit: children carrying it rise on their own and their parent is left
+  alone (the case rows on the homepage and work index, the portrait and
+  text of About). Nothing nests: a block inside a block would travel twice.
+- **The hero's copy has its own cascade** on load: eyebrow, `h1` and lede
+  carry `data-rise style="--i:N"` (N = 0, 1, 2), a 12px rise at 70ms steps
+  on top of the block's own reveal. Nothing else animates by attribute.
+- **What plays inside a block waits for the block.** The chart sweep, the
+  odometer (`data-flow`) and the experience timeline each start after their
+  block has revealed (`onceInView` in `main.js` listens for the `reveal`
+  event a block dispatches as it starts; `--exp-wait` is `--dur-reveal`),
+  and the gauge is held paused by CSS until then. New in-view work goes
+  through `onceInView`, never its own observer, so it inherits the wait.
+- **Content is visible by default.** The hidden state is `.anim
+  [data-reveal]`, and only the script adds `anim` to `<html>` after it has
+  found the observer, so a blocked or failed script never hides a section;
+  if nothing has revealed after 2.5s the class is dropped again. Under
+  `prefers-reduced-motion` the script never opts in and section 9 resets
+  every block, so the page is simply there.
+
+To see a reveal from the code, scroll a page in `puppeteer-core` with
+`Animation.setPlaybackRate(0.2)` over CDP and screenshot at intervals; the
+Browser pane cannot, because a hidden pane paints no frames and the
+observers never fire.
+
 ## Accessibility
 
 The site is held to WCAG 2.2 AA. Every page, including the password gate,
