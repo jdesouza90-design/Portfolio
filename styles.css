@@ -122,28 +122,28 @@
 /* The sans does the work: subhead, lede, body, small, micro */
 .t-subhead, .t-lede, .t-body, .t-small, .t-micro, .eyebrow,
 .testimonial-foot cite b,
-.layer-tab, .work-cta, .about-logos strong, .gate-form input,
-.btn, .chip, .nav-links a, .back, .tools span, .about-logos span, footer,
+.layer-tab, .work-cta, .gate-form input,
+.btn, .chip, .nav-links a, .back, .tools span, footer,
 .facts dt, table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
 .gallery figcaption, .proof-head small, .tooltip, .chart-pill, details.data,
-thead th, .about-logos time, .gauge .lbl, .table-wrap td[data-label]::before
+thead th, .gauge .lbl, .table-wrap td[data-label]::before
   { font-family: var(--font-body); margin: 0; }
 .t-subhead, .testimonial-foot cite b
   { font-size: var(--t-subhead); line-height: var(--lh-subhead); letter-spacing: var(--ls-subhead); font-weight: 500; color: var(--ink); }
 .t-lede
   { font-size: var(--t-lede); line-height: var(--lh-lede); letter-spacing: var(--ls-lede); font-weight: 400; color: var(--ink-2); max-width: var(--m-lede); }
-.t-body, .layer-tab, .work-cta, .about-logos strong, .gate-form input
+.t-body, .layer-tab, .work-cta, .gate-form input
   { font-size: var(--t-body); line-height: var(--lh-body); font-weight: 400; color: var(--ink-2); max-width: var(--m-body); }
-.t-small, .btn, .chip, .nav-links a, .back, .tools span, .about-logos span, footer,
+.t-small, .btn, .chip, .nav-links a, .back, .tools span, footer,
 .facts dt, table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
 .gallery figcaption, .proof-head small, .tooltip, .chart-pill, details.data
   { font-size: var(--t-small); line-height: var(--lh-small); font-weight: 400; color: var(--ink-2); }
-.t-micro, .eyebrow, thead th, .about-logos time, .gauge .lbl, .table-wrap td[data-label]::before
+.t-micro, .eyebrow, thead th, .gauge .lbl, .table-wrap td[data-label]::before
   { font-size: var(--t-micro); line-height: var(--lh-micro); letter-spacing: var(--ls-micro); text-transform: uppercase; font-weight: 500; color: var(--ink-2); }
 .eyebrow { display: block; }
 
 /* Weight: 500 is the one emphasis, for whatever names or acts. */
-strong, b, tbody th, .about-logos strong, .t-body a, .t-lede a,
+strong, b, tbody th, .t-body a, .t-lede a,
 .btn, .chip, .chart-pill, .tooltip b, .tip-val, .nav-links a, .back, .tools span, .layer-tab, .work-cta, .avatar, .testimonial-mark
   { font-weight: 500; }
 
@@ -152,9 +152,9 @@ strong, b, tbody th, .about-logos strong, .t-body a, .t-lede a,
    4.7:1 on paper-2 and under 4.5:1 on the panel grounds, so a caption inside
    a panel (.gallery figcaption) keeps ink-2. The accent marks the one action
    or number in a block. */
-strong, b, tbody th, .about-logos strong, .chip, .tools span, .avatar, .testimonial-mark, .tooltip b, .tip-val { color: var(--ink); }
+strong, b, tbody th, .chip, .tools span, .avatar, .testimonial-mark, .tooltip b, .tip-val { color: var(--ink); }
 .chart-pill { color: var(--surface); }
-footer, .walk-note, .testimonial-foot cite, .gate-form input::placeholder { color: var(--ink-3); }
+footer, .walk-note, .testimonial-foot cite, .exp-dates, .gate-form input::placeholder { color: var(--ink-3); }
 .work-cta, .t-body a, .t-lede a, .outcome-stat .t-stat, .proof-head .t-stat, thead .hl { color: var(--accent-ink); }
 
 /* Number flow: a headline stat that main.js rolls in digit by digit. Each
@@ -550,18 +550,51 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 /* name and title are one lockup, closer than a subhead and its text */
 .about-who { margin-top: clamp(28px, 3vw, 40px); }
 .about-who .t-body { margin-top: var(--sp-1); }
-.about-logos { list-style: none; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: auto auto auto auto; gap: clamp(24px, 4vw, 56px); padding: 0; margin: clamp(44px, 6vw, 72px) 0 0; }
-/* subgrid keeps the logo, count and location lines aligned across all three */
-.about-logos li { display: grid; grid-row: span 4; grid-template-rows: subgrid; gap: 0; padding-top: 26px; border-top: 1px solid var(--hair); align-content: start; justify-items: start; text-align: left; }
-.about-logos img { width: auto; max-width: 100%; align-self: end; justify-self: start; }
+/* Experience: three roles on one track, oldest first. Each item draws the
+   run of track from its own marker to the next (the last runs to the edge),
+   and the roles already held draw theirs again in ink on top, so the ink
+   ends at the current role. Once the list has faded in, the ink sweeps
+   along one segment after another and each marker lands as it arrives.
+   Without JS or under reduced motion the track is simply drawn. */
+.exp { --exp-gap: clamp(24px, 4vw, 56px); --exp-seg: .7s; --exp-wait: .4s; --sx: 0; --sy: 1;
+  list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--exp-gap);
+  padding: 0; margin: clamp(44px, 6vw, 72px) 0 0; }
+.exp-item { position: relative; min-width: 0; display: flex; flex-direction: column; padding-top: 32px; }
+.exp-item::before, .exp-item::after { content: ""; position: absolute; top: 4px; left: 0; height: 1px; width: calc(100% + var(--exp-gap)); }
+.exp-item::before { background: var(--hair); }
+.exp-item:last-child::before { width: 100%; }
+.exp-item::after { background: var(--ink); transform-origin: 0 0; }
+.exp-item:last-child::after { display: none; }
+.exp-mark { position: absolute; top: 0; left: 0; width: 9px; height: 9px; border-radius: 2px; background: var(--ink); z-index: 1; }
+.exp-item:last-child .exp-mark { background: var(--accent); }   /* the role held now */
+.anim .exp .exp-item::after { transform: scale(var(--sx), var(--sy)); }
+.anim .exp .exp-mark { transform: scale(0); }
+.anim .exp.in .exp-item::after { animation: exp-sweep var(--exp-seg) var(--ease-in-out) var(--exp-wait) both; }
+.anim .exp.in .exp-item:nth-child(2)::after { animation-delay: calc(var(--exp-wait) + var(--exp-seg)); }
+.anim .exp.in .exp-mark { animation: exp-land var(--dur-ui) var(--ease) var(--exp-wait) both; }
+.anim .exp.in .exp-item:nth-child(2) .exp-mark { animation-delay: calc(var(--exp-wait) + var(--exp-seg)); }
+.anim .exp.in .exp-item:nth-child(3) .exp-mark { animation-delay: calc(var(--exp-wait) + 2 * var(--exp-seg)); }
+@keyframes exp-sweep { from { transform: scale(var(--sx), var(--sy)); } to { transform: none; } }
+@keyframes exp-land { from { transform: scale(0); } to { transform: none; } }
+/* the label is a chip holding the company's own lockup */
+.exp-label { display: inline-flex; align-items: center; align-self: flex-start; min-height: 35px; margin-bottom: var(--sp-5); }
+.exp-label img { width: auto; }
 /* official vector lockups, sized so the wordmark text matches across all three */
-.about-logos img[alt="Best Egg"] { height: 23px; }
-.about-logos img[alt="Chainlink Labs"] { height: 29px; }
-.about-logos img[alt="Auth0"] { height: 29px; }
-.about-logos strong { align-self: end; padding-top: 22px; }
-.about-logos span { padding-top: 2px; }
-.about-logos time { display: block; margin-top: 10px; }
-@media (max-width: 700px) { .about-logos { grid-template-columns: 1fr; grid-template-rows: none; } .about-logos li { grid-row: auto; grid-template-rows: none; } }
+.exp-label img[alt="Best Egg"] { height: 14px; }
+.exp-label img[alt="Chainlink Labs"] { height: 17px; }
+.exp-label img[alt="Auth0"] { height: 17px; }
+.exp-item .t-body { margin-top: var(--sp-2); }
+.exp-dates { margin-top: auto; padding-top: var(--sp-5); }
+.exp-dates time { white-space: nowrap; }
+@media (max-width: 700px) {
+  /* the track turns down the left and the markers sit level with each label */
+  .exp { --exp-gap: var(--sp-6); --sx: 1; --sy: 0; grid-template-columns: minmax(0, 1fr); }
+  .exp-item { padding: 0 0 0 28px; }
+  .exp-item::before, .exp-item::after { top: 17px; left: 4px; width: 1px; height: calc(100% + var(--exp-gap)); }
+  .exp-item:last-child::before { height: calc(100% - 17px); }
+  .exp-mark { top: 13px; }
+  .exp-dates { padding-top: var(--sp-4); }
+}
 @media (max-width: 900px) { .about-grid { grid-template-columns: 1fr; gap: 32px; } .portrait { max-width: 210px; } }
 
 /* Contact: the one dark block, closing the page */
@@ -1025,8 +1058,7 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
   /* About */
   .about-grid { gap: 24px; }
   .portrait { max-width: 150px; }
-  .about-logos { margin-top: 40px; gap: 20px; }
-  .about-logos li { padding-top: 20px; }
+  .exp { margin-top: 40px; }
 
   /* Contact */
   .contact { padding: 32px 24px; gap: 28px; }
