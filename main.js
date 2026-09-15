@@ -473,20 +473,22 @@ const CONFIG = {
      lines, waves, contours, a fluid wash) were built and set aside on Sep 15,
      2026; branch hero-backgrounds up to ca9775b has them. */
   const fields = {
-    // A grid of ink dots breathing on three slow waves. The cursor pushes the
-    // dots within reach, they spring home, and a dot in motion turns green.
+    // A grid of ink circles breathing on three slow waves: a 24px grid of 4px
+    // rounds, so it reads as a grid rather than ramp.com's 12px texture. The
+    // cursor pushes the ones within reach, they spring home, and one in
+    // motion turns green.
     // The copy sits on quieter paper: dots thin to a third of their strength
     // under the box the statement and its buttons occupy, measured from the
     // markup, over a long soft edge.
     dots: ({ ctx, el, ink, accent }) => {
-      const S = 12, R = 150, F = 10, K = .018, DAMP = .8;   // pitch, push radius, push force, spring, damping
+      const S = 24, DOT = 2, R = 150, F = 10, K = .018, DAMP = .8;   // pitch, radius, push radius, push force, spring, damping
       const RS = 420, RW = 500, RF = 10, RD = 2.2;          // ripple: px/s, ring width, force, decay
       const A = .25, MOVED = 1.2;                           // strength on paper (John: 25%, light), px of travel that turns a dot green
       const PAD = 16, FEATHER = 220, UNDER = .35;           // the copy's margin, the run of the fade around it, the dots' strength under the copy (ramp.com: .35 to 1 over the top 45%)
       let W = 0, H = 0, n = 0, hx, hy, ox, oy, vx, vy, k, hf, sprites, sw = 0, energy = 0, hush = "", frames = 0;
       const hash = (i) => { const s = Math.sin(i * 12.9898) * 43758.5453; return s - Math.floor(s); };
       const sprite = (colour, dpr) => {
-        const r = 1.15, d = Math.ceil(r * 2 * dpr) + 2, s = document.createElement("canvas");
+        const r = DOT, d = Math.ceil(r * 2 * dpr) + 2, s = document.createElement("canvas");
         s.width = s.height = d;
         const g = s.getContext("2d");
         g.fillStyle = colour; g.beginPath(); g.arc(d / 2, d / 2, r * dpr, 0, Math.PI * 2); g.fill();
@@ -495,7 +497,7 @@ const CONFIG = {
       };
       const resize = (w, h, dpr) => {
         W = w; H = h;
-        const x0 = (W % S) / 2 + 6, y0 = (H % S) / 2 + 6;
+        const x0 = (W % S) / 2 + S / 2, y0 = (H % S) / 2 + S / 2;
         const cols = Math.ceil((W + S - x0) / S), rows = Math.ceil((H + S - y0) / S);
         n = cols * rows;
         hx = new Float32Array(n); hy = new Float32Array(n); k = new Float32Array(n);
