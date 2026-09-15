@@ -366,6 +366,45 @@ const CONFIG = {
     sync();
   });
 
+  /* ---- Once in view ----
+     Fires the callback once, when the element is on screen. The observer does
+     the work; a scroll and resize sweep backs it up; and the timer only steps
+     in for an element that is already in view but never fired (a blocked
+     observer), never for one the reader simply hasn't scrolled to yet, so a
+     block below the fold still animates however long it takes to reach it.
+     The callback gets true when it can animate and false when it should just
+     settle. Elements already on screen fire on the next frame. */
+  const onceInView = (el, threshold, cb, fallbackMs = 4000) => {
+    let done = false, io = null, timer = 0, queued = false;
+    const EVENTS = ["scroll", "resize", "load", "pageshow"];
+    const inView = () => {
+      const r = el.getBoundingClientRect(), edge = r.height * threshold;
+      return r.top + edge <= window.innerHeight && r.bottom - edge >= 0;
+    };
+    const fire = (animate) => {
+      if (done) return;
+      done = true;
+      if (io) io.disconnect();
+      clearTimeout(timer);
+      EVENTS.forEach((ev) => window.removeEventListener(ev, onMove));
+      document.removeEventListener("visibilitychange", onMove);
+      cb(animate);
+    };
+    const onMove = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(() => { queued = false; if (!done && inView()) fire(true); });
+    };
+    if ("IntersectionObserver" in window) {
+      io = new IntersectionObserver(([e]) => { if (e.isIntersecting) fire(true); }, { threshold });
+      io.observe(el);
+    }
+    EVENTS.forEach((ev) => window.addEventListener(ev, onMove, { passive: true }));
+    document.addEventListener("visibilitychange", onMove);
+    onMove();
+    timer = setTimeout(() => { if (!done && inView()) fire(false); }, fallbackMs);
+  };
+
   /* ---- Originations chart ----
      A line over a soft area, drawn in the pixels of its box so the type stays
      the same size on a phone. The lines are revealed left to right by a
@@ -507,19 +546,15 @@ const CONFIG = {
       lines.animate([{ clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)" }],
         { duration: 1400, easing: "cubic-bezier(.19, 1, .22, 1)", fill: "both" })
         .finished.then(() => { lines.style.clipPath = ""; }, () => {});
-      pill.animate([{ opacity: 0 }, { opacity: 1 }], { delay: 1300, duration: 300, easing: "ease-out", fill: "both" });
+      pill.animate([{ opacity: 0 }, { opacity: 1 }], { delay: 1300, duration: 300, easing: "ease-out", fill: "both" })
+        .finished.then(() => { pill.style.opacity = ""; }, () => {});
     };
     if (!played) {
       pill.style.opacity = "0";
-      if ("IntersectionObserver" in window) {
-        const io = new IntersectionObserver(([e]) => {
-          if (!e.isIntersecting) return;
-          io.disconnect();
-          setTimeout(play, 120);          // let the card's own reveal lead
-        }, { threshold: 0.35 });
-        io.observe(shell);
-      }
-      setTimeout(() => { if (!played) { played = true; lines.style.clipPath = ""; pill.style.opacity = ""; } }, 4000);
+      onceInView(shell, 0.35, (animate) => {
+        if (animate) setTimeout(play, 120);          // let the card's own reveal lead
+        else { played = true; lines.style.clipPath = ""; pill.style.opacity = ""; }
+      });
     }
 
     // Reading a month: marker, dot and a card of its numbers
@@ -619,18 +654,14 @@ const CONFIG = {
         } else c.strip.style.transform = end;
       });
     };
-    if ("IntersectionObserver" in window) {
-      const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { io.disconnect(); settle(true); } }, { threshold: 0.5 });
-      io.observe(el);
-      setTimeout(() => settle(false), 4000);            // never leave a stat reading zero
-    } else settle(true);
+    onceInView(el, 0.5, settle);                        // never leave a visible stat reading zero
   });
 
   /* ---- Swipe strips ----
-     On a phone the flow, gallery and three-up hero scroll sideways. A region
-     that scrolls has to be reachable from the keyboard, so it gets a tab stop
-     only while it actually overflows. */
-  const strips = $$(".flow, .gallery, .hero-panel.three");
+     On a phone the gallery and three-up hero scroll sideways. A region that
+     scrolls has to be reachable from the keyboard, so it gets a tab stop only
+     while it actually overflows. */
+  const strips = $$(".gallery, .hero-panel.three");
   const stops = () => strips.forEach((s) => {
     if (s.scrollWidth > s.clientWidth + 1) {
       s.tabIndex = 0;
