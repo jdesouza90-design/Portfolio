@@ -72,11 +72,11 @@ in `work.html` and on the homepage except the first row's images.
 ## 3. The work index (`work.html`)
 
 One `.case-row` per case study inside `.cases`, in the order John chose. The row is an `<a>`
-with the case's class so it carries the case's ground. `data-reveal` on the first row,
-`data-reveal="2"` on the rest. Headings are `h2` here (the page's `h1` is the hero).
+with the case's class so it carries the case's ground and `data-reveal` so it rises in on
+its own (see Motion in the README). Headings are `h2` here (the page's `h1` is the hero).
 
 ```html
-<a class="case-row case-verifications" href="work/verifications.html" data-reveal="2">
+<a class="case-row case-verifications" href="work/verifications.html" data-reveal>
   <div class="case-copy">
     <img decoding="async" class="case-logo" width="300" height="63" src="assets/logo-bestegg.svg" alt="Best Egg" loading="lazy">
     <h2>Verifications</h2>

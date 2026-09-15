@@ -59,42 +59,57 @@ const CONFIG = {
      document, so a failed, blocked or throttled script can never hide a section.
      A failsafe drops the animation if nothing has revealed after 2.5s.
 
-     Every major block is tagged so sections animate in. Anything already
-     marked keeps its own order; otherwise each direct child of a section gets
-     the next index, which drives the stagger in CSS. */
+     Every major block is tagged so sections rise in: anything already marked
+     keeps its tag, otherwise each direct child of a section gets one. A block
+     reveals once its top crosses a line 70% down the viewport, so the move
+     happens where the reader is looking rather than at the bottom edge; the
+     line drops to the bottom edge as the page runs out of scroll, so the last
+     blocks never wait for room that isn't there. Blocks that cross together
+     follow each other 60ms apart, in document order. */
   $$("main > section, main > div.wrap").forEach((section) => {
     const host = section.querySelector(":scope > .wrap") || section;
     const kids = Array.from(host.children).filter((k) => k.nodeType === 1);
     const list = kids.length ? kids : [section];
     list.forEach((el) => {
       if (el.closest("[data-reveal]") && el.closest("[data-reveal]") !== el) return;
+      if (el.querySelector("[data-reveal]")) return;   // its children rise on their own
       if (!el.hasAttribute("data-reveal")) el.setAttribute("data-reveal", "");
     });
   });
-  // stagger siblings within each parent
-  $$("[data-reveal]").forEach((el) => {
-    const declared = el.getAttribute("data-reveal");
-    const n = declared && /^\d+$/.test(declared)
-      ? parseInt(declared, 10) - 1
-      : Array.from(el.parentElement ? el.parentElement.children : [])
-          .filter((c) => c.hasAttribute && c.hasAttribute("data-reveal"))
-          .indexOf(el);
-    const i = Number.isFinite(n) ? Math.max(0, Math.min(n, 4)) : 0;
-    el.style.setProperty("--reveal-i", String(i));
-  });
 
   const revealEls = $$("[data-reveal]");
+  const LINE = 0.7;
   if (!reduced && "IntersectionObserver" in window && revealEls.length) {
     document.documentElement.classList.add("anim");
-    const show = (el) => el.classList.add("in");
+    // Everything shown in one pass is one batch; the stagger counts within it.
+    // The batch settles on a microtask (not a frame: frames stop in a background
+    // tab, and the failsafe below would fire first).
+    let batch = [];
+    const queued = new WeakSet();
+    const show = (el) => {
+      if (queued.has(el)) return;
+      queued.add(el);
+      if (!batch.length) queueMicrotask(() => {
+        batch.sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING) ? -1 : 1);
+        batch.forEach((n, i) => {
+          n.style.setProperty("--reveal-i", String(Math.min(i, 4)));
+          n.classList.add("in");
+          n.dispatchEvent(new CustomEvent("reveal", { bubbles: true }));
+        });
+        batch = [];
+      });
+      batch.push(el);
+    };
     const io = new IntersectionObserver((entries) => {
       entries.forEach((e) => { if (e.isIntersecting) { show(e.target); io.unobserve(e.target); } });
-    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.05 });
+    }, { rootMargin: `0px 0px -${Math.round((1 - LINE) * 100)}% 0px`, threshold: 0 });
     revealEls.forEach((el) => io.observe(el));
 
     // Backstop for the observer. It measures only the elements still hidden and
     // detaches itself once they have all been revealed, so a long page is not
     // paying for a full measure pass on every scroll tick for the rest of the visit.
+    // On first paint the whole viewport counts (nothing on the first screen
+    // should wait for a scroll); after that the line applies.
     const EVENTS = ["scroll", "resize", "load", "pageshow", "hashchange"];
     let pending = revealEls.slice();
     const detach = () => {
@@ -102,29 +117,31 @@ const CONFIG = {
       document.removeEventListener("visibilitychange", onMove);
       io.disconnect();
     };
-    const sweep = () => {
+    const sweep = (firstPaint) => {
       if (!pending.length) return;
       const vh = window.innerHeight;
+      const room = Math.max(0, document.documentElement.scrollHeight - vh - window.scrollY);
+      const line = firstPaint ? vh : vh - Math.min(vh * (1 - LINE), room);
       const still = [];
       for (const el of pending) {
         if (el.classList.contains("in")) continue;
         const r = el.getBoundingClientRect();
-        if (r.top < vh * 0.95 && r.bottom > 0) { show(el); io.unobserve(el); }
+        if (r.top < line && r.bottom > 0) { show(el); io.unobserve(el); }
         else still.push(el);
       }
       pending = still;
       if (!pending.length) detach();
     };
-    let queued = false;
+    let waiting = false;
     const onMove = () => {
-      if (queued) return;
-      queued = true;
-      requestAnimationFrame(() => { queued = false; sweep(); });
+      if (waiting) return;
+      waiting = true;
+      requestAnimationFrame(() => { waiting = false; sweep(false); });
     };
     EVENTS.forEach((ev) => window.addEventListener(ev, onMove, { passive: true }));
     document.addEventListener("visibilitychange", onMove);
-    sweep();
-    setTimeout(sweep, 400);
+    sweep(true);
+    setTimeout(() => sweep(true), 400);
     // Failsafe: if nothing ever revealed, the observer is broken - drop the
     // animation entirely so content is visible. Never blanket-reveal, or
     // everything below the fold is already shown before you scroll to it.
@@ -373,10 +390,14 @@ const CONFIG = {
      observer), never for one the reader simply hasn't scrolled to yet, so a
      block below the fold still animates however long it takes to reach it.
      The callback gets true when it can animate and false when it should just
-     settle. Elements already on screen fire on the next frame. */
+     settle. Elements already on screen fire on the next frame. An element
+     inside a block that reveals on scroll also waits for that block's reveal
+     (the "reveal" event), so nothing draws while its block is still hidden. */
   const onceInView = (el, threshold, cb, fallbackMs = 4000) => {
     let done = false, io = null, timer = 0, queued = false;
     const EVENTS = ["scroll", "resize", "load", "pageshow"];
+    const block = el.closest("[data-reveal]");
+    const revealed = () => !block || block.classList.contains("in") || !document.documentElement.classList.contains("anim");
     const inView = () => {
       const r = el.getBoundingClientRect(), edge = r.height * threshold;
       return r.top + edge <= window.innerHeight && r.bottom - edge >= 0;
@@ -388,21 +409,29 @@ const CONFIG = {
       clearTimeout(timer);
       EVENTS.forEach((ev) => window.removeEventListener(ev, onMove));
       document.removeEventListener("visibilitychange", onMove);
+      document.removeEventListener("reveal", onMove);
       cb(animate);
     };
     const onMove = () => {
       if (queued) return;
       queued = true;
-      requestAnimationFrame(() => { queued = false; if (!done && inView()) fire(true); });
+      requestAnimationFrame(() => { queued = false; if (!done && revealed() && inView()) fire(true); });
     };
     if ("IntersectionObserver" in window) {
-      io = new IntersectionObserver(([e]) => { if (e.isIntersecting) fire(true); }, { threshold });
+      io = new IntersectionObserver(([e]) => { if (e.isIntersecting && revealed()) fire(true); }, { threshold });
       io.observe(el);
     }
     EVENTS.forEach((ev) => window.addEventListener(ev, onMove, { passive: true }));
     document.addEventListener("visibilitychange", onMove);
+    document.addEventListener("reveal", onMove);
     onMove();
-    timer = setTimeout(() => { if (!done && inView()) fire(false); }, fallbackMs);
+    // Stuck in view with nothing pending: settle. Still waiting on the block's
+    // reveal (it sits below the line): check again later rather than settle.
+    const stuck = () => {
+      if (done || !inView()) return;
+      if (revealed()) fire(false); else timer = setTimeout(stuck, fallbackMs);
+    };
+    timer = setTimeout(stuck, fallbackMs);
   };
 
   /* ---- Originations chart ----
@@ -552,7 +581,7 @@ const CONFIG = {
     if (!played) {
       pill.style.opacity = "0";
       onceInView(shell, 0.35, (animate) => {
-        if (animate) setTimeout(play, 120);          // let the card's own reveal lead
+        if (animate) setTimeout(play, 200);          // let the card's own reveal lead
         else { played = true; lines.style.clipPath = ""; pill.style.opacity = ""; }
       });
     }

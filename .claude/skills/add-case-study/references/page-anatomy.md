@@ -27,8 +27,12 @@ Contents
   hero also gets `loading="lazy"`; hero images don't. Paths are `../assets/<file>` with no
   `?v=` (stamp.py adds it). Width and height are the file's real pixels (from `webp.sh`).
 - **Hero animation.** Only the hero's eyebrow, `h1` and lede carry `data-rise style="--i:N"`
-  with N = 0, 1, 2. Nothing else on the page animates by attribute; scroll reveal is
-  automatic.
+  with N = 0, 1, 2. Nothing else on the page animates by attribute: every direct child of a
+  section's `.wrap` rises into place on scroll by itself (48px over 700ms once its top
+  crosses 70% of the viewport; see Motion in the README). Keep that structure, one block
+  per child of `.wrap`, and never put `data-reveal` inside another `data-reveal`. Anything
+  that plays inside a block (chart, `data-flow`, gauge) waits for the block's reveal on its
+  own through `onceInView`.
 - **Section ids** are stable across pages: `results`, `story`, `problem`, `design`,
   `decisions`, `research`, `role`, `retro`. Extra rows take a short id of their own
   (`feeds`, `community`, `customize`).
