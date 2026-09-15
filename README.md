@@ -335,13 +335,18 @@ The rules that shape the code:
   each digit into a column of 0 to 9 behind a soft mask; signs, units and
   words stand still. Write the stat as plain text and the script does the
   rest, or leave the attribute off for a stat that should not move.
-- Experience on the homepage is three roles on one track, oldest first
-  (`ol.exp`): the company's lockup, the title, team size and
+- Experience on the homepage is four roles on one track, oldest first,
+  under a "Recent experience" eyebrow (`h3.exp-head` + `ol.exp`): the
+  company's lockup, the title, team size (where there was a team) and
   location, and the dates. Each item draws its own run of track and the roles
   already held draw theirs in ink, so the ink ends at the current role; the
   ink sweeps along once the list has scrolled in. Under 700px the track turns
-  down the left. Company logos in `assets/logo-*.svg` are the companies' own vector
-  files, sized in `styles.css` so the wordmark text matches across all three.
+  down the left. Company logos in `assets/logo-*.svg` are the companies' own
+  vector files, sized in `styles.css` so the wordmark text matches across the
+  row; `logo-charm.svg` is traced from the PNG lockup on charmsolutions.ai
+  (the only format they publish) and, being the widest, is the one that
+  shrinks to its column first. A lockup letterboxes in its row rather than
+  squeezing when a column is narrower than it.
 - Under the track, five lines senior leaders and peers wrote about John run
   in the case-study testimonial carousel (`.kudos`): one quote at a time,
   cross-fading, with the company mark centred above it and the source line
