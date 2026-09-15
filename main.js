@@ -476,16 +476,24 @@ const CONFIG = {
     // A grid of ink circles breathing on three slow waves: a 24px grid of 4px
     // rounds, so it reads as a grid rather than ramp.com's 12px texture. The
     // cursor pushes the ones within reach, they spring home, and one in
-    // motion turns green.
+    // motion turns green. A drifter, a soft taupe blob, wanders the field on
+    // its own and pushes the dots the way the cursor does; when the cursor
+    // comes over it, it snaps to the cursor and follows until the cursor
+    // leaves the block, then drifts on from wherever it is.
     // The copy sits on quieter paper: dots thin to a third of their strength
     // under the box the statement and its buttons occupy, measured from the
     // markup, over a long soft edge.
-    dots: ({ ctx, el, ink, accent }) => {
+    dots: ({ ctx, el, ink, accent, colour }) => {
       const S = 24, DOT = 2, R = 150, F = 10, K = .018, DAMP = .8;   // pitch, radius, push radius, push force, spring, damping
+      const BR = 260, BA = .4, BPUSH = 210, BF = .7, BSNAP = .8;     // drifter: radius, tint, push radius, push force vs the cursor's, snap reach as a share of the radius
+      const taupe = colour("--hair-2", "#CFC9BF").join(",");
       const RS = 420, RW = 500, RF = 10, RD = 2.2;          // ripple: px/s, ring width, force, decay
       const A = .25, MOVED = 1.2;                           // strength on paper (John: 25%, light), px of travel that turns a dot green
       const PAD = 16, FEATHER = 220, UNDER = .35;           // the copy's margin, the run of the fade around it, the dots' strength under the copy (ramp.com: .35 to 1 over the top 45%)
-      let W = 0, H = 0, n = 0, hx, hy, ox, oy, vx, vy, k, hf, sprites, sw = 0, energy = 0, hush = "", frames = 0;
+      let W = 0, H = 0, n = 0, hx, hy, ox, oy, vx, vy, k, hf, sprites, sw = 0, energy = 0, hush = "", frames = 0, now = 0;
+      const blob = { x: -1, y: -1, speed: 0, held: false };
+      // where the drifter wants to be: a slow figure that never repeats exactly
+      const roam = (t) => [W * (.5 + .3 * Math.sin(t * .11 + 1.3) + .07 * Math.sin(t * .37)), H * (.52 + .28 * Math.sin(t * .083 + .4) + .06 * Math.cos(t * .29))];
       const hash = (i) => { const s = Math.sin(i * 12.9898) * 43758.5453; return s - Math.floor(s); };
       const sprite = (colour, dpr) => {
         const r = DOT, d = Math.ceil(r * 2 * dpr) + 2, s = document.createElement("canvas");
@@ -508,6 +516,7 @@ const CONFIG = {
         sprites = [sprite(ink(1), dpr), sprite(accent, dpr)];
         hf = new Float32Array(n).fill(1); hush = "";
         clear();
+        if (!blob.held) [blob.x, blob.y] = roam(now);
       };
       // the box the copy occupies, in the block's pixels; each dot's share of the field from its distance to it.
       // Text is measured by its line boxes and a row of buttons by the buttons, since the blocks themselves span the wrap.
@@ -531,14 +540,16 @@ const CONFIG = {
           hf[i] = UNDER + (1 - UNDER) * u * u * (3 - 2 * u);
         }
       };
+      // the cursor and the drifter push the same way: a square falloff to their reach, scaled by how alive each is
+      const pushers = [{ x: 0, y: 0, r: R, f: F, a: 0 }, { x: 0, y: 0, r: BPUSH, f: F * BF, a: 0 }];
       const step = (p) => {
-        const push = p.active > .001, r2 = R * R, rips = p.ripples, nr = rips.length;
+        const rips = p.ripples, nr = rips.length, live = pushers.filter((q) => q.a > .001), np = live.length;
         let e = 0;
         for (let i = 0; i < n; i++) {
           let x = ox[i], y = oy[i], u = vx[i] - x * k[i], v = vy[i] - y * k[i];
-          if (push) {
-            const cx = hx[i] + x - p.x, cy = hy[i] + y - p.y, d2 = cx * cx + cy * cy;
-            if (d2 < r2 && d2 > .01) { const d = Math.sqrt(d2), q = 1 - d / R, f = q * q * F * p.active / d; u += cx * f; v += cy * f; }
+          for (let j = 0; j < np; j++) {
+            const q = live[j], cx = hx[i] + x - q.x, cy = hy[i] + y - q.y, d2 = cx * cx + cy * cy;
+            if (d2 < q.r * q.r && d2 > .01) { const d = Math.sqrt(d2), w = 1 - d / q.r, f = w * w * q.f * q.a / d; u += cx * f; v += cy * f; }
           }
           for (let r = 0; r < nr; r++) {
             const rp = rips[r], cx = hx[i] + x - rp.x, cy = hy[i] + y - rp.y, d = Math.sqrt(cx * cx + cy * cy), diff = d - rp.age * RS;
@@ -553,11 +564,27 @@ const CONFIG = {
         energy = e;
       };
       const frame = (t, dt, p, live) => {
-        if (live && (p.active > .001 || p.ripples.length || energy > 1e-3)) {
-          for (let s = Math.max(1, Math.min(3, Math.round(dt * 60))); s > 0; s--) step(p);
+        now = t;
+        if (live) {
+          // the drifter: snaps to a cursor that reaches it, follows it while the cursor is in the block, roams otherwise
+          if (p.inside && Math.hypot(p.x - blob.x, p.y - blob.y) < BR * BSNAP) blob.held = true;
+          if (!p.inside) blob.held = false;
+          const [tx, ty] = blob.held ? [p.x, p.y] : roam(t), ease = 1 - Math.exp(-dt / (blob.held ? .07 : 1.1));
+          const nx = blob.x + (tx - blob.x) * ease, ny = blob.y + (ty - blob.y) * ease;
+          blob.speed = dt > 0 ? Math.hypot(nx - blob.x, ny - blob.y) / dt : 0;
+          blob.x = nx; blob.y = ny;
+          pushers[0].x = p.x; pushers[0].y = p.y; pushers[0].a = p.active;
+          pushers[1].x = blob.x; pushers[1].y = blob.y; pushers[1].a = Math.min(1, blob.speed / 40);   // a resting drifter lets the dots settle
+          if (p.active > .001 || pushers[1].a > .001 || p.ripples.length || energy > 1e-3) {
+            for (let s = Math.max(1, Math.min(3, Math.round(dt * 60))); s > 0; s--) step(p);
+          }
         }
         if (++frames % 30 === 0) clear();                 // the copy reflows with fonts and the rise; keep up without measuring every frame
         ctx.clearRect(0, 0, W, H);
+        const g = ctx.createRadialGradient(blob.x, blob.y, 0, blob.x, blob.y, BR);
+        g.addColorStop(0, `rgba(${taupe},${BA})`); g.addColorStop(.5, `rgba(${taupe},${BA * .45})`); g.addColorStop(1, `rgba(${taupe},0)`);
+        ctx.fillStyle = g;
+        ctx.fillRect(blob.x - BR, blob.y - BR, BR * 2, BR * 2);
         const h = sw / 2;
         for (let i = 0; i < n; i++) {
           const x = hx[i], y = hy[i];
@@ -635,7 +662,7 @@ const CONFIG = {
     if (!ctx || !make) return;
     const colour = (name, fallback) => token(name, fallback).match(/\w\w/g).map((h) => parseInt(h, 16));   // a token as [r, g, b]
     const inkRgb = colour("--ink", "#14100C").join(","), paperRgb = colour("--paper", "#F6F4F0").join(",");
-    const field = make({ ctx, el, ink: (alpha) => `rgba(${inkRgb},${alpha})`, paper: (alpha) => `rgba(${paperRgb},${alpha})`, accent: token("--accent", "#3B6B44") });
+    const field = make({ ctx, el, colour, ink: (alpha) => `rgba(${inkRgb},${alpha})`, paper: (alpha) => `rgba(${paperRgb},${alpha})`, accent: token("--accent", "#3B6B44") });
 
     let W = 0, H = 0, dpr = 1;
     const size = () => {

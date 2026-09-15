@@ -246,7 +246,10 @@ scrolls to it, and every page gets it the same way:
   at a quarter strength, thinning to a third of that under the box the
   statement and its buttons occupy over a long soft edge, so the copy reads
   clean without a hole in the field (`PAD`, `FEATHER`, `UNDER` in the dots
-  block). Get in touch keeps its rings (paper hairlines at 42px
+  block). A drifter, a soft taupe blob (`BR`, `BA`), roams the field on a
+  slow figure and pushes the dots the way the cursor does; a cursor that
+  reaches it takes it over until it leaves the hero. Get in touch keeps its
+  rings (paper hairlines at 42px
   from behind the buttons) but draws them live: still at rest and identical
   to the stylesheet's, travelling outward while the cursor is over the band,
   brightening and bulging around it, carrying a wave on a click. Both ignore
