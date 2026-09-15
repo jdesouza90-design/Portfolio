@@ -429,9 +429,17 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
    .bleed blows a taller piece up until it runs off the bottom. */
 .case-media.cutout img { width: 100%; max-width: 100%; height: auto; border-radius: 0; box-shadow: none; filter: drop-shadow(0 18px 28px rgba(20, 16, 12, .18)); }
 .case-media.cutout.bleed img { position: absolute; top: 5%; left: 17%; width: 66%; max-width: none; max-height: none; }
-/* Emerge: one screen, large, coming out of the bottom-right corner of the ground,
-   so its opening reads at size and the ground clips the rest */
-.case-media.emerge img { position: absolute; top: 10%; left: 30%; width: 72%; max-width: none; max-height: none; }
+/* Emerge: one screen, large, coming out of a bottom corner of the ground so the
+   part that matters reads at size and the ground clips the rest. --x/--y set the
+   screen's visible corner, --w its zoom; .right shows its top-right corner instead
+   of its top-left. A phone screen carries its own keyed corners, so it drops the
+   CSS radius and ring and takes the cutout's drop-shadow. */
+.case-media.emerge img { position: absolute; top: var(--y, 10%); left: var(--x, 14%); width: var(--w, 88%); max-width: none; max-height: none; }
+.case-media.emerge.right img { left: auto; right: var(--x, 14%); }
+.case-media.emerge:not(.wide) img { border-radius: 0; box-shadow: none; filter: drop-shadow(0 18px 28px rgba(20, 16, 12, .18)); }
+.case-cross-sell .case-media.emerge { --x: 12%; --y: 10%; --w: 92%; }
+.case-no-code .case-media.emerge { --x: 14%; --y: 12%; --w: 150%; }
+.case-staking .case-media.emerge { --x: 14%; --y: 12%; --w: 140%; }
 @media (hover: hover) and (pointer: fine) {
   .case-row:hover .case-media img { transform: translateY(-5px); }
   .case-row:hover .work-cta::after { transform: translateX(5px); }
