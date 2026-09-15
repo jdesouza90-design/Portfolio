@@ -262,7 +262,9 @@ main, .nav { position: relative; z-index: 1; }
   border: 1px solid var(--hair-2); background: var(--surface); color: var(--ink); cursor: pointer;
   transition: transform var(--dur-press) var(--ease), border-color var(--dur-hover), color var(--dur-hover);
 }
-.icon-btn:hover { border-color: var(--accent); color: var(--accent-ink); }
+@media (hover: hover) and (pointer: fine) {   /* colour only for pointers that hover; a tap on a phone would leave the ring green */
+  .icon-btn:hover { border-color: var(--accent); color: var(--accent-ink); }
+}
 .icon-btn svg { width: 17px; height: 17px; }
 
 /* Chip: one shape for every tag on the site */
@@ -359,11 +361,23 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .nav-toggle { display: none; }
 .nav-contact { display: none; }
 @media (max-width: 760px) {
-  .nav .wrap { gap: 12px; }
+  .nav .wrap { gap: 12px; position: static; }   /* the sheet and the scrim measure from the bar, not from the wrap centred inside it */
+  /* Open, the bar goes solid and the menu hangs from it as one sheet of
+     paper, no seam and no hairline; an ink scrim covers the page below so
+     nothing reads through, and a tap on it closes the menu (main.js). */
+  .nav.open { background: var(--paper); border-color: transparent; }
+  .nav.open::before {
+    content: ""; position: absolute; left: 0; right: 0; top: var(--nav-h);
+    height: calc(100vh - var(--nav-h)); height: calc(100dvh - var(--nav-h));
+    background: color-mix(in srgb, var(--ink) 72%, transparent);
+    animation: scrim-in var(--dur-ui) var(--ease) both;
+  }
+  @keyframes scrim-in { from { opacity: 0; } }
   .nav-links {
     display: none; position: absolute; left: 0; right: 0; top: var(--nav-h);
-    background: var(--paper); border-bottom: 1px solid var(--hair);
-    padding: 8px var(--gutter) 16px;
+    background: var(--paper);
+    padding: 8px var(--gutter) var(--gutter);   /* 8 + a 12px row = the gutter above Work; the gutter again around Contact */
+    max-height: calc(100vh - var(--nav-h)); max-height: calc(100dvh - var(--nav-h)); overflow-y: auto;   /* a phone on its side: the sheet scrolls, the page behind stays locked */
   }
   .nav-links ul { flex-direction: column; gap: 0; }
   .nav-links a { display: block; padding: 12px 0; font-size: var(--t-body); line-height: var(--lh-body); }   /* a menu row is body size */
@@ -376,9 +390,15 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
      of page content at its edge; freezing body scroll while open stops it. */
   body.nav-locked { position: fixed; left: 0; right: 0; overflow: hidden; }
   .nav-toggle { display: grid; margin-left: auto; }
+  /* The three bars become a cross while the menu is open: the outer two slide
+     to the middle and turn, the middle one fades. */
+  .nav-toggle path { transform-box: view-box; transform-origin: 12px 12px; transition: transform var(--dur-ui) var(--ease), opacity var(--dur-ui) var(--ease); }
+  .nav.open .nav-toggle path:nth-child(1) { transform: rotate(45deg) translateY(5px); }
+  .nav.open .nav-toggle path:nth-child(2) { opacity: 0; }
+  .nav.open .nav-toggle path:nth-child(3) { transform: rotate(-45deg) translateY(-5px); }
   .nav-actions .btn { display: none; }
   .nav-contact { display: block; padding-top: 12px; }
-  .nav-contact .btn { display: inline-flex; padding: 12px 20px; color: var(--paper); }
+  .nav-contact .btn { display: flex; width: 100%; justify-content: center; padding: 12px 20px; color: var(--paper); }
 }
 
 /* --------------------------------------------------------------------------
@@ -941,7 +961,8 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
   .btn:hover, .btn:active, .icon-btn:active, .layer-tab:active, .testimonial-controls button:active { transform: none; }
   .btn[data-link="resume"] .icon-swap svg, .btn[data-link="email"] .icon-swap svg, .btn[data-link="linkedin"] .icon-swap svg, .btn-browse svg, .cs-next-arrow { transition: none; }
   .walk .play:active { transform: translate(-50%, -50%); }
-  .nav.open .nav-links { animation: none; }
+  .nav.open .nav-links, .nav.open::before { animation: none; }
+  .nav-toggle path { transition: none; }
 }
 
 /* --------------------------------------------------------------------------
