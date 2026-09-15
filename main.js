@@ -684,12 +684,13 @@ const CONFIG = {
       return { resize, frame };
     },
 
-    // The colour wash as a fluid: green and amber dye drifting on slow
-    // currents, stirred by the cursor and pushed by a click. A stable-fluids
-    // solver on a coarse grid; the canvas is blurred and multiplied by CSS.
-    wash: ({ ctx }) => {
-      const N = 84, ITER = 14, GREEN = [118, 176, 82], AMBER = [201, 143, 62];
-      const FLOOR = [.14, .09], CAP = [.3, .26], GAIN = [.16, .15];   // tint of green and amber everywhere, the most a dye can reach, dye to tint
+    // The colour wash as a fluid: the site's green and its sand drifting on
+    // slow currents as two dyes, stirred by the cursor and pushed by a click.
+    // A stable-fluids solver on a coarse grid, multiplied onto the paper by
+    // CSS; a floor of both dyes everywhere so no bare paper shows.
+    wash: ({ ctx, colour }) => {
+      const N = 84, ITER = 14, DYE = [colour("--accent", "#3B6B44"), colour("--panel-base", "#EFE8DB")];
+      const FLOOR = [.06, .4], CAP = [.24, .95], GAIN = [.12, .4];   // per dye: tint everywhere, the most it can reach, dye to tint (the sand is light, so it needs more)
       const flows = [
         { dye: 0, x: .22, y: .28, sx: .11, sy: .09, px: 0,   py: 1.3, r: .22, ry: .30 },
         { dye: 1, x: .76, y: .40, sx: .08, sy: .12, px: 2.4, py: .6,  r: .20, ry: .26 },
@@ -776,7 +777,7 @@ const CONFIG = {
         const px = img.data;
         for (let j = 0, q = 0; j < M; j++) for (let i = 0; i < N; i++, q += 4) {
           const n = IX(i + 1, j + 1), dg = Math.min(CAP[0], FLOOR[0] + g[n] * GAIN[0]), da = Math.min(CAP[1], FLOOR[1] + a[n] * GAIN[1]);   // capped: the wash stays a tint under the type
-          for (let k = 0; k < 3; k++) px[q + k] = 255 * (1 - dg * (1 - GREEN[k] / 255)) * (1 - da * (1 - AMBER[k] / 255));
+          for (let k = 0; k < 3; k++) px[q + k] = 255 * (1 - dg * (1 - DYE[0][k] / 255)) * (1 - da * (1 - DYE[1][k] / 255));
           px[q + 3] = 255;
         }
         octx.putImageData(img, 0, 0);
@@ -846,9 +847,9 @@ const CONFIG = {
     const ctx = c && c.getContext && c.getContext("2d");
     const make = fields[el.dataset.field];
     if (!ctx || !make) return;
-    const rgb = (name, fallback) => token(name, fallback).match(/\w\w/g).map((h) => parseInt(h, 16)).join(",");
-    const inkRgb = rgb("--ink", "#14100C"), paperRgb = rgb("--paper", "#F6F4F0");
-    const field = make({ ctx, el: el, ink: (alpha) => `rgba(${inkRgb},${alpha})`, paper: (alpha) => `rgba(${paperRgb},${alpha})`, accent: token("--accent", "#3B6B44") });
+    const colour = (name, fallback) => token(name, fallback).match(/\w\w/g).map((h) => parseInt(h, 16));   // a token as [r, g, b]
+    const inkRgb = colour("--ink", "#14100C").join(","), paperRgb = colour("--paper", "#F6F4F0").join(",");
+    const field = make({ ctx, el, colour, ink: (alpha) => `rgba(${inkRgb},${alpha})`, paper: (alpha) => `rgba(${paperRgb},${alpha})`, accent: token("--accent", "#3B6B44") });
 
     let W = 0, H = 0, dpr = 1;
     const size = () => {
