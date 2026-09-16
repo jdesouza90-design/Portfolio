@@ -136,7 +136,7 @@
 .t-subhead, .t-lede, .t-body, .t-small, .t-micro, .eyebrow,
 .testimonial-foot cite b,
 .layer-tab, .work-cta, .gate-form input,
-.btn, .chip, .nav-links a, .back, .crumbs, .tools span, footer,
+.btn, .chip, .nav-links ul a, .back, .crumbs, .tools span, footer,
 .facts dt, table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
 .gallery figcaption, .proof-head small, .tooltip, .chart-pill, details.data,
 thead th, .gauge .lbl, .table-wrap td[data-label]::before
@@ -147,7 +147,7 @@ thead th, .gauge .lbl, .table-wrap td[data-label]::before
   { font-size: var(--t-lede); line-height: var(--lh-lede); letter-spacing: var(--ls-lede); font-weight: 400; color: var(--ink-2); max-width: var(--m-lede); }
 .t-body, .layer-tab, .work-cta, .gate-form input
   { font-size: var(--t-body); line-height: var(--lh-body); font-weight: 400; color: var(--ink-2); max-width: var(--m-body); }
-.t-small, .btn, .chip, .nav-links a, .back, .crumbs, .tools span, footer,
+.t-small, .btn, .chip, .nav-links ul a, .back, .crumbs, .tools span, footer,
 .facts dt, table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
 .gallery figcaption, .proof-head small, .tooltip, .chart-pill, details.data
   { font-size: var(--t-small); line-height: var(--lh-small); font-weight: 400; color: var(--ink-2); }
@@ -157,7 +157,7 @@ thead th, .gauge .lbl, .table-wrap td[data-label]::before
 
 /* Weight: 500 is the one emphasis, for whatever names or acts. */
 strong, b, tbody th, .t-body a, .t-lede a,
-.btn, .chip, .chart-pill, .tooltip b, .tip-val, .nav-links a, .back, .crumbs, .tools span, .layer-tab, .work-cta, .avatar, .testimonial-mark
+.btn, .chip, .chart-pill, .tooltip b, .tip-val, .nav-links ul a, .back, .crumbs, .tools span, .layer-tab, .work-cta, .avatar, .testimonial-mark
   { font-weight: 500; }
 
 /* Tone: ink for what leads, ink-2 for what runs (the roles' default), ink-3
@@ -360,13 +360,13 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .brand { display: flex; align-items: center; gap: 11px; text-decoration: none; }
 .nav-links { margin-left: auto; }
 .nav-links ul { display: flex; gap: 28px; list-style: none; padding: 0; margin: 0; }
-.nav-links a { text-decoration: none; transition: color var(--dur-hover); }
+.nav-links ul a { text-decoration: none; transition: color var(--dur-hover); }   /* the rows; the phone foot holds plain .btns */
 .nav-links a.nav-icon { display: inline-flex; align-items: center; gap: 10px; padding-block: 2px; }
 .nav-links a.nav-icon svg { width: 17px; height: 17px; display: block; }
-.nav-links a.nav-icon span { display: none; }   /* the icon alone in the bar; icon + word in the phone menu */
+.nav-links a.nav-icon span { display: none; }   /* the icon alone in the bar; the word alone in the phone menu */
 .nav-links a.nav-download { display: inline-flex; align-items: center; gap: 6px; padding-block: 2px; }   /* the word plus a download arrow, so it reads as a file, not a page */
 .nav-links a.nav-download svg { width: 15px; height: 15px; display: block; }
-.nav-links a:hover, .nav-links a[aria-current="page"] { color: var(--ink); }
+.nav-links ul a:hover, .nav-links ul a[aria-current="page"] { color: var(--ink); }
 .nav-actions { display: flex; gap: 10px; align-items: center; }
 .nav-toggle { display: none; }
 .nav-foot { display: none; }
@@ -408,11 +408,11 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
   /* A menu row takes the title role (the phone rules are allowed to move a
      thing between roles); ink, as every row is a place to go, not a state. */
   .nav-links ul a, .nav-links ul a.nav-icon {
-    display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); padding: var(--sp-2) 0;
+    display: block; padding: var(--sp-4) 0;   /* a row's pitch is twice its type size */
     font-family: var(--font-display); font-weight: 400; font-size: var(--t-title); line-height: var(--lh-title); letter-spacing: var(--ls-title); color: var(--ink);
   }
   .nav-links a.nav-icon span { display: inline; }
-  .nav-links a.nav-icon svg { order: 1; width: 18px; height: 18px; color: var(--ink-2); }   /* the mark sits at the right edge as the row's cue, quieter than the word */
+  .nav-links a.nav-icon svg { display: none; }   /* the word alone here; the mark is for the bar */
   .nav-foot {
     position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--sp-4);
     padding: var(--sp-6) var(--gutter) calc(var(--gutter) + env(safe-area-inset-bottom, 0px));
