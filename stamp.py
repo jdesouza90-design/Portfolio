@@ -16,7 +16,7 @@ s = re.sub(r'(resume: "/(assets/[^"?]+))(?:\?v=[a-f0-9]+)?"',
 open('main.js', 'w').write(s)
 
 css_h, js_h = h('styles.css'), h('main.js')
-pages = ['index.html', 'work.html', 'admin/index.html'] + sorted(glob.glob('work/*.html'))
+pages = ['index.html', 'work.html', 'admin/index.html', 'admin/deck.html'] + sorted(glob.glob('work/*.html'))
 for f in pages + ['middleware.js']:
     s = open(f).read()
     here = os.path.dirname(f)
@@ -39,4 +39,4 @@ for f in pages + ['middleware.js']:
     s = re.sub(r'(content="https://john-desouza\.com/)og-image\.png(?:\?v=[a-f0-9]+)?"',
                lambda m: '%sog-image.png?v=%s"' % (m.group(1), h('og-image.png')), s)
     open(f, 'w').write(s)
-print("styles.css=%s  main.js=%s  admin/dash.js=%s  (%d pages + middleware.js stamped)" % (css_h, js_h, h('admin/dash.js'), len(pages)))
+print("styles.css=%s  main.js=%s  admin/dash.js=%s  admin/deck.js=%s  (%d pages + middleware.js stamped)" % (css_h, js_h, h('admin/dash.js'), h('admin/deck.js'), len(pages)))
