@@ -247,7 +247,7 @@ for slug in slugs:
 import hashlib
 def h(path): return hashlib.md5(open(path, "rb").read()).hexdigest()[:8]
 css_h, js_h = h("styles.css"), h("main.js")
-for p, s in list(html.items()) + [("work.html", work_html), ("index.html", index_html)]:
+for p, s in list(html.items()) + [("work.html", work_html), ("index.html", index_html), ("admin/index.html", read("admin/index.html"))]:
     m = re.search(r'styles\.css\?v=([a-f0-9]+)', s)
     if m and m.group(1) != css_h:
         warn(f"{p}: styles.css stamp is stale (run python3 stamp.py)")
@@ -263,7 +263,7 @@ print(f"{len(shown)} case studies" + (f" ({len(hidden)} hidden: {', '.join(sorte
 
 if "--no-validate" not in sys.argv:
     print("\nhtml-validate:")
-    r = subprocess.run(["npx", "html-validate", "index.html", "work.html", *pages])
+    r = subprocess.run(["npx", "html-validate", "index.html", "work.html", "admin/index.html", *pages])
     if r.returncode != 0:
         errors.append("html-validate failed")
     else:
