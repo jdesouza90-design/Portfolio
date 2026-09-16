@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" crossorigin>
-<link rel="stylesheet" href="../styles.css?v=76e35a1e">
+<link rel="stylesheet" href="../styles.css?v=cc99317b">
 </head>
 <body class="dash-body">
 <a class="skip" href="#main">Skip to content</a>
@@ -33,7 +33,7 @@
   <div class="wrap">
     <p class="eyebrow" data-rise style="--i:0">Activity</p>
     <h1 class="t-title" data-rise style="--i:1">Who's on the site.</h1>
-    <p class="t-lede dash-sub" data-rise style="--i:2" id="summary">Loading the last few hundred visits…</p>
+    <p class="t-lede dash-sub" data-rise style="--i:2" id="summary">Loading the last few weeks of visits…</p>
   </div>
 </section>
 
@@ -43,49 +43,113 @@
     <p class="dash-notice card" id="notice" hidden></p>
 
     <dl class="facts dash-facts" data-rise style="--i:3">
+      <div><dt>On the site now</dt><dd id="s-now">–</dd></div>
       <div><dt>Views today</dt><dd id="s-views">–</dd></div>
       <div><dt>Visitors today</dt><dd id="s-visitors">–</dd></div>
       <div><dt>Case-study unlocks today</dt><dd id="s-unlocks">–</dd></div>
       <div><dt>Views all time</dt><dd id="s-total">–</dd></div>
     </dl>
 
-    <section class="card dash-map-card" aria-labelledby="h-map">
-      <div class="dash-map-head">
-        <h2 class="eyebrow" id="h-map">On the map · last 7 days</h2>
-        <p class="t-small">Scroll or pinch to zoom, drag to move. Placed by IP, so each dot is accurate to about the city.</p>
-        <button class="btn btn-ghost btn-sm" type="button" id="map-fit">Show everyone</button>
+    <!-- One period for everything below it: the charts, the map, the tallies and the sessions. -->
+    <div class="dash-range" data-rise style="--i:4">
+      <div class="layer-tabs" role="group" aria-label="Period" id="range">
+        <button class="layer-tab" type="button" data-range="day" aria-pressed="false">Last 24 hours</button>
+        <button class="layer-tab" type="button" data-range="week" aria-pressed="true">Last 7 days</button>
+        <button class="layer-tab" type="button" data-range="month" aria-pressed="false">Last 30 days</button>
       </div>
-      <section class="dash-map" id="map" aria-label="Map of where visitors are"></section>
-      <p class="t-small dash-empty dash-map-empty" id="map-empty" hidden>No visits with a location yet.</p>
-    </section>
+    </div>
 
-    <div class="dash-grid">
+    <div class="dash-grid dash-grid-wide">
+      <section class="card dash-card chart dash-chart" aria-labelledby="h-chart">
+        <div class="dash-card-head">
+          <h2 class="eyebrow" id="h-chart">Visits · <span data-period>last 7 days</span></h2>
+          <p class="eyebrow dash-legend" aria-hidden="true"><span class="chart-legend"><i class="dot" aria-hidden="true"></i>Visitors</span><span class="chart-legend"><i class="dot dot-views" aria-hidden="true"></i>Views</span></p>
+        </div>
+        <div class="chart-shell dash-chart-shell" id="chart"></div>
+        <details class="data">
+          <summary>View as a table</summary>
+          <div class="table-wrap"><table class="dash-data">
+            <thead><tr><th scope="col">When</th><th scope="col">Visitors</th><th scope="col">Views</th></tr></thead>
+            <tbody id="chart-data"></tbody>
+          </table></div>
+        </details>
+      </section>
+
+      <section class="card dash-card" aria-labelledby="h-stay">
+        <h2 class="eyebrow" id="h-stay">How long they stay · <span data-period>last 7 days</span></h2>
+        <div class="dash-hist" id="hist" role="img" aria-labelledby="h-stay" aria-describedby="hist-note"></div>
+        <p class="t-small dash-empty" id="hist-note"></p>
+        <details class="data">
+          <summary>View as a table</summary>
+          <div class="table-wrap"><table class="dash-data">
+            <thead><tr><th scope="col">Session length</th><th scope="col">Sessions</th></tr></thead>
+            <tbody id="hist-data"></tbody>
+          </table></div>
+        </details>
+      </section>
+    </div>
+
+    <div class="dash-grid dash-grid-wide">
+      <section class="card dash-map-card" aria-labelledby="h-map">
+        <div class="dash-map-head">
+          <h2 class="eyebrow" id="h-map">On the map · <span data-period>last 7 days</span></h2>
+          <p class="t-small">Placed by IP, so each dot is accurate to about the city.</p>
+          <button class="btn btn-ghost btn-sm" type="button" id="map-fit">Show everyone</button>
+        </div>
+        <section class="dash-map" id="map" aria-label="Map of where visitors are"></section>
+        <p class="t-small dash-empty dash-map-empty" id="map-empty" hidden>No visits with a location yet.</p>
+      </section>
+
       <section class="card dash-card" aria-labelledby="h-where">
-        <h2 class="eyebrow" id="h-where">Where from · last 7 days</h2>
+        <h2 class="eyebrow" id="h-where">Where from · <span data-period>last 7 days</span></h2>
         <ol class="dash-list" id="where"></ol>
         <p class="t-small dash-empty" id="where-empty" hidden>No visits yet.</p>
       </section>
+    </div>
+
+    <div class="dash-grid">
       <section class="card dash-card" aria-labelledby="h-pages">
-        <h2 class="eyebrow" id="h-pages">Pages · last 7 days</h2>
+        <h2 class="eyebrow" id="h-pages">Pages · <span data-period>last 7 days</span></h2>
         <ol class="dash-list" id="pages"></ol>
         <p class="t-small dash-empty" id="pages-empty" hidden>No visits yet.</p>
       </section>
       <section class="card dash-card" aria-labelledby="h-refs">
-        <h2 class="eyebrow" id="h-refs">Sent by · last 7 days</h2>
+        <h2 class="eyebrow" id="h-refs">Sent by · <span data-period>last 7 days</span></h2>
         <ol class="dash-list" id="refs"></ol>
         <p class="t-small dash-empty" id="refs-empty" hidden>No visits yet.</p>
       </section>
+      <section class="card dash-card" aria-labelledby="h-devices">
+        <h2 class="eyebrow" id="h-devices">Devices · <span data-period>last 7 days</span></h2>
+        <ol class="dash-list" id="devices"></ol>
+        <p class="t-small dash-empty" id="devices-empty" hidden>No visits yet.</p>
+      </section>
     </div>
+
+    <section class="dash-feed" aria-labelledby="h-sessions">
+      <div class="dash-feed-head">
+        <h2 class="t-heading" id="h-sessions">Sessions · <span data-period>last 7 days</span></h2>
+        <p class="t-small" id="sessions-note">One person's visit, start to finish; a quiet half hour ends it. Newest first.</p>
+      </div>
+      <div class="table-wrap">
+        <table class="dash-table dash-sessions">
+          <thead>
+            <tr><th scope="col">Started</th><th scope="col">Where</th><th scope="col">Pages</th><th scope="col">Length</th><th scope="col">Device</th><th scope="col">Visitor</th></tr>
+          </thead>
+          <tbody id="sessions"></tbody>
+        </table>
+      </div>
+      <p class="t-small dash-empty" id="sessions-empty" hidden>No sessions yet.</p>
+    </section>
 
     <section class="dash-feed" aria-labelledby="h-feed">
       <div class="dash-feed-head">
         <h2 class="t-heading" id="h-feed">Live feed</h2>
-        <p class="t-small" id="feed-note">Newest first. New arrivals appear at the top as they happen.</p>
+        <p class="t-small" id="feed-note">Every page view, newest first. Time is how long the page was read; it fills in as they go.</p>
       </div>
       <div class="table-wrap">
         <table class="dash-table">
           <thead>
-            <tr><th scope="col">When</th><th scope="col">What</th><th scope="col">Page</th><th scope="col">Where</th><th scope="col">Sent by</th><th scope="col">Device</th><th scope="col">Visitor</th></tr>
+            <tr><th scope="col">When</th><th scope="col">What</th><th scope="col">Page</th><th scope="col">Time</th><th scope="col">Where</th><th scope="col">Sent by</th><th scope="col">Device</th><th scope="col">Visitor</th></tr>
           </thead>
           <tbody id="feed"></tbody>
         </table>
@@ -99,6 +163,6 @@
 </main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" crossorigin></script>
-<script src="dash.js?v=431641ec"></script>
+<script src="dash.js?v=d0ea58e2"></script>
 </body>
 </html>

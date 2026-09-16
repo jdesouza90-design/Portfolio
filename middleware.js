@@ -4,6 +4,7 @@
 //   /work/*         the case-study password (CASE_STUDY_PASSWORD)
 //   /admin/*        the activity dashboard, its own password (ADMIN_PASSWORD)
 //   /api/activity   the feed the dashboard polls; needs the admin cookie
+//   /api/ping       the beacon main.js sends with the time a page has been read
 //   everything else public, but every page view is recorded
 //
 // A correct case-study password sends the reader on with ?unlocked, which
@@ -12,11 +13,12 @@
 // Activity log: every page view on the site, every case-study unlock and every
 // wrong password is written to Vercel's runtime logs and, when an Upstash Redis
 // store is connected (KV_REST_API_URL / KV_REST_API_TOKEN), kept there for the
-// dashboard. Case-study events are also emailed via Resend when RESEND_API_KEY
-// and ACCESS_LOG_TO are set. Signing in to the dashboard, or opening any page
-// once with ?owner, mutes logging for your own browser.
+// dashboard, along with the time-on-page beacons that give it session lengths.
+// Case-study events are also emailed via Resend when RESEND_API_KEY and
+// ACCESS_LOG_TO are set. Signing in to the dashboard, or opening any page once
+// with ?owner, mutes logging for your own browser.
 
-export const config = { matcher: ['/', '/index.html', '/work.html', '/work/:path*', '/admin/:path*', '/api/activity'] };
+export const config = { matcher: ['/', '/index.html', '/work.html', '/work/:path*', '/admin/:path*', '/api/activity', '/api/ping'] };
 
 const COOKIE = 'cs_access';
 const MAX_AGE = 60 * 60 * 24 * 30;          // 30 days
@@ -27,8 +29,9 @@ const OWNER_MAX_AGE = 60 * 60 * 24 * 365;   // a year
 
 const FEED_KEY = 'activity';                // Redis list, newest first
 const COUNT_KEY = 'activity:count';         // all-time page views
-const FEED_KEEP = 2000;                     // entries kept in the list
-const FEED_PAGE = 500;                      // entries the dashboard loads
+const FEED_KEEP = 4000;                     // entries kept in the list (views and time beacons), all sent on the dashboard's first load
+const FEED_POLL = 100;                      // entries a poll reads before deciding whether it needs to go further back
+const PING_MAX = 4 * 3600;                  // seconds on one page a beacon may claim
 
 async function sha256(s) {
   const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
@@ -82,7 +85,7 @@ function page({ path, error, unconfigured, ref, admin }) {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/styles.css?v=76e35a1e">
+<link rel="stylesheet" href="/styles.css?v=cc99317b">
 </head>
 <body>
 <main class="gate-wrap"><div class="gate">
@@ -242,24 +245,56 @@ async function logAccess(kind, request, url, salt, ref) {
 }
 
 
+// ---- Time on page -----------------------------------------------------------
+// POST /api/ping {page, secs}: main.js sends one every minute while a page is
+// being looked at and as it is left, carrying the seconds it has been in view.
+// Kept in the same list as the views, never emailed; the dashboard pairs each
+// with the visit it belongs to and reads session lengths from them.
+
+async function ping(request, salt) {
+  let page = '', secs = 0;
+  try {
+    const body = JSON.parse(await request.text());
+    page = String(body.page || '').slice(0, 200);
+    secs = Math.min(PING_MAX, Math.max(0, Math.round(Number(body.secs) || 0)));
+  } catch (_) {}
+  if (!/^\/[\w\-./]*$/.test(page)) return;
+  const entry = { t: Date.now(), kind: 'time', page, secs, visitor: await visitorId(request, salt) };
+  console.log('access', JSON.stringify(entry));
+  await redis([['LPUSH', FEED_KEY, JSON.stringify(entry)], ['LTRIM', FEED_KEY, 0, FEED_KEEP - 1]])
+    .catch((err) => console.error('access-log: ping failed', err));
+}
+
+
 // ---- The feed ---------------------------------------------------------------
 // GET /api/activity?since=<ms>  →  { configured, now, total, events }
-// `events` is newest first, only those after `since` when it is given.
+// `events` is newest first, only those after `since` when it is given. The
+// first load takes everything kept; a poll reads a short window and only goes
+// further back when every entry in it turned out to be new.
 
 const json = (body, status = 200) => new Response(JSON.stringify(body), {
   status,
   headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'private, no-store', 'X-Robots-Tag': 'noindex' },
 });
 
-async function feed(url) {
-  if (!store()) return json({ configured: false, now: Date.now(), total: 0, events: [] });
-  const since = Number(url.searchParams.get('since')) || 0;
-  const [raw, total] = await redis([['LRANGE', FEED_KEY, 0, FEED_PAGE - 1], ['GET', COUNT_KEY]]);
+function parseEvents(raw, since) {
   const events = [];
   for (const s of raw || []) {
     let e; try { e = JSON.parse(s); } catch (_) { continue; }
-    if (e.t <= since) break;                 // newest first, so the rest are older too
-    events.push(e);
+    if (e.t > since) events.push(e);
+  }
+  return events;
+}
+
+async function feed(url) {
+  if (!store()) return json({ configured: false, now: Date.now(), total: 0, events: [] });
+  const since = Number(url.searchParams.get('since')) || 0;
+  const span = since ? FEED_POLL : FEED_KEEP;
+  const [raw, total] = await redis([['LRANGE', FEED_KEY, 0, span - 1], ['GET', COUNT_KEY]]);
+  let events = parseEvents(raw, since);
+  if (since && (raw || []).length === span && events.length === span) {
+    const [more] = await redis([['LRANGE', FEED_KEY, span, FEED_KEEP - 1]]);
+    events = events.concat(parseEvents(more, since));
   }
   return json({ configured: true, now: Date.now(), total: Number(total) || 0, events });
 }
@@ -272,6 +307,7 @@ export default async function middleware(request, context) {
   const path = url.pathname + url.search;
   const isAdmin = url.pathname.startsWith('/admin');
   const isFeed = url.pathname === '/api/activity';
+  const isPing = url.pathname === '/api/ping';
   const isWork = url.pathname.startsWith('/work/');
 
   // ---- Dashboard and its feed: the owner's password ----
@@ -319,11 +355,14 @@ export default async function middleware(request, context) {
   }
   const ua = request.headers.get('user-agent') || '';
   const muted = readCookie(request, OWNER_COOKIE) === '1' || isBot(ua) || isPrefetch(request.headers);
-  const log = (kind, ref) => {
-    if (muted) return;
-    const p = logAccess(kind, request, url, expected, ref);
-    if (context && typeof context.waitUntil === 'function') context.waitUntil(p);
-  };
+  const after = (p) => { if (context && typeof context.waitUntil === 'function') context.waitUntil(p); };
+  const log = (kind, ref) => { if (!muted) after(logAccess(kind, request, url, expected, ref)); };
+
+  if (isPing) {                              // the time-on-page beacon: same mute as the views, answered at once
+    if (request.method !== 'POST') return new Response(null, { status: 405, headers: { Allow: 'POST' } });
+    if (!muted) after(ping(request, expected));
+    return new Response(null, { status: 204, headers: { 'Cache-Control': 'no-store' } });
+  }
 
   if (!isWork) {                             // public page: record the view and serve it
     if (request.method === 'GET') log('viewed');

@@ -23,8 +23,8 @@ main.js                         CONFIG links, then one function per feature: nav
                                 walkthroughs, AI strands, fields (hero dots, contact rings), chart, number flow,
                                 swipe strips, About portrait height
 admin/index.html                Activity dashboard: who is on the site, live (its own password)
-admin/dash.js                   The dashboard's script: polls the feed, tallies the week, draws the map
-middleware.js                   Vercel Edge Middleware: the two password gates, the activity log and its feed
+admin/dash.js                   The dashboard's script: polls the feed, builds sessions, draws the charts and the map
+middleware.js                   Vercel Edge Middleware: the two password gates, the activity log, its feed and the time-on-page beacon
 vercel.json                     Cache and security headers
 .vercelignore                   Keeps the repo's tooling (this file, VOICE.md, stamp.py, dev.mjs, .claude/) off the deployment
 stamp.py                        Re-stamps every ?v= cache hash; run it before committing
@@ -71,20 +71,33 @@ LinkedIn), browser and OS, and a short visitor id so one person's sequence of
 views can be followed. Raw IP addresses are never stored or sent; crawlers and
 link previewers are skipped.
 
+`main.js` also keeps a small clock of how long each page is looked at (it runs
+while the tab is visible and the reader has done something in the last five
+minutes) and sends the seconds so far to `/api/ping` in a beacon once a minute
+and as the page is hidden or left. The middleware keeps those beside the views,
+under the same mute rules, and never emails them.
+
 **The dashboard** at `/admin/` (the "Sign in" link in the home page footer)
-shows it live: views and visitors today, a zoomable map of where people are
-(Leaflet on Esri's light-grey tiles, one dot per place sized by visits, placed
-from Vercel's IP coordinates so it is accurate to about the city), the
-where-from / pages / referrers tallies over the last seven days, and a feed
-that updates every few seconds as people arrive. It needs two things set up
-in Vercel:
+shows it live: who is on the site right now, views and visitors today, then
+one period control (last 24 hours / 7 days / 30 days) over everything below
+it: a visits chart (visitors over a soft area, views as a grey line, hover or
+arrow through it, a table behind "View as a table"), a histogram of how long
+sessions last, a map of where people are (Leaflet on Esri's light-grey tiles,
+one dot per place sized by visits, placed from Vercel's IP coordinates so it
+is accurate to about the city), the where-from / pages / referrers / devices
+tallies, a table of sessions (one person's visit start to finish, split at a
+quiet half hour, with the pages read, its length and a "Now" mark while they
+are still here) and a feed that updates every few seconds as people arrive,
+each view showing how long the page was read. It needs two things set up in
+Vercel:
 
 1. **A store.** Vercel → Project → Storage → Create Database → Upstash Redis
    (the free plan is plenty), connected to this project. That adds
    `KV_REST_API_URL` and `KV_REST_API_TOKEN` to the environment; the
    middleware also accepts Upstash's own `UPSTASH_REDIS_REST_URL` /
-   `UPSTASH_REDIS_REST_TOKEN`. The last 2,000 events are kept, plus an
-   all-time count. Without a store nothing is kept and the dashboard says so.
+   `UPSTASH_REDIS_REST_TOKEN`. The last 4,000 entries (views and time
+   beacons) are kept, plus an all-time count. Without a store nothing is kept
+   and the dashboard says so.
 2. **A password.** `ADMIN_PASSWORD` in Vercel → Project → Settings →
    Environment Variables. It is separate from the case-study password and,
    like it, deliberately not in this repo. Signing in sets a 30-day cookie;

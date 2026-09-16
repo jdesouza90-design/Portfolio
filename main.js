@@ -1163,9 +1163,49 @@ const CONFIG = {
     new ResizeObserver(([en]) => grid.style.setProperty("--portrait-w", `${en.contentRect.height * ratio}px`)).observe(text);
   };
 
+  /* ---- Time on page ----
+     A clock of how long this page has been looked at. It runs while the tab
+     is in view and the reader has done something in the last five minutes,
+     and pauses otherwise, so a tab left open behind another does not count.
+     Once a minute, and as the page is hidden or left, the seconds so far go
+     to /api/ping in a beacon; the middleware keeps them beside the visit and
+     the dashboard reads how long each visit and session lasted from them.
+     Nothing is sent that the page view itself did not already carry. */
+  const initClock = () => {
+    if (!("sendBeacon" in navigator)) return;
+    const IDLE = 5 * 60000, BEAT = 60000;
+    let banked = 0;                 // ms already counted from earlier stretches in view
+    let since = 0;                  // when the current stretch began; 0 while paused
+    let sent = -1, last = 0, idle = 0;
+    const visible = () => document.visibilityState === "visible";
+    const seconds = () => Math.round((banked + (since ? Date.now() - since : 0)) / 1000);
+    const send = () => {
+      const secs = seconds();
+      if (secs === sent) return;
+      sent = secs;
+      navigator.sendBeacon("/api/ping", JSON.stringify({ page: location.pathname, secs }));
+    };
+    const pause = () => { if (since) { banked += Date.now() - since; since = 0; } };
+    const resume = () => { if (!since && visible()) since = Date.now(); };
+    const touch = () => {           // any sign of the reader keeps the clock running for another five minutes
+      const now = Date.now();
+      if (now - last < 1000) return;
+      last = now;
+      resume();
+      clearTimeout(idle);
+      idle = setTimeout(() => { pause(); send(); }, IDLE);
+    };
+    ["pointerdown", "pointermove", "keydown", "scroll", "touchstart"].forEach((ev) => document.addEventListener(ev, touch, { passive: true }));
+    document.addEventListener("visibilitychange", () => { if (visible()) { last = 0; touch(); } else { pause(); send(); } });
+    window.addEventListener("pagehide", () => { pause(); send(); });
+    window.addEventListener("pageshow", () => { last = 0; touch(); });   // back from the bfcache: a new stretch
+    setInterval(() => { if (since) send(); }, BEAT);
+    touch();
+  };
+
   /* ---- Footer year ---- */
   const initYear = () => $$("[data-year]").forEach((el) => (el.textContent = new Date().getFullYear()));
 
-  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initFlows, initStrips, initPortrait, initYear]
+  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initFlows, initStrips, initPortrait, initClock, initYear]
     .forEach((init) => { try { init(); } catch (err) { console.error(`main.js: ${init.name} failed`, err); } });
 })();
