@@ -13,7 +13,7 @@ placement last because they are mechanical.
 
 ## Round 1: The facts
 
-Fills the hero eyebrow, the title, the four facts and the work-index chips.
+Fills the title, the four facts and the work-index chips.
 
 1. **What is the project called, as the company writes it?**
    Slot: `NAME`. Also the `<title>`, the next-links and the index rows.
@@ -21,9 +21,9 @@ Fills the hero eyebrow, the title, the four facts and the work-index chips.
    abbreviation, get both forms; the page spells it out on first use.
 
 2. **Which company, which domain, and what kind of work was it?**
-   Slot: `EYEBROW`, written as three parts with middle dots: "Best Egg · Consumer lending ·
-   0→1". The third part is the shape of the work in two or three words: 0→1, Redesign + A/B
-   test, New capability, Platform, Web3 login.
+   Feeds the case-row logo and ground on the index, and the shape of the work becomes a
+   chip in two or three words: 0→1, Redesign + A/B test, New capability, Platform, Web3
+   login. The hero carries no eyebrow; the h1 opens the page.
 
 3. **What was your title at the time?**
    Slot: facts cell 1, `Role`. Exactly as it was, not the current title.

@@ -26,7 +26,7 @@ Contents
 - **Images.** Always `decoding="async"`, `width`, `height` and `alt`. Everything below the
   hero also gets `loading="lazy"`; hero images don't. Paths are `../assets/<file>` with no
   `?v=` (stamp.py adds it). Width and height are the file's real pixels (from `webp.sh`).
-- **Hero animation.** Only the hero's eyebrow, `h1` and lede carry `data-rise style="--i:N"`
+- **Hero animation.** Only the hero's `h1` and lede carry `data-rise style="--i:N"`
   with N = 0, 1, 2. Nothing else on the page animates by attribute: every direct child of a
   section's `.wrap` rises into place on scroll by itself (48px over 700ms once its top
   crosses 70% of the viewport; see Motion in the README). Keep that structure, one block
@@ -55,7 +55,7 @@ Contents
 
 ## 2. Hero
 
-Slots: `NAME` (twice: the breadcrumb's current item and the h1), `EYEBROW`, `LEDE`,
+Slots: `NAME` (twice: the breadcrumb's current item and the h1), `LEDE`,
 outcome (two variants), hero panel (four variants), four facts. The breadcrumb's first
 two items never change; the last is plain text with `aria-current="page"`, not a link.
 
@@ -71,9 +71,8 @@ two items never change; the last is plain text with `aria-current="page"`, not a
     </nav>
     <div class="hero-lead">
       <div class="cs-hero-copy">
-      <p class="eyebrow" data-rise style="--i:0">{{EYEBROW}}</p>
-      <h1 class="t-display" data-rise style="--i:1">{{NAME}}</h1>
-      <p class="t-lede" data-rise style="--i:2">{{LEDE}}</p>
+      <h1 class="t-display" data-rise style="--i:0">{{NAME}}</h1>
+      <p class="t-lede" data-rise style="--i:1">{{LEDE}}</p>
     </div>
       {{OUTCOME}}
     </div>

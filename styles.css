@@ -571,7 +571,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
    The caption keeps a band at the bottom (the extra padding). */
 .fig-panel { --fig-pad: clamp(20px, 2.6vw, 32px); container-type: size; display: grid; place-items: center; padding: var(--fig-pad) var(--fig-pad) calc(var(--fig-pad) + 60px); border-radius: var(--radius-sm); }
 .fig-nest { position: relative; width: min(100%, 460px); width: min(100cqw, 100cqh, 460px); aspect-ratio: 1; }
-.nest { position: absolute; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--ink) 34%, transparent); transition: border-color var(--dur-ui), box-shadow var(--dur-ui); }
+.nest { position: absolute; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--ink) 34%, transparent); transition: border-color var(--dur-ui), box-shadow var(--dur-ui), background var(--dur-ui); }
 .nest[data-ring="2"] { inset: 0; transform-origin: 50% 80%; --from: .4; }
 .nest[data-ring="1"] { left: 13%; top: 26%; width: 74%; height: 74%; transform-origin: 50% 73%; --from: .54; }
 .nest[data-ring="0"] { left: 30%; top: 60%; width: 40%; height: 40%; transform-origin: 50% 50%; --from: .5; }
@@ -584,7 +584,8 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .nest[data-ring="0"] .nlbl { top: 50%; transform: translate(-50%, -50%); white-space: normal; width: 8ch; }
 .nest .t-subhead { color: var(--ink-2); transition: color var(--dur-ui); }
 .nest.hover, .nest.hover .t-subhead { border-color: var(--ink); color: var(--ink); }   /* the ring under the pointer; main.js hit-tests the circle */
-.nest.on { border-color: var(--accent); box-shadow: 0 0 0 8px var(--glow); }
+.nest.on { border-color: var(--accent); box-shadow: 0 0 0 8px var(--glow);
+  background: color-mix(in srgb, var(--surface) 72%, transparent); }   /* the picked ring lifts to a lighter disc so it reads off the ground and the two it shares */
 .nest.on .t-subhead { color: var(--ink); }
 .fig-cap { position: absolute; left: var(--fig-pad); bottom: var(--fig-pad); display: flex; flex-direction: column; gap: 2px; }
 /* As the card arrives, Figure A draws itself from the centre: the inner disc
@@ -703,7 +704,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
    under it in place of a person, who is left out by John's choice. */
 .kudos { margin-top: clamp(48px, 6vw, 80px); }
 .kudo-mark { height: 22px; width: auto; margin-bottom: clamp(24px, 3vw, 40px); }
-.kudos .testimonial .quote { flex: none; padding-bottom: 0; border-bottom: 0; }   /* no rule and no stretch: the source sits right under the quote, like a byline */
+.kudos .testimonial .quote { flex: none; padding-block: 0; border-bottom: 0; }   /* no rule and no stretch: the source sits right under the quote, like a byline */
 .kudos cite { display: block; margin-top: clamp(20px, 2.5vw, 32px); font-style: normal; }
 @media (max-width: 700px) {
   /* the track turns down the left and the markers sit level with each label */
@@ -830,6 +831,7 @@ footer a:hover { color: var(--ink); }
 .row-copy { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
 .row-copy .t-heading { margin-top: var(--sp-3); }
 .row-copy .t-title { margin-top: var(--stack-label); }
+.row-copy > :first-child { margin-top: 0; }   /* that margin is the gap under an eyebrow; a title that opens the block owns no gap */
 .row-copy .t-body { margin-top: var(--sp-4); }
 .row .panel { height: var(--panel-h); }
 .row .panel img { max-height: 100%; }
@@ -864,11 +866,14 @@ footer a:hover { color: var(--ink); }
    person underneath. Slides share a grid cell so the block is as tall as the
    longest quote and nothing below it jumps as they cross-fade. */
 .testimonials { width: 100%; margin-top: var(--sp-6); }
+/* Feedback sits on the same white card as the AI block, so a quote reads as a
+   thing someone handed over rather than more page. */
+.testimonials, .kudos { background: var(--surface); border: 1px solid var(--hair); border-radius: var(--radius); padding: clamp(24px, 4vw, 48px); }
 .testimonial-track { display: grid; }
 .testimonial { grid-area: 1 / 1; display: flex; flex-direction: column; align-items: center; text-align: center; opacity: 0; visibility: hidden; filter: blur(3px); transition: opacity .3s var(--ease), filter .3s var(--ease), visibility 0s .3s; }
 /* a touch of blur while the quotes cross so the eye reads one thing changing, not two overlapping */
 .testimonial.active { opacity: 1; visibility: visible; filter: none; transition: opacity .4s var(--ease), filter .4s var(--ease), visibility 0s; }
-.testimonial .quote { flex: 1; width: 100%; padding-bottom: var(--sp-6); border-bottom: 1px solid var(--hair-2); }
+.testimonial .quote { flex: 1; width: 100%; padding-block: var(--sp-5) var(--sp-7); border-bottom: 1px solid var(--hair-2); }   /* the quote sits off its heading and off its own rule, not hard against either */
 .testimonial .quote p { margin-inline: auto; }
 .testimonial-foot { display: flex; align-items: center; justify-content: center; gap: var(--sp-4); padding-top: var(--sp-5); text-align: left; }
 .testimonial-foot .avatar { flex: none; width: 48px; height: 48px; border-radius: 12px; display: grid; place-items: center; background: var(--paper-2); }

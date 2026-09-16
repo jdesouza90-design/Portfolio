@@ -132,8 +132,8 @@ for p, s in html.items():
         err(f"{p}: og:url does not match the file name")
     if re.search(r'<meta name="description" content="">', s):
         err(f"{p}: empty meta description")
-    if "data-rise" in s and s.count("data-rise") != 3:
-        warn(f"{p}: expected three data-rise elements in the hero, found {s.count('data-rise')}")
+    if "data-rise" in s and s.count("data-rise") != 2:
+        warn(f"{p}: expected two data-rise elements in the hero, found {s.count('data-rise')}")
 
     # Inline styles (html-validate also enforces this, but the message here is clearer)
     for st in re.findall(r'style="([^"]*)"', s):
