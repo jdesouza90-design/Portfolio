@@ -1076,6 +1076,112 @@ const CONFIG = {
     }
   });
 
+  /* ---- Matrix: a wall of variants thinning to the set that remains ----
+     One dot per variant on a canvas. As the block reveals the wall sweeps in
+     from the left, ink at low alpha; then the dots that were cut fade to a
+     ghost of themselves and the survivors travel into one block per
+     component, tinted by it, each block a column run tall enough for its
+     count. The blocks' width against the wall is the reduction. The grid is
+     chosen by width so the total factors exactly; the survivors are picked by
+     a seeded shuffle so the wall thins the same way every time. Reduced
+     motion, or a block that never gets to animate, draws the end state. */
+  const initMatrix = () => $$("[data-matrix]").forEach((el) => {
+    const canvas = $("canvas", el), plot = $(".matrix-plot", el);
+    if (!canvas || !plot) return;
+    const total = Number(el.dataset.total) || 0;
+    let groups = [];
+    try { groups = JSON.parse(el.dataset.groups || "[]"); } catch { return; }
+    const kept = groups.reduce((s, g) => s + g.n, 0);
+    if (!total || !kept || kept > total) return;
+    const ctx = canvas.getContext("2d");
+    const ink = tint("--ink", "#14100C");
+    const tints = [tint("--accent", "#3B6B44"), tint("--accent-2", "#6E9A5A"), tint("--ink-2", "#5C564E")];
+    const WALL = .28, GHOST = .07;
+
+    // a seeded shuffle picks which cells survive
+    let seed = 2304;
+    const rand = () => { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; };
+    const order = Array.from({ length: total }, (_, i) => i);
+    for (let i = total - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
+    const survivors = order.slice(0, kept);
+
+    let cols = 0, rows = 0, pitch = 0, dots = [], dpr = 1;
+    const layout = () => {
+      const w = plot.clientWidth;
+      if (!w) return false;
+      [cols, rows] = w >= 880 ? [96, 24] : w >= 600 ? [72, 32] : [48, 48];
+      if (cols * rows !== total) { cols = Math.ceil(Math.sqrt(total)); rows = Math.ceil(total / cols); }
+      pitch = w / cols;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(rows * pitch * dpr);
+      canvas.style.height = `${rows * pitch}px`;
+      // every dot starts in its own cell; a survivor also has a destination in its group's block
+      dots = Array.from({ length: total }, (_, i) => ({ x: i % cols, y: Math.floor(i / cols), tx: i % cols, ty: Math.floor(i / cols), g: -1 }));
+      // survivors sorted by where they start, so neighbours travel together
+      const set = survivors.slice().sort((a, b) => (a % cols) - (b % cols) || a - b);
+      let col = 0, k = 0;
+      groups.forEach((grp, gi) => {
+        for (let n = 0; n < grp.n; n++, k++) {
+          const d = dots[set[k]];
+          d.g = gi; d.tx = col + Math.floor(n / rows); d.ty = n % rows;
+        }
+        col += Math.ceil(grp.n / rows);
+      });
+      return true;
+    };
+
+    const ease = (t) => 1 - Math.pow(1 - t, 3);
+    // t is the time into the piece in ms; the wall sweeps in over the first
+    // 900ms, the cut runs from 1200 to 2100
+    const draw = (t) => {
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const r = pitch * .3, half = pitch / 2;
+      const cut = Math.min(Math.max((t - 1200) / 900, 0), 1), move = ease(cut);
+      for (const d of dots) {
+        const sweep = Math.min(Math.max((t - d.x * 6) / 300, 0), 1);   // each column 6ms after the last
+        if (sweep <= 0) continue;
+        if (d.g < 0) {
+          ctx.fillStyle = ink(WALL * sweep - (WALL - GHOST) * cut);
+          ctx.beginPath(); ctx.arc(d.x * pitch + half, d.y * pitch + half, r, 0, Math.PI * 2); ctx.fill();
+        } else {
+          const x = d.x + (d.tx - d.x) * move, y = d.y + (d.ty - d.y) * move;
+          ctx.fillStyle = cut > 0 ? tints[d.g](Math.min(1, WALL * sweep + (1 - WALL) * move)) : ink(WALL * sweep);
+          ctx.beginPath(); ctx.arc(x * pitch + half, y * pitch + half, r, 0, Math.PI * 2); ctx.fill();
+        }
+      }
+    };
+
+    let played = false, start = 0, raf = 0;
+    const END = 2400;
+    const frame = (now) => {
+      const t = now - start;
+      draw(t);
+      if (t < END) raf = requestAnimationFrame(frame);
+    };
+    const play = () => {
+      if (played) return;
+      played = true;
+      start = performance.now();
+      raf = requestAnimationFrame(frame);
+    };
+    const settle = () => { played = true; cancelAnimationFrame(raf); draw(END); };
+
+    if (!layout()) return;
+    onceInView(plot, 0.35, (animate) => {
+      if (animate && !reduced) setTimeout(play, 200);      // let the block's own reveal lead
+      else settle();
+    });
+    const relayout = () => { if (layout() && played) { cancelAnimationFrame(raf); draw(END); } };
+    if ("ResizeObserver" in window) {
+      let w = plot.clientWidth;
+      new ResizeObserver(() => { if (plot.clientWidth !== w) { w = plot.clientWidth; relayout(); } }).observe(plot);
+    } else {
+      window.addEventListener("resize", debounce(relayout, 120));
+    }
+  });
+
   /* ---- Number flow ----
      A headline stat rolls into place like an odometer: every digit is a
      column of 0 to 9 behind a soft mask, and each column turns once around
@@ -1206,6 +1312,6 @@ const CONFIG = {
   /* ---- Footer year ---- */
   const initYear = () => $$("[data-year]").forEach((el) => (el.textContent = new Date().getFullYear()));
 
-  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initFlows, initStrips, initPortrait, initClock, initYear]
+  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initMatrix, initFlows, initStrips, initPortrait, initClock, initYear]
     .forEach((init) => { try { init(); } catch (err) { console.error(`main.js: ${init.name} failed`, err); } });
 })();
