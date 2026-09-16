@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" crossorigin>
-<link rel="stylesheet" href="../styles.css?v=227fb04d">
+<link rel="stylesheet" href="../styles.css?v=6ea3465b">
 </head>
 <body class="dash-body">
 <a class="skip" href="#main">Skip to content</a>
@@ -130,6 +130,18 @@
         <h2 class="t-heading" id="h-feed">Live feed</h2>
         <p class="t-small" id="feed-note">Every page view, newest first. Time is how long the page was read; it fills in as they go.</p>
       </div>
+      <!-- Each select narrows the feed; the options are whatever the feed has seen. -->
+      <div class="dash-filters" role="group" aria-label="Filter the feed" id="feed-filters">
+        <span class="dash-filter"><select data-filter="kind" aria-label="Filter by kind"><option value="">All kinds</option></select></span>
+        <span class="dash-filter"><select data-filter="page" aria-label="Filter by page"><option value="">All pages</option></select></span>
+        <span class="dash-filter"><select data-filter="where" aria-label="Filter by place"><option value="">Everywhere</option></select></span>
+        <span class="dash-filter"><select data-filter="ref" aria-label="Filter by source"><option value="">All sources</option></select></span>
+        <span class="dash-filter"><select data-filter="device" aria-label="Filter by device"><option value="">All devices</option></select></span>
+        <div class="dash-filter-state" id="feed-state" hidden>
+          <p class="t-small" id="feed-count" aria-live="polite"></p>
+          <button class="btn btn-ghost btn-sm" type="button" id="feed-clear">Clear filters</button>
+        </div>
+      </div>
       <div class="table-wrap">
         <table class="dash-table">
           <thead>
@@ -163,6 +175,6 @@
 </main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" crossorigin></script>
-<script src="dash.js?v=4845b967"></script>
+<script src="dash.js?v=7d1d168a"></script>
 </body>
 </html>
