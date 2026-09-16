@@ -22,6 +22,7 @@ main.js                         CONFIG links, then one function per feature: nav
                                 walkthroughs, AI strands, fields (hero dots, contact rings), chart, number flow,
                                 swipe strips, About portrait height
 admin/index.html                Activity dashboard: who is on the site, live (its own password)
+admin/dash.js                   The dashboard's script: polls the feed, tallies the week, draws the map
 middleware.js                   Vercel Edge Middleware: the two password gates, the activity log and its feed
 vercel.json                     Cache and security headers
 .vercelignore                   Keeps the repo's tooling (this file, VOICE.md, stamp.py, dev.mjs, .claude/) off the deployment
@@ -149,8 +150,11 @@ Two rules keep it that way:
 - **Nothing after section 2 sets a face, size, weight, line-height or
   letter-spacing.** The exceptions are `.btn`, `.chip` and `.chart-pill`,
   whose line-height is a box metric; the chart's axis and milestone text,
-  set in pixels inside the SVG; and the phone rules, which move a menu row
-  and a stacked table label up to body size.
+  set in pixels inside the SVG; the dashboard's visitor hashes and the map's
+  credit line, which take the micro size without the micro role's caps; and
+  the phone rules, which step a few things a role up or down (a menu row and
+  a stacked table label up to body, the ring labels and the live badge down
+  a role).
 
 Colour is three tones and weight is two, both set in section 2 and nowhere
 else: ink for what leads, ink-2 for what runs, ink-3 for what sits beside on
@@ -324,7 +328,7 @@ runs clean through axe-core (WCAG 2.x A/AA and best-practice rules) and
 `html-validate`. To check a page after editing it:
 
 ```
-npx html-validate index.html work.html work/*.html
+npx html-validate index.html work.html admin/index.html work/*.html
 ```
 
 The rules that shape the code:

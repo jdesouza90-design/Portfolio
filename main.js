@@ -15,14 +15,42 @@ const CONFIG = {
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   /* ---- Helpers ---- */
-  // A colour token from styles.css, as #rrggbb, so the canvas draws in the
-  // same ink and accent as the page. The fallback is the token's value today.
+  // Tokens from styles.css, so the scripts draw and move in the page's own
+  // values: cssVar reads any token, hex a colour as #rrggbb, rgb the same as
+  // [r, g, b], tint a colour as a function of its alpha. Every fallback is
+  // the token's value today, for a stylesheet that failed to load.
   const styles = getComputedStyle(document.documentElement);
-  const token = (name, fallback) => {
-    const v = styles.getPropertyValue(name).trim();
-    return /^#[0-9a-f]{6}$/i.test(v) ? v : fallback;
-  };
+  const cssVar = (name, fallback) => styles.getPropertyValue(name).trim() || fallback;
+  const hex = (name, fallback) => { const v = cssVar(name, ""); return /^#[0-9a-f]{6}$/i.test(v) ? v : fallback; };
+  const rgb = (name, fallback) => hex(name, fallback).match(/\w\w/g).map((h) => parseInt(h, 16));
+  const tint = (name, fallback) => { const c = rgb(name, fallback).join(","); return (alpha) => `rgba(${c},${alpha})`; };
+  const EASE = cssVar("--ease", "cubic-bezier(.23, 1, .32, 1)");
+  const EASE_IN_OUT = cssVar("--ease-in-out", "cubic-bezier(.77, 0, .175, 1)");
   const debounce = (fn, ms) => { let t; return () => { clearTimeout(t); t = setTimeout(fn, ms); }; };
+  // A pause button says what it holds: pressed means paused.
+  const setPaused = (btn, playing, what) => {
+    if (!btn) return;
+    btn.setAttribute("aria-pressed", String(!playing));
+    btn.setAttribute("aria-label", `${playing ? "Pause" : "Resume"} ${what}`);
+  };
+  // Whether a block should be running: on screen (at least `threshold` of it)
+  // with the tab visible. `sync` runs whenever that answer may have changed;
+  // the returned function reads it, and its .stop() detaches the watch.
+  const whileOnScreen = (el, threshold, sync) => {
+    let seen = true;
+    const io = "IntersectionObserver" in window ? new IntersectionObserver(([en]) => { seen = en.isIntersecting; sync(); }, { threshold }) : null;
+    if (io) io.observe(el);
+    document.addEventListener("visibilitychange", sync);
+    const visible = () => seen && !document.hidden;
+    visible.stop = () => { if (io) io.disconnect(); document.removeEventListener("visibilitychange", sync); };
+    return visible;
+  };
+  // A canvas sized to its box in device pixels, capped at 2x; returns the ratio.
+  const fitCanvas = (c, W, H) => {
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    c.width = Math.round(W * dpr); c.height = Math.round(H * dpr);
+    return dpr;
+  };
   // Calls fn on the next frame after anything that can move content on screen
   // (scroll, resize, load, a jump to a hash, the tab coming back), at most once
   // a frame. Returns the throttled call itself, with a .stop() that detaches it.
@@ -74,7 +102,6 @@ const CONFIG = {
       history.replaceState(history.state, "", location.pathname + clean + location.hash);
     } catch (_) {}
 
-    const EASE = "cubic-bezier(.23, 1, .32, 1)", EASE_IO = "cubic-bezier(.77, 0, .175, 1)";
     const make = (tag, cls, text) => { const n = document.createElement(tag); n.className = cls; if (text) n.textContent = text; return n; };
     const sheet = make("div", "opener");
     sheet.setAttribute("role", "status");
@@ -119,8 +146,8 @@ const CONFIG = {
     at(1780, () => {
       sheet.classList.add("part");                       // the seam becomes the two door edges
       seam.style.opacity = "0";
-      left.animate([{ transform: "translateX(0)" }, { transform: "translateX(-100%)" }], { duration: 850, easing: EASE_IO, fill: "forwards" });
-      right.animate([{ transform: "translateX(0)" }, { transform: "translateX(100%)" }], { duration: 850, easing: EASE_IO, fill: "forwards" });
+      left.animate([{ transform: "translateX(0)" }, { transform: "translateX(-100%)" }], { duration: 850, easing: EASE_IN_OUT, fill: "forwards" });
+      right.animate([{ transform: "translateX(0)" }, { transform: "translateX(100%)" }], { duration: 850, easing: EASE_IN_OUT, fill: "forwards" });
     });
     at(1980, open);
     at(2640, finish);
@@ -387,7 +414,7 @@ const CONFIG = {
     const dots = $$(".dot", c);
     if (slides.length < 2 || !track) return;
     const DELAY = 7000;
-    let i = 0, timer = null, playing = true, focus = false, seen = true;
+    let i = 0, timer = null, playing = true, focus = false;
 
     const show = (k) => {
       i = (k + slides.length) % slides.length;
@@ -396,14 +423,11 @@ const CONFIG = {
     };
     const stop = () => { clearInterval(timer); timer = null; };
     const sync = () => {
-      const run = playing && !focus && seen && !document.hidden;
+      const run = playing && !focus && visible();
       if (run && !timer) timer = setInterval(() => show(i + 1), DELAY);
       if (!run) stop();
       track.setAttribute("aria-live", playing ? "off" : "polite");
-      if (pause) {
-        pause.setAttribute("aria-pressed", String(!playing));
-        pause.setAttribute("aria-label", playing ? "Pause rotation" : "Resume rotation");
-      }
+      setPaused(pause, playing, "rotation");
     };
     const nudge = (k) => { show(k); if (timer) { stop(); sync(); } };   // restart the clock after a manual move
 
@@ -422,10 +446,7 @@ const CONFIG = {
     });
     c.addEventListener("focusin", () => { focus = true; sync(); });
     c.addEventListener("focusout", (e) => { if (!c.contains(e.relatedTarget)) { focus = false; sync(); } });
-    document.addEventListener("visibilitychange", sync);
-    if ("IntersectionObserver" in window) {
-      new IntersectionObserver(([en]) => { seen = en.isIntersecting; sync(); }, { threshold: .25 }).observe(c);
-    }
+    const visible = whileOnScreen(c, .25, sync);
     show(0);
     sync();
   });
@@ -481,16 +502,10 @@ const CONFIG = {
     const green = { phi: 2.1, r0: .78, amp: .09, lam: 1.9, p1: 1.2, p2: 3.1, sp: .8, w: 2.2, set: 0 };
     const axis = { phi: 0, r0: 0, amp: 0, lam: 1, p1: 0, p2: 0, sp: 1, set: 0 };
     // the page's own ink and accent, so the strands match the type and the green line the links
-    const accent = token("--accent", "#3B6B44");
-    const inkRgb = token("--ink", "#14100C").match(/\w\w/g).map((h) => parseInt(h, 16)).join(",");
-    const ink = (alpha) => `rgba(${inkRgb},${alpha})`;
+    const accent = hex("--accent", "#3B6B44"), ink = tint("--ink", "#14100C");
 
     let W = 0, H = 0, dpr = 1;
-    const size = () => {
-      dpr = Math.min(2, window.devicePixelRatio || 1);
-      W = fig.clientWidth; H = fig.clientHeight;
-      c.width = Math.round(W * dpr); c.height = Math.round(H * dpr);
-    };
+    const size = () => { W = fig.clientWidth; H = fig.clientHeight; dpr = fitCanvas(c, W, H); };
 
     // a point on strand k at world x, time t: spin about the axis, yaw toward the camera, a touch of tilt, then project
     const o = [0, 0, 0];
@@ -537,16 +552,13 @@ const CONFIG = {
     };
 
     // the clock only runs while drawing, so a pause freezes the scene and resume picks it up
-    let raf = 0, acc = 0, since = 0, playing = true, seen = true;
+    let raf = 0, acc = 0, since = 0, playing = true;
     const tick = (now) => { frame(acc + (now - since) / 1000); raf = requestAnimationFrame(tick); };
     const sync = () => {
-      const run = playing && seen && !document.hidden;
+      const run = playing && visible();
       if (run && !raf) { since = performance.now(); raf = requestAnimationFrame(tick); }
       if (!run && raf) { cancelAnimationFrame(raf); raf = 0; acc += (performance.now() - since) / 1000; }
-      if (btn) {
-        btn.setAttribute("aria-pressed", String(!playing));
-        btn.setAttribute("aria-label", playing ? "Pause animation" : "Resume animation");
-      }
+      setPaused(btn, playing, "animation");
     };
     size();
     fig.classList.add("live");
@@ -554,10 +566,7 @@ const CONFIG = {
     if (btn) { btn.hidden = false; btn.addEventListener("click", () => { playing = !playing; sync(); }); }
     if ("ResizeObserver" in window) new ResizeObserver(() => { size(); frame(acc + (raf ? (performance.now() - since) / 1000 : 0)); }).observe(fig);
     else window.addEventListener("resize", size);
-    document.addEventListener("visibilitychange", sync);
-    if ("IntersectionObserver" in window) {
-      new IntersectionObserver(([en]) => { seen = en.isIntersecting; sync(); }, { threshold: .05 }).observe(fig);
-    }
+    const visible = whileOnScreen(fig, .05, sync);
     sync();
   });
 
@@ -577,6 +586,14 @@ const CONFIG = {
      whose measured values are the defaults. Four other hero pieces (ruled
      lines, waves, contours, a fluid wash) were built and set aside on Sep 15,
      2026; branch hero-backgrounds up to ca9775b has them. */
+  // A ripple from a tap: a ring travelling out at 420px/s with a soft wall
+  // 500 units wide, dying away over about two seconds. Returns its strength
+  // at distance d from the tap (0 off the ring); a piece scales it and
+  // divides by d to push along the radius.
+  const rippleAt = (rp, d) => {
+    const diff = d - rp.age * 420;
+    return diff > 60 || diff < -60 ? 0 : Math.exp(-diff * diff / 500) * Math.exp(-rp.age * 2.2);
+  };
   const fields = {
     // A grid of ink circles breathing on three slow waves: a 24px grid of 4px
     // rounds, so it reads as a grid rather than ramp.com's 12px texture. The
@@ -588,11 +605,11 @@ const CONFIG = {
     // The copy sits on quieter paper: dots thin to a third of their strength
     // under the box the statement and its buttons occupy, measured from the
     // markup, over a long soft edge.
-    dots: ({ ctx, el, ink, accent, colour }) => {
+    dots: ({ ctx, el, ink, accent, rgb }) => {
       const S = 24, DOT = 2, R = 150, F = 10, K = .018, DAMP = .8;   // pitch, radius, push radius, push force, spring, damping
       const BR = 260, BA = .4, BPUSH = 210, BF = .7, BSNAP = .8;     // drifter: radius, tint, push radius, push force vs the cursor's, snap reach as a share of the radius
-      const taupe = colour("--hair-2", "#CFC9BF").join(",");
-      const RS = 420, RW = 500, RF = 10, RD = 2.2;          // ripple: px/s, ring width, force, decay
+      const taupe = rgb("--hair-2", "#CFC9BF").join(",");
+      const RF = 10;                                        // ripple: force (its shape is rippleAt, shared with the rings)
       const A = .25, MOVED = 1.2;                           // strength on paper (John: 25%, light), px of travel that turns a dot green
       const PAD = 16, FEATHER = 220, UNDER = .35;           // the copy's margin, the run of the fade around it, the dots' strength under the copy (ramp.com: .35 to 1 over the top 45%)
       let W = 0, H = 0, n = 0, hx, hy, ox, oy, vx, vy, k, hf, sprites, sw = 0, energy = 0, hush = "", frames = 0, now = 0;
@@ -657,10 +674,10 @@ const CONFIG = {
             if (d2 < q.r * q.r && d2 > .01) { const d = Math.sqrt(d2), w = 1 - d / q.r, f = w * w * q.f * q.a / d; u += cx * f; v += cy * f; }
           }
           for (let r = 0; r < nr; r++) {
-            const rp = rips[r], cx = hx[i] + x - rp.x, cy = hy[i] + y - rp.y, d = Math.sqrt(cx * cx + cy * cy), diff = d - rp.age * RS;
-            if (diff > 60 || diff < -60 || d < .01) continue;
-            const f = Math.exp(-diff * diff / RW) * Math.exp(-rp.age * RD) * RF / d;
-            u += cx * f; v += cy * f;
+            const rp = rips[r], cx = hx[i] + x - rp.x, cy = hy[i] + y - rp.y, d = Math.sqrt(cx * cx + cy * cy);
+            if (d < .01) continue;
+            const f = rippleAt(rp, d) * RF / d;
+            if (f) { u += cx * f; v += cy * f; }
           }
           u *= DAMP; v *= DAMP; x += u; y += v;
           ox[i] = x; oy[i] = y; vx[i] = u; vy[i] = v;
@@ -714,7 +731,6 @@ const CONFIG = {
     // still, so the runner leaves it alone until the next move.
     rings: ({ ctx, el, paper }) => {
       const PITCH = 42, ALPHA = .07, SPEED = 22, SIG = 130, AMP = 22, RING = 16, LIFT = .14;   // px, tone, travel px/s, lens radius, lens lift, ripple lift, tone lift
-      const RS = 420, RW = 500, RD = 2.2;
       let W = 0, H = 0, ox = 0, oy = 0, R = 0, phase = 0, speed = 0;
       const resize = (w, h) => {
         W = w; H = h;
@@ -744,10 +760,10 @@ const CONFIG = {
             if (x < -40 || x > W + 40 || y < -40 || y > H + 40) { pen = false; continue; }   // the part of the ring off the band
             if (lift > 0) { const dx = x - p.x, dy = y - p.y, d2 = dx * dx + dy * dy; if (d2 < s2 * 6) { const f = lift * Math.exp(-d2 / s2); x += dx * f; y += dy * f; } }
             for (let k = 0; k < nr; k++) {
-              const rp = rips[k], dx = x - rp.x, dy = y - rp.y, d = Math.sqrt(dx * dx + dy * dy), diff = d - rp.age * RS;
-              if (diff > 60 || diff < -60 || d < .01) continue;
-              const f = RING * Math.exp(-diff * diff / RW) * Math.exp(-rp.age * RD) / d;
-              x += dx * f; y += dy * f;
+              const rp = rips[k], dx = x - rp.x, dy = y - rp.y, d = Math.sqrt(dx * dx + dy * dy);
+              if (d < .01) continue;
+              const f = RING * rippleAt(rp, d) / d;
+              if (f) { x += dx * f; y += dy * f; }
             }
             pen ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
             pen = true;
@@ -765,15 +781,12 @@ const CONFIG = {
     const ctx = c && c.getContext && c.getContext("2d");
     const make = fields[el.dataset.field];
     if (!ctx || !make) return;
-    const colour = (name, fallback) => token(name, fallback).match(/\w\w/g).map((h) => parseInt(h, 16));   // a token as [r, g, b]
-    const inkRgb = colour("--ink", "#14100C").join(","), paperRgb = colour("--paper", "#F6F4F0").join(",");
-    const field = make({ ctx, el, colour, ink: (alpha) => `rgba(${inkRgb},${alpha})`, paper: (alpha) => `rgba(${paperRgb},${alpha})`, accent: token("--accent", "#3B6B44") });
+    const field = make({ ctx, el, rgb, ink: tint("--ink", "#14100C"), paper: tint("--paper", "#F6F4F0"), accent: hex("--accent", "#3B6B44") });
 
     let W = 0, H = 0, dpr = 1;
     const size = () => {
-      dpr = Math.min(2, window.devicePixelRatio || 1);
       W = el.clientWidth; H = el.clientHeight;
-      c.width = Math.round(W * dpr); c.height = Math.round(H * dpr);
+      dpr = fitCanvas(c, W, H);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       field.resize(W, H, dpr);
     };
@@ -782,7 +795,7 @@ const CONFIG = {
     // and dies away within a second of it resting; the pieces scale their
     // response by it, so a resting cursor leaves the field to settle.
     const p = { x: -9999, y: -9999, vx: 0, vy: 0, active: 0, inside: false, ripples: [] };
-    let raf = 0, prev = 0, t = 0, fresh = true, playing = true, seen = true, stirring = true;
+    let raf = 0, prev = 0, t = 0, fresh = true, playing = true, stirring = true;
     const box = { top: 0, left: 0, w: 0, h: 0 };
     const measure = () => { const r = el.getBoundingClientRect(); box.top = r.top; box.left = r.left; box.w = r.width; box.h = r.height; };
     const CONTROLS = "a, button, input, select, textarea, label, [role=button], form";
@@ -827,13 +840,10 @@ const CONFIG = {
       stirring = field.frame(t, dt, p, true) !== false;
     };
     const sync = () => {
-      const run = playing && seen && !document.hidden;
+      const run = playing && visible();
       if (run && !raf) { fresh = true; raf = requestAnimationFrame(tick); }
       if (!run && raf) { cancelAnimationFrame(raf); raf = 0; }
-      if (btn) {
-        btn.setAttribute("aria-pressed", String(!playing));
-        btn.setAttribute("aria-label", playing ? "Pause animation" : "Resume animation");
-      }
+      setPaused(btn, playing, "animation");
     };
 
     size();
@@ -850,17 +860,15 @@ const CONFIG = {
     document.addEventListener("pointermove", move, { passive: true });
     document.addEventListener("pointerleave", leave);
     document.addEventListener("pointerdown", down, { passive: true });
-    document.addEventListener("visibilitychange", sync);
     const ro = "ResizeObserver" in window ? new ResizeObserver(() => { size(); stirring = true; if (!raf) field.frame(t, 0, p, true); }) : null;
     if (ro) ro.observe(el); else window.addEventListener("resize", size);
-    const io = "IntersectionObserver" in window ? new IntersectionObserver(([en]) => { seen = en.isIntersecting; sync(); }, { threshold: 0 }) : null;
-    if (io) io.observe(el);
+    const visible = whileOnScreen(el, 0, sync);
     sync();
     el.field = { stop() {
       playing = false; sync();
       document.removeEventListener("pointermove", move); document.removeEventListener("pointerleave", leave);
-      document.removeEventListener("pointerdown", down); document.removeEventListener("visibilitychange", sync);
-      if (ro) ro.disconnect(); if (io) io.disconnect();
+      document.removeEventListener("pointerdown", down);
+      if (ro) ro.disconnect(); visible.stop();
       if (btn) { btn.removeEventListener("click", toggle); btn.hidden = true; }
       ctx.clearRect(0, 0, W, H);
       el.classList.remove("live");
@@ -1076,7 +1084,7 @@ const CONFIG = {
   const initFlows = () => {
     const flowEase = CSS.supports?.("animation-timing-function", "linear(0, 1)")
       ? "linear(0, 0.0033 0.2%, 0.0263 2.27%, 0.0896 4.99%, 0.4108 12.34%, 0.5757 16.93%, 0.7011 21.7%, 0.7983 26.68%, 0.8721 31.98%, 0.9258 37.73%, 0.9637 44.19%, 0.9877 51.72%, 0.9992 60.71%, 1 100%)"
-      : "cubic-bezier(.23, 1, .32, 1)";
+      : EASE;
     $$("[data-flow]").forEach((el) => {
       const text = el.textContent.trim();
       if (reduced || !/\d/.test(text) || !("animate" in el)) return;   // "No code" has nothing to roll
