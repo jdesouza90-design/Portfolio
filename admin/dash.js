@@ -508,8 +508,11 @@
   // ---- Feed filters: each select narrows the feed to one value of its column ----
   // The options are whatever the feed has seen, commonest first, so a list is
   // never longer than the site's traffic. A chosen value stays listed until
-  // it is cleared, even after the last event with it has rolled out.
-  const filter = { kind: '', page: '', where: '', ref: '', device: '' };
+  // it is cleared, even after the last event with it has rolled out. Places
+  // work the other way round: every place is ticked to begin with and one
+  // can be left out, which is how the owner's own city is kept out of the
+  // feed; the unticked places are remembered in this browser.
+  const filter = { kind: '', page: '', ref: '', device: '' };
   const FACET = {
     kind:   (e) => e.kind,
     page:   (e) => pageName(e.page),
@@ -517,8 +520,11 @@
     ref:    (e) => refName(e.ref),
     device: (e) => e.device || 'unknown',
   };
-  const filtering = () => Object.values(filter).some(Boolean);
-  const matches = (e) => Object.keys(FACET).every((k) => !filter[k] || FACET[k](e) === filter[k]);
+  const PLACES_OUT = 'dash.places-out';
+  const excluded = new Set((() => { try { return JSON.parse(localStorage.getItem(PLACES_OUT)) || []; } catch (_) { return []; } })().filter((p) => typeof p === 'string'));
+  const remember = () => { try { localStorage.setItem(PLACES_OUT, JSON.stringify([...excluded])); } catch (_) { /* private mode: the ticks last the visit */ } };
+  const filtering = () => excluded.size > 0 || Object.values(filter).some(Boolean);
+  const matches = (e) => !excluded.has(FACET.where(e)) && Object.keys(filter).every((k) => !filter[k] || FACET[k](e) === filter[k]);
   const selects = [...document.querySelectorAll('.dash-filters select')];
   const listed = {};          // facet → the options last drawn, so an unchanged list is left alone
   function renderFilters(visits) {
@@ -533,6 +539,7 @@
       sel.replaceChildren(all, ...values.map((v) => { const o = document.createElement('option'); o.value = v; o.textContent = k === 'kind' ? KIND[v] : v; return o; }));
       sel.value = filter[k];
     }
+    renderPlaces(visits);
   }
   function refilter() {
     $('feed').replaceChildren();
@@ -549,9 +556,67 @@
   $('feed-clear').addEventListener('click', () => {
     for (const k in filter) filter[k] = '';
     for (const sel of selects) { sel.value = ''; sel.parentElement.classList.remove('is-on'); }
-    refilter();
+    tickPlaces(true);
     selects[0].focus();
   });
+
+  // ---- The places menu: a checkbox a place, commonest first; the unticked ones stay listed after they roll out ----
+  const placeWrap = $('place-filter'), placeBtn = $('place-btn'), placeMenu = $('place-menu'), placeList = $('place-list');
+  let places = [];
+  const placeOpen = () => !placeMenu.hidden;
+  const city = (p) => p.split(',')[0];
+  function labelPlaces() {
+    const out = places.filter((p) => excluded.has(p)), kept = places.length - out.length;
+    placeBtn.textContent = !out.length ? 'Everywhere'
+      : kept === 0 ? 'Nowhere'
+      : out.length === 1 ? `Everywhere but ${city(out[0])}`
+      : kept === 1 ? `${city(places.find((p) => !excluded.has(p)))} only`
+      : out.length <= kept ? `Everywhere but ${out.length} places` : `${kept} places`;
+    placeBtn.title = out.length ? `Leaving out ${out.join(', ')}` : '';
+    placeWrap.classList.toggle('is-on', out.length > 0);
+  }
+  function renderPlaces(visits) {
+    const counts = new Map(tally(visits, FACET.where));
+    const next = [...counts.keys()].concat([...excluded].filter((p) => !counts.has(p)));
+    if (next.join('\n') !== places.join('\n') && !placeOpen()) {          // rebuilt only when the list changes, never under an open menu
+      places = next;
+      const legend = placeList.firstElementChild;
+      placeList.replaceChildren(legend, ...places.map((p) => {
+        const l = document.createElement('label'); l.className = 'dash-check';
+        const i = document.createElement('input'); i.type = 'checkbox'; i.value = p; i.checked = !excluded.has(p);
+        const s = document.createElement('span'); s.className = 'dash-check-label'; s.textContent = p;
+        const c = document.createElement('span'); c.className = 'dash-count';
+        l.append(i, s, c);
+        return l;
+      }));
+      if (!places.length) { const p = document.createElement('p'); p.className = 't-small dash-menu-empty'; p.textContent = 'No places yet.'; placeList.appendChild(p); }
+    }
+    for (const l of placeList.querySelectorAll('.dash-check')) l.lastElementChild.textContent = n(counts.get(l.firstElementChild.value) || 0);   // the tallies move with every poll
+    labelPlaces();
+  }
+  function tickPlaces(on) {
+    for (const i of placeList.querySelectorAll('input')) { i.checked = on; if (on) excluded.delete(i.value); else excluded.add(i.value); }
+    if (on) excluded.clear();
+    remember();
+    refilter();
+  }
+  function showPlaces(open) {
+    placeMenu.hidden = !open;
+    placeBtn.setAttribute('aria-expanded', String(open));
+  }
+  placeBtn.addEventListener('click', () => showPlaces(!placeOpen()));
+  placeList.addEventListener('change', (e) => {
+    const i = e.target;
+    if (i.type !== 'checkbox') return;
+    if (i.checked) excluded.delete(i.value); else excluded.add(i.value);
+    remember();
+    refilter();
+  });
+  $('place-all').addEventListener('click', () => tickPlaces(true));
+  $('place-none').addEventListener('click', () => tickPlaces(false));
+  placeWrap.addEventListener('keydown', (e) => { if (e.key === 'Escape' && placeOpen()) { showPlaces(false); placeBtn.focus(); } });
+  placeWrap.addEventListener('focusout', (e) => { if (e.relatedTarget && !placeWrap.contains(e.relatedTarget)) showPlaces(false); });   // tabbed away; a click on the card's own padding keeps it
+  document.addEventListener('pointerdown', (e) => { if (placeOpen() && !placeWrap.contains(e.target)) showPlaces(false); });
 
   // ---- The feed ----
   const rows = new Map();     // event key → its row, so a time reading can land on it later
