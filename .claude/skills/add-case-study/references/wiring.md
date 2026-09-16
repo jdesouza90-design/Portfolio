@@ -166,18 +166,43 @@ next link is the page's full name with a right arrow; the previous link is a bar
 arrow with `aria-label="Previous case study"` (markup in `page-anatomy.md` §7). Today:
 
 ```
-cross-sell → verifications → refinance-offers → staking → no-code-tools → sign-in-with-ethereum → cross-sell
+cross-sell → verifications → refinance-offers → staking → no-code-tools → cross-sell
 ```
+
+(`sign-in-with-ethereum` is hidden, see below, so it is out of the ring; its own arrows
+still point at `no-code-tools` and `cross-sell`.)
 
 Inserting a page after X means three pages change: the new page's `PREV_SLUG` is X and its
 `NEXT_SLUG` is X's old next; X's next link now points to the new page; and X's old next
 gets its `cs-prev-link` pointed back at the new page. Inserting first means the new page
-sits between `sign-in-with-ethereum` and `cross-sell`: its prev is `sign-in-with-ethereum`,
-its next is `cross-sell`, and those two pages' next and prev links move to the new page.
+sits between `no-code-tools` and `cross-sell`: its prev is `no-code-tools`, its next is
+`cross-sell`, and those two pages' next and prev links move to the new page.
 The next link's text is the full project name with `&amp;` escaped. Keep the ring in the
 same order as `work.html`; `check.py` verifies both directions: the next links form a
 single ring that covers every page, and every page's prev link points back at the page
 whose next link points to it.
+
+---
+
+### Hiding a case study
+
+A page can be taken off the site without deleting anything (Sign-in with Ethereum, Sep
+2026). Four edits, all reversible:
+
+1. `<meta name="robots" content="noindex">` in the page's `<head>`, with a comment saying
+   why. `check.py` reads it as "parked": the page is still checked like the others, but is
+   left out of the ring, the index rows and the README count, and it is an error if
+   anything still links to it.
+2. Its `.case-row` on `work.html` (and `index.html`, if it had one) goes inside an HTML
+   comment where it stood, not into the bin, so the blurb and the composition survive.
+3. Close the ring over it: its previous page's next link takes its old next, and its old
+   next's `cs-prev-link` takes its previous page. Leave the hidden page's own arrows alone.
+4. The README: the structure block says it is hidden, and the "all N case studies" counts
+   drop by one.
+
+The page's ground in `styles.css`, its assets and its label in `admin/index.html` stay; the
+page still opens by URL behind the password, and `dev.mjs` stops seeding visits to it. To
+bring it back, reverse the four.
 
 ---
 
