@@ -22,7 +22,7 @@ work/sign-in-with-ethereum.html Auth0 · Sign-in with Ethereum (hidden for now: 
 styles.css                      Tokens, the ten type roles, components, case-study layout
 main.js                         CONFIG links, then one function per feature: nav, scroll reveal, tabs, carousel,
                                 walkthroughs, AI strands, fields (hero dots, contact rings), chart, number flow,
-                                swipe strips, About portrait height
+                                swipe strips, table frames, About portrait height
 admin/index.html                Activity dashboard: who is on the site, live (its own password)
 admin/dash.js                   The dashboard's script: polls the feed, builds sessions, draws the charts and the map
 middleware.js                   Vercel Edge Middleware: the two password gates, the activity log, its feed and the time-on-page beacon
@@ -389,8 +389,10 @@ The rules that shape the code:
   plot is a labelled, focusable group: left and right arrows, Home and End
   step through the months and read each one into a live card; the data table
   stays below it. A rolled stat keeps its plain text for screen readers.
-- Tables have header scopes. A table that scrolls sideways is a labelled,
-  focusable region.
+- Tables have header scopes. A table wider than its `.table-wrap` frame
+  scrolls sideways, so `main.js` (`dash.js` on the dashboard) makes the frame
+  a labelled tab stop only while it overflows, with the inputs' focus ring;
+  a `tabindex="0"` in the markup stands without the script.
 - Icons are `aria-hidden`; every image has an alt; logos used as decoration
   have an empty one. Focus rings switch to paper on dark grounds.
 - `prefers-reduced-motion` switches off every animation and smooth scrolling.

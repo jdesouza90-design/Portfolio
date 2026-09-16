@@ -645,6 +645,20 @@
     let w = $('hist').clientWidth;
     new ResizeObserver(() => { if ($('hist').clientWidth !== w) { w = $('hist').clientWidth; if (events.length) renderHist(sessions); } }).observe($('hist'));
   }
+  // The feeds are wider than a narrow window and scroll sideways, so each frame is a
+  // tab stop while it overflows, named for the reader who lands on it, and not
+  // otherwise (main.js does the same for the case-study tables). Watched as the frame
+  // or its table changes size: a details opening, rows filling in, the window.
+  if ('ResizeObserver' in window) {
+    document.querySelectorAll('.table-wrap').forEach((w) => {
+      const ro = new ResizeObserver(() => {
+        if (w.scrollWidth > w.clientWidth + 1) { w.tabIndex = 0; w.setAttribute('role', 'group'); w.setAttribute('aria-label', 'Table, scroll sideways'); }
+        else { w.removeAttribute('tabindex'); w.removeAttribute('role'); w.removeAttribute('aria-label'); }
+      });
+      ro.observe(w);
+      ro.observe(w.querySelector('table'));
+    });
+  }
 
   async function poll() {
     try {

@@ -173,8 +173,11 @@ is the accessible fallback and must carry the same numbers.
 </div>
 ```
 
-**Comparison table** (A/B test, before/after). The wrapper is a labelled, focusable region
-because it scrolls sideways on phones. The winning column carries `class="hl"`.
+**Comparison table** (A/B test, before/after). The wrapper is a labelled region that scrolls
+sideways where the table is wider than the frame (just above the 640px phone layer, which
+stacks the rows); `main.js` keeps it a tab stop only while it overflows, and the
+`tabindex="0"` in the markup stands without the script. The winning column carries
+`class="hl"`.
 ```html
 <section class="table-wrap" aria-label="A/B test results, Design A against Design B" tabindex="0">
   <table>
