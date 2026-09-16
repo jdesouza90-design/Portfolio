@@ -96,6 +96,7 @@
   --ease: cubic-bezier(.23, 1, .32, 1);
   --ease-in-out: cubic-bezier(.77, 0, .175, 1);
   --ease-soft: cubic-bezier(.33, 1, .68, 1);
+  --ease-settle: cubic-bezier(.34, 1.56, .64, 1);   /* overshoots by a tenth and settles back: the phone menu's rows, nothing else */
   --dur-press: 140ms;
   --dur-hover: 200ms;
   --dur-ui: 240ms;
@@ -379,7 +380,8 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
      Everything stays in the tree and transitions both ways. Opening: the
      sheet fades in (--dur-ui), the foot follows from --dur-press, the rows
      from --dur-hover, 60ms apart (the reveal's own stagger), each a 16px
-     rise. Closing runs in reverse order and faster: rows and foot fade
+     rise that overshoots by a hair and settles (--ease-settle). Closing
+     runs in reverse order and faster: rows and foot fade
      together without moving (--dur-press), then the sheet (--dur-ui).
      visibility waits for the last fade, so a hidden sheet takes no taps or
      focus. */
@@ -398,7 +400,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
     flex-direction: column; gap: 0; padding: var(--sp-8) var(--gutter) var(--sp-7);
   }
   .nav-links li { opacity: 0; transform: translateY(16px); transition: opacity var(--dur-press) var(--ease), transform 0s var(--dur-press); }   /* closing: fade in place, then reset the rise unseen */
-  .nav.open .nav-links li { opacity: 1; transform: none; transition: opacity var(--dur-ui) var(--ease) var(--wait), transform var(--dur-ui) var(--ease) var(--wait); }
+  .nav.open .nav-links li { opacity: 1; transform: none; transition: opacity var(--dur-ui) var(--ease) var(--wait), transform var(--dur-ui) var(--ease-settle) var(--wait); }   /* the rise settles with a small bounce */
   .nav-links li:nth-child(1) { --wait: calc(var(--dur-hover) + 0ms); }
   .nav-links li:nth-child(2) { --wait: calc(var(--dur-hover) + 60ms); }
   .nav-links li:nth-child(3) { --wait: calc(var(--dur-hover) + 120ms); }

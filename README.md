@@ -233,7 +233,10 @@ phone layer fixes what a collapse alone gets wrong:
   about its own centre. Everything stays in the tree and transitions both
   ways: opening, the sheet fades in (`--dur-ui`), the foot follows from
   `--dur-press`, the rows from `--dur-hover`, 60ms apart (the reveal's own
-  stagger), each a 16px rise; closing runs in reverse and faster, rows and
+  stagger), each a 16px rise that overshoots by about a tenth and settles
+  back (`--ease-settle`, the site's one overshoot ease; harvey.ai's rows
+  measure as a plain ease-out, the settle is what reads as a bounce);
+  closing runs in reverse and faster, rows and
   foot fading in place together (`--dur-press`) and then the sheet.
   `visibility` waits for the last fade so a hidden sheet takes no taps or
   focus. The page holds its scroll position underneath: the root's overflow
@@ -253,7 +256,8 @@ a `1fr` column widens the column to its content and the page scrolls sideways.
 Section 9 of `styles.css` and the "Scroll reveal" block of `main.js`. The
 rule of the site is that controls answer inside 200ms and nothing a user
 triggers runs past 300ms (`--dur-press` 140, `--dur-hover` 200, `--dur-ui`
-240, all on `--ease`). The one slow move is a section arriving as the reader
+240, all on `--ease`; `--ease-settle` is the one overshoot, for the phone
+menu's rows). The one slow move is a section arriving as the reader
 scrolls to it, and every page gets it the same way:
 
 - **Every block rises into place.** A block waits 48px below its position
