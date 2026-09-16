@@ -993,11 +993,11 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 .gauge .notch, .gauge .slot { stroke: var(--surface); stroke-width: 3; }
 .gauge .slot { stroke-width: 10; }
 .gauge .bar { stroke: var(--accent-ink); stroke-width: 3.5; stroke-linecap: round; }
-.gauge .needle { transform-box: view-box; transform-origin: 180px 178px; transform: rotate(84deg); animation: gauge-needle 2.4s var(--ease-in-out) both; }
+.gauge .needle { transform-box: view-box; transform-origin: 180px 178px; transform: rotate(90deg) translateX(-5px); animation: gauge-needle 2.4s var(--ease-in-out) both; }
 /* the dial is below the fold; hold it empty until its block reveals so the fill is actually seen */
 .anim [data-reveal]:not(.in) .gauge :is(.fill, .needle) { animation-play-state: paused; }
 @keyframes gauge-fill { from { stroke-dashoffset: 409; } to { stroke-dashoffset: 0; } }
-@keyframes gauge-needle { from { transform: rotate(-84deg); } to { transform: rotate(84deg); } }   /* 6° inside each end, so the head sits on the ring */
+@keyframes gauge-needle { from { transform: rotate(-90deg) translateX(5px); } to { transform: rotate(90deg) translateX(-5px); } }   /* full sweep; the 5px nudge keeps the slot flush inside the ring's flat ends */
 .gauge .lbl { position: absolute; white-space: nowrap; }
 .gauge .l0 { left: 13.9%; top: 100%; transform: translate(-50%, 8px); }
 .gauge .l3 { left: 86.1%; top: 100%; transform: translate(-50%, 8px); }
