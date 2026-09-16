@@ -505,6 +505,54 @@
         : 'No visits recorded yet. They will appear here as people arrive.';
   }
 
+  // ---- Feed filters: each select narrows the feed to one value of its column ----
+  // The options are whatever the feed has seen, commonest first, so a list is
+  // never longer than the site's traffic. A chosen value stays listed until
+  // it is cleared, even after the last event with it has rolled out.
+  const filter = { kind: '', page: '', where: '', ref: '', device: '' };
+  const FACET = {
+    kind:   (e) => e.kind,
+    page:   (e) => pageName(e.page),
+    where:  (e) => e.where || 'unknown',
+    ref:    (e) => refName(e.ref),
+    device: (e) => e.device || 'unknown',
+  };
+  const filtering = () => Object.values(filter).some(Boolean);
+  const matches = (e) => Object.keys(FACET).every((k) => !filter[k] || FACET[k](e) === filter[k]);
+  const selects = [...document.querySelectorAll('.dash-filters select')];
+  const listed = {};          // facet → the options last drawn, so an unchanged list is left alone
+  function renderFilters(visits) {
+    for (const sel of selects) {
+      const k = sel.dataset.filter;
+      const values = k === 'kind' ? Object.keys(KIND) : tally(visits, FACET[k]).map(([v]) => v);
+      if (filter[k] && !values.includes(filter[k])) values.push(filter[k]);
+      const sig = values.join('\n');
+      if (sig === listed[k] || document.activeElement === sel) continue;   // never rebuild under an open menu
+      listed[k] = sig;
+      const all = sel.firstElementChild;                                    // the "all" option comes from the markup
+      sel.replaceChildren(all, ...values.map((v) => { const o = document.createElement('option'); o.value = v; o.textContent = k === 'kind' ? KIND[v] : v; return o; }));
+      sel.value = filter[k];
+    }
+  }
+  function refilter() {
+    $('feed').replaceChildren();
+    rows.clear();
+    renderFeed([]);
+  }
+  $('feed-filters').addEventListener('change', (e) => {
+    const sel = e.target.closest('select[data-filter]');
+    if (!sel) return;
+    filter[sel.dataset.filter] = sel.value;
+    sel.parentElement.classList.toggle('is-on', sel.value !== '');
+    refilter();
+  });
+  $('feed-clear').addEventListener('click', () => {
+    for (const k in filter) filter[k] = '';
+    for (const sel of selects) { sel.value = ''; sel.parentElement.classList.remove('is-on'); }
+    refilter();
+    selects[0].focus();
+  });
+
   // ---- The feed ----
   const rows = new Map();     // event key → its row, so a time reading can land on it later
   function row(e, fresh) {
@@ -538,10 +586,12 @@
 
   function renderFeed(fresh) {
     const tb = $('feed');
-    if (!tb.children.length) {                       // first paint: everything at once
-      tb.replaceChildren(...events.filter(isVisit).slice(0, 200).map((e) => row(e, false)));
+    const visits = events.filter(isVisit);
+    const shown = (e) => isVisit(e) && matches(e);
+    if (!tb.children.length) {                       // first paint, or a new filter: everything at once
+      tb.replaceChildren(...visits.filter(matches).slice(0, 200).map((e) => row(e, false)));
     } else {
-      for (const e of [...fresh].reverse()) if (isVisit(e)) tb.prepend(row(e, true));   // newest ends up on top
+      for (const e of [...fresh].reverse()) if (shown(e)) tb.prepend(row(e, true));   // newest ends up on top
       while (tb.children.length > 200) { rows.delete(tb.lastElementChild.dataset.key); tb.lastElementChild.remove(); }
     }
     for (const e of events) {                        // readings that arrived since the row was drawn
@@ -551,6 +601,14 @@
       const td = tr.querySelector('.c-secs'), text = dur(e.secs * 1000);
       if (td.textContent !== text) td.textContent = text;
     }
+    renderFilters(visits);
+    const on = filtering();
+    if (on) {
+      const count = visits.filter(matches).length;
+      $('feed-count').textContent = `${n(count)} of ${n(visits.length)} ${count === 1 ? 'matches' : 'match'}${count > 200 ? ' · newest 200 shown' : ''}`;
+    }
+    $('feed-state').hidden = !on;
+    $('feed-empty').textContent = on ? 'Nothing matches these filters.' : 'Nothing yet. Visits appear here as people arrive.';
     $('feed-empty').hidden = tb.children.length > 0;
   }
 
