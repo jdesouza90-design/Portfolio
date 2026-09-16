@@ -19,7 +19,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <!-- A fresh unlock from the gate: hold the page until its opener is up (initUnlock in main.js). -->
 <script>if (/[?&]unlocked(?=&|$)/.test(location.search)) document.documentElement.classList.add("unlock");</script>
-<link rel="stylesheet" href="../styles.css?v=3bd06e77">
+<link rel="stylesheet" href="../styles.css?v=b954954e">
 <script defer src="/_vercel/insights/script.js"></script>
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
@@ -87,24 +87,26 @@
       <h2 class="t-title">Three components where one did everything</h2>
       <p class="t-lede">The old .Button carried seven properties multiplied together, and most of the results were never used. I set the direction and the two designers shipped Button, Icon Button and Link, with icons and fixed widths handled inside the component instead of as variants. The counts are the Figma library's own, before and after.</p>
     </header>
-    <div class="proof">
+    <div class="proof matrix" data-matrix data-total="2304" data-groups='[{"label":"Button","n":141},{"label":"Icon Button","n":120},{"label":"Link","n":60}]'>
       <div class="proof-head">
         <div><div class="t-stat" data-flow>321</div><small>variants across three components, down from 2,304 in one</small></div>
-        <span class="eyebrow">Figma library · before and after</span>
+        <span class="eyebrow matrix-legend"><span><i class="dot" aria-hidden="true"></i>Button · 141</span><span><i class="dot m2" aria-hidden="true"></i>Icon Button · 120</span><span><i class="dot m3" aria-hidden="true"></i>Link · 60</span></span>
       </div>
-      <section class="table-wrap" aria-label="The old .Button against the new system" tabindex="0">
-      <table>
-        <thead><tr><th scope="col">Metric</th><th scope="col">Old .Button</th><th scope="col" class="hl">New system</th></tr></thead>
-        <tbody>
-          <tr><th scope="row">Components</th><td data-label="Old .Button">1</td><td class="hl" data-label="New system">3: Button, Icon Button, Link</td></tr>
-          <tr><th scope="row">Variants</th><td data-label="Old .Button">2,304</td><td class="hl" data-label="New system">321</td></tr>
-          <tr><th scope="row">Properties that multiply</th><td data-label="Old .Button">7</td><td class="hl" data-label="New system">4</td></tr>
-          <tr><th scope="row">Icons</th><td data-label="Old .Button">A variant, 4× the matrix</td><td class="hl" data-label="New system">A boolean and a swap, no multiplier</td></tr>
-          <tr><th scope="row">Fixed width</th><td data-label="Old .Button">A variant, 2× the matrix</td><td class="hl" data-label="New system">Handled inside the component</td></tr>
-          <tr><th scope="row">Disabled state</th><td data-label="Old .Button">One per colour</td><td class="hl" data-label="New system">Danger, Brand and Action reuse Primary's</td></tr>
-        </tbody>
-      </table>
-      </section>
+      <div class="matrix-plot" role="img" aria-label="2,304 dots, one per variant of the old .Button, thinning to the 321 that remain: 141 Button, 120 Icon Button and 60 Link"><canvas aria-hidden="true"></canvas></div>
+      <details class="data">
+        <summary>View as a table</summary>
+        <table>
+          <thead><tr><th scope="col">Metric</th><th scope="col">Old .Button</th><th scope="col" class="hl">New system</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Components</th><td>1</td><td class="hl">3: Button, Icon Button, Link</td></tr>
+            <tr><th scope="row">Variants</th><td>2,304</td><td class="hl">321</td></tr>
+            <tr><th scope="row">Properties that multiply</th><td>7</td><td class="hl">4</td></tr>
+            <tr><th scope="row">Icons</th><td>A variant, 4× the matrix</td><td class="hl">A boolean and a swap, no multiplier</td></tr>
+            <tr><th scope="row">Fixed width</th><td>A variant, 2× the matrix</td><td class="hl">Handled inside the component</td></tr>
+            <tr><th scope="row">Disabled state</th><td>One per colour</td><td class="hl">Danger, Brand and Action reuse Primary's</td></tr>
+          </tbody>
+        </table>
+      </details>
     </div>
   </div>
 </section>
@@ -200,6 +202,6 @@
   </div>
 </section>
 </main>
-<script src="../main.js?v=8fbd6f02"></script>
+<script src="../main.js?v=c77aeddb"></script>
 </body>
 </html>
