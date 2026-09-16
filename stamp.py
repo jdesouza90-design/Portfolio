@@ -1,12 +1,19 @@
 #!/usr/bin/env python3
-"""Re-stamp styles.css / main.js / asset / icon / social-image URLs with their
-content hash. Run after editing any of them so browsers and the CDN fetch the
+"""Re-stamp styles.css / main.js / asset / icon / social-image / resume URLs with
+their content hash. Run after editing any of them so browsers and the CDN fetch the
 new file. The pages are stamped, and so is the password gate in middleware.js,
 which links the same stylesheet and favicon."""
 import re, glob, hashlib, os
 
 def h(p):
     return hashlib.md5(open(p, 'rb').read()).hexdigest()[:8]
+
+# The resume is downloaded from CONFIG in main.js rather than linked from a page, and
+# /assets/ is cached for a week: stamp it first, so main.js's own hash carries the change.
+s = open('main.js').read()
+s = re.sub(r'(resume: "/(assets/[^"?]+))(?:\?v=[a-f0-9]+)?"',
+           lambda m: '%s?v=%s"' % (m.group(1), h(m.group(2))) if os.path.exists(m.group(2)) else m.group(0), s)
+open('main.js', 'w').write(s)
 
 css_h, js_h = h('styles.css'), h('main.js')
 pages = ['index.html', 'work.html', 'admin/index.html'] + sorted(glob.glob('work/*.html'))

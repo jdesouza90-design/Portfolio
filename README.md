@@ -468,7 +468,7 @@ The rules that shape the code:
 - The three walkthrough recordings are 2.8–7.8 MB and only load when a visitor
   presses Play. They come from the deck's GIFs, so their resolution is capped;
   replace them if you still have the original screen recordings.
-- Image, stylesheet, script, icon and social-image URLs carry a `?v=` content
-  hash. After replacing any of them run `python3 stamp.py`, which restamps every
-  page and the password gate in `middleware.js`, so visitors and link
-  unfurlers stop seeing the old file.
+- Image, stylesheet, script, icon, social-image and resume URLs carry a `?v=`
+  content hash. After replacing any of them run `python3 stamp.py`, which
+  restamps every page, the resume link in `main.js` and the password gate in
+  `middleware.js`, so visitors and link unfurlers stop seeing the old file.
