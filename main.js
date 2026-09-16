@@ -3,7 +3,7 @@
 const CONFIG = {
   linkedin: "https://www.linkedin.com/in/johndesouza-/",
   email: "jdesouza90@gmail.com",
-  resume: "/assets/john-desouza-resume.pdf",  // empty hides the "Resume" links
+  resume: "/assets/john-desouza-resume.pdf?v=751c3168",  // empty hides the "Resume" links
 };
 
 /* 2. Everything else. Each feature is one function below; the list at the end
