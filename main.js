@@ -179,11 +179,11 @@ const CONFIG = {
     // While the menu is open the page holds still: the root's overflow is
     // hidden (styles.css) and, for iOS Safari, which rubber-bands the page
     // behind the sheet regardless, a touch drag is refused unless it is
-    // scrolling the sheet itself (a phone on its side). Nothing moves, so
+    // scrolling the rows themselves (a phone on its side). Nothing moves, so
     // nothing has to be put back on close.
-    const links = $(".nav-links", nav);
+    const rows = $(".nav-links ul", nav);
     const holdTouch = (e) => {
-      if (links && links.contains(e.target) && links.scrollHeight > links.clientHeight) return;
+      if (rows && rows.contains(e.target) && rows.scrollHeight > rows.clientHeight) return;
       e.preventDefault();
     };
     const setOpen = (open) => {
@@ -195,8 +195,6 @@ const CONFIG = {
       else document.removeEventListener("touchmove", holdTouch);
     };
     toggle.addEventListener("click", () => setOpen(!nav.classList.contains("open")));
-    // A tap on the scrim (the nav's own ::before, so the event lands on the nav) closes it.
-    nav.addEventListener("click", (e) => { if (e.target === nav && nav.classList.contains("open")) setOpen(false); });
     nav.addEventListener("keydown", (e) => {
       if (e.key !== "Escape" || !nav.classList.contains("open")) return;
       setOpen(false);

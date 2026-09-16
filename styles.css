@@ -374,39 +374,61 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .nav-links a:hover, .nav-links a[aria-current="page"] { color: var(--ink); }
 .nav-actions { display: flex; gap: 10px; align-items: center; }
 .nav-toggle { display: none; }
-.nav-contact { display: none; }
+.nav-foot { display: none; }
 @media (max-width: 760px) {
-  .nav .wrap { gap: 12px; position: static; }   /* the sheet and the scrim measure from the bar, not from the wrap centred inside it */
-  /* Open, the bar goes solid and the menu hangs from it as one sheet of
-     paper, no seam and no hairline; an ink scrim covers the page below so
-     nothing reads through, and a tap on it closes the menu (main.js). */
+  .nav .wrap { gap: 12px; position: static; }   /* the sheet measures from the bar, not from the wrap centred inside it */
+  /* The phone menu, after harvey.ai: open, the bar goes solid and a sheet of
+     paper fills the screen beneath it. The rows take the title role and rise
+     into place one after another once the sheet is in; the two things a
+     reader does from here, Contact and Resume, are buttons at the foot.
+     Everything stays in the tree and transitions both ways. Opening: the
+     sheet fades in (--dur-ui), the foot follows from --dur-press, the rows
+     from --dur-hover, 60ms apart (the reveal's own stagger), each a 16px
+     rise. Closing runs in reverse order and faster: rows and foot fade
+     together without moving (--dur-press), then the sheet (--dur-ui).
+     visibility waits for the last fade, so a hidden sheet takes no taps or
+     focus. */
   .nav.open { background: var(--paper); border-color: transparent; }
-  /* The sheet and the scrim stay in the tree and transition both ways, so the
-     menu closes the way it opened (a fade and a 6px lift) instead of vanishing
-     on the frame the class drops. visibility waits for the fade on the way out
-     and clears at once on the way in; hidden, neither takes taps or focus. */
-  .nav::before {
-    content: ""; position: absolute; left: 0; right: 0; top: var(--nav-h);
-    height: calc(100vh - var(--nav-h)); height: calc(100dvh - var(--nav-h));
-    background: color-mix(in srgb, var(--ink) 72%, transparent);
-    opacity: 0; visibility: hidden;
-    transition: opacity var(--dur-ui) var(--ease), visibility 0s var(--dur-ui);
-  }
-  .nav.open::before { opacity: 1; visibility: visible; transition: opacity var(--dur-ui) var(--ease), visibility 0s; }
   .nav-links {
     position: absolute; left: 0; right: 0; top: var(--nav-h);
+    height: calc(100vh - var(--nav-h)); height: calc(100dvh - var(--nav-h));
+    display: flex; flex-direction: column;
     background: var(--paper);
-    padding: 8px var(--gutter) var(--gutter);   /* 8 + a 12px row = the gutter above Work; the gutter again around Contact */
-    max-height: calc(100vh - var(--nav-h)); max-height: calc(100dvh - var(--nav-h)); overflow-y: auto; overscroll-behavior: contain;   /* a phone on its side: the sheet scrolls, the page behind stays put */
-    opacity: 0; visibility: hidden; transform: translateY(-6px);
-    transition: opacity var(--dur-ui) var(--ease), transform var(--dur-ui) var(--ease), visibility 0s var(--dur-ui);
+    opacity: 0; visibility: hidden;
+    transition: opacity var(--dur-ui) var(--ease) var(--dur-press), visibility 0s calc(var(--dur-press) + var(--dur-ui));
   }
-  .nav-links ul { flex-direction: column; gap: 0; }
-  .nav-links a { display: block; padding: 12px 0; font-size: var(--t-body); line-height: var(--lh-body); }   /* a menu row is body size */
-  .nav-links a.nav-icon { display: flex; padding: 12px 0; }
+  .nav.open .nav-links { opacity: 1; visibility: visible; transition: opacity var(--dur-ui) var(--ease), visibility 0s; }
+  .nav-links ul {
+    flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain;   /* a phone on its side: the rows scroll under the foot, the page behind stays put */
+    flex-direction: column; gap: 0; padding: var(--sp-8) var(--gutter) var(--sp-7);
+  }
+  .nav-links li { opacity: 0; transform: translateY(16px); transition: opacity var(--dur-press) var(--ease), transform 0s var(--dur-press); }   /* closing: fade in place, then reset the rise unseen */
+  .nav.open .nav-links li { opacity: 1; transform: none; transition: opacity var(--dur-ui) var(--ease) var(--wait), transform var(--dur-ui) var(--ease) var(--wait); }
+  .nav-links li:nth-child(1) { --wait: calc(var(--dur-hover) + 0ms); }
+  .nav-links li:nth-child(2) { --wait: calc(var(--dur-hover) + 60ms); }
+  .nav-links li:nth-child(3) { --wait: calc(var(--dur-hover) + 120ms); }
+  .nav-links li:nth-child(4) { --wait: calc(var(--dur-hover) + 180ms); }
+  .nav-links li:nth-child(5) { --wait: calc(var(--dur-hover) + 240ms); }
+  .nav-links li.nav-resume { display: none; }   /* Resume is a button at the foot here */
+  /* A menu row takes the title role (the phone rules are allowed to move a
+     thing between roles); ink, as every row is a place to go, not a state. */
+  .nav-links ul a, .nav-links ul a.nav-icon {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); padding: var(--sp-2) 0;
+    font-family: var(--font-display); font-weight: 400; font-size: var(--t-title); line-height: var(--lh-title); letter-spacing: var(--ls-title); color: var(--ink);
+  }
   .nav-links a.nav-icon span { display: inline; }
-  .nav-links a.nav-download { display: flex; padding: 12px 0; }
-  .nav.open .nav-links { opacity: 1; visibility: visible; transform: none; transition: opacity var(--dur-ui) var(--ease), transform var(--dur-ui) var(--ease), visibility 0s; }
+  .nav-links a.nav-icon svg { order: 1; width: 18px; height: 18px; color: var(--ink-2); }   /* the mark sits at the right edge as the row's cue, quieter than the word */
+  .nav-foot {
+    position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--sp-4);
+    padding: var(--sp-6) var(--gutter) calc(var(--gutter) + env(safe-area-inset-bottom, 0px));
+    opacity: 0; transition: opacity var(--dur-press) var(--ease);
+  }
+  .nav-foot::before {   /* rows that scroll under the foot fade out before they reach the buttons */
+    content: ""; position: absolute; left: 0; right: 0; bottom: 100%; height: var(--sp-8); pointer-events: none;
+    background: linear-gradient(to bottom, color-mix(in srgb, var(--paper) 0%, transparent), var(--paper));
+  }
+  .nav.open .nav-foot { opacity: 1; transition: opacity var(--dur-ui) var(--ease) var(--dur-press); }
+  .nav-foot .btn { justify-content: center; padding-inline: var(--sp-3); }
   /* The page holds its scroll position while the menu is open. Overflow on the
      root stops wheels and keys without moving anything (the body used to go
      position: fixed, which reset the scroll to 0 and put it back on close, and
@@ -414,15 +436,12 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
      rubber-banding the page behind the sheet, which the root rule does not. */
   html.nav-locked { overflow: hidden; }
   .nav-toggle { display: grid; margin-left: auto; }
-  /* The three bars become a cross while the menu is open: the outer two slide
-     to the middle and turn, the middle one fades. */
-  .nav-toggle path { transform-box: view-box; transform-origin: 12px 12px; transition: transform var(--dur-ui) var(--ease), opacity var(--dur-ui) var(--ease); }
-  .nav.open .nav-toggle path:nth-child(1) { transform: rotate(45deg) translateY(5px); }
-  .nav.open .nav-toggle path:nth-child(2) { opacity: 0; }
-  .nav.open .nav-toggle path:nth-child(3) { transform: rotate(-45deg) translateY(-5px); }
+  /* Two lines become a cross while the menu is open: each turns 45° about its
+     own centre as it moves to the middle. */
+  .nav-toggle path { transform-box: view-box; transform-origin: 12px 12px; transition: transform var(--dur-ui) var(--ease); }
+  .nav.open .nav-toggle path:nth-child(1) { transform: rotate(45deg) translateY(3px); }
+  .nav.open .nav-toggle path:nth-child(2) { transform: rotate(-45deg) translateY(-3px); }
   .nav-actions .btn { display: none; }
-  .nav-contact { display: block; padding-top: 12px; }
-  .nav-contact .btn { display: flex; width: 100%; justify-content: center; padding: 12px 20px; color: var(--paper); }
 }
 
 /* --------------------------------------------------------------------------
@@ -1111,7 +1130,7 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
   .btn:hover, .btn:active, .icon-btn:active, .layer-tab:active, .testimonial-controls button:active { transform: none; }
   .icon-swap svg, .btn-browse svg, .cs-next-arrow { transition: none; }
   .walk .play:active { transform: translate(-50%, -50%); }
-  .nav-links, .nav.open .nav-links, .nav::before, .nav.open::before { transition: none; }
+  .nav-links, .nav.open .nav-links, .nav-links li, .nav.open .nav-links li, .nav-foot, .nav.open .nav-foot { transition: none; }
   .nav-toggle path { transition: none; }
 }
 
