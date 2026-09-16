@@ -220,19 +220,28 @@ phone layer fixes what a collapse alone gets wrong:
 - The facts strip loses its box and tightens to label-over-value rows; the
   tab strip scrolls; the testimonial quote steps down to quote size and the
   product mark drops under the name.
-- The phone menu is one sheet of paper hanging from the bar: the bar goes
-  solid while it is open, the three bars of the button turn into a cross,
-  Contact sits full width at the bottom, and an ink scrim covers the page
-  below (a tap on it closes the menu). The sheet and the scrim measure from
-  the bar itself, not from the `.wrap` centred inside it. Both stay in the
-  tree and transition (a fade and a 6px lift, `--dur-ui`) in both directions,
-  so the menu closes the way it opened; `visibility` waits for the fade on
-  the way out so a hidden sheet takes no taps or focus. The page holds its
-  scroll position underneath: the root's overflow goes hidden while the menu
-  is open and a `touchmove` guard refuses drags that are not scrolling the
-  sheet itself (iOS Safari rubber-bands the page regardless of overflow).
-  Nothing moves, so nothing is put back on close; the body used to go
-  `position: fixed`, which reset the scroll and jumped the page.
+- The phone menu takes its shape and its choreography from harvey.ai, built
+  on the site's own tokens: open, the bar goes solid and a sheet of paper
+  fills the screen beneath it; the rows (Work, Leadership, About, LinkedIn)
+  take the title role in the serif, ink, with the LinkedIn mark at the
+  right edge as the row's cue; the two things a reader does from here,
+  Contact me and Resume, are buttons at the foot (the `.nav-foot`, hidden on
+  desktop, where Resume is a row in the bar and Contact sits in
+  `.nav-actions`). The two lines of the button turn into a cross, each
+  about its own centre. Everything stays in the tree and transitions both
+  ways: opening, the sheet fades in (`--dur-ui`), the foot follows from
+  `--dur-press`, the rows from `--dur-hover`, 60ms apart (the reveal's own
+  stagger), each a 16px rise; closing runs in reverse and faster, rows and
+  foot fading in place together (`--dur-press`) and then the sheet.
+  `visibility` waits for the last fade so a hidden sheet takes no taps or
+  focus. The page holds its scroll position underneath: the root's overflow
+  goes hidden while the menu is open and a `touchmove` guard refuses drags
+  that are not scrolling the rows themselves (iOS Safari rubber-bands the
+  page regardless of overflow); the rows scroll under a paper fade above
+  the foot on a phone held sideways. Nothing moves, so nothing is put back
+  on close; the body used to go `position: fixed`, which reset the scroll
+  and jumped the page. The sheet measures from the bar itself, not from the
+  `.wrap` centred inside it.
 
 Collapsed grids use `minmax(0, 1fr)`, never bare `1fr`: a swipe strip inside
 a `1fr` column widens the column to its content and the page scrolls sideways.
