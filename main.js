@@ -76,13 +76,13 @@ const CONFIG = {
 
     const EASE = "cubic-bezier(.23, 1, .32, 1)", EASE_IO = "cubic-bezier(.77, 0, .175, 1)";
     const make = (tag, cls, text) => { const n = document.createElement(tag); n.className = cls; if (text) n.textContent = text; return n; };
-    const sheet = make("div", "open");
+    const sheet = make("div", "opener");
     sheet.setAttribute("role", "status");
-    const left = make("div", "open-half l"), right = make("div", "open-half r"), seam = make("span", "open-seam");
-    const body = make("div", "open-body");
+    const left = make("div", "opener-half l"), right = make("div", "opener-half r"), seam = make("span", "opener-seam");
+    const body = make("div", "opener-body");
     const eyebrow = make("p", "eyebrow", "Unlocked");
     const title = make("p", "t-display", h1.textContent.trim());
-    const note = make("p", "t-small open-note", "Thanks for the password. The numbers in here aren't public, so please keep them between us.");
+    const note = make("p", "t-small opener-note", "Thanks for the password. The numbers in here aren't public, so please keep them between us.");
     body.append(eyebrow, title, note);
     sheet.append(left, right, seam, body);
     document.body.appendChild(sheet);
