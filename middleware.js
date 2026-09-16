@@ -1,8 +1,9 @@
 // Vercel Edge Middleware — the two password gates and the activity log.
 // Runs before the static files are served.
 //
-//   /work/*         the case-study password (CASE_STUDY_PASSWORD)
-//   /admin/*        the activity dashboard, its own password (ADMIN_PASSWORD)
+//   /work/*         the case-study password (CASE_STUDY_PASSWORD); the owner's
+//                   admin cookie opens them too, so /admin/deck.html can read them
+//   /admin/*        the dashboard and the deck, the owner's password (ADMIN_PASSWORD)
 //   /api/activity   the feed the dashboard polls; needs the admin cookie
 //   /api/ping       the beacon main.js sends with the time a page has been read
 //   everything else public, but every page view is recorded
@@ -85,7 +86,7 @@ function page({ path, error, unconfigured, ref, admin }) {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/styles.css?v=af17a477">
+<link rel="stylesheet" href="/styles.css?v=b3d9e80e">
 </head>
 <body>
 <main class="gate-wrap"><div class="gate">
@@ -393,6 +394,7 @@ export default async function middleware(request, context) {
     log('viewed');
     return;
   }
+  if (process.env.ADMIN_PASSWORD && readCookie(request, ADMIN_COOKIE) === await adminTokenFor(process.env.ADMIN_PASSWORD)) return;   // the owner, signed in: no gate, and no log (the owner cookie mutes it)
   // Carry an external referrer through the form so the unlock log can name it.
   const ref = refOf(request, url);
   return new Response(page({ path, ref: isExternal(ref) ? ref : '' }), { status: 401, headers });
