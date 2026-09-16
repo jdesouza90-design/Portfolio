@@ -176,20 +176,23 @@ const CONFIG = {
     window.addEventListener("scroll", onScroll, { passive: true });
     const toggle = $(".nav-toggle");
     if (!toggle) return;
-    let lockY = 0;
+    // While the menu is open the page holds still: the root's overflow is
+    // hidden (styles.css) and, for iOS Safari, which rubber-bands the page
+    // behind the sheet regardless, a touch drag is refused unless it is
+    // scrolling the sheet itself (a phone on its side). Nothing moves, so
+    // nothing has to be put back on close.
+    const links = $(".nav-links", nav);
+    const holdTouch = (e) => {
+      if (links && links.contains(e.target) && links.scrollHeight > links.clientHeight) return;
+      e.preventDefault();
+    };
     const setOpen = (open) => {
       nav.classList.toggle("open", open);
       toggle.setAttribute("aria-expanded", String(open));
       toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
-      if (open) {
-        lockY = window.scrollY;
-        document.body.style.top = `-${lockY}px`;
-        document.body.classList.add("nav-locked");
-      } else {
-        document.body.classList.remove("nav-locked");
-        document.body.style.top = "";
-        window.scrollTo(0, lockY);
-      }
+      document.documentElement.classList.toggle("nav-locked", open);
+      if (open) document.addEventListener("touchmove", holdTouch, { passive: false });
+      else document.removeEventListener("touchmove", holdTouch);
     };
     toggle.addEventListener("click", () => setOpen(!nav.classList.contains("open")));
     // A tap on the scrim (the nav's own ::before, so the event lands on the nav) closes it.
