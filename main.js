@@ -1327,6 +1327,33 @@ const CONFIG = {
     window.addEventListener("load", stops);
   };
 
+  /* ---- Table frames ----
+     A table wider than its frame scrolls sideways, so the frame gets a tab
+     stop the same way, only while it actually overflows: checked as the frame
+     or its table changes size (the viewport, a details opening, the fonts
+     arriving). Under 640px the rows stack (styles.css, section 11), nothing
+     scrolls, and the stop goes. A frame the markup names keeps its name; any
+     other is a group named for the reader who lands on it. A tabindex="0" in
+     the markup stands for a browser without the observer. */
+  const initTableWraps = () => {
+    if (!("ResizeObserver" in window)) return;
+    $$(".table-wrap").forEach((w) => {
+      const named = w.hasAttribute("aria-label") || w.hasAttribute("aria-labelledby");
+      const ro = new ResizeObserver(() => {
+        if (w.scrollWidth > w.clientWidth + 1) {
+          w.tabIndex = 0;
+          if (!named) { w.setAttribute("role", "group"); w.setAttribute("aria-label", "Table, scroll sideways"); }
+        } else {
+          w.removeAttribute("tabindex");
+          if (!named) { w.removeAttribute("role"); w.removeAttribute("aria-label"); }
+        }
+      });
+      ro.observe(w);
+      const table = $("table", w);
+      if (table) ro.observe(table);
+    });
+  };
+
   /* ---- About: the portrait stands as tall as the text beside it ----
      Its column is the text's height at the photo's own ratio, so it scales
      with the type instead of the row. CSS falls back to a fixed share of the
@@ -1383,6 +1410,6 @@ const CONFIG = {
   /* ---- Footer year ---- */
   const initYear = () => $$("[data-year]").forEach((el) => (el.textContent = new Date().getFullYear()));
 
-  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initMatrix, initConfig, initFlows, initStrips, initPortrait, initClock, initYear]
+  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initMatrix, initConfig, initFlows, initStrips, initTableWraps, initPortrait, initClock, initYear]
     .forEach((init) => { try { init(); } catch (err) { console.error(`main.js: ${init.name} failed`, err); } });
 })();

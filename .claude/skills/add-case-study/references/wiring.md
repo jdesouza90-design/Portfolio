@@ -317,5 +317,6 @@ of what works in this environment:
 
 Things that have failed before and how they were fixed: `--ink-3` text under 4.5:1 (use
 `--ink-2` or `--ink`); a `<dl>` with the icon outside the `<dt>` (keep it inside); a table
-that scrolls without a label (the `.table-wrap` region with `aria-label` and `tabindex="0"`);
+that scrolls without a label (the `.table-wrap` region with `aria-label`; `main.js` gives it a
+tab stop while it overflows, and the markup's `tabindex="0"` stands without the script);
 an image with no `alt` (every image has one, decorative ones empty).
