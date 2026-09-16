@@ -85,7 +85,7 @@ function page({ path, error, unconfigured, ref, admin }) {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/styles.css?v=02953e3e">
+<link rel="stylesheet" href="/styles.css?v=af17a477">
 </head>
 <body>
 <main class="gate-wrap"><div class="gate">
