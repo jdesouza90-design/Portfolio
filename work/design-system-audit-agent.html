@@ -19,7 +19,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <!-- A fresh unlock from the gate: hold the page until its opener is up (initUnlock in main.js). -->
 <script>if (/[?&]unlocked(?=&|$)/.test(location.search)) document.documentElement.classList.add("unlock");</script>
-<link rel="stylesheet" href="../styles.css?v=b954954e">
+<link rel="stylesheet" href="../styles.css?v=227fb04d">
 <script defer src="/_vercel/insights/script.js"></script>
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
@@ -154,6 +154,42 @@
       </div>
       <figure class="panel wide"><img decoding="async" width="1800" height="866" src="../assets/btn-sheet-after.webp?v=63fac1b2" alt="The three new components side by side: the Button sheet, the Icon Button sheet and the Link sheet, every style, state and size on one page" loading="lazy"></figure>
     </article>
+
+    <article class="row full" id="try">
+      <div class="row-copy">
+        <p class="eyebrow">Try it</p>
+        <h3 class="t-title">The same button, both ways</h3>
+        <p class="t-lede">Set a button in the old .Button and in the new Button. On the left every option is a variant, so each pick is one cell of 2,304. On the right the icons are toggles, so the same pick is one of 141.</p>
+      </div>
+      <div class="proof config" data-config>
+        <div class="config-side" data-side="old">
+          <p class="eyebrow">Old .Button · 7 variant properties</p>
+          <div class="specimen"><span class="spec s-medium" aria-hidden="true"><span>Click me</span></span></div>
+          <div class="config-form" role="group" aria-label="Old .Button options">
+            <fieldset class="config-group"><legend class="eyebrow">Style</legend><div class="chips"><label class="chip"><input class="sr-only" type="radio" name="old-style" value="solid" checked><span>Solid</span></label><label class="chip"><input class="sr-only" type="radio" name="old-style" value="ghost"><span>Ghost</span></label><label class="chip"><input class="sr-only" type="radio" name="old-style" value="borderless"><span>Borderless</span></label><label class="chip"><input class="sr-only" type="radio" name="old-style" value="link"><span>Link</span></label></div></fieldset>
+            <fieldset class="config-group"><legend class="eyebrow">Colour</legend><div class="chips"><label class="chip"><input class="sr-only" type="radio" name="old-colour" value="primary" checked><span>Primary</span></label><label class="chip"><input class="sr-only" type="radio" name="old-colour" value="neutral"><span>Neutral</span></label><label class="chip"><input class="sr-only" type="radio" name="old-colour" value="danger"><span>Danger</span></label></div></fieldset>
+            <fieldset class="config-group"><legend class="eyebrow">Size</legend><div class="chips"><label class="chip"><input class="sr-only" type="radio" name="old-size" value="small"><span>Small</span></label><label class="chip"><input class="sr-only" type="radio" name="old-size" value="medium" checked><span>Medium</span></label><label class="chip"><input class="sr-only" type="radio" name="old-size" value="large"><span>Large</span></label></div></fieldset>
+            <fieldset class="config-group"><legend class="eyebrow">Icon</legend><div class="chips"><label class="chip"><input class="sr-only" type="radio" name="old-icon" value="none" checked><span>None</span></label><label class="chip"><input class="sr-only" type="radio" name="old-icon" value="left"><span>Icon left</span></label><label class="chip"><input class="sr-only" type="radio" name="old-icon" value="right"><span>Icon right</span></label><label class="chip"><input class="sr-only" type="radio" name="old-icon" value="only"><span>Icon only</span></label></div></fieldset>
+            <fieldset class="config-group"><legend class="eyebrow">Fixed width</legend><div class="chips"><label class="chip"><input class="sr-only" type="radio" name="old-fixed" value="no" checked><span>No</span></label><label class="chip"><input class="sr-only" type="radio" name="old-fixed" value="yes"><span>Yes</span></label></div></fieldset>
+            <fieldset class="config-group"><legend class="eyebrow">State</legend><div class="chips"><label class="chip"><input class="sr-only" type="radio" name="old-state" value="default" checked><span>Default</span></label><label class="chip"><input class="sr-only" type="radio" name="old-state" value="hover"><span>Hover</span></label><label class="chip"><input class="sr-only" type="radio" name="old-state" value="active"><span>Active</span></label><label class="chip"><input class="sr-only" type="radio" name="old-state" value="disabled"><span>Disabled</span></label></div></fieldset>
+            <fieldset class="config-group"><legend class="eyebrow">Theme</legend><div class="chips"><label class="chip"><input class="sr-only" type="radio" name="old-theme" value="light" checked><span>Light</span></label><label class="chip"><input class="sr-only" type="radio" name="old-theme" value="dark"><span>Dark</span></label></div></fieldset>
+          </div>
+          <p class="t-small config-sum">One of <b>2,304</b> variants. 22 options, every one of them a variant.</p>
+        </div>
+        <div class="config-side" data-side="new">
+          <p class="eyebrow">New Button · 4 variant properties, 2 toggles</p>
+          <div class="specimen"><span class="spec s-medium" aria-hidden="true"><span>Click me</span></span></div>
+          <div class="config-form" role="group" aria-label="New Button options">
+            <fieldset class="config-group"><legend class="eyebrow">Style</legend><div class="chips"><label class="chip"><input class="sr-only" type="radio" name="new-style" value="primary" checked><span>Primary</span></label><label class="chip"><input class="sr-only" type="radio" name="new-style" value="secondary"><span>Secondary</span></label><label class="chip"><input class="sr-only" type="radio" name="new-style" value="ghost-primary"><span>Ghost primary</span></label><label class="chip"><input class="sr-only" type="radio" name="new-style" value="ghost-secondary"><span>Ghost secondary</span></label><label class="chip"><input class="sr-only" type="radio" name="new-style" value="neutral"><span>Neutral</span></label><label class="chip"><input class="sr-only" type="radio" name="new-style" value="danger"><span>Danger</span></label><label class="chip"><input class="sr-only" type="radio" name="new-style" value="brand"><span>Brand</span></label><label class="chip"><input class="sr-only" type="radio" name="new-style" value="action"><span>Action</span></label></div></fieldset>
+            <fieldset class="config-group"><legend class="eyebrow">Size</legend><div class="chips"><label class="chip"><input class="sr-only" type="radio" name="new-size" value="small"><span>Small</span></label><label class="chip"><input class="sr-only" type="radio" name="new-size" value="medium" checked><span>Medium</span></label><label class="chip"><input class="sr-only" type="radio" name="new-size" value="large"><span>Large</span></label></div></fieldset>
+            <fieldset class="config-group"><legend class="eyebrow">State</legend><div class="chips"><label class="chip"><input class="sr-only" type="radio" name="new-state" value="default" checked><span>Default</span></label><label class="chip"><input class="sr-only" type="radio" name="new-state" value="hover"><span>Hover</span></label><label class="chip"><input class="sr-only" type="radio" name="new-state" value="active"><span>Active</span></label><label class="chip"><input class="sr-only" type="radio" name="new-state" value="focused"><span>Focused</span></label><label class="chip"><input class="sr-only" type="radio" name="new-state" value="disabled"><span>Disabled</span></label></div></fieldset>
+            <fieldset class="config-group"><legend class="eyebrow">On navy</legend><div class="chips"><label class="chip"><input class="sr-only" type="radio" name="new-navy" value="no" checked><span>No</span></label><label class="chip"><input class="sr-only" type="radio" name="new-navy" value="yes"><span>Yes</span></label></div></fieldset>
+            <fieldset class="config-group"><legend class="eyebrow">Toggles · add no variants</legend><div class="chips"><label class="chip"><input class="sr-only" type="checkbox" name="new-left"><span>Left icon</span></label><label class="chip"><input class="sr-only" type="checkbox" name="new-right"><span>Right icon</span></label></div></fieldset>
+          </div>
+          <p class="t-small config-sum">One of <b>141</b> variants. 18 options and 2 toggles that add none.</p>
+        </div>
+      </div>
+    </article>
   </div>
 </section>
 
@@ -202,6 +238,6 @@
   </div>
 </section>
 </main>
-<script src="../main.js?v=9acafd3f"></script>
+<script src="../main.js?v=2891fbf1"></script>
 </body>
 </html>

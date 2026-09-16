@@ -1133,14 +1133,14 @@ const CONFIG = {
 
     const ease = (t) => 1 - Math.pow(1 - t, 3);
     // t is the time into the piece in ms; the wall sweeps in over the first
-    // 1300ms, holds, then the cut runs from 1800 to 3200
+    // second, holds, then the cut runs from 1500 to 2700
     const draw = (t) => {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const r = pitch * .3, half = pitch / 2;
-      const cut = Math.min(Math.max((t - 1800) / 1400, 0), 1), move = ease(cut);
+      const cut = Math.min(Math.max((t - 1500) / 1200, 0), 1), move = ease(cut);
       for (const d of dots) {
-        const sweep = Math.min(Math.max((t - d.x * 9) / 400, 0), 1);   // each column 9ms after the last
+        const sweep = Math.min(Math.max((t - d.x * 7) / 350, 0), 1);   // each column 7ms after the last
         if (sweep <= 0) continue;
         if (d.g < 0) {
           ctx.fillStyle = ink(WALL * sweep - (WALL - GHOST) * cut);
@@ -1154,7 +1154,7 @@ const CONFIG = {
     };
 
     let played = false, start = 0, raf = 0;
-    const END = 3500;
+    const END = 3000;
     const frame = (now) => {
       const t = now - start;
       draw(t);
@@ -1180,6 +1180,77 @@ const CONFIG = {
     } else {
       window.addEventListener("resize", debounce(relayout, 120));
     }
+  });
+
+  /* ---- Configurator: the old .Button and the new Button, live ----
+     Each side is a form of radios and checkboxes under chips; the specimen
+     above it is repainted from the form on every change. The colours are
+     Best Egg's own, taken from the variant sheets, so the specimen stands
+     in for a screenshot. Nothing here is counted: the sums under each side
+     are the file's, written in the markup. */
+  const initConfig = () => $$("[data-config]").forEach((root) => {
+    const SPARK = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.5 14.2 9.8 21.5 12l-7.3 2.2L12 21.5l-2.2-7.3L2.5 12l7.3-2.2Z"/></svg>';
+    const shade = (hexColor, k) => {   // k < 1 darkens, k > 1 lightens toward white
+      const [r, g, b] = hexColor.match(/\w\w/g).map((h) => parseInt(h, 16));
+      const f = (c) => Math.round(k < 1 ? c * k : c + (255 - c) * (k - 1));
+      return `rgb(${f(r)},${f(g)},${f(b)})`;
+    };
+    // Old .Button: colour by (colour, theme); style decides fill, outline or text
+    const OLD = {
+      light: { primary: "#2B4C7E", neutral: "#0F2138", danger: "#C42B2B", paper: "#FFFFFF", disabled: ["#E3E7EC", "#9AA3AE"] },
+      dark:  { primary: "#B8F05A", neutral: "#FFFFFF", danger: "#F27777", paper: "#0B1F3A", disabled: ["#33425A", "#8A94A3"] },
+    };
+    // New Button: one palette per style, [fill, text, border]
+    const NEW = {
+      primary: ["#2F5FA0", "#FFFFFF", "#2F5FA0"], secondary: ["#0B1F3A", "#FFFFFF", "#0B1F3A"],
+      "ghost-primary": ["transparent", "#2F5FA0", "#2F5FA0"], "ghost-secondary": ["transparent", "#0B1F3A", "#0B1F3A"],
+      neutral: ["#F4F5F7", "#0B1F3A", "#D8DCE2"], danger: ["#C42B2B", "#FFFFFF", "#C42B2B"],
+      brand: ["#C7F26B", "#0B1F3A", "#C7F26B"], action: ["#1E7A4D", "#FFFFFF", "#1E7A4D"],
+    };
+    const NEW_NAVY = { "ghost-primary": ["transparent", "#CFE0FF", "#CFE0FF"], "ghost-secondary": ["transparent", "#FFFFFF", "#FFFFFF"], neutral: ["rgba(255,255,255,.12)", "#FFFFFF", "rgba(255,255,255,.28)"], secondary: ["#FFFFFF", "#0B1F3A", "#FFFFFF"] };
+
+    root.querySelectorAll("[data-side]").forEach((side) => {
+      const form = $(".config-form", side), spec = $(".spec", side), box = $(".specimen", side);
+      if (!form || !spec || !box) return;
+      // names are prefixed by side, so the two sides' radios never share a group
+      const v = (name) => { const el = form.querySelector(`input[name="${side.dataset.side}-${name}"]:checked`); return el ? el.value : ""; };
+      const on = (name) => !!form.querySelector(`input[name="${side.dataset.side}-${name}"]:checked`);
+      const paint = () => {
+        const isOld = side.dataset.side === "old";
+        const size = v("size") || "medium", state = v("state") || "default";
+        let fill, text, border, label = "Click me", left = false, right = false, iconOnly = false, navy = false;
+        if (isOld) {
+          const theme = v("theme") === "dark" ? "dark" : "light", pal = OLD[theme], colour = pal[v("colour")] || pal.primary, style = v("style") || "solid";
+          navy = theme === "dark";
+          const icon = v("icon");
+          left = icon === "left"; right = icon === "right"; iconOnly = icon === "only";
+          if (style === "solid") { fill = colour; text = theme === "dark" ? "#0B1F3A" : "#FFFFFF"; border = colour; }
+          else if (style === "ghost") { fill = "transparent"; text = colour; border = colour; }
+          else { fill = "transparent"; text = colour; border = "transparent"; }
+          if (state === "disabled") { [fill, text] = style === "solid" ? pal.disabled : ["transparent", pal.disabled[1]]; border = style === "ghost" ? pal.disabled[0] : fill; }
+          spec.classList.toggle("fixed", v("fixed") === "yes");
+          spec.classList.toggle("st-link", style === "link");
+        } else {
+          navy = v("navy") === "yes";
+          const style = v("style") || "primary";
+          [fill, text, border] = (navy && NEW_NAVY[style]) || NEW[style] || NEW.primary;
+          left = on("left"); right = on("right");
+          if (state === "disabled") { fill = navy ? "#33425A" : "#E3E7EC"; text = navy ? "#8A94A3" : "#9AA3AE"; border = fill; }
+          spec.classList.remove("fixed", "st-link");
+        }
+        if (state === "hover" && fill !== "transparent" && !fill.startsWith("rgba")) fill = shade(fill, navy && fill !== "#FFFFFF" ? 1.08 : .9);
+        if (state === "active" && fill !== "transparent" && !fill.startsWith("rgba")) fill = shade(fill, navy && fill !== "#FFFFFF" ? 1.16 : .8);
+        spec.style.background = fill; spec.style.color = text; spec.style.borderColor = border;
+        spec.className = spec.className.replace(/\bs-\w+/g, "").trim() + ` s-${size}`;
+        spec.classList.toggle("icon-only", iconOnly);
+        spec.classList.toggle("focused", state === "focused");
+        spec.style.setProperty("--specimen-bg", navy ? "#0B1F3A" : cssVar("--paper", "#F6F4F0"));
+        spec.innerHTML = iconOnly ? SPARK : `${left ? SPARK : ""}<span>${label}</span>${right ? SPARK : ""}`;
+        box.classList.toggle("navy", navy);
+      };
+      form.addEventListener("change", paint);
+      paint();
+    });
   });
 
   /* ---- Number flow ----
@@ -1312,6 +1383,6 @@ const CONFIG = {
   /* ---- Footer year ---- */
   const initYear = () => $$("[data-year]").forEach((el) => (el.textContent = new Date().getFullYear()));
 
-  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initMatrix, initFlows, initStrips, initPortrait, initClock, initYear]
+  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initMatrix, initConfig, initFlows, initStrips, initPortrait, initClock, initYear]
     .forEach((init) => { try { init(); } catch (err) { console.error(`main.js: ${init.name} failed`, err); } });
 })();

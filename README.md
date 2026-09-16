@@ -405,6 +405,14 @@ The rules that shape the code:
   `data-annotations`; the table below it is the accessible fallback. The
   line is swept open left to right when the card scrolls in and the closing
   value lands in a pill at the right edge.
+- The audit agent page's proof is a matrix (`[data-matrix]` with `data-total`
+  and `data-groups`): one dot per variant on a canvas, the wall sweeping in
+  as the block reveals and thinning to the set that remains, one tinted
+  block per component. The comparison table sits behind "View as a table".
+  Its "Try it" row is a configurator (`[data-config]`): two labelled groups
+  of chip-styled radios and checkboxes (names prefixed by side, so the two
+  sides never share a radio group) and a specimen `main.js` repaints in Best
+  Egg's own colours, the way a screenshot would show them.
 - A headline stat with `data-flow` rolls in like an odometer: main.js turns
   each digit into a column of 0 to 9 behind a soft mask; signs, units and
   words stand still. Write the stat as plain text and the script does the
