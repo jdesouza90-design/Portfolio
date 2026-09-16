@@ -313,7 +313,7 @@ Play. The note says what it is and, if it is over 3 MB, roughly how big.
     <img decoding="async" width="932" height="720" src="../assets/staking-walkthrough-poster.jpg" data-anim="../assets/staking-walkthrough.webp" alt="Walkthrough of the Chainlink Staking early-access flow" loading="lazy">
     <button class="btn btn-sm play" type="button" aria-pressed="false"><svg viewBox="0 0 12 14" fill="currentColor" aria-hidden="true"><path d="M11.2 6.13 1.6.24A1 1 0 0 0 .1 1.1v11.8a1 1 0 0 0 1.5.86l9.6-5.9a1 1 0 0 0 0-1.72Z"/></svg> <span>Play walkthrough</span></button>
   </div>
-  <p class="walk-note">Screen recording of the v0.1 early-access flow.</p>
+  <p class="walk-note t-small">Screen recording of the v0.1 early-access flow.</p>
 </div>
 ```
 

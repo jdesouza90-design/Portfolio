@@ -10,7 +10,8 @@ Live: https://john-desouza.com
 
 ```
 index.html                      Home: hero, selected work, how I lead, how I track design, about, contact
-work.html                       Work index: all five case studies
+work.html                       Work index: all six case studies
+work/design-system-audit-agent.html  Best Egg · Design system audit agent
 work/cross-sell.html            Best Egg · Cross-Sell (Vehicle Equity & Home Secured Loans)
 work/verifications.html         Best Egg · Verifications
 work/refinance-offers.html      Best Egg · Refinance offers on native mobile
@@ -50,7 +51,7 @@ before any file is served. The home page and the work index stay public.
   Vercel → Project → Settings → Environment Variables. It is deliberately not
   stored in this repo.
 - A correct password sets a cookie scoped to `/work` that lasts 30 days, so a
-  visitor unlocks all five case studies once.
+  visitor unlocks all six case studies once.
 - Changing the password invalidates every existing cookie, because the cookie
   value is derived from the password.
 - If the variable is missing the gate fails closed and says so.
@@ -185,7 +186,7 @@ three rhythm tokens: `--section` between sections, `--row` between rows,
 
 ## Case study skeleton
 
-All five case studies are the same document, in this order:
+All six case studies are the same document, in this order:
 
 1. **Hero**: a breadcrumb trail (Home / Work / this study, the current page
    in plain ink and not a link) and then the eyebrow, title and one-sentence
