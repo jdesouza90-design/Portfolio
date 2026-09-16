@@ -1309,9 +1309,11 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 
 /* --------------------------------------------------------------------------
    12. Activity dashboard (admin/)
-   The owner's view of who is on the site: a stat strip, three tallies and a
-   live feed the page polls every few seconds. Built from the case-study
-   parts (facts, card, table) so it reads as one more page of the site.
+   The owner's view of who is on the site: a stat strip, one period control,
+   a visits chart and a session-length histogram, a map beside the where-from
+   tally, three more tallies, a table of sessions and a live feed the page
+   polls every few seconds. Built from the case-study parts (facts, card,
+   chart, table) so it reads as one more page of the site.
    -------------------------------------------------------------------------- */
 .dash-nav { border-color: var(--hair); }
 .dash-nav-actions { margin-left: auto; display: flex; align-items: center; gap: 20px; }
@@ -1325,15 +1327,47 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 .dash-sub { color: var(--ink-2); max-width: 60ch; }
 .dash { padding-bottom: var(--section); }
 .dash-notice { margin-bottom: var(--sp-6); border-color: var(--accent); color: var(--ink-2); }
-.dash-facts { margin-top: 0; }
+.dash-facts { margin-top: 0; grid-template-columns: repeat(5, minmax(0, 1fr)); }
 
-/* The map: Leaflet on CARTO's light tiles, its chrome restyled to the tokens.
+/* The period: one row of tabs, and everything under it follows. */
+.dash-range { margin-top: var(--row); }
+.dash-range .layer-tab[aria-pressed="true"] { color: var(--ink); }
+
+.dash-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-5); margin-top: var(--sp-5); }
+.dash-grid-wide { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+.dash-card .eyebrow { margin-bottom: var(--sp-4); }
+.dash-card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px 20px; flex-wrap: wrap; }
+.dash-legend { display: inline-flex; gap: 18px; color: var(--ink-3); }
+.dash-legend .chart-legend { gap: 7px; }
+.dot-views { background: var(--ink-3) !important; width: 14px !important; height: 2px !important; border-radius: 2px !important; }
+.dash-card details.data { margin-top: var(--sp-4); }
+.dash-card .table-wrap { margin-top: var(--sp-3); }
+.dash-card .dash-data { min-width: 0; }
+.dash-card .dash-data th, .dash-card .dash-data td { padding: 9px 12px; font-size: var(--t-small); line-height: var(--lh-small); }
+
+/* The visits chart: the case-study chart's parts at a dashboard's height,
+   visitors in the accent over a soft area, views as a thinner grey line
+   behind them. Both are read from the same marker. */
+.dash-chart-shell { height: 260px; }
+.dash-chart .line-views { stroke: var(--ink-3); stroke-width: 1.5; }
+.dash-chart .tooltip { width: 200px; }
+
+/* Session lengths: a column per band, the count on each cap. */
+.dash-hist { height: 200px; }
+.dash-hist svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.dash-hist .col { fill: var(--accent); transition: fill var(--dur-hover); }
+.dash-hist g:hover .col { fill: var(--accent-2); }
+.dash-hist .cap { font-size: 12px; fill: var(--ink-2); font-variant-numeric: tabular-nums; }
+.dash-hist .axis { font-size: 12px; fill: var(--ink-3); }
+#hist-note { margin-top: var(--sp-3); }
+
+/* The map: Leaflet on Esri's light tiles, its chrome restyled to the tokens.
    Dots are the accent green, sized by visits; the newest arrival pulses. */
-.dash-map-card { margin-top: var(--row); padding: 0; overflow: hidden; }
-.dash-map-head { display: flex; align-items: center; gap: 12px 20px; flex-wrap: wrap; padding: 22px 28px 18px; }
+.dash-map-card { padding: 0; overflow: hidden; display: flex; flex-direction: column; }
+.dash-map-head { display: flex; align-items: center; gap: 10px 18px; flex-wrap: wrap; padding: 22px 28px 16px; }
 .dash-map-head .eyebrow { margin: 0; }
-.dash-map-head .t-small { flex: 1; min-width: 24ch; margin: 0; color: var(--ink-3); }
-.dash-map { height: clamp(320px, 46vw, 540px); background: var(--surface-2); isolation: isolate; }
+.dash-map-head .t-small { flex: 1; min-width: 20ch; margin: 0; color: var(--ink-3); }
+.dash-map { height: clamp(260px, 30vw, 360px); background: var(--surface-2); isolation: isolate; }
 .dash-map-empty { padding: 0 28px 22px; }
 .leaflet-container { font-family: var(--font-body); font-size: var(--t-small); background: var(--surface-2); }
 .leaflet-tile-pane, .leaflet-labels-pane { filter: sepia(.10); }   /* tiles pulled toward the paper */
@@ -1352,8 +1386,6 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 .visit-dot.is-new { animation: dot-pulse 2.2s var(--ease-soft) infinite; }
 @keyframes dot-pulse { from { stroke-width: 2; stroke-opacity: .9; } to { stroke-width: 18; stroke-opacity: 0; } }
 
-.dash-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-5); margin-top: var(--row); }
-.dash-card .eyebrow { margin-bottom: var(--sp-4); }
 .dash-list { list-style: none; margin: 0; padding: 0; }
 .dash-list li { position: relative; display: flex; align-items: baseline; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--hair); font-size: var(--t-small); line-height: var(--lh-small); }
 .dash-list li:last-child { border-bottom: 0; }
@@ -1365,27 +1397,37 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 .dash-feed { margin-top: var(--row); }
 .dash-feed-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: var(--sp-5); }
 .dash-feed-head .t-small { margin: 0; color: var(--ink-3); }
-.dash-table { min-width: 880px; }
+.dash-table { min-width: 960px; }
+.dash-sessions { min-width: 880px; }
 .dash-table td { font-size: var(--t-small); line-height: var(--lh-small); padding: 12px 16px; }
-.dash-table .c-time, .dash-table .c-where { white-space: nowrap; }
+.dash-table .c-time, .dash-table .c-where, .dash-table .c-secs, .dash-table .c-length { white-space: nowrap; }
 .dash-table .c-time { color: var(--ink-2); }
+.dash-table .c-secs, .dash-table .c-length { font-variant-numeric: tabular-nums; }
+.dash-table .c-route { max-width: 34ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .dash-table .c-visitor { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: var(--t-micro); color: var(--ink-3); }
-.dash-kind { display: inline-block; padding: 3px 9px; border-radius: 20px; background: var(--surface-2); font-size: var(--t-micro); line-height: var(--lh-micro); letter-spacing: var(--ls-micro); text-transform: uppercase; white-space: nowrap; }
-tr[data-kind="unlocked"] .dash-kind { background: var(--glow); color: var(--accent-ink); }
+.dash-kind, .dash-now { display: inline-block; padding: 3px 9px; border-radius: 20px; background: var(--surface-2); font-size: var(--t-micro); line-height: var(--lh-micro); letter-spacing: var(--ls-micro); text-transform: uppercase; white-space: nowrap; }
+.dash-now, tr[data-kind="unlocked"] .dash-kind { background: var(--glow); color: var(--accent-ink); }
+.c-time .dash-now, .c-route .dash-kind { margin-left: 8px; }
 tr[data-kind="wrong password"] .dash-kind { background: color-mix(in srgb, var(--danger) 10%, var(--surface)); color: var(--danger); }
 .dash-table tr.is-new { animation: dash-new 4s linear both; }   /* an arrival glows green, then settles */
 @keyframes dash-new { from { background: var(--glow); } to { background: transparent; } }
 
-@media (max-width: 900px) { .dash-grid { grid-template-columns: 1fr; } }
-@media (max-width: 640px) { .dash-map-head { padding: 18px 20px 14px; } .dash-map { height: 340px; } .dash-map-empty { padding: 0 20px 18px; } }
+@media (max-width: 1000px) { .dash-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 900px) { .dash-grid, .dash-grid-wide { grid-template-columns: 1fr; } }
+@media (max-width: 640px) {
+  .dash-facts { grid-template-columns: 1fr; }
+  .dash-chart-shell { height: 220px; }
+  .dash-hist { height: 180px; }
+  .dash-map-head { padding: 18px 20px 14px; } .dash-map { height: 300px; } .dash-map-empty { padding: 0 20px 18px; }
+}
 @media (max-width: 640px) {   /* the feed stacks (section 11): time and kind share the first line, the page is the card's heading */
   .dash-table tbody tr { padding: 16px; }
   .dash-table .c-time, .dash-table .c-kind { display: inline; }
   .dash-table .c-kind { margin-left: 10px; }
-  .dash-table .c-page { margin-top: var(--sp-2); font-size: var(--t-body); line-height: var(--lh-body); }
+  .dash-table .c-page, .dash-table .c-route { margin-top: var(--sp-2); font-size: var(--t-body); line-height: var(--lh-body); max-width: none; white-space: normal; }
 }
 @media (max-width: 560px) { .dash-nav-actions { gap: 12px; } .dash-live { font-size: var(--t-micro); } }
 @media (prefers-reduced-motion: reduce) {
   .dash-live[data-state="on"] .dash-live-dot, .dash-table tr.is-new, .visit-dot.is-new { animation: none; }
-  .dash-bar, .visit-dot { transition: none; }
+  .dash-bar, .visit-dot, .dash-hist .col { transition: none; }
 }
