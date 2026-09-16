@@ -223,7 +223,15 @@ phone layer fixes what a collapse alone gets wrong:
   solid while it is open, the three bars of the button turn into a cross,
   Contact sits full width at the bottom, and an ink scrim covers the page
   below (a tap on it closes the menu). The sheet and the scrim measure from
-  the bar itself, not from the `.wrap` centred inside it.
+  the bar itself, not from the `.wrap` centred inside it. Both stay in the
+  tree and transition (a fade and a 6px lift, `--dur-ui`) in both directions,
+  so the menu closes the way it opened; `visibility` waits for the fade on
+  the way out so a hidden sheet takes no taps or focus. The page holds its
+  scroll position underneath: the root's overflow goes hidden while the menu
+  is open and a `touchmove` guard refuses drags that are not scrolling the
+  sheet itself (iOS Safari rubber-bands the page regardless of overflow).
+  Nothing moves, so nothing is put back on close; the body used to go
+  `position: fixed`, which reset the scroll and jumped the page.
 
 Collapsed grids use `minmax(0, 1fr)`, never bare `1fr`: a swipe strip inside
 a `1fr` column widens the column to its content and the page scrolls sideways.

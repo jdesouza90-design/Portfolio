@@ -376,29 +376,38 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
      paper, no seam and no hairline; an ink scrim covers the page below so
      nothing reads through, and a tap on it closes the menu (main.js). */
   .nav.open { background: var(--paper); border-color: transparent; }
-  .nav.open::before {
+  /* The sheet and the scrim stay in the tree and transition both ways, so the
+     menu closes the way it opened (a fade and a 6px lift) instead of vanishing
+     on the frame the class drops. visibility waits for the fade on the way out
+     and clears at once on the way in; hidden, neither takes taps or focus. */
+  .nav::before {
     content: ""; position: absolute; left: 0; right: 0; top: var(--nav-h);
     height: calc(100vh - var(--nav-h)); height: calc(100dvh - var(--nav-h));
     background: color-mix(in srgb, var(--ink) 72%, transparent);
-    animation: scrim-in var(--dur-ui) var(--ease) both;
+    opacity: 0; visibility: hidden;
+    transition: opacity var(--dur-ui) var(--ease), visibility 0s var(--dur-ui);
   }
-  @keyframes scrim-in { from { opacity: 0; } }
+  .nav.open::before { opacity: 1; visibility: visible; transition: opacity var(--dur-ui) var(--ease), visibility 0s; }
   .nav-links {
-    display: none; position: absolute; left: 0; right: 0; top: var(--nav-h);
+    position: absolute; left: 0; right: 0; top: var(--nav-h);
     background: var(--paper);
     padding: 8px var(--gutter) var(--gutter);   /* 8 + a 12px row = the gutter above Work; the gutter again around Contact */
-    max-height: calc(100vh - var(--nav-h)); max-height: calc(100dvh - var(--nav-h)); overflow-y: auto;   /* a phone on its side: the sheet scrolls, the page behind stays locked */
+    max-height: calc(100vh - var(--nav-h)); max-height: calc(100dvh - var(--nav-h)); overflow-y: auto; overscroll-behavior: contain;   /* a phone on its side: the sheet scrolls, the page behind stays put */
+    opacity: 0; visibility: hidden; transform: translateY(-6px);
+    transition: opacity var(--dur-ui) var(--ease), transform var(--dur-ui) var(--ease), visibility 0s var(--dur-ui);
   }
   .nav-links ul { flex-direction: column; gap: 0; }
   .nav-links a { display: block; padding: 12px 0; font-size: var(--t-body); line-height: var(--lh-body); }   /* a menu row is body size */
   .nav-links a.nav-icon { display: flex; padding: 12px 0; }
   .nav-links a.nav-icon span { display: inline; }
   .nav-links a.nav-download { display: flex; padding: 12px 0; }
-  .nav.open .nav-links { display: block; animation: menu-in var(--dur-ui) var(--ease) both; }
-  @keyframes menu-in { from { opacity: 0; transform: translateY(-6px); } }
-  /* iOS Safari lets the page rubber-band behind the fixed menu, flashing a gap
-     of page content at its edge; freezing body scroll while open stops it. */
-  body.nav-locked { position: fixed; left: 0; right: 0; overflow: hidden; }
+  .nav.open .nav-links { opacity: 1; visibility: visible; transform: none; transition: opacity var(--dur-ui) var(--ease), transform var(--dur-ui) var(--ease), visibility 0s; }
+  /* The page holds its scroll position while the menu is open. Overflow on the
+     root stops wheels and keys without moving anything (the body used to go
+     position: fixed, which reset the scroll to 0 and put it back on close, and
+     the page jumped); a touchmove guard in main.js stops iOS Safari
+     rubber-banding the page behind the sheet, which the root rule does not. */
+  html.nav-locked { overflow: hidden; }
   .nav-toggle { display: grid; margin-left: auto; }
   /* The three bars become a cross while the menu is open: the outer two slide
      to the middle and turn, the middle one fades. */
@@ -1096,7 +1105,7 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
   .btn:hover, .btn:active, .icon-btn:active, .layer-tab:active, .testimonial-controls button:active { transform: none; }
   .icon-swap svg, .btn-browse svg, .cs-next-arrow { transition: none; }
   .walk .play:active { transform: translate(-50%, -50%); }
-  .nav.open .nav-links, .nav.open::before { animation: none; }
+  .nav-links, .nav.open .nav-links, .nav::before, .nav.open::before { transition: none; }
   .nav-toggle path { transition: none; }
 }
 
