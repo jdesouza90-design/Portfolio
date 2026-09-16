@@ -1133,14 +1133,14 @@ const CONFIG = {
 
     const ease = (t) => 1 - Math.pow(1 - t, 3);
     // t is the time into the piece in ms; the wall sweeps in over the first
-    // 900ms, the cut runs from 1200 to 2100
+    // 1300ms, holds, then the cut runs from 1800 to 3200
     const draw = (t) => {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const r = pitch * .3, half = pitch / 2;
-      const cut = Math.min(Math.max((t - 1200) / 900, 0), 1), move = ease(cut);
+      const cut = Math.min(Math.max((t - 1800) / 1400, 0), 1), move = ease(cut);
       for (const d of dots) {
-        const sweep = Math.min(Math.max((t - d.x * 6) / 300, 0), 1);   // each column 6ms after the last
+        const sweep = Math.min(Math.max((t - d.x * 9) / 400, 0), 1);   // each column 9ms after the last
         if (sweep <= 0) continue;
         if (d.g < 0) {
           ctx.fillStyle = ink(WALL * sweep - (WALL - GHOST) * cut);
@@ -1154,7 +1154,7 @@ const CONFIG = {
     };
 
     let played = false, start = 0, raf = 0;
-    const END = 2400;
+    const END = 3500;
     const frame = (now) => {
       const t = now - start;
       draw(t);
