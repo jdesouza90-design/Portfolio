@@ -223,15 +223,21 @@ phone layer fixes what a collapse alone gets wrong:
 - The phone menu takes its shape and its choreography from harvey.ai, built
   on the site's own tokens: open, the bar goes solid and a sheet of paper
   fills the screen beneath it; the rows (Work, Leadership, About, LinkedIn)
-  take the title role in the serif, ink, with the LinkedIn mark at the
-  right edge as the row's cue; the two things a reader does from here,
-  Contact me and Resume, are buttons at the foot (the `.nav-foot`, hidden on
-  desktop, where Resume is a row in the bar and Contact sits in
-  `.nav-actions`). The two lines of the button turn into a cross, each
+  take the title role in the serif, ink, words alone, at a pitch of twice
+  the type size; the two things a reader does from here, Contact me and
+  Resume, are buttons at the foot (the `.nav-foot`, hidden on desktop,
+  where Resume is a row in the bar and Contact sits in `.nav-actions`).
+  The role lists in section 2 and the bar rules match `.nav-links ul a`,
+  the rows, so the foot's buttons stay plain `.btn`s (a bare `.nav-links a`
+  would set their colour to `--ink-2` and dim the labels). The two lines
+  of the button turn into a cross, each
   about its own centre. Everything stays in the tree and transitions both
   ways: opening, the sheet fades in (`--dur-ui`), the foot follows from
   `--dur-press`, the rows from `--dur-hover`, 60ms apart (the reveal's own
-  stagger), each a 16px rise; closing runs in reverse and faster, rows and
+  stagger), each a 16px rise that overshoots by about a tenth and settles
+  back (`--ease-settle`, the site's one overshoot ease; harvey.ai's rows
+  measure as a plain ease-out, the settle is what reads as a bounce);
+  closing runs in reverse and faster, rows and
   foot fading in place together (`--dur-press`) and then the sheet.
   `visibility` waits for the last fade so a hidden sheet takes no taps or
   focus. The page holds its scroll position underneath: the root's overflow
@@ -251,7 +257,8 @@ a `1fr` column widens the column to its content and the page scrolls sideways.
 Section 9 of `styles.css` and the "Scroll reveal" block of `main.js`. The
 rule of the site is that controls answer inside 200ms and nothing a user
 triggers runs past 300ms (`--dur-press` 140, `--dur-hover` 200, `--dur-ui`
-240, all on `--ease`). The one slow move is a section arriving as the reader
+240, all on `--ease`; `--ease-settle` is the one overshoot, for the phone
+menu's rows). The one slow move is a section arriving as the reader
 scrolls to it, and every page gets it the same way:
 
 - **Every block rises into place.** A block waits 48px below its position
