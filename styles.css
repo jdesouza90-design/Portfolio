@@ -341,8 +341,11 @@ main, .nav { position: relative; z-index: 1; }
   .col .t-subhead::before { display: none; }
 }
 
-/* Tables */
+/* Tables. A frame whose table is wider than it scrolls sideways, and main.js
+   (dash.js on the dashboard) makes it a tab stop only while it does; the ring
+   is the one the inputs wear. */
 .table-wrap { overflow-x: auto; border: 1px solid var(--hair); border-radius: 16px; background: var(--surface); }
+.table-wrap:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 table { border-collapse: collapse; width: 100%; min-width: 640px; }
 th, td { text-align: left; padding: 15px 16px; border-bottom: 1px solid var(--hair); vertical-align: top; }
 thead th { background: var(--surface-2); white-space: nowrap; }
