@@ -10,13 +10,14 @@ Live: https://john-desouza.com
 
 ```
 index.html                      Home: hero, selected work, how I lead, how I track design, about, contact
-work.html                       Work index: all six case studies
+work.html                       Work index: all five case studies
 work/cross-sell.html            Best Egg · Cross-Sell (Vehicle Equity & Home Secured Loans)
 work/verifications.html         Best Egg · Verifications
 work/refinance-offers.html      Best Egg · Refinance offers on native mobile
 work/staking.html               Chainlink Labs · Staking v0.1
 work/no-code-tools.html         Auth0 · No-code tools
-work/sign-in-with-ethereum.html Auth0 · Sign-in with Ethereum
+work/sign-in-with-ethereum.html Auth0 · Sign-in with Ethereum (hidden for now: no index row, out of the
+                                ring, noindex; still opens by URL; its work.html row is parked in a comment)
 styles.css                      Tokens, the ten type roles, components, case-study layout
 main.js                         CONFIG links, then one function per feature: nav, scroll reveal, tabs, carousel,
                                 walkthroughs, AI strands, fields (hero dots, contact rings), chart, number flow,
@@ -49,7 +50,7 @@ before any file is served. The home page and the work index stay public.
   Vercel → Project → Settings → Environment Variables. It is deliberately not
   stored in this repo.
 - A correct password sets a cookie scoped to `/work` that lasts 30 days, so a
-  visitor unlocks all six case studies once.
+  visitor unlocks all five case studies once.
 - Changing the password invalidates every existing cookie, because the cookie
   value is derived from the password.
 - If the variable is missing the gate fails closed and says so.
@@ -171,7 +172,7 @@ three rhythm tokens: `--section` between sections, `--row` between rows,
 
 ## Case study skeleton
 
-All six case studies are the same document, in this order:
+All five case studies are the same document, in this order:
 
 1. **Hero**: a breadcrumb trail (Home / Work / this study, the current page
    in plain ink and not a link) and then the eyebrow, title and one-sentence
@@ -226,15 +227,21 @@ phone layer fixes what a collapse alone gets wrong:
 - The phone menu takes its shape and its choreography from harvey.ai, built
   on the site's own tokens: open, the bar goes solid and a sheet of paper
   fills the screen beneath it; the rows (Work, Leadership, About, LinkedIn)
-  take the title role in the serif, ink, with the LinkedIn mark at the
-  right edge as the row's cue; the two things a reader does from here,
-  Contact me and Resume, are buttons at the foot (the `.nav-foot`, hidden on
-  desktop, where Resume is a row in the bar and Contact sits in
-  `.nav-actions`). The two lines of the button turn into a cross, each
+  take the title role in the serif, ink, words alone, at a pitch of twice
+  the type size; the two things a reader does from here, Contact me and
+  Resume, are buttons at the foot (the `.nav-foot`, hidden on desktop,
+  where Resume is a row in the bar and Contact sits in `.nav-actions`).
+  The role lists in section 2 and the bar rules match `.nav-links ul a`,
+  the rows, so the foot's buttons stay plain `.btn`s (a bare `.nav-links a`
+  would set their colour to `--ink-2` and dim the labels). The two lines
+  of the button turn into a cross, each
   about its own centre. Everything stays in the tree and transitions both
   ways: opening, the sheet fades in (`--dur-ui`), the foot follows from
   `--dur-press`, the rows from `--dur-hover`, 60ms apart (the reveal's own
-  stagger), each a 16px rise; closing runs in reverse and faster, rows and
+  stagger), each a 16px rise that overshoots by about a tenth and settles
+  back (`--ease-settle`, the site's one overshoot ease; harvey.ai's rows
+  measure as a plain ease-out, the settle is what reads as a bounce);
+  closing runs in reverse and faster, rows and
   foot fading in place together (`--dur-press`) and then the sheet.
   `visibility` waits for the last fade so a hidden sheet takes no taps or
   focus. The page holds its scroll position underneath: the root's overflow
@@ -254,7 +261,8 @@ a `1fr` column widens the column to its content and the page scrolls sideways.
 Section 9 of `styles.css` and the "Scroll reveal" block of `main.js`. The
 rule of the site is that controls answer inside 200ms and nothing a user
 triggers runs past 300ms (`--dur-press` 140, `--dur-hover` 200, `--dur-ui`
-240, all on `--ease`). The one slow move is a section arriving as the reader
+240, all on `--ease`; `--ease-settle` is the one overshoot, for the phone
+menu's rows). The one slow move is a section arriving as the reader
 scrolls to it, and every page gets it the same way:
 
 - **Every block rises into place.** A block waits 48px below its position
@@ -433,7 +441,8 @@ The rules that shape the code:
   it runs off the bottom; `.emerge` sets a whole screen large, coming out of
   a bottom corner of the ground (`--x`/`--y`/`--w` per row set beside the
   rule; `.right` shows the screen's top-right corner instead). Sign-in with
-  Ethereum keeps the plain `.wide` ground. Where a screen runs off the ground
+  Ethereum (its row is parked in a comment while the page is hidden) keeps
+  the plain `.wide` ground. Where a screen runs off the ground
   (`.emerge`, `.bleed`) the ground fades it out over the last stretch before
   each edge (`--fade`, 40 to 80 px): the `::after` overlay paints the ground
   itself, masked to a band along the edges, so the screen dissolves into it

@@ -11,6 +11,11 @@ arrow that doesn't point back, a page with no ground, an image with no size, an 
 isn't there, nav drift between pages, a stale count in the README, a placeholder left in.
 Then it runs html-validate on every page unless --no-validate is given. Exit status is 1 if
 anything is an error.
+
+A case study can be hidden without being deleted: a <meta name="robots" content="noindex">
+in its <head> parks it. A parked page is still checked like the others (ground, images,
+assets, nav, head), but it is left out of the work index, the next-case-study ring and the
+README count, and it is an error if anything on the site still links to it.
 """
 import glob
 import os
@@ -54,6 +59,20 @@ css = read("styles.css")
 readme = read("README.md") if os.path.exists("README.md") else ""
 template = read(os.path.join(SKILL, "assets", "case-study.template.html"))
 
+NOINDEX = '<meta name="robots" content="noindex">'
+hidden = {os.path.splitext(os.path.basename(p))[0] for p, s in html.items()
+          if NOINDEX in (block(s, "<head>", "</head>") or "")}
+shown = [slug for slug in slugs if slug not in hidden]
+
+
+def strip_comments(s):
+    return re.sub(r"<!--.*?-->", "", s, flags=re.S)
+
+
+# The indexes without their comments: a hidden page's row is parked in one, and must not count.
+work_rows = strip_comments(work_html)
+index_rows = strip_comments(index_html)
+
 # ---- Conflict markers and leftover placeholders -------------------------------------
 for p, s in list(html.items()) + [("work.html", work_html), ("index.html", index_html), ("styles.css", css)]:
     if re.search(r"^(<<<<<<<|=======|>>>>>>>) ", s, re.M):
@@ -73,7 +92,7 @@ for p, s in html.items():
         cls = m.group(1)
         if not re.search(r"^\." + re.escape(cls) + r"\s*\{", css, re.M):
             err(f"{p}: no .{cls} ground rule in styles.css")
-        if f'class="case-row {cls}"' not in work_html:
+        if slug not in hidden and f'class="case-row {cls}"' not in work_rows:
             err(f"{p}: work.html has no .case-row.{cls}")
 
     # Next link: the plain <a> in p.cs-next-title, after the .cs-prev-link one (which is "previous")
@@ -87,6 +106,8 @@ for p, s in html.items():
             err(f"{p}: next link points to missing page {nm.group(1)}.html")
         if nm.group(1) == slug:
             err(f"{p}: next link points to itself")
+        if slug not in hidden and nm.group(1) in hidden:
+            err(f"{p}: next link points to hidden page {nm.group(1)}.html")
 
     # Prev link: the bare-arrow <a class="cs-prev-link"> that opens the same <p>
     pm = re.search(r'<p class="t-title cs-next-title">\s*<a class="cs-prev-link" href="([a-z0-9-]+)\.html"', s)
@@ -96,6 +117,8 @@ for p, s in html.items():
         prev_of[slug] = pm.group(1)
         if pm.group(1) not in slugs:
             err(f"{p}: prev link points to missing page {pm.group(1)}.html")
+        if slug not in hidden and pm.group(1) in hidden:
+            err(f"{p}: prev link points to hidden page {pm.group(1)}.html")
 
     # Images
     hero_end = s.find("</section>", s.find('class="cs-hero"'))
@@ -141,23 +164,26 @@ for p, s in html.items():
             err(f"{p}: inline style not allowed: style=\"{st}\"")
 
 # ---- The ring ---------------------------------------------------------------------------
-if next_of and len(next_of) == len(slugs):
-    start = slugs[0]
+ring_next = {slug: nxt for slug, nxt in next_of.items() if slug not in hidden}
+if ring_next and len(ring_next) == len(shown):
+    start = shown[0]
     seen, cur = [], start
-    while cur not in seen and cur in next_of:
+    while cur not in seen and cur in ring_next:
         seen.append(cur)
-        cur = next_of[cur]
-    if cur != start or len(seen) != len(slugs):
-        missing = sorted(set(slugs) - set(seen))
-        err("next-case-study links do not form one ring over every page; "
+        cur = ring_next[cur]
+    if cur != start or len(seen) != len(shown):
+        missing = sorted(set(shown) - set(seen))
+        err("next-case-study links do not form one ring over every shown page; "
             f"followed {' → '.join(seen)} → {cur}; not reached: {missing or 'none'}")
 for slug, prev in prev_of.items():
+    if slug in hidden:
+        continue  # a hidden page's arrows point into the ring; nothing in the ring points back
     if prev in next_of and next_of[prev] != slug:
         err(f"work/{slug}.html: prev link points to {prev}.html, whose next link is "
             f"{next_of[prev]}.html, not this page")
 
 # ---- Index rows -------------------------------------------------------------------------
-for name, s, root_rel in (("work.html", work_html, ""), ("index.html", index_html, "")):
+for name, s, root_rel in (("work.html", work_rows, ""), ("index.html", index_rows, "")):
     for m in re.finditer(r'<a class="case-row (case-[a-z0-9-]+)" href="([^"]+)"', s):
         cls, href = m.groups()
         if not os.path.exists(href):
@@ -167,14 +193,18 @@ for name, s, root_rel in (("work.html", work_html, ""), ("index.html", index_htm
     for im in re.finditer(r'<img\b[^>]*src="(assets/[^"?]+)[^"]*"[^>]*>', s):
         if not os.path.exists(im.group(1)):
             err(f"{name}: asset not found: {im.group(1)}")
-for slug in slugs:
-    if f'href="work/{slug}.html"' not in work_html:
+for slug in shown:
+    if f'href="work/{slug}.html"' not in work_rows:
         err(f"work.html: no row for work/{slug}.html")
-order_index = [m.group(1) for m in re.finditer(r'href="work/([a-z0-9-]+)\.html"', work_html)]
-if order_index and next_of:
+for slug in hidden:
+    for name, s in (("work.html", work_rows), ("index.html", index_rows)):
+        if f'href="work/{slug}.html"' in s:
+            err(f"{name}: still has a live row for hidden page work/{slug}.html")
+order_index = [m.group(1) for m in re.finditer(r'href="work/([a-z0-9-]+)\.html"', work_rows)]
+if order_index and ring_next:
     ring = [order_index[0]]
-    while len(ring) < len(order_index) and next_of.get(ring[-1]) not in ring:
-        ring.append(next_of[ring[-1]])
+    while len(ring) < len(order_index) and ring_next.get(ring[-1]) not in ring:
+        ring.append(ring_next[ring[-1]])
     if ring != order_index:
         warn("the next-link ring runs in a different order from work.html: "
              f"ring {' → '.join(ring)}; index {' → '.join(order_index)}")
@@ -205,7 +235,7 @@ if t_head != ref_head:
 
 # ---- README count -----------------------------------------------------------------------
 words = {3: "three", 4: "four", 5: "five", 6: "six", 7: "seven", 8: "eight", 9: "nine", 10: "ten"}
-n = len(slugs)
+n = len(shown)
 for m in re.finditer(r"all (\w+) case studies", readme):
     if m.group(1) not in (words.get(n), str(n)):
         err(f"README.md says 'all {m.group(1)} case studies' but there are {n}")
@@ -228,7 +258,8 @@ for p, s in list(html.items()) + [("work.html", work_html), ("index.html", index
 # ---- Report -----------------------------------------------------------------------------
 for e in errors: print("ERROR   " + e)
 for w in warnings: print("warning " + w)
-print(f"{len(slugs)} case studies, {len(errors)} errors, {len(warnings)} warnings")
+print(f"{len(shown)} case studies" + (f" ({len(hidden)} hidden: {', '.join(sorted(hidden))})" if hidden else "")
+      + f", {len(errors)} errors, {len(warnings)} warnings")
 
 if "--no-validate" not in sys.argv:
     print("\nhtml-validate:")
