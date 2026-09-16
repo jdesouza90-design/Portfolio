@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Design system audit agent — John DeSouza</title>
-<meta name="description" content="How I set up an agent at Best Egg to audit the design system: it read every Figma file, cut the button component from 2,304 variants to 321 and wrote the guideline and a coded library. A case study by John DeSouza.">
+<meta name="description" content="How I set up an agent at Best Egg to audit the design system and coached two designers through running it: 2,304 button variants became 321, with a guideline and an internal design system site that updates itself from Figma. A case study by John DeSouza.">
 <meta property="og:title" content="Design system audit agent — John DeSouza">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://john-desouza.com/work/design-system-audit-agent.html">
 <meta property="og:image" content="https://john-desouza.com/og-image.png?v=cbd7c531">
-<meta property="og:description" content="An agent I set up read every Figma file at Best Egg and cut the button component from 2,304 variants to 321, an 86% reduction.">
+<meta property="og:description" content="An agent I set up read every Figma file at Best Egg. Two designers I coached ran it and cut the button component from 2,304 variants to 321.">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.ico?v=a803d66e" sizes="32x32">
 <link rel="icon" href="/favicon.svg?v=fb53733d" type="image/svg+xml">
@@ -64,7 +64,7 @@
     <div class="hero-lead">
       <div class="cs-hero-copy">
       <h1 class="t-display" data-rise style="--i:0">Design system audit agent</h1>
-      <p class="t-lede" data-rise style="--i:1">I set up an agent to read every Figma file at Best Egg, count each button variant, map where it was used and flag what to cut. Designers now pick from three components instead of one that did everything, and the agent wrote the guideline and the coded library.</p>
+      <p class="t-lede" data-rise style="--i:1">I set up an agent to read every Figma file at Best Egg and coached two designers through running it: count each button variant, map where it was used, flag what to cut. Designers now pick from three components instead of one that did everything, and an internal design system site updates itself from Figma every week.</p>
     </div>
       <div class="outcome-stat"><p class="eyebrow">Outcome</p><div class="t-stat" data-flow>86%</div><p class="t-small">Fewer button variants: from 2,304 in one component to 321 across three</p></div>
     </div>
@@ -85,7 +85,7 @@
     <header class="section-intro">
       <p class="eyebrow">Results</p>
       <h2 class="t-title">Three components where one did everything</h2>
-      <p class="t-lede">The old .Button carried seven properties multiplied together, and most of the results were never used. We shipped Button, Icon Button and Link, with icons and fixed widths handled inside the component instead of as variants. The counts are the Figma library's own, before and after.</p>
+      <p class="t-lede">The old .Button carried seven properties multiplied together, and most of the results were never used. I set the direction and the two designers shipped Button, Icon Button and Link, with icons and fixed widths handled inside the component instead of as variants. The counts are the Figma library's own, before and after.</p>
     </header>
     <div class="proof">
       <div class="proof-head">
@@ -134,38 +134,41 @@
       <div class="row-copy">
         <p class="eyebrow">The design</p>
         <h3 class="t-title">The agent counted, we decided</h3>
-        <p class="t-lede">The agent, built on Claude, ran through every Figma file: it listed each variant, found every instance in the product files and flagged what was unused or duplicated. We kept 321, split them into Button, Icon Button and Link, and had it write the usage guideline. Then it built the library in code, each component with its props, code and tokens on one page.</p>
+        <p class="t-lede">The agent, built on Claude, ran through every Figma file: it listed each variant, found every instance in the product files and flagged what was unused or duplicated. The two designers ran each pass and brought the list to me. As a group we kept 321, split them into Button, Icon Button and Link, and had the agent write the usage guideline.</p>
       </div>
-      <div>
-        <div class="walk">
-          <img decoding="async" width="1600" height="948" src="../assets/btn-walkthrough-poster.jpg?v=44123547" data-anim="../assets/btn-walkthrough.webp" alt="The Best Egg component library built on shadcn/ui: Button, Form field, Card, Badge, Switch and Checkbox, each with a one-line description" loading="lazy">
-          <button class="btn btn-sm play" type="button" aria-pressed="false"><svg viewBox="0 0 12 14" fill="currentColor" aria-hidden="true"><path d="M11.2 6.13 1.6.24A1 1 0 0 0 .1 1.1v11.8a1 1 0 0 0 1.5.86l9.6-5.9a1 1 0 0 0 0-1.72Z"/></svg> <span>Play walkthrough</span></button>
+      <div class="cols">
+        <div class="col">
+          <div class="col-head"><svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="8" width="5.5" height="8" rx="1.5"/><rect x="9.25" y="8" width="5.5" height="8" rx="1.5"/><rect class="ac" x="16" y="8" width="5.5" height="8" rx="1.5"/></svg><h4 class="t-subhead">Split by purpose</h4></div>
+          <p class="t-body">Button, Icon Button and Link each got their own component, so the name says what it is for.</p>
         </div>
-        <p class="walk-note t-small">Screen recording of the coded component library: Form field with its props, code and tokens.</p>
-      </div>
-    </article>
-
-    <article class="row" id="decisions">
-      <div class="row-copy">
-        <p class="eyebrow">Design decisions</p>
-        <h3 class="t-heading">Three decisions inside the split</h3>
-        <ul class="tensions stack">
-          <li><h4 class="t-subhead">Split by purpose</h4><p class="t-body">Button, Icon Button and Link each got their own component, so the name says what it is for.</p></li>
-          <li><h4 class="t-subhead">Booleans over variants</h4><p class="t-body">Left and right icons became toggles and the icon itself a swap, so they add nothing to the matrix.</p></li>
-          <li><h4 class="t-subhead">One disabled state</h4><p class="t-body">Danger, Brand and Action reuse Primary's disabled variant instead of defining their own.</p></li>
-        </ul>
-      </div>
-      <figure class="panel wide"><img decoding="async" width="1200" height="1077" src="../assets/btn-after-button.webp?v=e193ac94" alt="The new Button component's sheet: Primary, Secondary, ghost, Neutral, Danger, Brand and Action in default, hover, active, focused and disabled, at three sizes" loading="lazy"></figure>
-    </article>
-
-    <article class="row full" id="after">
-      <div class="row-copy">
-        <p class="eyebrow">The result</p>
-        <h3 class="t-title">The whole set on one sheet</h3>
-        <p class="t-lede">Button, Icon Button and Link, 321 variants, on one sheet a designer can read at a glance. The old .Button ran to 2,304 and off the page.</p>
+        <div class="col">
+          <div class="col-head"><svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="7" width="19" height="10" rx="5"/><circle class="ac-fill" cx="16" cy="12" r="3"/></svg><h4 class="t-subhead">Booleans over variants</h4></div>
+          <p class="t-body">Left and right icons became toggles and the icon itself a swap, so they add nothing to the matrix.</p>
+        </div>
+        <div class="col">
+          <div class="col-head"><svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="3.5" width="7" height="4" rx="1.5"/><rect x="2.5" y="10" width="7" height="4" rx="1.5"/><rect x="2.5" y="16.5" width="7" height="4" rx="1.5"/><path d="M9.5 5.5h2c1.5 0 2 1.5 2.5 3M9.5 12h5M9.5 18.5h2c1.5 0 2-1.5 2.5-3"/><rect class="ac" x="15" y="9" width="6.5" height="6" rx="1.5"/></svg><h4 class="t-subhead">One disabled state</h4></div>
+          <p class="t-body">Danger, Brand and Action reuse Primary's disabled variant instead of defining their own.</p>
+        </div>
       </div>
       <figure class="panel wide"><img decoding="async" width="1800" height="866" src="../assets/btn-sheet-after.webp?v=63fac1b2" alt="The three new components side by side: the Button sheet, the Icon Button sheet and the Link sheet, every style, state and size on one page" loading="lazy"></figure>
     </article>
+  </div>
+</section>
+
+<section class="cs-section" id="library">
+  <div class="wrap">
+    <header class="section-intro">
+      <p class="eyebrow">The library</p>
+      <h2 class="t-title">A design system site that updates itself</h2>
+      <p class="t-lede">With the set settled, we had the agent build an internal design system site: every component rendered live, with its props, code and tokens on one page. It reads the component library in Figma and updates every week, so what the site shows is what the file holds.</p>
+    </header>
+    <div>
+      <div class="walk">
+        <img decoding="async" width="1600" height="948" src="../assets/btn-walkthrough-poster.jpg?v=44123547" data-anim="../assets/btn-walkthrough.webp" alt="The Best Egg component library built on shadcn/ui: Button, Form field, Card, Badge, Switch and Checkbox, each with a one-line description" loading="lazy">
+        <button class="btn btn-sm play" type="button" aria-pressed="false"><svg viewBox="0 0 12 14" fill="currentColor" aria-hidden="true"><path d="M11.2 6.13 1.6.24A1 1 0 0 0 .1 1.1v11.8a1 1 0 0 0 1.5.86l9.6-5.9a1 1 0 0 0 0-1.72Z"/></svg> <span>Play walkthrough</span></button>
+      </div>
+      <p class="walk-note t-small">Screen recording of the internal design system site: Form field with its props, code and tokens.</p>
+    </div>
   </div>
 </section>
 
@@ -173,11 +176,11 @@
   <div class="wrap">
     <header class="section-intro">
       <p class="eyebrow">My role</p>
-      <h2 class="t-title">The method, the review and the room</h2>
+      <h2 class="t-title">The method, the coaching and the room</h2>
     </header>
     <div class="ledger">
-      <div class="ledger-row"><h3 class="t-heading">The method</h3><p class="t-body">I decided to build the audit as an agent instead of running it by hand. I wrote its brief and the rules it worked to: read every file, list every variant, find every instance, flag anything unused or duplicated and show its working. Buttons went first because they were the visible mess.</p></div>
-      <div class="ledger-row"><h3 class="t-heading">The review</h3><p class="t-body">The agent's count was a claim until we checked it. The two designers and I went through its list against the files, decided the split into three components and set which variants stayed. The agent then wrote the guideline and the library to the decisions we had made.</p></div>
+      <div class="ledger-row"><h3 class="t-heading">The method</h3><p class="t-body">I decided to build the audit as an agent instead of running it by hand, and I wrote its brief and the rules it worked to: read every file, list every variant, find every instance, flag anything unused or duplicated and show its working. Buttons went first because they were the visible mess. I drove the work and the two designers executed it.</p></div>
+      <div class="ledger-row"><h3 class="t-heading">The coaching</h3><p class="t-body">The two designers ran the agent. I coached them through it: how to brief it, how to read its list against the files, when to overrule it. Its count was a claim until we checked it, so we reviewed it as a group and decided the split into three components together. The designers then had the agent write the guideline and the library to the calls we had made.</p></div>
       <div class="ledger-row"><h3 class="t-heading">The room</h3><p class="t-body">I presented the work to product leadership and then to the product org: the reduction, the time saved and what it did to the workflow. New designers ramp faster on three components than on one that did everything, and engineering can see the button styles instead of guessing between them. Leadership asked for the same run on their own use cases.</p></div>
     </div>
   </div>

@@ -211,6 +211,9 @@ All six case studies are the same document, in this order:
    one heading, one short paragraph.
 5. **What I'd do differently**: one narrow note with run-in labels, where a
    retro exists.
+   Where a second deliverable earns more than a row, it takes a section of its
+   own between How we got there and My role: a centred intro over the visual
+   (the audit agent page's "The library", a section intro over its walkthrough).
 6. **Next**: the closing band with the next case study and contact.
 
 Icons are inline SVG, 24-unit, 1.5 stroke, ink with one green accent detail
