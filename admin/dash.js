@@ -15,6 +15,7 @@
     '/work/cross-sell.html': 'Cross-Sell', '/work/verifications.html': 'Verifications',
     '/work/refinance-offers.html': 'Refinance offers', '/work/staking.html': 'Staking',
     '/work/no-code-tools.html': 'No-code tools', '/work/sign-in-with-ethereum.html': 'Sign-in with Ethereum',
+    '/work/design-system-audit-agent.html': 'Design system audit agent',
   };
   const pageName = (p) => NAMES[p] || p.replace(/^\/work\//, '').replace(/\.html$/, '') || p;
   const refName = (r) => {
