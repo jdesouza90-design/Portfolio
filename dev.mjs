@@ -46,7 +46,7 @@ const PLACES = [
   ['Austin', 'TX', 'US', 30.267, -97.743], ['Chicago', 'IL', 'US', 41.878, -87.630], ['London', 'ENG', 'GB', 51.507, -0.128],
   ['Toronto', 'ON', 'CA', 43.653, -79.383], ['Berlin', 'BE', 'DE', 52.520, 13.405], ['Lisbon', '11', 'PT', 38.722, -9.139], ['Sydney', 'NSW', 'AU', -33.869, 151.209],
 ];
-const PAGES = ['/', '/', '/', '/work.html', '/work.html', '/work/staking.html', '/work/cross-sell.html', '/work/verifications.html', '/work/refinance-offers.html', '/work/no-code-tools.html', '/work/sign-in-with-ethereum.html'];
+const PAGES = ['/', '/', '/', '/work.html', '/work.html', '/work/staking.html', '/work/cross-sell.html', '/work/verifications.html', '/work/refinance-offers.html', '/work/no-code-tools.html'];
 const REFS = ['direct', 'direct', 'https://www.linkedin.com/', 'https://www.linkedin.com/feed/', 'https://www.google.com/', '/', '/work.html', 'https://mail.google.com/mail/u/0/'];
 const DEVICES = ['Chrome on macOS', 'Safari on iOS', 'Safari on macOS', 'Chrome on Windows', 'Firefox on macOS', 'Chrome on Android'];
 const pick = (a) => a[Math.floor(Math.random() * a.length)];
