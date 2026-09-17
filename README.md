@@ -460,18 +460,18 @@ The rules that shape the code:
   timed off the reveal like the experience track. Under 1100px the card is
   one column with the figure as a cover, and on a phone the ring names step
   down to the Small role.
-- "Coaching and autonomy" is the first of the three leadership cards, in the
-  same skeleton: Figure B on the left (`.fig-team`, an inline SVG on the panel
-  ground), the copy and the four points as a hairline ledger (`.team-pts`) on
-  the right. The figure is a product frame with the design strategy frame
-  inside it; inside that, the team's decisions linked to each other above the
-  quality bar, and John on the strategy frame's edge feeding into them, not in
-  the middle. Each ledger row names its part of the figure (`data-part`), and
-  while the pointer rests on a row that part lights in the accent, pure CSS
-  through `:has()`. As the card arrives the figure draws itself outside in
-  (product frame, strategy frame, links, the bar sweeping and each decision
-  landing), timed off the reveal like Figure A. Under 1100px the figure is a
-  cover above the copy.
+- "Coaching and autonomy" is the first leadership block and stands on the
+  section ground rather than in a card (after the "Built for software
+  businesses" strip on zoah.com, rebuilt on the site's tokens): under the
+  heading, four columns divided by vertical hairlines (`.team-cols`), each a
+  one-word label, the point in the Heading role, its paragraph in the Small
+  role, then air, and a small line drawing of the point pinned to the foot of
+  the column (`.team-art`, inline SVG: a strategy frame with the team's calls
+  inside it; feedback running from John's marker to the work; the bar the
+  pieces stand on, with his marker on it; the product frame the strategy
+  frame sits inside). Ink hairlines, the one marker in the accent. As the
+  block arrives each drawing draws itself a beat after the last, timed off
+  the reveal. Two columns under 900px, one on a phone with horizontal rules.
 - The abstract beside "AI in the process" on the homepage is drawn live by
   `main.js` on a canvas: the same strands in three dimensions, turning slowly,
   with a pause button in the corner. `assets/ai-process.svg` is the still it

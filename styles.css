@@ -552,7 +552,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 
 /* Leadership panels */
 .card { position: relative; background: var(--surface); border: 1px solid var(--hair); border-radius: var(--radius); padding: 28px; }
-.lead-solo + .lead-solo { margin-top: clamp(80px, 10vw, 148px); }
+.lead-solo + .lead-solo, .lead-team + .lead-solo { margin-top: clamp(80px, 10vw, 148px); }
 .lead-solo { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(28px, 5vw, 72px); padding: var(--card-pad); align-items: start; }
 .lead-solo-copy .t-body { max-width: 58ch; }
 .point-icon { width: 22px; height: 22px; display: block; margin: 0 0 14px; color: var(--accent); }
@@ -679,84 +679,48 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
   .fig-nest { width: min(100cqw, 460px); }
 }
 
-/* Coaching and autonomy: the first of the three cards, in the same skeleton as
-   the other two. Figure B on the left, on the panel ground: a product frame,
-   the design strategy frame inside it, and inside that the team's decisions
-   linked to each other above the quality bar, with me on the strategy
-   frame's edge feeding into them, not in the middle. The four points run as
-   a hairline ledger on the right; each names one part of the figure
-   (data-part), and while the pointer rests on a row that part lights in the
-   accent, the way a tab lights its ring in Figure A. As the card arrives the
-   figure draws itself outside in: the product frame, then the strategy
-   frame, then the links, the bar sweeping in and each decision landing. */
-.lead-team { align-items: stretch; grid-template-columns: minmax(0, 10fr) minmax(0, 13fr); }
-.team-panel { padding-bottom: calc(var(--fig-pad) + 64px); }
-.fig-team { position: relative; width: min(100cqw, calc(100cqh * 4 / 5), 400px); aspect-ratio: 4 / 5; }
-.fig-team svg { display: block; width: 100%; height: 100%; overflow: visible; }
-.fig-team rect, .fig-team line { fill: none; stroke-width: 1; vector-effect: non-scaling-stroke; transition: stroke var(--dur-ui), filter var(--dur-ui); }
-.fig-team .fb-product { stroke: color-mix(in srgb, var(--ink) 22%, transparent); }
-.fig-team .fb-frame { stroke: color-mix(in srgb, var(--ink) 40%, transparent); }
-.fig-team .fb-links line { stroke: color-mix(in srgb, var(--ink) 30%, transparent); }
-.fig-team .fb-feed line { stroke: var(--accent); stroke-dasharray: 3 4; }   /* feedback runs in, dashed, from the edge to the work */
-.fig-team .fb-bar { stroke: var(--ink); stroke-width: 1.5; }
-.fig-team .fb-nodes circle { fill: var(--ink); transition: fill var(--dur-ui); }
-.fig-team .fb-me-dot { fill: var(--accent); }
-.fig-team .fb-me-glow { fill: var(--glow); }
-/* frame names sit inside their frame's top band, like the ring names in Figure A */
-.flbl { position: absolute; white-space: nowrap; }
-.flbl .t-subhead { color: var(--ink-2); transition: color var(--dur-ui); }
-.flbl .t-micro { color: var(--ink-3); letter-spacing: .08em; text-transform: uppercase; transition: color var(--dur-ui); }
-.flbl-product { left: 10.5%; top: 6.4%; }
-.flbl-frame { left: 22%; top: 24.4%; }
-.flbl-bar { left: 22.5%; top: 75.6%; }
-/* the row under the pointer lights its part; the frames light their names too */
-@media (hover: hover) and (pointer: fine) {
-  .lead-team:has([data-part="frame"]:hover) .fb-frame { stroke: var(--accent); filter: drop-shadow(0 0 6px var(--glow)); }
-  .lead-team:has([data-part="frame"]:hover) .flbl-frame .t-subhead { color: var(--accent-ink); }
-  .lead-team:has([data-part="frame"]:hover) .fb-nodes circle { fill: var(--accent); }
-  .lead-team:has([data-part="feed"]:hover) .fb-feed line { stroke: var(--accent-ink); stroke-dasharray: none; }
-  .lead-team:has([data-part="feed"]:hover) .fb-me-glow { r: 22; }
-  .lead-team:has([data-part="bar"]:hover) .fb-bar { stroke: var(--accent); stroke-width: 2.5; }
-  .lead-team:has([data-part="bar"]:hover) .flbl-bar .t-micro { color: var(--accent-ink); }
-  .lead-team:has([data-part="product"]:hover) .fb-product { stroke: var(--accent); filter: drop-shadow(0 0 6px var(--glow)); }
-  .lead-team:has([data-part="product"]:hover) .flbl-product .t-subhead { color: var(--accent-ink); }
-  .fig-team .fb-me-glow { transition: r var(--dur-ui); }
-  .team-pt .t-subhead { transition: color var(--dur-hover); }
-  .team-pt:hover .t-subhead { color: var(--accent-ink); }
-}
-/* the four points as a hairline ledger under the heading */
-.team-pts { list-style: none; padding: 0; margin: clamp(24px, 3vw, 36px) 0 0; border-top: 1px solid var(--hair); }
-.team-pt { padding: clamp(18px, 2.4vw, 26px) 0; border-bottom: 1px solid var(--hair); }
-.team-pt .t-body { margin-top: var(--sp-2); }
-/* entrance, timed off the card's reveal like Figure A */
-.anim .lead-team .fig-team rect, .anim .lead-team .fig-team line { stroke-dasharray: 1; stroke-dashoffset: 1; }
-.anim .lead-team .fig-team .fb-feed line { stroke-dasharray: 1; }
-.anim .lead-team .fig-team circle, .anim .lead-team .flbl { opacity: 0; }
-.anim .lead-team .fig-team circle { transform-box: fill-box; transform-origin: center; transform: scale(0); }
-.anim .lead-team.in .fb-product { animation: fb-draw .9s var(--ease-in-out) var(--dur-reveal) both; }
-.anim .lead-team.in .fb-frame { animation: fb-draw .8s var(--ease-in-out) calc(var(--dur-reveal) + .35s) both; }
-.anim .lead-team.in .fb-links line { animation: fb-draw .45s var(--ease-soft) calc(var(--dur-reveal) + .9s) both; }
-.anim .lead-team.in .fb-links line:nth-child(2), .anim .lead-team.in .fb-links line:nth-child(3) { animation-delay: calc(var(--dur-reveal) + 1.05s); }
-.anim .lead-team.in .fb-links line:nth-child(4), .anim .lead-team.in .fb-links line:nth-child(5), .anim .lead-team.in .fb-links line:nth-child(6) { animation-delay: calc(var(--dur-reveal) + 1.2s); }
-.anim .lead-team.in .fb-links line:nth-child(7) { animation-delay: calc(var(--dur-reveal) + 1.35s); }
-.anim .lead-team.in .fb-nodes circle { animation: fb-land var(--dur-ui) var(--ease) calc(var(--dur-reveal) + .85s) both; }
-.anim .lead-team.in .fb-nodes circle:nth-child(2) { animation-delay: calc(var(--dur-reveal) + 1s); }
-.anim .lead-team.in .fb-nodes circle:nth-child(3), .anim .lead-team.in .fb-nodes circle:nth-child(4) { animation-delay: calc(var(--dur-reveal) + 1.15s); }
-.anim .lead-team.in .fb-nodes circle:nth-child(5), .anim .lead-team.in .fb-nodes circle:nth-child(6) { animation-delay: calc(var(--dur-reveal) + 1.3s); }
-.anim .lead-team.in .fb-bar { animation: fb-draw .6s var(--ease-in-out) calc(var(--dur-reveal) + 1.3s) both; }
-.anim .lead-team.in .fb-me circle { animation: fb-land var(--dur-ui) var(--ease) calc(var(--dur-reveal) + 1.6s) both; }
-.anim .lead-team.in .fb-feed line { animation: fb-draw-dash .5s var(--ease-soft) calc(var(--dur-reveal) + 1.75s) both; }
-.anim .lead-team.in .flbl { animation: nest-label .4s var(--ease) calc(var(--dur-reveal) + .6s) both; }
-.anim .lead-team.in .flbl-frame { animation-delay: calc(var(--dur-reveal) + .95s); }
-.anim .lead-team.in .flbl-bar { animation-delay: calc(var(--dur-reveal) + 1.7s); }
+/* Coaching and autonomy: the first leadership block stands on the section
+   ground rather than in a card. Under the heading, four columns divided by
+   vertical hairlines: a one-word label, the point, its paragraph, then air,
+   and a small line drawing of the point pinned to the foot of the column
+   (a strategy frame with the team's calls inside it; feedback running from
+   my marker to the work; the bar the pieces stand on, with my marker on it;
+   the product frame that the strategy frame sits inside). The drawings are
+   ink hairlines on the ground, the one marker in the accent. As the block
+   arrives each drawing draws itself, a column after the next. */
+.lead-team { padding: 0; }
+.team-head .t-heading { max-width: 22ch; }
+.team-cols { list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 0; margin: clamp(40px, 5vw, 64px) 0 0; border-top: 1px solid var(--hair); }
+.team-col { display: flex; flex-direction: column; min-height: clamp(420px, 40vw, 560px); padding: clamp(24px, 3vw, 36px) clamp(20px, 2.6vw, 36px) 0; border-left: 1px solid var(--hair); }
+.team-col:first-child { padding-left: 0; border-left: 0; }
+.team-col:last-child { padding-right: 0; }
+.team-label { color: var(--ink-3); }
+.team-col .t-heading { margin-top: var(--sp-3); }
+.team-col .t-heading + .t-small { margin-top: var(--sp-4); }
+.team-art { display: block; width: 100%; max-width: 200px; height: auto; margin-top: auto; padding-top: 40px; color: var(--ink); overflow: visible; box-sizing: content-box; }
+.team-art .dot { fill: var(--ink); stroke: none; }
+.team-art .me { fill: var(--accent); stroke: var(--accent); }
+.team-art .dash { stroke: var(--accent); stroke-dasharray: 3 4; }
+.team-art .bar { stroke-width: 1.5; }
+.team-art .faint { stroke: color-mix(in srgb, var(--ink) 30%, transparent); }
+/* entrance: strokes draw, dots and the marker land, each column a beat later */
+.anim .lead-team .team-art :is(rect, path) { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.anim .lead-team .team-art circle { opacity: 0; transform-box: fill-box; transform-origin: center; transform: scale(0); }
+.anim .lead-team.in .team-art :is(rect, path) { animation: fb-draw .7s var(--ease-in-out) var(--art-wait, var(--dur-reveal)) both; }
+.anim .lead-team.in .team-art .dash { animation-name: fb-draw-dash; }
+.anim .lead-team.in .team-art circle { animation: fb-land var(--dur-ui) var(--ease) calc(var(--art-wait, var(--dur-reveal)) + .55s) both; }
+.team-col:nth-child(2) { --art-wait: calc(var(--dur-reveal) + .18s); }
+.team-col:nth-child(3) { --art-wait: calc(var(--dur-reveal) + .36s); }
+.team-col:nth-child(4) { --art-wait: calc(var(--dur-reveal) + .54s); }
 @keyframes fb-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
-/* the dashed feed lines: drawn once as a solid, then handed their dash pattern */
 @keyframes fb-draw-dash { from { stroke-dashoffset: 1; stroke-dasharray: 1; } 99% { stroke-dashoffset: 0; stroke-dasharray: 1; } to { stroke-dashoffset: 0; stroke-dasharray: 3 4; } }
 @keyframes fb-land { from { opacity: 0; transform: scale(0); } to { opacity: 1; transform: none; } }
-@media (max-width: 1100px) {
-  .lead-team { grid-template-columns: minmax(0, 1fr); }
-  .team-panel { container-type: inline-size; }
-  .fig-team { width: min(100cqw, 400px); }
+@media (max-width: 900px) {
+  .team-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 0; }
+  .team-col { min-height: 0; padding-top: 0; padding-bottom: clamp(32px, 5vw, 48px); }
+  .team-col:nth-child(3) { border-left: 0; padding-left: 0; }
+  .team-col:nth-child(2) { padding-right: 0; }
+  .team-col:nth-child(n+3) { border-top: 1px solid var(--hair); padding-top: clamp(24px, 4vw, 36px); }
 }
 
 /* About: portrait beside a single statement. The portrait stands exactly as tall
@@ -1244,7 +1208,7 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
   .opener-body > * { opacity: 1; }                          /* the opener shows still, then goes */
   .opener-seam { transform: none; }
   .gauge .fill, .gauge .needle { animation: none !important; }
-  .layer, .layer-tabs::after, .nest, .nest .t-subhead, .fig-team svg *, .flbl .t-subhead { transition: none; }
+  .layer, .layer-tabs::after, .nest, .nest .t-subhead, .team-art * { transition: none; }
   .case-media img, .work-cta::after, .tooltip, .chart-marker, .chart-node { transition: none; transform: none; }
   .tooltip { transform: translate(-50%, 0); }
   .btn:hover, .btn:active, .icon-btn:active, .layer-tab:active, .testimonial-controls button:active { transform: none; }
@@ -1376,8 +1340,10 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 
   /* Leadership */
   .lead-solo { padding: 24px 20px; }
-  .team-pt { padding: 18px 0; }
-  .flbl .t-subhead { font-size: var(--t-small); line-height: var(--lh-small); }
+  .team-cols { grid-template-columns: minmax(0, 1fr); }
+  .team-col { min-height: 0; padding: 24px 0; border: 0; border-top: 1px solid var(--hair); }
+  .team-col:first-child { border-top: 0; padding-top: 0; }
+  .team-art { margin-top: 32px; padding-top: 0; }
   .lead-solo + .lead-solo { margin-top: 64px; }
   /* the tab strip scrolls instead of wrapping onto a broken second line */
   .layer-tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
