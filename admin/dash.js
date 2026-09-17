@@ -477,8 +477,107 @@
     }
   }
 
+  // ---- One visitor ----
+  // A hash pressed in the Visitor column of either table follows that
+  // person: the feed keeps only their events and the sessions table only
+  // their visits, on top of whatever else is set. A chip in each filter
+  // row names them and lets go on press; so does pressing the hash again,
+  // and either Clear filters.
+  let followed = '';
+  const shortHash = (v) => v.length > 10 ? `${v.slice(0, 10)}…` : v;
+  function visitorCell(td, v) {
+    if (!v) { td.textContent = ''; return; }
+    const b = document.createElement('button');
+    b.className = 'dash-visitor'; b.type = 'button'; b.dataset.visitor = v;
+    b.textContent = v; b.title = followed === v ? 'Following this visitor; press to show everyone' : 'Follow this visitor';
+    b.setAttribute('aria-pressed', String(followed === v));
+    td.appendChild(b);
+  }
+  function renderFollowed() {
+    for (const chip of document.querySelectorAll('.dash-filter-visitor')) {
+      chip.hidden = !followed;
+      const b = chip.firstElementChild;
+      b.replaceChildren();
+      if (followed) { const h = document.createElement('span'); h.className = 'dash-hash'; h.textContent = shortHash(followed); b.append('Visitor ', h, ' ×'); }
+      b.setAttribute('aria-label', followed ? `Following visitor ${followed}` : '');
+    }
+    for (const b of document.querySelectorAll('.dash-visitor')) {
+      const on = b.dataset.visitor === followed;
+      b.setAttribute('aria-pressed', String(on));
+      b.title = on ? 'Following this visitor; press to show everyone' : 'Follow this visitor';
+    }
+  }
+  function follow(v) {
+    followed = followed === v ? '' : v;
+    renderFollowed();
+    refilter();
+    renderSessions(sessions, Date.now());
+  }
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('.dash-visitor');
+    if (!b) return;
+    const section = b.closest('.dash-feed');   // found before the redraw takes the button away
+    follow(b.dataset.visitor);
+    if (followed) section.querySelector('.dash-filter-visitor button').focus();   // the chip above that table; focus scrolls it in under the nav (scroll-margin) and the narrowed table follows
+    else section.querySelector('.dash-filters select').focus();                 // let go: focus stays in the section
+  });
+  for (const chip of document.querySelectorAll('.dash-filter-visitor button')) chip.addEventListener('click', () => { follow(followed); chip.closest('.dash-filters').querySelector('select').focus(); });
+
+  // ---- Session filters: each select narrows the sessions table to one value of its column ----
+  // A session holds several pages and can meet several gates, so a page or
+  // gate filter matches when any of them does; length uses the histogram's
+  // bands. Places, pages and devices list whatever the period's sessions
+  // hold, commonest first, and a chosen value stays listed until it is
+  // cleared; the gate and length lists are fixed. Independent of the feed's.
+  const sfilter = { where: '', page: '', tried: '', length: '', device: '' };
+  const band = (s) => s.length == null ? 'untimed' : BANDS.find(([, lo, hi]) => s.length / 1000 >= lo && s.length / 1000 < hi)[0];
+  const SFACET = {            // every value the session has for that column
+    where:  (s) => [s.where || 'unknown'],
+    page:   (s) => [...new Set(s.views.map((v) => pageName(v.page)))],
+    tried:  (s) => s.tried.size ? ['any', ...new Set([...s.tried.values()].map((o) => Object.keys(OUTCOME)[o]))] : ['none'],
+    length: (s) => [band(s)],
+    device: (s) => [s.device || 'unknown'],
+  };
+  const SOPTIONS = {          // the fixed lists, in a telling order
+    tried:  ['any', 'gated', 'wrong password', 'unlocked', 'none'],
+    length: BANDS.map(([label]) => label).concat('untimed'),
+  };
+  const SLABEL = { any: 'Met a gate', none: 'No gate', gated: 'At the gate', 'wrong password': 'Wrong password', unlocked: 'Unlocked', untimed: 'No time beacon' };
+  const sfiltering = () => !!followed || Object.values(sfilter).some(Boolean);
+  const smatches = (s) => (!followed || s.visitor === followed) && Object.keys(sfilter).every((k) => !sfilter[k] || SFACET[k](s).includes(sfilter[k]));
+  const sselects = [...document.querySelectorAll('#session-filters select')];
+  const slisted = {};
+  function renderSessionFilters(all) {
+    for (const sel of sselects) {
+      const k = sel.dataset.filter;
+      const values = SOPTIONS[k] ? [...SOPTIONS[k]] : tally(all.flatMap(SFACET[k]), (v) => v).map(([v]) => v);
+      if (sfilter[k] && !values.includes(sfilter[k])) values.push(sfilter[k]);
+      const sig = values.join('\n');
+      if (sig === slisted[k] || document.activeElement === sel) continue;   // never rebuild under an open menu
+      slisted[k] = sig;
+      const allOpt = sel.firstElementChild;
+      sel.replaceChildren(allOpt, ...values.map((v) => { const o = document.createElement('option'); o.value = v; o.textContent = SLABEL[v] || v; return o; }));
+      sel.value = sfilter[k];
+    }
+  }
+  $('session-filters').addEventListener('change', (e) => {
+    const sel = e.target.closest('select[data-filter]');
+    if (!sel) return;
+    sfilter[sel.dataset.filter] = sel.value;
+    sel.parentElement.classList.toggle('is-on', sel.value !== '');
+    renderSessions(sessions, Date.now());
+  });
+  $('session-clear').addEventListener('click', () => {
+    for (const k in sfilter) sfilter[k] = '';
+    for (const sel of sselects) { sel.value = ''; sel.parentElement.classList.remove('is-on'); }
+    follow('');
+    sselects[0].focus();
+  });
+
   // ---- Sessions table ----
-  function renderSessions(sessions, now) {
+  function renderSessions(all, now) {
+    renderSessionFilters(all);
+    const sessions = all.filter(smatches);
     const tb = $('sessions');
     tb.replaceChildren(...sessions.slice(0, 40).map((s) => {
       const tr = document.createElement('tr');
@@ -497,7 +596,7 @@
         const td = document.createElement('td');
         td.className = `c-${cls}`;
         if (label) td.dataset.label = label;
-        td.textContent = text;
+        if (cls === 'visitor') visitorCell(td, s.visitor); else td.textContent = text;
         if (title && title !== text) td.title = title;
         if (cls === 'time' && s.live) { const b = document.createElement('span'); b.className = 'dash-now'; b.textContent = 'Now'; td.appendChild(b); }
         if (cls === 'tried') fillTried(td, s.tried);
@@ -505,6 +604,10 @@
       }
       return tr;
     }));
+    const on = sfiltering();
+    if (on) $('session-count').textContent = `${n(sessions.length)} of ${n(all.length)} ${sessions.length === 1 ? 'matches' : 'match'}${sessions.length > 40 ? ' · newest 40 shown' : ''}`;
+    $('session-state').hidden = !on;
+    $('sessions-empty').textContent = followed && all.length && !Object.values(sfilter).some(Boolean) ? 'This visitor has no session in the period.' : on ? 'No sessions match these filters.' : 'No sessions yet.';
     $('sessions-empty').hidden = sessions.length > 0;
   }
 
@@ -652,9 +755,9 @@
   const PLACES_OUT = 'dash.places-out';
   const excluded = new Set((() => { try { return JSON.parse(localStorage.getItem(PLACES_OUT)) || []; } catch (_) { return []; } })().filter((p) => typeof p === 'string'));
   const remember = () => { try { localStorage.setItem(PLACES_OUT, JSON.stringify([...excluded])); } catch (_) { /* private mode: the ticks last the visit */ } };
-  const filtering = () => excluded.size > 0 || Object.values(filter).some(Boolean);
-  const matches = (e) => !excluded.has(FACET.where(e)) && Object.keys(filter).every((k) => !filter[k] || FACET[k](e) === filter[k]);
-  const selects = [...document.querySelectorAll('.dash-filters select')];
+  const filtering = () => !!followed || excluded.size > 0 || Object.values(filter).some(Boolean);
+  const matches = (e) => (!followed || e.visitor === followed) && !excluded.has(FACET.where(e)) && Object.keys(filter).every((k) => !filter[k] || FACET[k](e) === filter[k]);
+  const selects = [...document.querySelectorAll('#feed-filters select')];
   const listed = {};          // facet → the options last drawn, so an unchanged list is left alone
   function renderFilters(visits) {
     for (const sel of selects) {
@@ -685,6 +788,7 @@
   $('feed-clear').addEventListener('click', () => {
     for (const k in filter) filter[k] = '';
     for (const sel of selects) { sel.value = ''; sel.parentElement.classList.remove('is-on'); }
+    if (followed) follow('');
     tickPlaces(true);
     selects[0].focus();
   });
@@ -772,6 +876,7 @@
       if (label) td.dataset.label = label;             // the phone layer stacks the row and labels each cell
       if (cls === 'kind') { const b = document.createElement('span'); b.className = 'dash-kind'; b.dataset.kind = e.kind; b.textContent = text; td.appendChild(b); }
       else if (cls === 'tried') fillTried(td, e.session ? e.session.tried : new Map());   // what that visit tried, on each of its rows
+      else if (cls === 'visitor') visitorCell(td, e.visitor);
       else td.textContent = text;
       if (title && title !== text) td.title = title;
       tr.appendChild(td);

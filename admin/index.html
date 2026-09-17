@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" crossorigin>
-<link rel="stylesheet" href="../styles.css?v=ca5866e8">
+<link rel="stylesheet" href="../styles.css?v=71ab7819">
 </head>
 <body class="dash-body">
 <a class="skip" href="#main">Skip to content</a>
@@ -137,7 +137,7 @@
     <section class="dash-feed" aria-labelledby="h-feed">
       <div class="dash-feed-head">
         <h2 class="t-heading" id="h-feed">Live feed</h2>
-        <p class="t-small" id="feed-note">Every page view, newest first. Tried to open is each case study that visit met the password gate on, and how it ended; Time is how long the page was read. Both fill in as they go.</p>
+        <p class="t-small" id="feed-note">Every page view, newest first. Tried to open is each case study that visit met the password gate on, and how it ended; Time is how long the page was read. Both fill in as they go. Press a hash in the Visitor column to follow one person.</p>
       </div>
       <!-- Each select narrows the feed; the options are whatever the feed has seen. -->
       <div class="dash-filters" role="group" aria-label="Filter the feed" id="feed-filters">
@@ -156,6 +156,8 @@
         </div>
         <span class="dash-filter"><select data-filter="ref" aria-label="Filter by source"><option value="">All sources</option></select></span>
         <span class="dash-filter"><select data-filter="device" aria-label="Filter by device"><option value="">All devices</option></select></span>
+        <!-- One visitor: set by pressing a hash in the Visitor column of either table; this chip names them and clears on press. -->
+        <span class="dash-filter dash-filter-visitor is-on" hidden><button class="dash-filter-btn" type="button" aria-describedby="visitor-hint"></button><span class="sr-only" id="visitor-hint">Press to show everyone again</span></span>
         <div class="dash-filter-state" id="feed-state" hidden>
           <p class="t-small" id="feed-count" aria-live="polite"></p>
           <button class="btn btn-ghost btn-sm" type="button" id="feed-clear">Clear filters</button>
@@ -175,7 +177,20 @@
     <section class="dash-feed" aria-labelledby="h-sessions">
       <div class="dash-feed-head">
         <h2 class="t-heading" id="h-sessions">Sessions · <span data-period>last 7 days</span></h2>
-        <p class="t-small" id="sessions-note">One person's visit, start to finish; a quiet half hour ends it. Newest first. Tried to open is each case study they met the password gate on, and how it ended.</p>
+        <p class="t-small" id="sessions-note">One person's visit, start to finish; a quiet half hour ends it. Newest first. Tried to open is each case study they met the password gate on, and how it ended. Press a hash in the Visitor column to follow one person.</p>
+      </div>
+      <!-- Each select narrows the sessions; a session matches a page or a gate outcome if any of its pages did. -->
+      <div class="dash-filters" role="group" aria-label="Filter the sessions" id="session-filters">
+        <span class="dash-filter"><select data-filter="where" aria-label="Filter by place"><option value="">Everywhere</option></select></span>
+        <span class="dash-filter"><select data-filter="page" aria-label="Filter by page visited"><option value="">All pages</option></select></span>
+        <span class="dash-filter"><select data-filter="tried" aria-label="Filter by what they tried to open"><option value="">Any gate or none</option></select></span>
+        <span class="dash-filter"><select data-filter="length" aria-label="Filter by session length"><option value="">Any length</option></select></span>
+        <span class="dash-filter"><select data-filter="device" aria-label="Filter by device"><option value="">All devices</option></select></span>
+        <span class="dash-filter dash-filter-visitor is-on" hidden><button class="dash-filter-btn" type="button" aria-describedby="visitor-hint"></button></span>
+        <div class="dash-filter-state" id="session-state" hidden>
+          <p class="t-small" id="session-count" aria-live="polite"></p>
+          <button class="btn btn-ghost btn-sm" type="button" id="session-clear">Clear filters</button>
+        </div>
       </div>
       <div class="table-wrap">
         <table class="dash-table dash-sessions">
@@ -194,6 +209,6 @@
 </main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" crossorigin></script>
-<script src="dash.js?v=5203b2ba"></script>
+<script src="dash.js?v=a2f0271f"></script>
 </body>
 </html>

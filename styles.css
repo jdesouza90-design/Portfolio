@@ -1522,6 +1522,14 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 .dash-table .c-secs, .dash-table .c-length { font-variant-numeric: tabular-nums; }
 .dash-table .c-route { max-width: 34ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .dash-table .c-visitor { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: var(--t-micro); color: var(--ink-3); }   /* a hash, so monospace and never the micro role's caps */
+/* The hash is a button: press it to follow that visitor through both tables. Pressed, it wears the chosen chip's ink. */
+.dash-visitor { font: inherit; color: inherit; background: none; border: 0; padding: 3px 9px; margin: -3px -9px; border-radius: 20px; cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; text-decoration-color: var(--hair-2); transition: background var(--dur-hover), color var(--dur-hover); }
+.dash-visitor:hover { color: var(--accent-ink); text-decoration-color: currentColor; }
+.dash-visitor:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.dash-visitor[aria-pressed="true"], .dash-visitor[aria-pressed="true"]:hover { background: var(--ink); color: var(--paper); text-decoration: none; }
+.dash-filter-visitor::after { display: none; }   /* a chip, not a menu: no chevron */
+.dash-filter-visitor .dash-filter-btn { padding-right: 16px; }
+.dash-hash { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
 .dash-kind, .dash-now { display: inline-block; padding: 3px 9px; border-radius: 20px; background: var(--surface-2); white-space: nowrap; }
 .dash-now, .dash-kind[data-kind="unlocked"] { background: var(--glow); color: var(--accent-ink); }
 .c-time .dash-now, .dash-tried .dash-kind { margin-left: 8px; }
@@ -1547,6 +1555,7 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
   .dash-table .c-time, .dash-table .c-kind { display: inline; }
   .dash-table .c-kind { margin-left: 10px; }
   .dash-table .c-page, .dash-table .c-route { margin-top: var(--sp-2); font-size: var(--t-body); line-height: var(--lh-body); max-width: none; white-space: normal; }
+  .dash-visitor { margin: 0; }   /* stacked under its label, the pill lines up with it instead of hugging the cell edge */
 }
 @media (max-width: 560px) { .dash-nav-actions { gap: 12px; } .dash-live { font-size: var(--t-micro); } }
 @media (prefers-reduced-motion: reduce) {
