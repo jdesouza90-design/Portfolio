@@ -11,8 +11,8 @@
 // A correct case-study password sends the reader on with ?unlocked, which
 // main.js answers with the opener (the sheet that parts) exactly once.
 //
-// Activity log: every page view on the site, every case-study unlock and every
-// wrong password is written to Vercel's runtime logs and, when an Upstash Redis
+// Activity log: every page view on the site, every password gate reached, every
+// case-study unlock and every wrong password is written to Vercel's runtime logs and, when an Upstash Redis
 // store is connected (KV_REST_API_URL / KV_REST_API_TOKEN), kept there for the
 // dashboard, along with the time-on-page beacons that give it session lengths.
 // Case-study events are also emailed via Resend when RESEND_API_KEY and
@@ -86,7 +86,7 @@ function page({ path, error, unconfigured, ref, admin }) {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/styles.css?v=9db16848">
+<link rel="stylesheet" href="/styles.css?v=f5ac8f0d">
 </head>
 <body>
 <main class="gate-wrap"><div class="gate">
@@ -198,8 +198,10 @@ async function sendEmail(subject, text) {
   if (!res.ok) console.error('access-log: email failed', res.status, await res.text());
 }
 
-// kind: 'viewed' | 'unlocked' | 'wrong password'. Never throws — the pages must not break.
-// Every event goes to the runtime log and the store; case-study events are emailed too.
+// kind: 'viewed' | 'gated' | 'unlocked' | 'wrong password'. Never throws — the pages must not break.
+// Every event goes to the runtime log and the store; case-study events are emailed too,
+// except reaching the gate, which the dashboard shows and which would otherwise double
+// every unlock's mail.
 async function logAccess(kind, request, url, salt, ref) {
   try {
     const ua = request.headers.get('user-agent') || '';
@@ -222,7 +224,7 @@ async function logAccess(kind, request, url, salt, ref) {
         ['INCR', COUNT_KEY],
       ]).catch((err) => console.error('access-log: store failed', err)),
     ];
-    if (url.pathname.startsWith('/work/')) {
+    if (url.pathname.startsWith('/work/') && kind !== 'gated') {
       const name = url.pathname.replace(/^\/work\//, '').replace(/\.html$/, '');
       jobs.push(sendEmail(
         `Case study ${kind}: ${name} · ${entry.where}`,
@@ -395,7 +397,9 @@ export default async function middleware(request, context) {
     return;
   }
   if (process.env.ADMIN_PASSWORD && readCookie(request, ADMIN_COOKIE) === await adminTokenFor(process.env.ADMIN_PASSWORD)) return;   // the owner, signed in: no gate, and no log (the owner cookie mutes it)
-  // Carry an external referrer through the form so the unlock log can name it.
+  // Locked: record that the case study was tried, then show the gate. An external
+  // referrer is carried through the form so the unlock log can name it too.
   const ref = refOf(request, url);
+  if (request.method === 'GET') log('gated');
   return new Response(page({ path, ref: isExternal(ref) ? ref : '' }), { status: 401, headers });
 }

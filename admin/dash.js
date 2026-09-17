@@ -23,8 +23,12 @@
     if (r.startsWith('/')) return 'On the site';
     try { return new URL(r).hostname.replace(/^www\./, ''); } catch (_) { return r; }
   };
-  const KIND = { viewed: 'View', unlocked: 'Unlocked', 'wrong password': 'Wrong password' };
+  const KIND = { viewed: 'View', gated: 'Tried to open', unlocked: 'Unlocked', 'wrong password': 'Wrong password' };
   const isVisit = (e) => e.kind in KIND;
+  // What became of a case study someone tried to open, the best outcome winning:
+  // reaching the gate, then a wrong password, then the unlock.
+  const OUTCOME = { gated: 0, 'wrong password': 1, unlocked: 2 };
+  const OUTCOME_LABEL = ['At the gate', 'Wrong password', 'Unlocked'];
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // The one period control. Days are calendar days so a bar is a whole day;
@@ -108,6 +112,8 @@
   // ---- Sessions: one person's events in a row, split at a quiet half hour ----
   // Length is first event to last signal (a time beacon counts), the way
   // analytics tools define it; a lone view with no beacon has no length.
+  // `tried` is each case study the person met the password gate on, with how
+  // it ended; a session that only ever reached a gate still counts.
   function buildSessions(list, now) {
     const by = new Map();
     for (const e of list) { const a = by.get(e.visitor); if (a) a.push(e); else by.set(e.visitor, [e]); }
@@ -116,18 +122,19 @@
       evs.sort((a, b) => a.t - b.t);
       let s = null;
       for (const e of evs) {
-        if (!s || e.t - s.end > GAP) { s = { visitor, start: e.t, end: e.t, views: [], unlocks: 0, beacons: 0, where: '', device: '' }; out.push(s); }
+        if (!s || e.t - s.end > GAP) { s = { visitor, start: e.t, end: e.t, views: [], tried: new Map(), beacons: 0, where: '', device: '' }; out.push(s); }
         s.end = Math.max(s.end, e.t);
-        if (e.kind === 'time') s.beacons++;
-        else if (e.kind === 'viewed') { s.views.push(e); if (!s.where) { s.where = e.where; s.device = e.device; } }
-        else if (e.kind === 'unlocked') s.unlocks++;
+        if (e.kind === 'time') { s.beacons++; continue; }
+        if (!s.where) { s.where = e.where; s.device = e.device; }
+        if (e.kind === 'viewed') s.views.push(e);
+        else if (e.kind in OUTCOME) s.tried.set(e.page, Math.max(s.tried.get(e.page) ?? -1, OUTCOME[e.kind]));
       }
     }
     for (const s of out) {
       s.length = s.end > s.start ? s.end - s.start : (s.beacons ? 0 : null);
       s.live = now - s.end < LIVE;
     }
-    return out.filter((s) => s.views.length).sort((a, b) => b.end - a.end);
+    return out.filter((s) => s.views.length || s.tried.size).sort((a, b) => b.end - a.end);
   }
 
   // Each time beacon belongs to the latest view of that page by that visitor;
@@ -448,6 +455,7 @@
         ['time', ago(s.start, now), stamp(s.start)],
         ['where', s.where || 'unknown', '', 'Where'],
         ['route', route.join(' → '), route.length > 3 ? route.join(' → ') : '', 'Pages'],
+        ['tried', s.tried.size ? '' : '–', '', 'Tried to open'],
         ['length', s.length == null ? '–' : dur(s.length), s.length == null ? 'No time beacon arrived for this visit' : '', 'Length'],
         ['device', s.device || '', '', 'Device'],
         ['visitor', s.visitor || '', '', 'Visitor'],
@@ -459,7 +467,19 @@
         td.textContent = text;
         if (title && title !== text) td.title = title;
         if (cls === 'time' && s.live) { const b = document.createElement('span'); b.className = 'dash-now'; b.textContent = 'Now'; td.appendChild(b); }
-        if (cls === 'route' && s.unlocks) { const b = document.createElement('span'); b.className = 'dash-kind'; b.textContent = s.unlocks === 1 ? 'Unlocked' : `${s.unlocks} unlocks`; td.appendChild(b); }
+        if (cls === 'tried') {                      // each case study met at the gate, with how it ended
+          for (const [page, outcome] of s.tried) {
+            const item = document.createElement('span');
+            item.className = 'dash-tried';
+            item.append(pageName(page));
+            const b = document.createElement('span');
+            b.className = 'dash-kind';
+            b.dataset.kind = Object.keys(OUTCOME)[outcome];
+            b.textContent = OUTCOME_LABEL[outcome];
+            item.appendChild(b);
+            td.appendChild(item);
+          }
+        }
         tr.appendChild(td);
       }
       return tr;
@@ -497,7 +517,7 @@
     renderSessions(sessions, now);
 
     const latest = views[0];
-    const reading = here.map((s) => pageName(s.views[s.views.length - 1].page));
+    const reading = here.map((s) => s.views.length ? pageName(s.views[s.views.length - 1].page) : 'a password gate');
     $('summary').textContent = here.length
       ? `${here.length === 1 ? 'One person is' : `${n(here.length)} people are`} on the site right now, reading ${[...new Set(reading)].slice(0, 3).join(', ')} · ${n(todaysViews.length)} view${todaysViews.length === 1 ? '' : 's'} today`
       : latest
@@ -640,7 +660,7 @@
       const td = document.createElement('td');
       td.className = `c-${cls}`;
       if (label) td.dataset.label = label;             // the phone layer stacks the row and labels each cell
-      if (cls === 'kind') { const b = document.createElement('span'); b.className = 'dash-kind'; b.textContent = text; td.appendChild(b); }
+      if (cls === 'kind') { const b = document.createElement('span'); b.className = 'dash-kind'; b.dataset.kind = e.kind; b.textContent = text; td.appendChild(b); }
       else td.textContent = text;
       if (title && title !== text) td.title = title;
       tr.appendChild(td);

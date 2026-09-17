@@ -65,7 +65,13 @@ if (process.env.SEED !== '0') {
     for (let k = 0; k < pages && t < now; k++) {
       const page = k === 0 ? pick(['/', '/', '/work.html']) : pick(PAGES);
       const base = { page, where, country: p[2], lat: p[3], lon: p[4], device, visitor };
-      if (page.startsWith('/work/') && Math.random() < .3) rows.push({ t, kind: Math.random() < .8 ? 'unlocked' : 'wrong password', ref, ...base });
+      if (page.startsWith('/work/') && Math.random() < .4) {                                                     // met the gate: most get in, some mistype, some leave
+        rows.push({ t, kind: 'gated', ref, ...base });
+        const r = Math.random();
+        if (r < .5) rows.push({ t: t + 1000, kind: 'wrong password', ref, ...base });
+        if (r < .25 || (r >= .5 && r < .65)) { t += 2000 + Math.random() * 6000; ref = page; continue; }   // gave up, at the gate or after a wrong password
+        rows.push({ t: t + 2000, kind: 'unlocked', ref, ...base });
+      }
       rows.push({ t, kind: 'viewed', ref, ...base });
       const stay = Math.random() < .2 ? 3000 + Math.random() * 12000 : 20000 + Math.random() ** 2 * 420000;   // a bounce, or up to seven minutes
       if (Math.random() < .85) {                                                                          // most visits have their beacons; a few were lost
