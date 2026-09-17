@@ -123,6 +123,13 @@ next deployment.
   logging for that browser for a year; on a browser you don't sign in from,
   open any page once with `?owner` on the URL (e.g. `/?owner`) for the same
   effect.
+- Referrer spam (views "sent by" a junk domain that nobody clicked) can be
+  blocked from the Sent by tally: Block beside the host, then Sure? to
+  confirm. That puts the host on a blocklist in the store (`activity:blocked`,
+  subdomains included), drops every view it sent from the log and the
+  all-time count for good, and the edge stops recording it within a minute.
+  Blocked hosts sit under the tally with an Unblock each. The site itself
+  still serves them; only the dashboard stops counting.
 
 ## The deck
 

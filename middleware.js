@@ -4,7 +4,8 @@
 //   /work/*         the case-study password (CASE_STUDY_PASSWORD); the owner's
 //                   admin cookie opens them too, so /admin/deck.html can read them
 //   /admin/*        the dashboard and the deck, the owner's password (ADMIN_PASSWORD)
-//   /api/activity   the feed the dashboard polls; needs the admin cookie
+//   /api/activity   the feed the dashboard polls, and the referrer blocklist it
+//                   edits (POST); needs the admin cookie
 //   /api/ping       the beacon main.js sends with the time a page has been read
 //   everything else public, but every page view is recorded
 //
@@ -17,7 +18,9 @@
 // dashboard, along with the time-on-page beacons that give it session lengths.
 // Case-study events are also emailed via Resend when RESEND_API_KEY and
 // ACCESS_LOG_TO are set. Signing in to the dashboard, or opening any page once
-// with ?owner, mutes logging for your own browser.
+// with ?owner, mutes logging for your own browser. Referrer spam is blocked
+// from the dashboard: a host on the blocklist (activity:blocked, kept by the
+// dashboard's Block buttons) has its views neither recorded nor counted.
 
 export const config = { matcher: ['/', '/index.html', '/work.html', '/work/:path*', '/admin/:path*', '/api/activity', '/api/ping'] };
 
@@ -33,6 +36,8 @@ const COUNT_KEY = 'activity:count';         // all-time page views
 const FEED_KEEP = 4000;                     // entries kept in the list (views and time beacons), all sent on the dashboard's first load
 const FEED_POLL = 100;                      // entries a poll reads before deciding whether it needs to go further back
 const PING_MAX = 4 * 3600;                  // seconds on one page a beacon may claim
+const BLOCK_KEY = 'activity:blocked';       // Redis set of referrer hosts whose views are spam
+const BLOCK_TTL = 60000;                    // ms an edge instance keeps its copy of the set before reading it again
 
 async function sha256(s) {
   const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
@@ -86,7 +91,7 @@ function page({ path, error, unconfigured, ref, admin }) {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/styles.css?v=ed5a2d13">
+<link rel="stylesheet" href="/styles.css?v=ca5866e8">
 </head>
 <body>
 <main class="gate-wrap"><div class="gate">
@@ -144,6 +149,27 @@ function refOf(request, url) {
   } catch (_) { return ''; }
 }
 const isExternal = (ref) => /^https?:/.test(ref);
+// The host a referrer names, the way the dashboard shows it (no www.); '' for direct and same-site.
+function hostOf(ref) {
+  if (!isExternal(ref)) return '';
+  try { return new URL(ref).hostname.replace(/^www\./, '').toLowerCase(); } catch (_) { return ''; }
+}
+// A blocked host covers its subdomains too: referrer spam rotates them.
+const hostBlocked = (host, blocked) => !!host && blocked.some((b) => host === b || host.endsWith(`.${b}`));
+
+// The blocklist as this edge instance last read it. A block takes effect here
+// within a minute; the dashboard hides the host's views at once regardless.
+let blockedAt = 0, blockedHosts = [];
+async function blocklist() {
+  if (Date.now() - blockedAt > BLOCK_TTL) {
+    try {
+      const [hosts] = (await redis([['SMEMBERS', BLOCK_KEY]])) || [[]];
+      blockedHosts = hosts || [];
+      blockedAt = Date.now();
+    } catch (err) { console.error('access-log: blocklist failed', err); }   // the last copy serves until the store answers
+  }
+  return blockedHosts;
+}
 
 // Coarse device/browser read of the user agent; the raw string is logged alongside.
 function describeUA(ua) {
@@ -216,6 +242,7 @@ async function logAccess(kind, request, url, salt, ref) {
       device: describeUA(ua),
       visitor: await visitorId(request, salt),
     };
+    if (hostBlocked(hostOf(entry.ref), await blocklist())) return;   // referrer spam: not a visit
     console.log('access', JSON.stringify(entry));
     const jobs = [
       redis([
@@ -270,10 +297,17 @@ async function ping(request, salt) {
 
 
 // ---- The feed ---------------------------------------------------------------
-// GET /api/activity?since=<ms>  →  { configured, now, total, events }
+// GET /api/activity?since=<ms>  →  { configured, now, total, events, blocked }
 // `events` is newest first, only those after `since` when it is given. The
 // first load takes everything kept; a poll reads a short window and only goes
-// further back when every entry in it turned out to be new.
+// further back when every entry in it turned out to be new. `blocked` is the
+// referrer blocklist, so the dashboard can hide and unblock.
+//
+// POST /api/activity {host, block}  →  { blocked, removed }
+// Adds a referrer host to the blocklist, or takes it off. Blocking also
+// removes every view that host sent from the log and the all-time count
+// (each entry by value, so nothing arriving meanwhile is lost); those views
+// are gone for good, unblocking only lets new ones in again.
 
 const json = (body, status = 200) => new Response(JSON.stringify(body), {
   status,
@@ -290,16 +324,40 @@ function parseEvents(raw, since) {
 }
 
 async function feed(url) {
-  if (!store()) return json({ configured: false, now: Date.now(), total: 0, events: [] });
+  if (!store()) return json({ configured: false, now: Date.now(), total: 0, events: [], blocked: [] });
   const since = Number(url.searchParams.get('since')) || 0;
   const span = since ? FEED_POLL : FEED_KEEP;
-  const [raw, total] = await redis([['LRANGE', FEED_KEY, 0, span - 1], ['GET', COUNT_KEY]]);
+  const [raw, total, blocked] = await redis([['LRANGE', FEED_KEY, 0, span - 1], ['GET', COUNT_KEY], ['SMEMBERS', BLOCK_KEY]]);
   let events = parseEvents(raw, since);
   if (since && (raw || []).length === span && events.length === span) {
     const [more] = await redis([['LRANGE', FEED_KEY, span, FEED_KEEP - 1]]);
     events = events.concat(parseEvents(more, since));
   }
-  return json({ configured: true, now: Date.now(), total: Number(total) || 0, events });
+  return json({ configured: true, now: Date.now(), total: Number(total) || 0, events, blocked: (blocked || []).sort() });
+}
+
+const HOST_RE = /^(?=.{1,253}$)[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/;
+async function editBlocklist(request) {
+  if (!store()) return json({ error: 'No store is connected' }, 503);
+  let host = '', block = true;
+  try {
+    const body = JSON.parse(await request.text());
+    host = String(body.host || '').trim().toLowerCase().replace(/^www\./, '');
+    block = body.block !== false;
+  } catch (_) {}
+  if (!HOST_RE.test(host)) return json({ error: 'Not a host name' }, 400);
+  let removed = 0;
+  if (block) {
+    const [raw] = await redis([['LRANGE', FEED_KEY, 0, -1]]);
+    const gone = (raw || []).filter((s) => { try { return hostBlocked(hostOf(JSON.parse(s).ref), [host]); } catch (_) { return false; } });
+    removed = gone.length;
+    await redis([['SADD', BLOCK_KEY, host], ...gone.map((s) => ['LREM', FEED_KEY, 1, s]), ...(removed ? [['DECRBY', COUNT_KEY, removed]] : [])]);
+  } else {
+    await redis([['SREM', BLOCK_KEY, host]]);
+  }
+  blockedAt = 0;                                       // this instance re-reads the list on its next view
+  const [blocked] = await redis([['SMEMBERS', BLOCK_KEY]]);
+  return json({ blocked: (blocked || []).sort(), removed });
 }
 
 
@@ -320,7 +378,10 @@ export default async function middleware(request, context) {
     const expected = await adminTokenFor(password);
     const signedIn = readCookie(request, ADMIN_COOKIE) === expected;
 
-    if (isFeed) return signedIn ? feed(url) : json({ error: 'Sign in at /admin/ first' }, 401);
+    if (isFeed) {
+      if (!signedIn) return json({ error: 'Sign in at /admin/ first' }, 401);
+      return request.method === 'POST' ? editBlocklist(request) : feed(url);
+    }
 
     if (request.method === 'GET' && url.searchParams.has('signout')) {
       return new Response(null, {
