@@ -68,8 +68,8 @@ before any file is served. The home page and the work index stay public.
 
 ## Who is on the site
 
-The same middleware records every page view on the site, every case-study
-unlock and every wrong password: which page, when, city/region/country
+The same middleware records every page view on the site, every password gate
+reached, every case-study unlock and every wrong password: which page, when, city/region/country
 (Vercel's IP geolocation), the referrer (the page that sent them, e.g.
 LinkedIn), browser and OS, and a short visitor id so one person's sequence of
 views can be followed. Raw IP addresses are never stored or sent; crawlers and
@@ -90,8 +90,9 @@ sessions last, a map of where people are (Leaflet on Esri's light-grey tiles,
 one dot per place sized by visits, placed from Vercel's IP coordinates so it
 is accurate to about the city), the where-from / pages / referrers / devices
 tallies, a table of sessions (one person's visit start to finish, split at a
-quiet half hour, with the pages read, its length and a "Now" mark while they
-are still here) and a feed that updates every few seconds as people arrive,
+quiet half hour, with the pages read, each case study they tried to open and
+how it ended — at the gate, wrong password, unlocked — its length and a "Now"
+mark while they are still here) and a feed that updates every few seconds as people arrive,
 each view showing how long the page was read. It needs two things set up in
 Vercel:
 

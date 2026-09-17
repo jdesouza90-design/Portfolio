@@ -1504,17 +1504,19 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 .dash-filter-state .t-small { margin: 0; color: var(--ink-3); font-variant-numeric: tabular-nums; }
 .dash-feed .dash-empty { margin-top: var(--sp-4); padding-left: 16px; }   /* under the header row, at the cells' inset */
 .dash-table { min-width: 960px; }
-.dash-sessions { min-width: 880px; }
+.dash-sessions { min-width: 1040px; }
 .dash-table td { padding: 12px 16px; }
-.dash-table .c-time, .dash-table .c-where, .dash-table .c-secs, .dash-table .c-length { white-space: nowrap; }
+.dash-table .c-time, .dash-table .c-where, .dash-table .c-secs, .dash-table .c-length, .dash-sessions .c-device { white-space: nowrap; }
 .dash-table .c-time { color: var(--ink-2); }
 .dash-table .c-secs, .dash-table .c-length { font-variant-numeric: tabular-nums; }
 .dash-table .c-route { max-width: 34ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .dash-table .c-visitor { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: var(--t-micro); color: var(--ink-3); }   /* a hash, so monospace and never the micro role's caps */
 .dash-kind, .dash-now { display: inline-block; padding: 3px 9px; border-radius: 20px; background: var(--surface-2); white-space: nowrap; }
-.dash-now, tr[data-kind="unlocked"] .dash-kind { background: var(--glow); color: var(--accent-ink); }
-.c-time .dash-now, .c-route .dash-kind { margin-left: 8px; }
-tr[data-kind="wrong password"] .dash-kind { background: color-mix(in srgb, var(--danger) 10%, var(--surface)); color: var(--danger); }
+.dash-now, .dash-kind[data-kind="unlocked"] { background: var(--glow); color: var(--accent-ink); }
+.c-time .dash-now, .dash-tried .dash-kind { margin-left: 8px; }
+.dash-kind[data-kind="wrong password"] { background: color-mix(in srgb, var(--danger) 10%, var(--surface)); color: var(--danger); }
+.dash-tried { display: block; white-space: nowrap; }   /* one case study per line, its outcome beside it */
+.dash-tried + .dash-tried { margin-top: 6px; }
 .dash-table tr.is-new { animation: dash-new 4s linear both; }   /* an arrival glows green, then settles */
 @keyframes dash-new { from { background: var(--glow); } to { background: transparent; } }
 
