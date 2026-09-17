@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Design system audit agent — John DeSouza</title>
-<meta name="description" content="How I coached one of my two designers to build an agent at Best Egg that audits the design system: 2,304 button variants became 321, with a guideline and an internal design system site that updates itself from Figma. A case study by John DeSouza.">
+<meta name="description" content="How I coached a senior product designer and a product designer to build an agent at Best Egg that audits the design system: 2,304 button variants became 321, with a guideline and an internal design system site that updates itself from Figma. A case study by John DeSouza.">
 <meta property="og:title" content="Design system audit agent — John DeSouza">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://john-desouza.com/work/design-system-audit-agent.html">
 <meta property="og:image" content="https://john-desouza.com/og-image.png?v=cbd7c531">
-<meta property="og:description" content="I coached a designer to build an agent that read every Figma file at Best Egg and cut the button component from 2,304 variants to 321.">
+<meta property="og:description" content="I coached a senior product designer and a product designer to build an agent that read every Figma file at Best Egg and cut the button component from 2,304 variants to 321.">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.ico?v=a803d66e" sizes="32x32">
 <link rel="icon" href="/favicon.svg?v=fb53733d" type="image/svg+xml">
@@ -64,7 +64,7 @@
     <div class="hero-lead">
       <div class="cs-hero-copy">
       <h1 class="t-display" data-rise style="--i:0">Design system audit agent</h1>
-      <p class="t-lede" data-rise style="--i:1">I coached one of the two designers to build an agent that reads every Figma file at Best Egg, counts each button variant, maps where it was used and flags what to cut. Designers now pick from three components instead of one that did everything, and an internal design system site updates itself from Figma every week.</p>
+      <p class="t-lede" data-rise style="--i:1">I coached a senior product designer and a product designer to build an agent that reads every Figma file at Best Egg, counts each button variant, maps where it's used and flags what to cut. It turned one overloaded button component into three, and an internal design system site now rebuilds itself from Figma every week.</p>
     </div>
       <div class="outcome-stat"><p class="eyebrow">Outcome</p><div class="t-stat" data-flow>86%</div><p class="t-small">Fewer button variants: from 2,304 in one component to 321 across three</p></div>
     </div>
@@ -73,7 +73,7 @@
     </figure>
     <dl class="facts">
       <div><dt>Role</dt><dd>Director of Product Design</dd></div>
-      <div><dt>Team</dt><dd>2 designers</dd></div>
+      <div><dt>Team</dt><dd>1 senior product designer, 1 product designer</dd></div>
       <div><dt>Timeline</dt><dd>1 quarter</dd></div>
       <div><dt>Launched</dt><dd>Q2 2026</dd></div>
     </dl>
@@ -85,7 +85,7 @@
     <header class="section-intro">
       <p class="eyebrow">Results</p>
       <h2 class="t-title">Three components where one did everything</h2>
-      <p class="t-lede">The old .Button carried seven properties multiplied together, and most of the results were never used. I set the direction and the two designers shipped Button, Icon Button and Link, with icons and fixed widths handled inside the component instead of as variants. The counts are the Figma library's own, before and after.</p>
+      <p class="t-lede">The old .Button carried seven properties multiplied together, and most of the results were never used. I set the direction and the senior product designer and product designer shipped Button, Icon Button and Link, with icons and fixed widths handled inside the component instead of as variants. The counts are the Figma library's own, before and after.</p>
     </header>
     <div class="proof matrix" data-matrix data-total="2304" data-groups='[{"label":"Button","n":141},{"label":"Icon Button","n":120},{"label":"Link","n":60}]'>
       <div class="proof-head">
@@ -126,7 +126,7 @@
         <ul class="tensions">
           <li><strong>Coverage</strong><span>Three components still had to cover every real use in the product.</span></li>
           <li><strong>Trust</strong><span>The team had to believe an agent's count over its own sense of what was in the file.</span></li>
-          <li><strong>Adoption</strong><span>A new structure only counts once designers and engineers switch to it.</span></li>
+          <li><strong>Adoption</strong><span>A new structure only counts once product designers and engineers switch to it.</span></li>
         </ul>
       </div>
       <figure class="panel wide crop" style="--crop-pos: 0 0"><img decoding="async" width="1000" height="560" src="../assets/btn-sheet-close.webp?v=78251215" alt="A corner of the sheet at full size: near-identical Primary buttons in default, hover, active and disabled, solid, ghost and borderless, with and without icons" loading="lazy"></figure>
@@ -136,7 +136,7 @@
       <div class="row-copy">
         <p class="eyebrow">The design</p>
         <h3 class="t-title">The agent counted, we decided</h3>
-        <p class="t-lede">The agent, built on Claude, ran through every Figma file: it listed each variant, found every instance in the product files and flagged what was unused or duplicated. The two designers ran each pass and brought the list to me. As a group we kept 321, split them into Button, Icon Button and Link, and had the agent write the usage guideline.</p>
+        <p class="t-lede">The agent, built on Claude, ran through every Figma file: it listed each variant, found every instance in the product files and flagged what was unused or duplicated. The senior product designer and product designer ran each pass and brought the list to me. As a group we kept 321, split them into Button, Icon Button and Link, and had the agent write the usage guideline.</p>
       </div>
       <div class="cols">
         <div class="col">
@@ -159,7 +159,7 @@
       <div class="row-copy">
         <p class="eyebrow">Try it</p>
         <h3 class="t-title">The same button, both ways</h3>
-        <p class="t-lede">Build a button in the old .Button and in the new Button. On the left every option is a variant, so each pick is one cell of 2,304. On the right the icons are toggles, so the same pick is one of 141.</p>
+        <p class="t-lede">Build a button in the old .Button and in the new Button. On the left every option is a variant, so each pick is one cell of 2,304. On the right the icons are toggles and Button is one of three new components, so the same pick is one of 141 — its share of the 321 total, alongside Icon Button and Link.</p>
       </div>
       <div class="proof config" data-config>
         <div class="config-side" data-side="old">
@@ -217,9 +217,9 @@
       <h2 class="t-title">The method, the coaching and the audience</h2>
     </header>
     <div class="ledger">
-      <div class="ledger-row"><h3 class="t-heading">The method</h3><p class="t-body">I decided to run the audit as an agent instead of by hand, and I wrote its brief and the rules it worked to: read every file, list every variant, find every instance, flag anything unused or duplicated and show its working. Buttons went first because they were the visible mess. I drove the work and the two designers executed it.</p></div>
-      <div class="ledger-row"><h3 class="t-heading">The coaching</h3><p class="t-body">One of the two designers built the agent, and I coached them through it: how to brief it, how to read its list against the files, when to overrule it. Its count was a claim until we checked it, so both designers ran it and we reviewed the list as a group, then decided the split into three components together. The designers then had the agent write the guideline and the library to the calls we had made.</p></div>
-      <div class="ledger-row"><h3 class="t-heading">The audience</h3><p class="t-body">I presented the work to product leadership and then to the product org: the reduction, the time saved and what it did to the workflow. New designers ramp faster on three components than on one that did everything, and engineering can see the button styles instead of guessing between them. Leadership asked for the same run on their own use cases.</p></div>
+      <div class="ledger-row"><h3 class="t-heading">The method</h3><p class="t-body">I decided to run the audit as an agent instead of by hand, and I wrote its brief and the rules it worked to: read every file, list every variant, find every instance, flag anything unused or duplicated and show its working. Buttons went first because they were the visible mess. I drove the work and the senior product designer and product designer executed it.</p></div>
+      <div class="ledger-row"><h3 class="t-heading">The coaching</h3><p class="t-body">The senior product designer built the agent, and I coached the pair through it: how to brief it, how to read its list against the files, when to overrule it. Its count was a claim until we checked it, so both ran it and we reviewed the list as a group, then decided the split into three components together. They then had the agent write the guideline and the library to the calls we had made.</p></div>
+      <div class="ledger-row"><h3 class="t-heading">The audience</h3><p class="t-body">I presented the work to product leadership and then to the product org: the reduction, the time saved and what it did to the workflow. New product designers ramp faster on three components than on one that did everything, and engineering can see the button styles instead of guessing between them. Leadership asked for the same run on their own use cases.</p></div>
     </div>
   </div>
 </section>
