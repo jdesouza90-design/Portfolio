@@ -140,7 +140,7 @@ Compose for it:
 - Check it at 1280 and 390 wide (the phone layer changes the ground's aspect ratio) and
   look at the faded edge specifically, not just the row.
 
-The hero lede on `work.html` says "The case studies are password protected"; it doesn't
+The hero lede on `work.html` doesn't
 mention a count, so it needs no change.
 
 ---
