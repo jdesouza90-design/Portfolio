@@ -100,7 +100,8 @@
     const hero = q(doc, '.cs-hero');
     const facts = {};
     const factList = qa(hero, '.facts > div').map((d) => { const k = text(q(d, 'dt')), v = text(q(d, 'dd')); facts[k] = v; return { k, v }; });
-    const intro = (id) => { const s = q(doc, '#' + id); return { el: s, eyebrow: text(q(s, '.section-intro .eyebrow')), heading: text(q(s, '.section-intro .t-title')), lede: text(q(s, '.section-intro .t-lede')) }; };
+    const intro = (id) => { const s = q(doc, '#' + id), h = s && (q(s, '.section-intro') || q(s, '.row-copy'));   // a section's intro, or a full row's copy
+      return { el: s, eyebrow: text(q(h, '.eyebrow')), heading: text(q(h, '.t-title')), lede: text(q(h, '.t-lede')) }; };
     const results = intro('results');
     const tableEl = q(results.el, 'table');
     const table = tableEl ? {

@@ -249,9 +249,9 @@ All six case studies are the same document, in this order:
    one heading, one short paragraph.
 5. **What I'd do differently**: one narrow note with run-in labels, where a
    retro exists.
-   Where a second deliverable earns more than a row, it takes a section of its
-   own between How we got there and My role: a centred intro over the visual
-   (the audit agent page's "The library", a section intro over its walkthrough).
+   A second deliverable takes a `.row.full` of its own in the story, placed
+   where it happened (the audit agent page's "The library", its walkthrough
+   between The design and Try it).
 6. **Next**: the closing band with the next case study and contact.
 
 Icons are inline SVG, 24-unit, 1.5 stroke, ink with one green accent detail
@@ -513,12 +513,13 @@ The rules that shape the code:
   itself, masked to a band along the edges, so the screen dissolves into it
   instead of stopping at the clip line, and nothing inside the band is meant
   to be read. Contained images (`.cutout`, `.wide`) keep their crisp edges.
-- The three walkthrough recordings are 1.1–7.8 MB and only load when a visitor
+- The three walkthrough recordings are 1.5–7.8 MB and only load when a visitor
   presses Play. Staking and Cross-Sell come from the deck's GIFs, so their
   resolution is capped; replace them if you still have the original screen
-  recordings. The audit agent one is a screen recording encoded to an animated
-  webp at 12 fps (there is no ffmpeg on this Mac; `ffmpeg-static` from npm or
-  PyAV's `libwebp_anim` both work).
+  recordings. The audit agent one is a screen recording encoded at 12 fps by
+  `.claude/skills/add-case-study/scripts/anim.py`, which does its own frame
+  differencing: libwebp's animation encoder leaves a ghost of the previous
+  screen behind after a page change.
 - Image, stylesheet, script, icon, social-image and resume URLs carry a `?v=`
   content hash. After replacing any of them run `python3 stamp.py`, which
   restamps every page, the resume link in `main.js` and the password gate in
