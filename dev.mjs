@@ -20,14 +20,19 @@ process.env.KV_REST_API_URL = 'http://store.local';
 process.env.KV_REST_API_TOKEN = 'local';
 
 // ---- In-memory Redis behind the REST shape middleware.js speaks ----
-const lists = new Map(), values = new Map();
+const lists = new Map(), values = new Map(), sets = new Map();
 const cmd = ([op, key, ...args]) => {
   switch (op) {
     case 'LPUSH': { const l = lists.get(key) || []; l.unshift(...args); lists.set(key, l); return l.length; }
     case 'LTRIM': { const l = lists.get(key) || []; lists.set(key, l.slice(Number(args[0]), Number(args[1]) + 1)); return 'OK'; }
     case 'LRANGE': { const l = lists.get(key) || []; const end = Number(args[1]); return l.slice(Number(args[0]), end < 0 ? undefined : end + 1); }
+    case 'LREM': { const l = lists.get(key) || []; const i = l.indexOf(args[1]); if (i < 0) return 0; l.splice(i, 1); return 1; }   // count 1: the first match
     case 'INCR': { const v = (Number(values.get(key)) || 0) + 1; values.set(key, String(v)); return v; }
+    case 'DECRBY': { const v = (Number(values.get(key)) || 0) - Number(args[0]); values.set(key, String(v)); return v; }
     case 'GET': return values.get(key) ?? null;
+    case 'SADD': { const st = sets.get(key) || new Set(); const before = st.size; for (const a of args) st.add(a); sets.set(key, st); return st.size - before; }
+    case 'SREM': { const st = sets.get(key) || new Set(); let n = 0; for (const a of args) n += st.delete(a) ? 1 : 0; return n; }
+    case 'SMEMBERS': return [...(sets.get(key) || [])];
     default: throw new Error(`unsupported ${op}`);
   }
 };
@@ -51,6 +56,7 @@ const PLACES = [
 ];
 const PAGES = ['/', '/', '/', '/work.html', '/work.html', '/work/staking.html', '/work/cross-sell.html', '/work/verifications.html', '/work/refinance-offers.html', '/work/no-code-tools.html', '/work/design-system-audit-agent.html'];
 const REFS = ['direct', 'direct', 'https://www.linkedin.com/', 'https://www.linkedin.com/feed/', 'https://www.google.com/', 'https://mail.google.com/mail/u/0/'];
+const SPAM = ['https://free-traffic.buttons-for-your-website.com/', 'https://semalt.com/crawler', 'https://a1.semalt.com/', 'https://www.site-audit-ranking.xyz/'];   // referrer spam, to try Block on
 const DEVICES = ['Chrome on macOS', 'Safari on iOS', 'Safari on macOS', 'Chrome on Windows', 'Firefox on macOS', 'Chrome on Android'];
 const pick = (a) => a[Math.floor(Math.random() * a.length)];
 if (process.env.SEED !== '0') {
@@ -81,6 +87,10 @@ if (process.env.SEED !== '0') {
       t += stay + 1000 + Math.random() * 4000;
       ref = page;
     }
+  }
+  for (let i = 0; i < 40; i++) {                                                                     // spam: a hit on the home page and nothing else, no beacon
+    const p = pick(PLACES), ref = pick(SPAM);
+    rows.push({ t: now - Math.floor(Math.random() * 7 * 86400000), kind: 'viewed', ref, page: '/', where: p.slice(0, 3).join(', '), country: p[2], lat: p[3], lon: p[4], device: 'Chrome on Windows', visitor: Math.random().toString(16).slice(2, 8) });
   }
   rows.sort((a, b) => b.t - a.t);
   lists.set('activity', rows.filter((r) => r.t <= now).map((r) => JSON.stringify(r)));

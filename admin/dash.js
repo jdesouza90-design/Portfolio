@@ -55,6 +55,9 @@
 
   let events = [];            // newest first, views and time beacons alike
   let total = 0;
+  let blocked = [];           // referrer hosts blocked as spam (the edge keeps the set; www. stripped)
+  const refHost = (r) => { if (!r || !/^https?:/.test(r)) return ''; try { return new URL(r).hostname.replace(/^www\./, '').toLowerCase(); } catch (_) { return ''; } };
+  const isSpam = (e) => { const h = refHost(e.ref); return !!h && blocked.some((b) => h === b || h.endsWith(`.${b}`)); };
   let lastT = 0;
   let timer = null;
   let lastOk = 0;
@@ -94,16 +97,22 @@
     return [...m.entries()].sort((a, b) => b[1] - a[1]);
   }
 
-  function renderList(id, rows, limit = 8) {
+  // `action(label)` may hand a row a button; a list with one is left alone while
+  // the button has focus, so a poll never pulls it out from under the keyboard.
+  let forceLists = false;     // a block or unblock redraws the lists even under focus, then places it
+  function renderList(id, rows, limit = 8, action = null) {
     const ol = $(id), empty = $(id + '-empty');
-    ol.replaceChildren();
     const top = rows.slice(0, limit);
+    if (!forceLists && ol.contains(document.activeElement)) return;
+    ol.replaceChildren();
     const max = top.length ? top[0][1] : 1;
     for (const [label, count] of top) {
       const li = document.createElement('li');
       li.innerHTML = `<span class="dash-bar" style="--w:${Math.round(100 * count / max)}%"></span><span class="dash-label"></span><span class="dash-count"></span>`;
       li.querySelector('.dash-label').textContent = label;
       li.querySelector('.dash-count').textContent = n(count);
+      const btn = action && action(label);
+      if (btn) li.appendChild(btn);
       ol.appendChild(li);
     }
     empty.hidden = top.length > 0;
@@ -520,7 +529,7 @@
     const inRange = views.filter((e) => e.t >= start);
     renderList('where', tally(inRange, (e) => e.where || 'unknown'));
     renderList('pages', tally(inRange, (e) => pageName(e.page)));
-    renderList('refs', tally(inRange, (e) => refName(e.ref)));
+    renderList('refs', tally(inRange, (e) => refName(e.ref)), 8, blockButton);
     renderList('devices', tally(inRange, (e) => e.device || 'unknown'));
     renderMap(inRange, now);
     chart.update(buckets(inRange, now));
@@ -535,6 +544,94 @@
       : latest
         ? `Nobody right now · Last visit ${ago(latest.t, now)} from ${latest.where || 'somewhere unknown'} · ${n(todaysViews.length)} view${todaysViews.length === 1 ? '' : 's'} today`
         : 'No visits recorded yet. They will appear here as people arrive.';
+  }
+
+  // ---- Blocking referrer spam ----
+  // A Block button beside each external host in Sent by. Pressing it once
+  // arms it with what it will drop; pressing it again asks the edge to add the
+  // host to the blocklist and remove that host's views from the log (for good:
+  // unblocking only lets new ones in). The blocked hosts sit under the list
+  // with an Unblock each. What is blocked is hidden here at once; the edge
+  // stops recording it within a minute.
+  let armed = '';
+  const status = $('refs-status');
+  const isHost = (label) => /^[a-z0-9-]+(\.[a-z0-9-]+)+$/i.test(label);
+  const viewsFrom = (host) => events.filter((e) => isVisit(e) && (refHost(e.ref) === host || refHost(e.ref).endsWith(`.${host}`))).length;
+  function blockButton(label) {
+    if (!isHost(label)) return null;                 // Direct and On the site can't be blocked
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'dash-act'; b.dataset.host = label;
+    b.setAttribute('aria-label', `Block ${label}`);
+    setArmed(b, label === armed);
+    return b;
+  }
+  function setArmed(b, on) {
+    const host = b.dataset.host;
+    b.classList.toggle('is-armed', on);
+    if (on) {
+      const k = viewsFrom(host), views = `${n(k)} view${k === 1 ? '' : 's'}`;
+      b.textContent = 'Sure?';
+      b.setAttribute('aria-label', `Block ${host} and drop its ${views}: press again to confirm`);
+      status.textContent = `Blocking ${host} drops its ${views} from the log for good. Press again to confirm.`;
+    } else {
+      b.textContent = 'Block'; b.setAttribute('aria-label', `Block ${host}`);
+      if (status.textContent.startsWith('Blocking ') && status.textContent.endsWith('confirm.')) status.textContent = '';
+    }
+  }
+  function disarm() {
+    if (!armed) return;
+    const b = $('refs').querySelector(`[data-host="${CSS.escape(armed)}"]`);
+    armed = '';
+    if (b) setArmed(b, false);
+  }
+  async function setBlocked(host, block) {
+    status.textContent = block ? `Blocking ${host}…` : `Unblocking ${host}…`;
+    try {
+      const res = await fetch('/api/activity', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ host, block }) });
+      if (res.status === 401) { location.reload(); return; }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+      blocked = data.blocked;
+      if (block) { events = events.filter((e) => !isSpam(e)); total = Math.max(0, total - data.removed); }
+      status.textContent = block
+        ? `Blocked ${host} · ${n(data.removed)} view${data.removed === 1 ? '' : 's'} dropped`
+        : `Unblocked ${host} · new views from it count again`;
+      forceLists = true;
+      try { renderStats(Date.now()); refilter(); renderBlocked(); } finally { forceLists = false; }
+      // Focus follows the host: to its Unblock, or back to the lists once it is gone.
+      const next = block ? $('blocked-list').querySelector(`[data-host="${CSS.escape(host)}"]`) : ($('blocked-list').querySelector('.dash-act') || $('refs').querySelector('.dash-act'));
+      (next || status).focus();
+    } catch (err) {
+      console.error(err);
+      status.textContent = `Couldn't ${block ? 'block' : 'unblock'} ${host}: ${err.message}`;
+    }
+  }
+  $('refs').addEventListener('click', (e) => {
+    const b = e.target.closest('.dash-act');
+    if (!b) return;
+    const host = b.dataset.host;
+    if (armed === host) { armed = ''; setArmed(b, false); setBlocked(host, true); return; }
+    disarm();
+    armed = host;
+    setArmed(b, true);
+  });
+  $('refs').addEventListener('keydown', (e) => { if (e.key === 'Escape' && armed) { disarm(); } });
+  $('refs').addEventListener('focusout', (e) => { if (armed && !$('refs').contains(e.relatedTarget)) disarm(); });
+  let listedBlocked = '';
+  function renderBlocked() {
+    const box = $('refs-blocked'), ul = $('blocked-list');
+    const sig = blocked.join('\n');
+    if (sig === listedBlocked || (!forceLists && ul.contains(document.activeElement))) return;
+    listedBlocked = sig;
+    ul.replaceChildren(...blocked.map((host) => {
+      const li = document.createElement('li');
+      const s = document.createElement('span'); s.textContent = host;
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'dash-act'; b.dataset.host = host; b.textContent = 'Unblock'; b.setAttribute('aria-label', `Unblock ${host}`);
+      b.addEventListener('click', () => setBlocked(host, false));
+      li.append(s, b);
+      return li;
+    }));
+    box.hidden = !blocked.length;
   }
 
   // ---- Feed filters: each select narrows the feed to one value of its column ----
@@ -775,16 +872,16 @@
         $('summary').textContent = 'Nothing is being recorded until a store is connected.';
         return;
       }
-      const fresh = data.events.filter((e) => !seen.has(key(e)));
-      for (const e of fresh) seen.add(key(e));
-      if (fresh.length) {
-        events = fresh.concat(events).sort((a, b) => b.t - a.t).slice(0, KEEP);
-        lastT = events[0].t;
-      }
+      blocked = data.blocked || [];
+      const fresh = data.events.filter((e) => !seen.has(key(e)) && !isSpam(e));   // spam the edge recorded before its blocklist caught up
+      for (const e of data.events) seen.add(key(e));
+      if (fresh.length) events = fresh.concat(events).sort((a, b) => b.t - a.t).slice(0, KEEP);
+      if (data.events.length) lastT = Math.max(lastT, data.events[0].t);
       total = data.total;
       lastOk = Date.now();
       renderStats(Date.now());
       renderFeed(fresh);
+      renderBlocked();
       setLive('on', 'Live');
       $('dash').setAttribute('aria-busy', 'false');
     } catch (err) {

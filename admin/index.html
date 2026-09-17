@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" crossorigin>
-<link rel="stylesheet" href="../styles.css?v=ed5a2d13">
+<link rel="stylesheet" href="../styles.css?v=ca5866e8">
 </head>
 <body class="dash-body">
 <a class="skip" href="#main">Skip to content</a>
@@ -121,6 +121,11 @@
         <h2 class="eyebrow" id="h-refs">Sent by · <span data-period>last 7 days</span></h2>
         <ol class="dash-list" id="refs"></ol>
         <p class="t-small dash-empty" id="refs-empty" hidden>No visits yet.</p>
+        <p class="t-small dash-status" id="refs-status" role="status" tabindex="-1"></p>
+        <div class="dash-blocked" id="refs-blocked" hidden>
+          <p class="t-small">Blocked as spam. Their views are dropped before they are counted; a block covers the host's subdomains too.</p>
+          <ul id="blocked-list" aria-label="Blocked referrers"></ul>
+        </div>
       </section>
       <section class="card dash-card" aria-labelledby="h-devices">
         <h2 class="eyebrow" id="h-devices">Devices · <span data-period>last 7 days</span></h2>
@@ -189,6 +194,6 @@
 </main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" crossorigin></script>
-<script src="dash.js?v=816a0102"></script>
+<script src="dash.js?v=5203b2ba"></script>
 </body>
 </html>
