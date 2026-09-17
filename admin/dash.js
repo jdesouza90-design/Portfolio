@@ -113,7 +113,8 @@
   // Length is first event to last signal (a time beacon counts), the way
   // analytics tools define it; a lone view with no beacon has no length.
   // `tried` is each case study the person met the password gate on, with how
-  // it ended; a session that only ever reached a gate still counts.
+  // it ended; a session that only ever reached a gate still counts. Each visit
+  // event is handed its session, so the feed can show the same on its rows.
   function buildSessions(list, now) {
     const by = new Map();
     for (const e of list) { const a = by.get(e.visitor); if (a) a.push(e); else by.set(e.visitor, [e]); }
@@ -125,6 +126,7 @@
         if (!s || e.t - s.end > GAP) { s = { visitor, start: e.t, end: e.t, views: [], tried: new Map(), beacons: 0, where: '', device: '' }; out.push(s); }
         s.end = Math.max(s.end, e.t);
         if (e.kind === 'time') { s.beacons++; continue; }
+        e.session = s;
         if (!s.where) { s.where = e.where; s.device = e.device; }
         if (e.kind === 'viewed') s.views.push(e);
         else if (e.kind in OUTCOME) s.tried.set(e.page, Math.max(s.tried.get(e.page) ?? -1, OUTCOME[e.kind]));
@@ -444,6 +446,28 @@
     }));
   }
 
+  // A Tried to open cell: each case study met at the gate, with how it ended,
+  // or a dash. Both tables draw it; the feed redraws it as outcomes arrive.
+  const triedSig = (tried) => [...tried].map(([p, o]) => `${p}:${o}`).join(',');
+  function fillTried(td, tried) {
+    const sig = triedSig(tried);
+    if (td.dataset.sig === sig) return;
+    td.dataset.sig = sig;
+    td.replaceChildren();
+    if (!tried.size) { td.textContent = '–'; return; }
+    for (const [page, outcome] of tried) {
+      const item = document.createElement('span');
+      item.className = 'dash-tried';
+      item.append(pageName(page));
+      const b = document.createElement('span');
+      b.className = 'dash-kind';
+      b.dataset.kind = Object.keys(OUTCOME)[outcome];
+      b.textContent = OUTCOME_LABEL[outcome];
+      item.appendChild(b);
+      td.appendChild(item);
+    }
+  }
+
   // ---- Sessions table ----
   function renderSessions(sessions, now) {
     const tb = $('sessions');
@@ -455,7 +479,7 @@
         ['time', ago(s.start, now), stamp(s.start)],
         ['where', s.where || 'unknown', '', 'Where'],
         ['route', route.join(' → '), route.length > 3 ? route.join(' → ') : '', 'Pages'],
-        ['tried', s.tried.size ? '' : '–', '', 'Tried to open'],
+        ['tried', '', '', 'Tried to open'],
         ['length', s.length == null ? '–' : dur(s.length), s.length == null ? 'No time beacon arrived for this visit' : '', 'Length'],
         ['device', s.device || '', '', 'Device'],
         ['visitor', s.visitor || '', '', 'Visitor'],
@@ -467,19 +491,7 @@
         td.textContent = text;
         if (title && title !== text) td.title = title;
         if (cls === 'time' && s.live) { const b = document.createElement('span'); b.className = 'dash-now'; b.textContent = 'Now'; td.appendChild(b); }
-        if (cls === 'tried') {                      // each case study met at the gate, with how it ended
-          for (const [page, outcome] of s.tried) {
-            const item = document.createElement('span');
-            item.className = 'dash-tried';
-            item.append(pageName(page));
-            const b = document.createElement('span');
-            b.className = 'dash-kind';
-            b.dataset.kind = Object.keys(OUTCOME)[outcome];
-            b.textContent = OUTCOME_LABEL[outcome];
-            item.appendChild(b);
-            td.appendChild(item);
-          }
-        }
+        if (cls === 'tried') fillTried(td, s.tried);
         tr.appendChild(td);
       }
       return tr;
@@ -650,6 +662,7 @@
       ['time', ago(e.t, Date.now()), stamp(e.t)],
       ['kind', KIND[e.kind] || e.kind],
       ['page', pageName(e.page), e.page],
+      ['tried', '', '', 'Tried to open'],
       ['secs', e.kind !== 'viewed' ? '' : e.secs == null ? '–' : dur(e.secs * 1000), '', 'Time'],
       ['where', e.where || 'unknown', '', 'Where'],
       ['ref', refName(e.ref), e.ref, 'Sent by'],
@@ -661,6 +674,7 @@
       td.className = `c-${cls}`;
       if (label) td.dataset.label = label;             // the phone layer stacks the row and labels each cell
       if (cls === 'kind') { const b = document.createElement('span'); b.className = 'dash-kind'; b.dataset.kind = e.kind; b.textContent = text; td.appendChild(b); }
+      else if (cls === 'tried') fillTried(td, e.session ? e.session.tried : new Map());   // what that visit tried, on each of its rows
       else td.textContent = text;
       if (title && title !== text) td.title = title;
       tr.appendChild(td);
@@ -679,10 +693,12 @@
       for (const e of [...fresh].reverse()) if (shown(e)) tb.prepend(row(e, true));   // newest ends up on top
       while (tb.children.length > 200) { rows.delete(tb.lastElementChild.dataset.key); tb.lastElementChild.remove(); }
     }
-    for (const e of events) {                        // readings that arrived since the row was drawn
-      if (e.kind !== 'viewed' || e.secs == null) continue;
+    for (const e of events) {                        // readings and gate outcomes that arrived since the row was drawn
+      if (!isVisit(e)) continue;
       const tr = rows.get(key(e));
       if (!tr) continue;
+      if (e.session) fillTried(tr.querySelector('.c-tried'), e.session.tried);
+      if (e.kind !== 'viewed' || e.secs == null) continue;
       const td = tr.querySelector('.c-secs'), text = dur(e.secs * 1000);
       if (td.textContent !== text) td.textContent = text;
     }

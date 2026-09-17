@@ -1503,7 +1503,7 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 .dash-filter-state { margin-left: auto; display: flex; align-items: center; gap: 14px; }
 .dash-filter-state .t-small { margin: 0; color: var(--ink-3); font-variant-numeric: tabular-nums; }
 .dash-feed .dash-empty { margin-top: var(--sp-4); padding-left: 16px; }   /* under the header row, at the cells' inset */
-.dash-table { min-width: 960px; }
+.dash-table { min-width: 1120px; }
 .dash-sessions { min-width: 1040px; }
 .dash-table td { padding: 12px 16px; }
 .dash-table .c-time, .dash-table .c-where, .dash-table .c-secs, .dash-table .c-length, .dash-sessions .c-device { white-space: nowrap; }
