@@ -32,6 +32,9 @@ for f in pages + ['middleware.js']:
         p = src.replace('../', '')
         return 'src="%s?v=%s"' % (src, h(p)) if os.path.exists(p) else m.group(0)
     s = re.sub(r'src="((?:\.\./)?assets/[^"?]+)(?:\?v=[a-f0-9]+)?"', asset, s)
+    # Walkthrough animations load from data-anim on Play; /assets/ is cached for a week, so stamp them too.
+    s = re.sub(r'data-anim="((?:\.\./)?assets/[^"?]+)(?:\?v=[a-f0-9]+)?"',
+               lambda m: asset(m).replace('src=', 'data-anim=', 1), s)
     # Icons are root-absolute on every page; browsers cache favicons hard, so stamp them too.
     s = re.sub(r'href="/(favicon\.svg|favicon\.ico|apple-touch-icon\.png)(?:\?v=[a-f0-9]+)?"',
                lambda m: 'href="/%s?v=%s"' % (m.group(1), h(m.group(1))), s)

@@ -512,9 +512,12 @@ The rules that shape the code:
   itself, masked to a band along the edges, so the screen dissolves into it
   instead of stopping at the clip line, and nothing inside the band is meant
   to be read. Contained images (`.cutout`, `.wide`) keep their crisp edges.
-- The three walkthrough recordings are 2.8–7.8 MB and only load when a visitor
-  presses Play. They come from the deck's GIFs, so their resolution is capped;
-  replace them if you still have the original screen recordings.
+- The three walkthrough recordings are 1.1–7.8 MB and only load when a visitor
+  presses Play. Staking and Cross-Sell come from the deck's GIFs, so their
+  resolution is capped; replace them if you still have the original screen
+  recordings. The audit agent one is a screen recording encoded to an animated
+  webp at 12 fps (there is no ffmpeg on this Mac; `ffmpeg-static` from npm or
+  PyAV's `libwebp_anim` both work).
 - Image, stylesheet, script, icon, social-image and resume URLs carry a `?v=`
   content hash. After replacing any of them run `python3 stamp.py`, which
   restamps every page, the resume link in `main.js` and the password gate in
