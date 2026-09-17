@@ -56,9 +56,13 @@ problem and research rows, and in both indexes.
 
 Walkthroughs: the animation is an animated webp (or a GIF converted to one) at
 `<prefix>-walkthrough.webp`, the poster is `<prefix>-walkthrough-poster.jpg`. The existing
-recordings are 2.8 to 8 MB and only load on Play; if a new one is over 3 MB, say so in the
+recordings are 1.5 to 8 MB and only load on Play; if a new one is over 3 MB, say so in the
 `.walk-note`. If John still has the original screen recording, prefer it to a deck GIF; the
-deck GIFs are capped at their export resolution.
+deck GIFs are capped at their export resolution. Encode a `.mov` with
+`scripts/anim.py <src.mov> assets/<prefix>-walkthrough.webp assets/<prefix>-walkthrough-poster.jpg 12 68 12`
+(it also writes the poster). Do not use ffmpeg's or PyAV's `libwebp_anim` for a screen
+recording: it never inserts key frames and flattens "similar" blocks, so a faint ghost of the
+previous screen stays behind after every page change.
 
 Alt text says what the screen shows and what it says: the heading on the screen, the state
 ("0 of 3 complete", "with a submitted file"). A hero image alt can be a sentence. Never
