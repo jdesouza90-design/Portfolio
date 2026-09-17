@@ -514,7 +514,10 @@ The rules that shape the code:
   to be read. Contained images (`.cutout`, `.wide`) keep their crisp edges.
 - The three walkthrough recordings are 2.8–7.8 MB and only load when a visitor
   presses Play. They come from the deck's GIFs, so their resolution is capped;
-  replace them if you still have the original screen recordings.
+  replace them if you still have the original screen recordings. The Staking
+  poster is rebuilt at 2× (the GIF's laptop, Chainlink's 2122px still of the
+  first screen, nav and stepper redrawn on the same geometry) so only the
+  play state is soft; the GIF itself is not hosted anywhere public.
 - Image, stylesheet, script, icon, social-image and resume URLs carry a `?v=`
   content hash. After replacing any of them run `python3 stamp.py`, which
   restamps every page, the resume link in `main.js` and the password gate in
