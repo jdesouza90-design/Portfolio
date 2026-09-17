@@ -245,11 +245,14 @@ main, .nav { position: relative; z-index: 1; }
    answers the hand before the page does. Hover lifts are gated to pointers
    that can hover: a tap on a phone would otherwise leave the button raised. */
 .btn:active, .icon-btn:active, .layer-tab:active, .testimonial-controls button:active { transform: scale(.97); }
-.walk .play:active { transform: translate(-50%, -50%) scale(.97); }
 @media (hover: hover) and (pointer: fine) {
   .btn:hover { transform: translateY(-2px); }
   .btn:hover:active { transform: translateY(-2px) scale(.97); }
 }
+/* The walkthrough's play control is centered by its transform, so it keeps that
+   through the press; the .btn hover lift above would drop it and move the
+   button out from under the cursor before the click lands. */
+.walk .play:active, .walk .play:hover:active { transform: translate(-50%, -50%) scale(.97); }
 .btn-primary { background: var(--ink); color: var(--paper); }
 .btn-primary:hover { background: var(--accent); color: var(--surface); box-shadow: 0 10px 30px -10px var(--glow); }
 .btn-ghost { border-color: var(--hair-2); color: var(--ink); background: var(--surface); }
@@ -1174,7 +1177,7 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
   .tooltip { transform: translate(-50%, 0); }
   .btn:hover, .btn:active, .icon-btn:active, .layer-tab:active, .testimonial-controls button:active { transform: none; }
   .icon-swap svg, .btn-browse svg, .cs-next-arrow { transition: none; }
-  .walk .play:active { transform: translate(-50%, -50%); }
+  .walk .play:active, .walk .play:hover:active { transform: translate(-50%, -50%); }
   .nav-links, .nav.open .nav-links, .nav-links li, .nav.open .nav-links li, .nav-foot, .nav.open .nav-foot { transition: none; }
   .nav-toggle path { transition: none; }
 }
