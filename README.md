@@ -25,9 +25,6 @@ main.js                         CONFIG links, then one function per feature: nav
                                 swipe strips, table frames, About portrait height
 admin/index.html                Activity dashboard: who is on the site, live (its own password)
 admin/dash.js                   The dashboard's script: polls the feed, builds sessions, draws the charts and the map
-admin/deck.html                 The interview deck, drawn from the site's pages each time it opens (the Deck tab)
-admin/deck.js                   Reads the pages into a model, draws the slides, runs the stage (keys, notes, overview, present)
-admin/deck-plan.js              One entry per slide: layout, what it pulls, framing lines, speaker notes, per-company fills
 middleware.js                   Vercel Edge Middleware: the two password gates, the activity log, its feed and the time-on-page beacon
 vercel.json                     Cache and security headers
 .vercelignore                   Keeps the repo's tooling (this file, VOICE.md, stamp.py, dev.mjs, .claude/) off the deployment
@@ -130,40 +127,6 @@ next deployment.
   all-time count for good, and the edge stops recording it within a minute.
   Blocked hosts sit under the tally with an Unblock each. The site itself
   still serves them; only the dashboard stops counting.
-
-## The deck
-
-`/admin/deck.html` (the Deck tab beside Activity, behind the same password)
-is the interview presentation, drawn from the site's own pages each time it
-opens: `admin/deck.js` fetches `index.html`, `work.html` and the two case
-studies, reads them into a model (hero, facts, results table, ledger rows,
-problem tensions, gallery, decisions, quotes, retro) and draws the slides
-`admin/deck-plan.js` asks for. Nothing on a slide is copied, so a change to a
-case study is a change to the deck. Signing in to the dashboard also opens
-the `/work/*` pages for that browser, which is how the deck reads them.
-
-`deck-plan.js` holds what the site doesn't: one entry per slide with its
-layout, the fields it pulls, the framing lines and the speaker notes, plus
-`fills` (role, company, date, the Why-here reasons) and `studies` (which two
-case studies carry it). Anything in [square brackets] is a gap for John to
-fill or a per-company line; the notes panel and the slides mark them. A
-version for one company is a copy of the plan with different fills and, if
-needed, different studies. `skip: 'compressed'` drops a slide from the
-compressed path (the **C** key) for a 45-minute room.
-
-On a screen 720px and wider it is a stage: one 16:9 slide, arrow keys or a
-swipe to move, **N** for the notes beside it, **G** for every slide at once,
-**F** to present full screen, a clock that starts on the first move and turns
-red past the plan's minutes (**T** resets it). The URL hash names the slide.
-A slide whose content no longer fits (a paragraph on the site grew) is
-outlined red and named in the bar and the overview. Under 720px, and in print,
-the slides stack as a document with their notes under them, in the site's
-ordinary type.
-
-Everything inside a slide is sized in container units (`styles.css`,
-section 13: the type tokens become `cqi` values on the slide's content), so
-the same markup is the slide on stage, a thumbnail in the overview and a page
-on a phone. The admin pages' tab row is `.dash-tabs`.
 
 ## Before sending the link out
 
@@ -415,7 +378,7 @@ runs clean through axe-core (WCAG 2.x A/AA and best-practice rules) and
 `html-validate`. To check a page after editing it:
 
 ```
-npx html-validate index.html work.html admin/index.html admin/deck.html work/*.html
+npx html-validate index.html work.html admin/index.html work/*.html
 ```
 
 The rules that shape the code:
