@@ -177,7 +177,7 @@ Every piece of text on the site takes exactly one of ten roles, defined as
 tokens at the top of `styles.css` (`--t-display` … `--t-quote`, with matching
 `--lh-*`, `--ls-*` and `--m-*`) and turned into rules in section 2. A role
 sets all of type at once: face, size, weight, line-height, letter-spacing,
-colour, measure and a zero margin. The serif speaks (display, title, heading,
+color, measure and a zero margin. The serif speaks (display, title, heading,
 stat, quote) and is never bold; the sans does the work (subhead, lede, body,
 small, micro).
 
@@ -208,7 +208,7 @@ Two rules keep it that way:
   a stacked table label up to body, the ring labels and the live badge down
   a role).
 
-Colour is three tones and weight is two, both set in section 2 and nowhere
+Color is three tones and weight is two, both set in section 2 and nowhere
 else: ink for what leads, ink-2 for what runs, ink-3 for what sits beside on
 paper (captions, cites, the footer; it is under 4.5:1 on the panel grounds);
 400 runs and 500 names or acts (labels, buttons, `strong`, links in text).
@@ -287,7 +287,7 @@ phone layer fixes what a collapse alone gets wrong:
   where Resume is a row in the bar and Contact sits in `.nav-actions`).
   The role lists in section 2 and the bar rules match `.nav-links ul a`,
   the rows, so the foot's buttons stay plain `.btn`s (a bare `.nav-links a`
-  would set their colour to `--ink-2` and dim the labels). The two lines
+  would set their color to `--ink-2` and dim the labels). The two lines
   of the button turn into a cross, each
   about its own centre. Everything stays in the tree and transitions both
   ways: opening, the sheet fades in (`--dur-ui`), the foot follows from
@@ -412,7 +412,7 @@ npx html-validate index.html work.html admin/index.html admin/deck.html work/*.h
 
 The rules that shape the code:
 
-- Every colour pair is a token, and every token pair used for text passes
+- Every color pair is a token, and every token pair used for text passes
   4.5:1 on the darkest ground it sits on (`--ink-3` was darkened for this).
   The hero lede is set in `--ink` because it sits over the dot field.
 - The nav is a `<nav aria-label="Primary">` landmark; the phone menu button
@@ -451,7 +451,7 @@ The rules that shape the code:
   Its "Try it" row is a configurator (`[data-config]`): two labelled groups
   of chip-styled radios and checkboxes (names prefixed by side, so the two
   sides never share a radio group) and a specimen `main.js` repaints in Best
-  Egg's own colours, the way a screenshot would show them.
+  Egg's own colors, the way a screenshot would show them.
 - A headline stat with `data-flow` rolls in like an odometer: main.js turns
   each digit into a column of 0 to 9 behind a soft mask; signs, units and
   words stand still. Write the stat as plain text and the script does the
