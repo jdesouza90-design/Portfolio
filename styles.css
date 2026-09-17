@@ -2,7 +2,7 @@
    John DeSouza — portfolio
 
    Direction: editorial restraint. Warm paper ground, oversized light serif
-   statements, vast whitespace, hairline rows. Colour is carried by the work
+   statements, vast whitespace, hairline rows. Color is carried by the work
    imagery, not by the page; the one accent is a forest green.
 
    Order: tokens → type roles → base → primitives → nav → home → case study
@@ -16,7 +16,7 @@
 :root {
   color-scheme: light;
 
-  /* colour */
+  /* color */
   --paper: #F6F4F0;
   --paper-2: #EFECE6;
   --surface: #FFFFFF;
@@ -110,7 +110,7 @@
    2. Type roles
    Every piece of text on the site takes exactly one of ten roles, and a role
    sets all of type at once: face, size, weight, line-height, letter-spacing,
-   colour, measure and a zero margin. Headings and paragraphs carry their
+   color, measure and a zero margin. Headings and paragraphs carry their
    role as a class in the markup (.t-title, .t-body, .eyebrow); the inline
    and structural text of a component (a cell, a cite, a button) is listed
    under its role here. Nothing after this section sets a face, size, weight,
@@ -277,7 +277,7 @@ main, .nav { position: relative; z-index: 1; }
   border: 1px solid var(--hair-2); background: var(--surface); color: var(--ink); cursor: pointer;
   transition: transform var(--dur-press) var(--ease), border-color var(--dur-hover), color var(--dur-hover);
 }
-@media (hover: hover) and (pointer: fine) {   /* colour only for pointers that hover; a tap on a phone would leave the ring green */
+@media (hover: hover) and (pointer: fine) {   /* color only for pointers that hover; a tap on a phone would leave the ring green */
   .icon-btn:hover { border-color: var(--accent); color: var(--accent-ink); }
 }
 .icon-btn svg { width: 17px; height: 17px; }
@@ -468,7 +468,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 
 .hero h1 { margin-inline: auto; }
 @media (min-width: 900px) { .hero h1 { max-width: 34ch; } .hero h1 .nowrap-lg { white-space: nowrap; } }
-/* The lede sits over the colour wash. Ink-2 fell to 4.1:1 where a blob passes
+/* The lede sits over the color wash. Ink-2 fell to 4.1:1 where a blob passes
    under it (3.3:1 where two overlap), so the hero sets it in ink. */
 .hero .t-lede { margin-inline: auto; color: var(--ink); }
 .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: clamp(28px, 3vw, 38px); }
@@ -554,7 +554,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .lead-solo-copy .t-body { max-width: 58ch; }
 .point-icon { width: 22px; height: 22px; display: block; margin: 0 0 14px; color: var(--accent); }
 /* Coaching: intro on top, then a 2x2 ledger of cells sharing hairlines.
-   The 1px gap lets the card's hair colour show through as the rules. */
+   The 1px gap lets the card's hair color show through as the rules. */
 .lead-grid { display: block; padding: 0; overflow: hidden; }
 .lead-solo-intro { padding: var(--card-pad) var(--card-pad) clamp(24px, 4vw, 40px); }
 .lead-points { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--hair); border-top: 1px solid var(--hair); }
@@ -1028,7 +1028,7 @@ footer a:hover { color: var(--ink); }
    option a chip. Native radios and checkboxes sit under the chips, so the
    keyboard and a screen reader get a plain form, and :has(:checked) lights
    the chosen chip. The specimen is drawn by main.js in Best Egg's own
-   colours, the way a screenshot would be, on a navy ground for the dark
+   colors, the way a screenshot would be, on a navy ground for the dark
    theme. */
 .config { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(24px, 3vw, 44px); }
 .config-side { display: grid; gap: var(--sp-4); align-content: start; min-width: 0; }

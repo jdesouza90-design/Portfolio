@@ -1,7 +1,7 @@
 /* The activity dashboard (admin/index.html): polls /api/activity every few
    seconds, reads sessions out of the views and time beacons, draws the visits
    chart, the session-length histogram and the map, tallies the period and
-   keeps the live feed newest-first. Sized and coloured by the same tokens as
+   keeps the live feed newest-first. Sized and colored by the same tokens as
    the site (styles.css, section 12). */
 (() => {
   const $ = (id) => document.getElementById(id);

@@ -318,7 +318,7 @@ This is a craft story, but the thing to watch is the method. I didn't fix the bu
         image: c.story.problem.image || c.hero[0],
         imageCaption: 'The old .Button, as the file held it.',
       }; },
-      notes: `Seven properties that multiply. Style, colour, size, icon, fixed width, state, theme. Every combination existed whether anyone used it or not. Most weren't used. A lot were near identical.
+      notes: `Seven properties that multiply. Style, color, size, icon, fixed width, state, theme. Every combination existed whether anyone used it or not. Most weren't used. A lot were near identical.
 
 The cost wasn't the file. It was the decision. A designer picking a button made seven choices, and had no way to know if the result was one engineering had built. So people copied whatever was nearest.
 

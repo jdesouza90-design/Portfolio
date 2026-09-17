@@ -16,8 +16,8 @@ const CONFIG = {
 
   /* ---- Helpers ---- */
   // Tokens from styles.css, so the scripts draw and move in the page's own
-  // values: cssVar reads any token, hex a colour as #rrggbb, rgb the same as
-  // [r, g, b], tint a colour as a function of its alpha. Every fallback is
+  // values: cssVar reads any token, hex a color as #rrggbb, rgb the same as
+  // [r, g, b], tint a color as a function of its alpha. Every fallback is
   // the token's value today, for a stylesheet that failed to load.
   const styles = getComputedStyle(document.documentElement);
   const cssVar = (name, fallback) => styles.getPropertyValue(name).trim() || fallback;
@@ -618,11 +618,11 @@ const CONFIG = {
       // where the drifter wants to be: a slow figure that never repeats exactly
       const roam = (t) => [W * (.5 + .3 * Math.sin(t * .11 + 1.3) + .07 * Math.sin(t * .37)), H * (.52 + .28 * Math.sin(t * .083 + .4) + .06 * Math.cos(t * .29))];
       const hash = (i) => { const s = Math.sin(i * 12.9898) * 43758.5453; return s - Math.floor(s); };
-      const sprite = (colour, dpr) => {
+      const sprite = (color, dpr) => {
         const r = DOT, d = Math.ceil(r * 2 * dpr) + 2, s = document.createElement("canvas");
         s.width = s.height = d;
         const g = s.getContext("2d");
-        g.fillStyle = colour; g.beginPath(); g.arc(d / 2, d / 2, r * dpr, 0, Math.PI * 2); g.fill();
+        g.fillStyle = color; g.beginPath(); g.arc(d / 2, d / 2, r * dpr, 0, Math.PI * 2); g.fill();
         sw = d / dpr;
         return s;
       };
@@ -1184,7 +1184,7 @@ const CONFIG = {
 
   /* ---- Configurator: the old .Button and the new Button, live ----
      Each side is a form of radios and checkboxes under chips; the specimen
-     above it is repainted from the form on every change. The colours are
+     above it is repainted from the form on every change. The colors are
      Best Egg's own, taken from the variant sheets, so the specimen stands
      in for a screenshot. Nothing here is counted: the sums under each side
      are the file's, written in the markup. */
@@ -1195,7 +1195,7 @@ const CONFIG = {
       const f = (c) => Math.round(k < 1 ? c * k : c + (255 - c) * (k - 1));
       return `rgb(${f(r)},${f(g)},${f(b)})`;
     };
-    // Old .Button: colour by (colour, theme); style decides fill, outline or text
+    // Old .Button: color by (color, theme); style decides fill, outline or text
     const OLD = {
       light: { primary: "#2B4C7E", neutral: "#0F2138", danger: "#C42B2B", paper: "#FFFFFF", disabled: ["#E3E7EC", "#9AA3AE"] },
       dark:  { primary: "#B8F05A", neutral: "#FFFFFF", danger: "#F27777", paper: "#0B1F3A", disabled: ["#33425A", "#8A94A3"] },
@@ -1220,13 +1220,13 @@ const CONFIG = {
         const size = v("size") || "medium", state = v("state") || "default";
         let fill, text, border, label = "Click me", left = false, right = false, iconOnly = false, navy = false;
         if (isOld) {
-          const theme = v("theme") === "dark" ? "dark" : "light", pal = OLD[theme], colour = pal[v("colour")] || pal.primary, style = v("style") || "solid";
+          const theme = v("theme") === "dark" ? "dark" : "light", pal = OLD[theme], color = pal[v("color")] || pal.primary, style = v("style") || "solid";
           navy = theme === "dark";
           const icon = v("icon");
           left = icon === "left"; right = icon === "right"; iconOnly = icon === "only";
-          if (style === "solid") { fill = colour; text = theme === "dark" ? "#0B1F3A" : "#FFFFFF"; border = colour; }
-          else if (style === "ghost") { fill = "transparent"; text = colour; border = colour; }
-          else { fill = "transparent"; text = colour; border = "transparent"; }
+          if (style === "solid") { fill = color; text = theme === "dark" ? "#0B1F3A" : "#FFFFFF"; border = color; }
+          else if (style === "ghost") { fill = "transparent"; text = color; border = color; }
+          else { fill = "transparent"; text = color; border = "transparent"; }
           if (state === "disabled") { [fill, text] = style === "solid" ? pal.disabled : ["transparent", pal.disabled[1]]; border = style === "ghost" ? pal.disabled[0] : fill; }
           spec.classList.toggle("fixed", v("fixed") === "yes");
           spec.classList.toggle("st-link", style === "link");
