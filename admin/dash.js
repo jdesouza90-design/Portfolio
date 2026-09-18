@@ -62,7 +62,9 @@
   let timer = null;
   let lastOk = 0;
   const seen = new Set();
+  const SEEN_MAX = 4 * KEEP;        // pruned back to what the kept events name
   const key = (e) => `${e.t}|${e.visitor}|${e.page}`;
+  const pruneSeen = () => { if (seen.size <= SEEN_MAX) return; seen.clear(); for (const e of events) seen.add(key(e)); };
   const live = $('live'), liveLabel = $('live-label');
 
   const setLive = (state, label) => { live.dataset.state = state; liveLabel.textContent = label; };
@@ -916,6 +918,7 @@
   }
 
   function tickClock() {                             // relative times drift; refresh the words
+    if (document.hidden) return;
     const now = Date.now();
     for (const tr of $('feed').children) tr.firstElementChild.textContent = ago(Number(tr.dataset.t), now);
     if (events[0]) renderStats(now);
@@ -963,7 +966,10 @@
     });
   }
 
+  let polling = false, drawn = false;   // the first answer always paints, however empty
   async function poll() {
+    if (polling) return;
+    polling = true;
     try {
       const res = await fetch(`/api/activity${lastT ? `?since=${lastT}` : ''}`, { cache: 'no-store', credentials: 'same-origin' });
       if (res.status === 401) { location.reload(); return; }        // cookie gone: back to the gate
@@ -977,21 +983,29 @@
         $('summary').textContent = 'Nothing is being recorded until a store is connected.';
         return;
       }
+      const wasBlocked = blocked.join('\n');
       blocked = data.blocked || [];
       const fresh = data.events.filter((e) => !seen.has(key(e)) && !isSpam(e));   // spam the edge recorded before its blocklist caught up
       for (const e of data.events) seen.add(key(e));
       if (fresh.length) events = fresh.concat(events).sort((a, b) => b.t - a.t).slice(0, KEEP);
+      pruneSeen();
       if (data.events.length) lastT = Math.max(lastT, data.events[0].t);
+      const moved = !drawn || fresh.length > 0 || total !== data.total || blocked.join('\n') !== wasBlocked;
       total = data.total;
       lastOk = Date.now();
-      renderStats(Date.now());
-      renderFeed(fresh);
-      renderBlocked();
+      if (moved) {
+        renderStats(Date.now());
+        renderFeed(fresh);
+        renderBlocked();
+        drawn = true;
+      }
       setLive('on', 'Live');
       $('dash').setAttribute('aria-busy', 'false');
     } catch (err) {
       console.error(err);
       setLive('off', lastOk ? `Reconnecting… last update ${ago(lastOk, Date.now())}` : 'Can\'t reach the feed');
+    } finally {
+      polling = false;
     }
   }
 
