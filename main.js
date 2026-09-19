@@ -81,6 +81,37 @@ const CONFIG = {
     setTimeout(go, 6000);
   };
 
+  // A piece that draws its own frames waits for its block to land before it
+  // starts. The charts and the matrix already do this through onceInView, which
+  // holds until the block's reveal and then lets it lead by 200ms; the canvases
+  // ran off their own observer instead, so an 88-strand first frame, or a
+  // field's first pass, was drawn in the middle of the block's transition. That
+  // is the hitch as a card arrives. A block that never reveals still gets its
+  // piece: every wait here has a way out.
+  const afterReveal = (el, fn) => {
+    const block = el.closest("[data-reveal]");
+    if (!block || !document.documentElement.classList.contains("anim")) { fn(); return; }
+    let done = false, timer = 0;
+    const go = () => {
+      if (done) return;
+      done = true;
+      clearTimeout(timer);
+      document.removeEventListener("reveal", onReveal);
+      block.removeEventListener("transitionend", onEnd);
+      fn();
+    };
+    const onEnd = (e) => { if (e.target === block) go(); };     // transitionend bubbles; a child's is not this one
+    const onReveal = () => {
+      if (!block.classList.contains("in")) return;
+      document.removeEventListener("reveal", onReveal);
+      block.addEventListener("transitionend", onEnd);
+      clearTimeout(timer);
+      timer = setTimeout(go, 1600);                             // the rise may already be over, or never end
+    };
+    timer = setTimeout(go, 6000);
+    if (block.classList.contains("in")) onReveal(); else document.addEventListener("reveal", onReveal);
+  };
+
   /* ---- Unlock opener ----
      The gate answers a correct password by sending the reader to the case
      study with ?unlocked, and the head's one-line script has already set
@@ -556,19 +587,22 @@ const CONFIG = {
     let raf = 0, acc = 0, since = 0, playing = true;
     const tick = (now) => { frame(acc + (now - since) / 1000); raf = requestAnimationFrame(tick); };
     const sync = () => {
-      const run = playing && visible();
+      const run = playing && visible && visible();
       if (run && !raf) { since = performance.now(); raf = requestAnimationFrame(tick); }
       if (!run && raf) { cancelAnimationFrame(raf); raf = 0; acc += (performance.now() - since) / 1000; }
       setPaused(btn, playing, "animation");
     };
-    size();
-    fig.classList.add("live");
-    frame(0);
-    if (btn) { btn.hidden = false; btn.addEventListener("click", () => { playing = !playing; sync(); }); }
-    if ("ResizeObserver" in window) new ResizeObserver(() => { size(); frame(acc + (raf ? (performance.now() - since) / 1000 : 0)); }).observe(fig);
-    else window.addEventListener("resize", size);
-    const visible = whileOnScreen(fig, .05, sync);
-    sync();
+    let visible = null;
+    afterReveal(fig, () => {                       // the still SVG holds the frame until the card has landed
+      size();
+      fig.classList.add("live");
+      frame(0);
+      if (btn) { btn.hidden = false; btn.addEventListener("click", () => { playing = !playing; sync(); }); }
+      if ("ResizeObserver" in window) new ResizeObserver(() => { size(); frame(acc + (raf ? (performance.now() - since) / 1000 : 0)); }).observe(fig);
+      else window.addEventListener("resize", size);
+      visible = whileOnScreen(fig, .05, sync);
+      sync();
+    });
   });
 
   /* ---- Fields ----
@@ -1046,7 +1080,7 @@ const CONFIG = {
     if (!played) {
       pill.style.opacity = "0";
       onceInView(shell, 0.35, (animate) => {
-        if (animate) setTimeout(play, 200);          // let the card's own reveal lead
+        if (animate) afterReveal(shell, play);       // let the card's own reveal land first
         else { played = true; lines.style.clipPath = ""; pill.style.opacity = ""; }
       });
     }
@@ -1170,7 +1204,7 @@ const CONFIG = {
 
     if (!layout()) return;
     onceInView(plot, 0.35, (animate) => {
-      if (animate && !reduced) setTimeout(play, 200);      // let the block's own reveal lead
+      if (animate && !reduced) afterReveal(plot, play);    // let the block's own reveal land first
       else settle();
     });
     const relayout = () => { if (layout() && played) { cancelAnimationFrame(raf); draw(END); } };
