@@ -45,8 +45,6 @@ async function sha256(s) {
 }
 const tokenFor = (password) => sha256(`cs-gate:v1:${password}`);
 const adminTokenFor = (password) => sha256(`admin-gate:v1:${password}`);
-// A submitted password is matched against the cookie token the secret hashes to,
-// so the comparison's timing never depends on how many characters were right.
 
 function readCookie(request, name) {
   const header = request.headers.get('cookie') || '';
@@ -93,7 +91,7 @@ function page({ path, error, unconfigured, ref, admin }) {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/styles.css?v=b28e8c63">
+<link rel="stylesheet" href="/styles.css?v=4bb51732">
 </head>
 <body>
 <main class="gate-wrap"><div class="gate">
@@ -283,16 +281,10 @@ async function logAccess(kind, request, url, salt, ref) {
 // Kept in the same list as the views, never emailed; the dashboard pairs each
 // with the visit it belongs to and reads session lengths from them.
 
-const PING_BODY_MAX = 2048;                 // bytes of beacon body read; the real one is ~60
-
 async function ping(request, salt) {
   let page = '', secs = 0;
   try {
-    const len = Number(request.headers.get('content-length'));
-    if (Number.isFinite(len) && len > PING_BODY_MAX) return;
-    const text = await request.text();
-    if (text.length > PING_BODY_MAX) return;
-    const body = JSON.parse(text);
+    const body = JSON.parse(await request.text());
     page = String(body.page || '').slice(0, 200);
     secs = Math.min(PING_MAX, Math.max(0, Math.round(Number(body.secs) || 0)));
   } catch (_) {}
@@ -335,16 +327,15 @@ async function feed(url) {
   if (!store()) return json({ configured: false, now: Date.now(), total: 0, events: [], blocked: [] });
   const since = Number(url.searchParams.get('since')) || 0;
   const span = since ? FEED_POLL : FEED_KEEP;
-  const [raw, total, blocked] = (await redis([['LRANGE', FEED_KEY, 0, span - 1], ['GET', COUNT_KEY], ['SMEMBERS', BLOCK_KEY]])) || [[], 0, []];
+  const [raw, total, blocked] = await redis([['LRANGE', FEED_KEY, 0, span - 1], ['GET', COUNT_KEY], ['SMEMBERS', BLOCK_KEY]]);
   let events = parseEvents(raw, since);
   if (since && (raw || []).length === span && events.length === span) {
-    const [more] = (await redis([['LRANGE', FEED_KEY, span, FEED_KEEP - 1]])) || [[]];
+    const [more] = await redis([['LRANGE', FEED_KEY, span, FEED_KEEP - 1]]);
     events = events.concat(parseEvents(more, since));
   }
   return json({ configured: true, now: Date.now(), total: Number(total) || 0, events, blocked: (blocked || []).sort() });
 }
 
-const LREM_BATCH = 200;                     // LREM commands sent in one pipeline when a block clears a host's views
 const HOST_RE = /^(?=.{1,253}$)[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/;
 async function editBlocklist(request) {
   if (!store()) return json({ error: 'No store is connected' }, 503);
@@ -357,12 +348,10 @@ async function editBlocklist(request) {
   if (!HOST_RE.test(host)) return json({ error: 'Not a host name' }, 400);
   let removed = 0;
   if (block) {
-    const [raw] = (await redis([['LRANGE', FEED_KEY, 0, -1]])) || [[]];
+    const [raw] = await redis([['LRANGE', FEED_KEY, 0, -1]]);
     const gone = (raw || []).filter((s) => { try { return hostBlocked(hostOf(JSON.parse(s).ref), [host]); } catch (_) { return false; } });
     removed = gone.length;
-    await redis([['SADD', BLOCK_KEY, host]]);
-    for (let i = 0; i < gone.length; i += LREM_BATCH) await redis(gone.slice(i, i + LREM_BATCH).map((s) => ['LREM', FEED_KEY, 1, s]));
-    if (removed) await redis([['DECRBY', COUNT_KEY, removed]]);
+    await redis([['SADD', BLOCK_KEY, host], ...gone.map((s) => ['LREM', FEED_KEY, 1, s]), ...(removed ? [['DECRBY', COUNT_KEY, removed]] : [])]);
   } else {
     await redis([['SREM', BLOCK_KEY, host]]);
   }
@@ -403,7 +392,7 @@ export default async function middleware(request, context) {
     if (request.method === 'POST') {
       let submitted = '';
       try { submitted = String((await request.formData()).get('password') || '').trim(); } catch (_) {}
-      if (await adminTokenFor(submitted) === expected) {
+      if (submitted === password) {
         const h = new Headers({ Location: url.pathname, 'Cache-Control': 'no-store' });
         h.append('Set-Cookie', setCookie(ADMIN_COOKIE, expected, '/', ADMIN_MAX_AGE));
         h.append('Set-Cookie', setCookie(OWNER_COOKIE, '1', '/', OWNER_MAX_AGE));   // the owner's own visits stay out of the log
@@ -451,7 +440,7 @@ export default async function middleware(request, context) {
       submitted = String(form.get('password') || '').trim();
       ref = String(form.get('ref') || '').slice(0, 500);
     } catch (_) {}
-    if (await tokenFor(submitted) === expected) {
+    if (submitted === password) {
       log('unlocked', ref);
       url.searchParams.delete('unlocked');            // never doubled when the gate itself was reached with it
       const rest = url.searchParams.toString();

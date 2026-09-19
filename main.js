@@ -798,13 +798,11 @@ const CONFIG = {
     const p = { x: -9999, y: -9999, vx: 0, vy: 0, active: 0, inside: false, ripples: [] };
     let raf = 0, prev = 0, t = 0, fresh = true, playing = true, stirring = true;
     const box = { top: 0, left: 0, w: 0, h: 0 };
-    let stale = true, measured = -1e6;
-    const measure = () => { const r = el.getBoundingClientRect(); box.top = r.top; box.left = r.left; box.w = r.width; box.h = r.height; stale = false; measured = performance.now(); };
-    const restale = () => { stale = true; };
+    const measure = () => { const r = el.getBoundingClientRect(); box.top = r.top; box.left = r.left; box.w = r.width; box.h = r.height; };
     const CONTROLS = "a, button, input, select, textarea, label, [role=button], form";
     let tx = -9999, ty = -9999, on = false, over = false, checked = 0, moved = -1e6, touched = -1e6;
     const move = (e) => {
-      if (stale || e.timeStamp - prev > 40) measure();       // a still piece has not measured since its last frame
+      if (e.timeStamp - prev > 40) measure();               // a still piece has not measured since its last frame
       const x = e.clientX - box.left, y = e.clientY - box.top;
       p.inside = x >= 0 && y >= 0 && x <= box.w && y <= box.h;
       if (y < -150 || y > box.h + 150) { on = false; return; }
@@ -815,7 +813,7 @@ const CONFIG = {
     const leave = () => { on = false; p.inside = false; };
     const down = (e) => {
       if (!e.isPrimary || over) return;
-      if (stale || e.timeStamp - prev > 40) measure();
+      if (e.timeStamp - prev > 40) measure();
       const x = e.clientX - box.left, y = e.clientY - box.top;
       if (x < 0 || y < 0 || x > box.w || y > box.h) return;
       p.ripples.push({ x, y, born: e.timeStamp, age: 0 });
@@ -829,7 +827,7 @@ const CONFIG = {
       if (!fresh && !busy && (!stirring || now - prev < 33)) return;   // idle: 30fps is plenty for the breathing, none for a still piece
       const dt = fresh ? 0 : Math.min((now - prev) / 1000, .05);
       fresh = false; prev = now; t += dt;
-      if (stale || now - measured > 250) measure();
+      measure();
       if (on) {
         const x = p.x, y = p.y;
         if (x < -9000) { p.x = tx; p.y = ty; }              // arriving: start where the cursor is, not off the page
@@ -863,9 +861,7 @@ const CONFIG = {
     document.addEventListener("pointermove", move, { passive: true });
     document.addEventListener("pointerleave", leave);
     document.addEventListener("pointerdown", down, { passive: true });
-    window.addEventListener("scroll", restale, { passive: true });
-    window.addEventListener("resize", restale, { passive: true });
-    const ro = "ResizeObserver" in window ? new ResizeObserver(() => { size(); restale(); stirring = true; if (!raf) field.frame(t, 0, p, true); }) : null;
+    const ro = "ResizeObserver" in window ? new ResizeObserver(() => { size(); stirring = true; if (!raf) field.frame(t, 0, p, true); }) : null;
     if (ro) ro.observe(el); else window.addEventListener("resize", size);
     const visible = whileOnScreen(el, 0, sync);
     sync();
@@ -873,7 +869,6 @@ const CONFIG = {
       playing = false; sync();
       document.removeEventListener("pointermove", move); document.removeEventListener("pointerleave", leave);
       document.removeEventListener("pointerdown", down);
-      window.removeEventListener("scroll", restale); window.removeEventListener("resize", restale);
       if (ro) ro.disconnect(); visible.stop();
       if (btn) { btn.removeEventListener("click", toggle); btn.hidden = true; }
       ctx.clearRect(0, 0, W, H);
@@ -959,7 +954,6 @@ const CONFIG = {
 
     // Reading a month: marker, dot and a card of its numbers
     const place = (k) => {
-      if (!geo || !data[k]) return;
       const { pts, m, ih, W } = geo;
       const p = pts[k], d = data[k];
       const note = annos.find((a) => a.at === k);
@@ -1022,7 +1016,6 @@ const CONFIG = {
 
       // Milestones ride the sweep with the line
       annos.forEach((a, i) => {
-        if (!pts[a.at]) return;
         const ax = pts[a.at].x;
         const right = ax > W / 2;                    // anchor the text so it stays inside the frame
         const ty = narrow ? 10 + (i % 2) * 14 : 10;  // stagger rows on a phone so two notes never collide
@@ -1076,12 +1069,8 @@ const CONFIG = {
 
     draw();
     if ("ResizeObserver" in window) {
-      let w = shell.clientWidth, h = shell.clientHeight;
-      new ResizeObserver(() => {
-        if (shell.clientWidth === w && shell.clientHeight === h) return;
-        w = shell.clientWidth; h = shell.clientHeight;
-        draw();
-      }).observe(shell);
+      let w = shell.clientWidth;
+      new ResizeObserver(() => { if (shell.clientWidth !== w) { w = shell.clientWidth; draw(); } }).observe(shell);
     } else {
       window.addEventListener("resize", debounce(draw, 120));
     }
@@ -1147,7 +1136,7 @@ const CONFIG = {
     // second, holds, then the cut runs from 1500 to 2700
     const draw = (t) => {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       const r = pitch * .3, half = pitch / 2;
       const cut = Math.min(Math.max((t - 1500) / 1200, 0), 1), move = ease(cut);
       for (const d of dots) {
@@ -1374,8 +1363,7 @@ const CONFIG = {
     if (!grid || !("ResizeObserver" in window)) return;
     const text = $(".about-text", grid), img = $(".portrait img", grid);
     if (!text || !img) return;
-    const ratio = Number(img.getAttribute("width")) / Number(img.getAttribute("height"));
-    if (!Number.isFinite(ratio) || ratio <= 0) return;       // no intrinsic size in the markup: the CSS fallback stands
+    const ratio = img.getAttribute("width") / img.getAttribute("height");
     new ResizeObserver(([en]) => grid.style.setProperty("--portrait-w", `${en.contentRect.height * ratio}px`)).observe(text);
   };
 

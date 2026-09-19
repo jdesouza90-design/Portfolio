@@ -24,7 +24,7 @@ const lists = new Map(), values = new Map(), sets = new Map();
 const cmd = ([op, key, ...args]) => {
   switch (op) {
     case 'LPUSH': { const l = lists.get(key) || []; l.unshift(...args); lists.set(key, l); return l.length; }
-    case 'LTRIM': { const l = lists.get(key) || []; const e = Number(args[1]); lists.set(key, l.slice(Number(args[0]), e < 0 ? l.length + e + 1 : e + 1)); return 'OK'; }
+    case 'LTRIM': { const l = lists.get(key) || []; lists.set(key, l.slice(Number(args[0]), Number(args[1]) + 1)); return 'OK'; }
     case 'LRANGE': { const l = lists.get(key) || []; const end = Number(args[1]); return l.slice(Number(args[0]), end < 0 ? undefined : end + 1); }
     case 'LREM': { const l = lists.get(key) || []; const i = l.indexOf(args[1]); if (i < 0) return 0; l.splice(i, 1); return 1; }   // count 1: the first match
     case 'INCR': { const v = (Number(values.get(key)) || 0) + 1; values.set(key, String(v)); return v; }
@@ -117,10 +117,7 @@ const TYPES = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 
 const root = path.dirname(new URL(import.meta.url).pathname);
 
 function serveStatic(pathname, res, cookies = []) {
-  let file;
-  try { file = path.join(root, decodeURIComponent(pathname)); } catch (_) { res.writeHead(400); res.end('Bad request'); return; }
-  const rel = path.relative(root, file);
-  if (rel === '..' || rel.startsWith(`..${path.sep}`) || path.isAbsolute(rel)) { res.writeHead(404); res.end('Not found'); return; }
+  let file = path.join(root, decodeURIComponent(pathname));
   if (pathname.endsWith('/')) file = path.join(file, 'index.html');
   if (!fs.existsSync(file) && fs.existsSync(file + '.html')) file += '.html';
   if (!fs.existsSync(file) || fs.statSync(file).isDirectory()) { res.writeHead(404); res.end('Not found'); return; }
