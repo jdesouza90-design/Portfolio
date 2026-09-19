@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reveal test</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+  /* The page under test: the site's own reveal, block for block, with the real
+     thumbnails. Each variant changes exactly one thing, so whichever one comes
+     back smooth on the phone names the cause. */
+  body { margin: 0; background: #F6F4F0; }
+  .readout { position: fixed; inset: 0 0 auto 0; z-index: 99; background: #14100C; color: #F6F4F0;
+    font: 500 13px/1.45 ui-monospace, Menlo, monospace; padding: 10px 12px; }
+  .readout b { color: #8FD08F; font-size: 15px; }
+  .readout .v { color: #E3B341; }
+  .pick { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .pick a { color: #14100C; background: #F6F4F0; text-decoration: none; padding: 5px 9px; border-radius: 6px; font-size: 12px; }
+  .pick a.on { background: #8FD08F; }
+  .spacer { height: 62vh; }
+  .tblock { margin: 0 16px 58vh; background: #fff; border: 1px solid #E3DFD7; border-radius: 18px; padding: 14px; }
+  .tblock img { display: block; width: 100%; height: auto; border-radius: 10px; }
+  .tblock p { font: 500 14px/1.4 system-ui, sans-serif; color: #5C564E; margin: 10px 2px 0; }
+
+  /* variant a — exactly what the site ships today */
+  [data-v] .tblock { opacity: 0; transform: translateY(48px);
+    transition: opacity 700ms linear, transform 700ms cubic-bezier(.33, 1, .68, 1); }
+  [data-v] .tblock.in { opacity: 1; transform: none; }
+  /* the cutout shadow the real thumbnails carry */
+  [data-v="a"] .tblock img, [data-v="c"] .tblock img, [data-v="d"] .tblock img { filter: drop-shadow(0 18px 28px rgba(20, 16, 12, .18)); }
+  /* b — same, minus the drop-shadow filter (box-shadow instead: rasterises once) */
+  [data-v="b"] .tblock img { box-shadow: 0 18px 28px rgba(20, 16, 12, .18); }
+  /* c — 3d transform, the classic iOS layer promotion */
+  [data-v="c"] .tblock { transform: translate3d(0, 48px, 0); will-change: opacity, transform; }
+  [data-v="c"] .tblock.in { transform: translate3d(0, 0, 0); }
+  /* d — fade only, no movement at all */
+  [data-v="d"] .tblock { transform: none; transition: opacity 700ms linear; }
+  /* e — no animation whatsoever: the floor. If this still stutters it is not the reveal. */
+  [data-v="e"] .tblock { opacity: 1; transform: none; transition: none; }
+</style>
+</head>
+<body>
+<div class="readout">
+  scroll to the bottom, slowly — then read this<br>
+  variant <span class="v" id="vn">a</span> ·
+  frames <span id="n">0</span> · median <span id="med">–</span> ·
+  p95 <b id="p95">–</b> · janky <b id="pc">–</b> · worst <span id="mx">–</span>
+  <div class="pick" id="pick"></div>
+</div>
+<div class="spacer"></div>
+<div id="stage"></div>
+<div class="spacer"></div>
+<script>
+(function () {
+  var V = (location.search.match(/[?&]v=([a-e])/) || [])[1] || 'a';
+  document.body.setAttribute('data-v', V);
+  document.getElementById('vn').textContent = V;
+  var NAMES = { a: 'a · as shipped', b: 'b · no drop-shadow', c: 'c · translate3d', d: 'd · fade only', e: 'e · no animation' };
+  var pick = document.getElementById('pick');
+  Object.keys(NAMES).forEach(function (k) {
+    var a = document.createElement('a');
+    a.href = '?v=' + k; a.textContent = NAMES[k]; if (k === V) a.className = 'on';
+    pick.appendChild(a);
+  });
+
+  // The real thumbnails, repeated so there is a run of them to scroll past.
+  var SHOTS = ['/assets/btn-sheet-before.webp', '/assets/cs-decline.webp', '/assets/staking-overview.webp',
+               '/assets/nocode-illustration.webp', '/assets/refi-offers.webp', '/assets/ver-documents.webp'];
+  var stage = document.getElementById('stage');
+  for (var i = 0; i < 10; i++) {
+    var d = document.createElement('div');
+    d.className = 'tblock';
+    var img = document.createElement('img');
+    img.src = SHOTS[i % SHOTS.length];
+    img.loading = 'lazy'; img.decoding = 'async';
+    var p = document.createElement('p');
+    p.textContent = 'block ' + (i + 1);
+    d.appendChild(img); d.appendChild(p); stage.appendChild(d);
+  }
+
+  // The site's own reveal: a 70% line, .in added from an IntersectionObserver.
+  if (V !== 'e') {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { rootMargin: '0px 0px -30% 0px', threshold: 0 });
+    [].forEach.call(document.querySelectorAll('.tblock'), function (el) { io.observe(el); });
+  }
+
+  // Frame times, sampled only while the page is actually moving.
+  var ts = [], last = performance.now(), y = window.scrollY, moving = 0;
+  window.addEventListener('scroll', function () { moving = performance.now() + 250; }, { passive: true });
+  function tick(now) {
+    var d = now - last; last = now;
+    if (now < moving && d < 400) ts.push(d);
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+
+  function show() {
+    if (ts.length < 20) return;
+    var s = ts.slice().sort(function (a, b) { return a - b; });
+    var long = s.filter(function (f) { return f > 32; }).length;
+    document.getElementById('n').textContent = s.length;
+    document.getElementById('med').textContent = s[s.length >> 1].toFixed(1);
+    document.getElementById('p95').textContent = s[Math.floor(s.length * .95)].toFixed(1) + 'ms';
+    document.getElementById('pc').textContent = (100 * long / s.length).toFixed(1) + '%';
+    document.getElementById('mx').textContent = s[s.length - 1].toFixed(0) + 'ms';
+  }
+  setInterval(show, 500);
+})();
+</script>
+</body>
+</html>
