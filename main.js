@@ -81,6 +81,24 @@ const CONFIG = {
     setTimeout(go, 6000);
   };
 
+  // While the page is scrolling, the pieces that draw their own frames stand
+  // still. A reveal happens during a scroll by definition, and the fields and
+  // the strands are the main thread's biggest other customer - most of all on a
+  // phone, where they cost several times what they do on a laptop. Holding them
+  // for the length of the scroll hands those frames to the transitions. Each
+  // piece already knows how to pause and pick its clock back up, so this is the
+  // same pause the button does; everything resumes a breath after the last
+  // scroll event.
+  let scrolling = false, scrollTimer = 0;
+  const scrollWatchers = new Set();
+  const isScrolling = () => scrolling;
+  const whileStill = (sync) => { scrollWatchers.add(sync); return () => scrollWatchers.delete(sync); };
+  window.addEventListener("scroll", () => {
+    if (!scrolling) { scrolling = true; scrollWatchers.forEach((f) => f()); }
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(() => { scrolling = false; scrollWatchers.forEach((f) => f()); }, 140);
+  }, { passive: true });
+
   // A piece that draws its own frames waits for its block to land before it
   // starts. The charts and the matrix already do this through onceInView, which
   // holds until the block's reveal and then lets it lead by 200ms; the canvases
@@ -587,7 +605,7 @@ const CONFIG = {
     let raf = 0, acc = 0, since = 0, playing = true;
     const tick = (now) => { frame(acc + (now - since) / 1000); raf = requestAnimationFrame(tick); };
     const sync = () => {
-      const run = playing && visible && visible();
+      const run = playing && visible && visible() && !isScrolling();
       if (run && !raf) { since = performance.now(); raf = requestAnimationFrame(tick); }
       if (!run && raf) { cancelAnimationFrame(raf); raf = 0; acc += (performance.now() - since) / 1000; }
       setPaused(btn, playing, "animation");
@@ -601,6 +619,7 @@ const CONFIG = {
       if ("ResizeObserver" in window) new ResizeObserver(() => { size(); frame(acc + (raf ? (performance.now() - since) / 1000 : 0)); }).observe(fig);
       else window.addEventListener("resize", size);
       visible = whileOnScreen(fig, .05, sync);
+      whileStill(sync);
       sync();
     });
   });
@@ -875,7 +894,7 @@ const CONFIG = {
       stirring = field.frame(t, dt, p, true) !== false;
     };
     const sync = () => {
-      const run = playing && visible();
+      const run = playing && visible() && !isScrolling();
       if (run && !raf) { fresh = true; raf = requestAnimationFrame(tick); }
       if (!run && raf) { cancelAnimationFrame(raf); raf = 0; }
       setPaused(btn, playing, "animation");
@@ -898,12 +917,13 @@ const CONFIG = {
     const ro = "ResizeObserver" in window ? new ResizeObserver(() => { size(); stirring = true; if (!raf) field.frame(t, 0, p, true); }) : null;
     if (ro) ro.observe(el); else window.addEventListener("resize", size);
     const visible = whileOnScreen(el, 0, sync);
+    const unwatch = whileStill(sync);
     sync();
     el.field = { stop() {
       playing = false; sync();
       document.removeEventListener("pointermove", move); document.removeEventListener("pointerleave", leave);
       document.removeEventListener("pointerdown", down);
-      if (ro) ro.disconnect(); visible.stop();
+      if (ro) ro.disconnect(); visible.stop(); unwatch();
       if (btn) { btn.removeEventListener("click", toggle); btn.hidden = true; }
       ctx.clearRect(0, 0, W, H);
       el.classList.remove("live");
