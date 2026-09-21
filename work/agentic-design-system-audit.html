@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Agentic design system audit and remediation — John DeSouza</title>
-<meta name="description" content="How I coached three senior product designers to build an agent that cut 2,304 button variants to 321 at Best Egg, then ran an agentic audit of the whole design system across 296 files and split the 23 fixes between the team and a Claude agent. A case study by John DeSouza.">
+<meta name="description" content="How I built an agent that audits Best Egg's design system: 2,304 button variants became 321, the whole library was measured across 296 files, two senior product designers and a Claude agent split the 23 fixes, and the audit runs again every month. A case study by John DeSouza.">
 <meta property="og:title" content="Agentic design system audit and remediation — John DeSouza">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://john-desouza.com/work/agentic-design-system-audit.html">
 <meta property="og:image" content="https://john-desouza.com/og-image.png?v=cbd7c531">
-<meta property="og:description" content="An agent cut Best Egg's button from 2,304 variants to 321. Then I audited the whole design system with one and split the fixes between the team and a Claude agent.">
+<meta property="og:description" content="I built an agent that audits Best Egg's design system: 2,304 button variants became 321, and the rest of the library is sized to shrink 66%.">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.ico?v=a803d66e" sizes="32x32">
 <link rel="icon" href="/favicon.svg?v=fb53733d" type="image/svg+xml">
@@ -64,7 +64,7 @@
     <div class="hero-lead">
       <div class="cs-hero-copy">
       <h1 class="t-display" data-rise style="--i:0">Agentic design system audit and remediation</h1>
-      <p class="t-lede" data-rise style="--i:1">I coached three senior product designers to build an agent that turned one overloaded button into three components. Then I ran the audit on the whole library myself and split the 23 fixes between the team and a Claude agent.</p>
+      <p class="t-lede" data-rise style="--i:1">I built an agent that audits Best Egg's design system. It turned one overloaded button into three components, then measured the whole library. Two senior product designers and a Claude agent are splitting the 23 fixes, and the audit runs again every month to catch changes and inconsistencies.</p>
     </div>
       <div class="outcome-stat"><p class="eyebrow">Outcome</p><div class="t-stat" data-flow>86%</div><p class="t-small">Fewer button variants, 2,304 to 321, with the rest of the library sized next</p></div>
     </div>
@@ -85,7 +85,7 @@
     <header class="section-intro">
       <p class="eyebrow">Results</p>
       <h2 class="t-title">Buttons first, then the whole library</h2>
-      <p class="t-lede">The old .Button carried seven properties multiplied together, and most of the results were never used. The team shipped Button, Icon Button and Link, 321 variants where there had been 2,304, and the counts are the Figma library's own. The full audit that followed found the same pattern across 1,316 assets, and its plan is sized further down.</p>
+      <p class="t-lede">The old .Button carried seven properties multiplied together, and most of the results were never used. One senior product designer did the remediation from the agent's list: Button, Icon Button and Link, 321 variants where there had been 2,304, and the counts are the Figma library's own. The full audit that followed found the same pattern across 1,316 assets, and its plan is sized further down.</p>
     </header>
     <div class="proof matrix" data-matrix data-total="2304" data-groups='[{"label":"Button","n":141},{"label":"Icon Button","n":120},{"label":"Link","n":60}]'>
       <div class="proof-head">
@@ -136,7 +136,7 @@
       <div class="row-copy">
         <p class="eyebrow">The design</p>
         <h3 class="t-title">The agent counted, we decided</h3>
-        <p class="t-lede">The agent, built on Claude, ran through every Figma file: it listed each variant, found every instance in the product files and flagged what was unused or duplicated. The team ran each pass and brought the list to me. As a group we kept 321, split them into Button, Icon Button and Link, and had the agent write the usage guideline.</p>
+        <p class="t-lede">I built the agent on Claude and ran it through every Figma file: it listed each variant, found every instance in the product files and flagged what was unused or duplicated. One senior product designer took the list and did the remediation: 321 kept, split into Button, Icon Button and Link, with the agent writing the usage guideline.</p>
       </div>
       <div class="cols">
         <div class="col">
@@ -159,7 +159,7 @@
       <div class="row-copy">
         <p class="eyebrow">The full audit</p>
         <h3 class="t-title">Then I measured the whole library</h3>
-        <p class="t-lede">Buttons were the visible mess. I ran the next pass myself: an agent built a read-only crawler that reads every file the token can reach for component instances and hand-set values, at 15 files a minute. Eight teams registered by hand, 296 of 296 files analysed, and every figure carries its bound.</p>
+        <p class="t-lede">Buttons were the visible mess. Next I pointed the agent at the whole library. I generated a read-only Figma token that connects it to Claude, so the crawler can reach every file and read each one for component instances and hand-set values, at 15 files a minute. Eight teams registered by hand, 296 of 296 files analysed, and every figure carries its bound.</p>
       </div>
       <div class="cols">
         <div class="col">
@@ -172,7 +172,7 @@
         </div>
         <div class="col">
           <div class="col-head"><svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V11M9.5 19V8M15 19v-6"/><path class="ac" d="M20.5 19V4.5"/><path d="M2.5 21h19"/></svg><h4 class="t-subhead">History built in</h4></div>
-          <p class="t-body">The index overwrote itself each run, so a history table and a monthly job now make direction measurable.</p>
+          <p class="t-body">The index overwrote itself each run, so the audit now runs again every month and logs what changed and what drifted.</p>
         </div>
       </div>
       <figure class="panel wide"><img decoding="async" width="1800" height="933" src="../assets/dsr-type.webp?v=176b1a9e" alt="Typography defined three ways in the library: a Type variables sheet with Rza and Gordita, a Product UI sheet of desktop and mobile headings and body copy, and a Marcom UI sheet with its own heading scale" loading="lazy"></figure>
@@ -182,12 +182,12 @@
   <div class="wrap">
     <header class="section-intro">
       <p class="eyebrow">My role</p>
-      <h2 class="t-title">The brief, the full audit and the split</h2>
+      <h2 class="t-title">The agent, the full audit and the split</h2>
     </header>
     <div class="ledger">
-      <div class="ledger-row"><h3 class="t-heading">The brief</h3><p class="t-body">I decided to run the button audit as an agent instead of by hand and wrote its brief: read every file, list every variant, find every instance, flag anything unused or duplicated and show its working. One of the three senior product designers built it, and I coached the team through briefing it and reading its list against the files. We decided the split into three as a group.</p></div>
-      <div class="ledger-row"><h3 class="t-heading">The full audit</h3><p class="t-body">The second pass I ran myself. I wrote the crawler's rules, registered the teams, excluded the archives and the library's own file, took a name-match heuristic out of the adoption formula and reported Brand Studio separately, because marketing collateral does not instance a dropdown.</p></div>
-      <div class="ledger-row"><h3 class="t-heading">The split</h3><p class="t-body">The analysis narrows decisions and people make them. Specs and lists went to a Claude agent, edits to the library to the team. 10px appears 1,834 times and 12px 1,796, and the data cannot pick one. The 92 dormant illustrations get a conversation with Brand Studio, not a deletion.</p></div>
+      <div class="ledger-row"><h3 class="t-heading">The agent</h3><p class="t-body">I decided to run the audit as an agent instead of by hand and built it myself: read every file, list every variant, find every instance, flag anything unused or duplicated and show its working. Its count was a claim until it was checked against the file, so the button list went to a senior product designer, who did the remediation.</p></div>
+      <div class="ledger-row"><h3 class="t-heading">The full audit</h3><p class="t-body">The second pass was the whole library, and I ran it myself. I generated the Figma token, wrote the crawler's rules, registered the teams, excluded the archives and the library's own file, took a name-match heuristic out of the adoption formula and reported Brand Studio separately, because marketing collateral does not instance a dropdown.</p></div>
+      <div class="ledger-row"><h3 class="t-heading">The split</h3><p class="t-body">The analysis narrows decisions and people make them. Specs and lists went to a Claude agent, edits to the library to two senior product designers. 10px appears 1,834 times and 12px 1,796, and the data cannot pick one. The 92 dormant illustrations get a conversation with Brand Studio, not a deletion.</p></div>
     </div>
   </div>
 </section>
@@ -210,7 +210,7 @@
       <div class="row-copy">
         <p class="eyebrow">The remediation</p>
         <h3 class="t-title">Twenty-three fixes, split between the team and an agent</h3>
-        <p class="t-lede">The crawler was read-only, so the plan divides at write access. A Claude agent takes the analysis and specs, and the team makes every edit to the library. The after column is sized from the index, and the monthly job will report the real one.</p>
+        <p class="t-lede">The crawler was read-only, so the plan divides at write access. A Claude agent takes the analysis and specs, and two senior product designers make every edit to the library. The after column is sized from the index, and the monthly job will report the real one.</p>
       </div>
       <div class="proof">
         <div class="proof-head">
