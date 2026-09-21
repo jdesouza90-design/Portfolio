@@ -140,15 +140,33 @@ async function redis(commands) {
 
 // ---- Activity log -----------------------------------------------------------
 
+// A source named on the link itself: /work/staking.html?from=slack. Some places
+// a link is shared send no referrer at all — Slack marks every link it shows
+// no-referrer, and the desktop app hands the URL to the browser with nothing
+// attached, so a click from either arrives indistinguishable from someone
+// typing the address in. Tagging the link is the only thing that survives that,
+// so a tag wins over the referrer when both are there: it is the one the sender
+// meant. Recorded in the same field as the referrer, which keeps it out of the
+// spam blocklist (that only ever matches a host) and through the gate.
+const FROM = 'from:';
+const fromTag = (url) => {
+  const t = (url.searchParams.get('from') || '').toLowerCase();
+  return /^[a-z0-9][a-z0-9-]{0,31}$/.test(t) ? FROM + t : '';
+};
 // Referrer with its query string dropped (LinkedIn et al. append tracking params).
 // Same-host referrers come back as a bare path, external ones as origin + path.
 function refOf(request, url) {
+  const tag = fromTag(url);
+  if (tag) return tag;
   try {
     const r = new URL(request.headers.get('referer') || '');
     return r.host === url.host ? r.pathname : r.origin + r.pathname;
   } catch (_) { return ''; }
 }
 const isExternal = (ref) => /^https?:/.test(ref);
+// What is worth carrying through the password gate, so an unlock is credited to
+// the place the link came from: somewhere else on the web, or a tagged link.
+const isSource = (ref) => isExternal(ref) || ref.startsWith(FROM);
 // The host a referrer names, the way the dashboard shows it (no www.); '' for direct and same-site.
 function hostOf(ref) {
   if (!isExternal(ref)) return '';
@@ -481,9 +499,10 @@ export default async function middleware(request, context) {
     return;
   }
   if (process.env.ADMIN_PASSWORD && readCookie(request, ADMIN_COOKIE) === await adminTokenFor(process.env.ADMIN_PASSWORD)) return;   // the owner, signed in: no gate, and no log (the owner cookie mutes it)
-  // Locked: record that the case study was tried, then show the gate. An external
-  // referrer is carried through the form so the unlock log can name it too.
+  // Locked: record that the case study was tried, then show the gate. Where the
+  // visit came from — another site, or the tag on the link — is carried through
+  // the form so the unlock log can name it too.
   const ref = refOf(request, url);
   if (request.method === 'GET') log('gated');
-  return new Response(page({ path, ref: isExternal(ref) ? ref : '' }), { status: 401, headers });
+  return new Response(page({ path, ref: isSource(ref) ? ref : '' }), { status: 401, headers });
 }

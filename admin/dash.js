@@ -18,10 +18,24 @@
     '/work/design-system-audit-agent.html': 'Design system audit agent',
   };
   const pageName = (p) => NAMES[p] || p.replace(/^\/work\//, '').replace(/\.html$/, '') || p;
+  // Places worth calling by name rather than by host. Each arrives under
+  // several: Greenhouse alone sends a recruiter from my.greenhouse.io,
+  // app.greenhouse.io and the job boards, which are all one place as far as
+  // "where did this come from" goes. A line each to add another.
+  const SOURCES = [
+    [/(^|\.)slack\.com$|(^|\.)slack-redir\.net$/, 'Slack'],
+    [/(^|\.)greenhouse\.io$/, 'Greenhouse'],
+  ];
+  const named = (host) => (SOURCES.find(([re]) => re.test(host)) || [])[1] || '';
+  // `from:x` is the tag on a shared link (middleware.js), which is how a click
+  // out of Slack is known at all: it sends no referrer.
+  const tagName = (t) => (SOURCES.find(([, label]) => label.toLowerCase() === t) || [])[1]
+    || t.charAt(0).toUpperCase() + t.slice(1);
   const refName = (r) => {
     if (!r || r === 'direct') return 'Direct';
+    if (r.startsWith('from:')) return tagName(r.slice(5));
     if (r.startsWith('/')) return 'On the site';
-    try { return new URL(r).hostname.replace(/^www\./, ''); } catch (_) { return r; }
+    try { const h = new URL(r).hostname.replace(/^www\./, ''); return named(h) || h; } catch (_) { return r; }
   };
   const KIND = { viewed: 'View', gated: 'Tried to open', unlocked: 'Unlocked', 'wrong password': 'Wrong password' };
   const isVisit = (e) => e.kind in KIND;

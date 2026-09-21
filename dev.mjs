@@ -55,7 +55,8 @@ const PLACES = [
   ['Toronto', 'ON', 'CA', 43.653, -79.383], ['Berlin', 'BE', 'DE', 52.520, 13.405], ['Lisbon', '11', 'PT', 38.722, -9.139], ['Sydney', 'NSW', 'AU', -33.869, 151.209],
 ];
 const PAGES = ['/', '/', '/', '/work.html', '/work.html', '/work/staking.html', '/work/cross-sell.html', '/work/verifications.html', '/work/refinance-offers.html', '/work/no-code-tools.html', '/work/design-system-audit-agent.html'];
-const REFS = ['direct', 'direct', 'https://www.linkedin.com/', 'https://www.linkedin.com/feed/', 'https://www.google.com/', 'https://mail.google.com/mail/u/0/'];
+const REFS = ['direct', 'direct', 'https://www.linkedin.com/', 'https://www.linkedin.com/feed/', 'https://www.google.com/', 'https://mail.google.com/mail/u/0/',
+  'from:slack', 'https://my.greenhouse.io/applications', 'https://app.greenhouse.io/people/12', 'https://boards.greenhouse.io/acme/jobs/4', 'https://app.slack.com/client/T0/C0'];   // the tag a shared link carries, and the hosts the named sources arrive under
 const SPAM = ['https://free-traffic.buttons-for-your-website.com/', 'https://semalt.com/crawler', 'https://a1.semalt.com/', 'https://www.site-audit-ranking.xyz/'];   // referrer spam, to try Block on
 const DEVICES = ['Chrome on macOS', 'Safari on iOS', 'Safari on macOS', 'Chrome on Windows', 'Firefox on macOS', 'Chrome on Android'];
 const pick = (a) => a[Math.floor(Math.random() * a.length)];

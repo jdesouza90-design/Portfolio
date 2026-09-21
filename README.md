@@ -124,6 +124,23 @@ next deployment.
   logging for that browser for a year; on a browser you don't sign in from,
   open any page once with `?owner` on the URL (e.g. `/?owner`) for the same
   effect.
+- **Where a visit came from** is the Sent by tally and the feed's Sent by
+  column. Slack and Greenhouse are named there rather than listed by host,
+  because each arrives under several — a recruiter reaches you from
+  `my.greenhouse.io`, `app.greenhouse.io` or a job board, and they are one
+  place as far as the question goes. The list is `SOURCES` at the top of
+  `admin/dash.js`, a line each to add another. Named sources have no Block
+  button; that stays for hosts, where spam comes from.
+- **Tag a link you share** with `?from=`, e.g.
+  `john-desouza.com/work/staking.html?from=slack`, and the visit is credited to
+  that name whatever the browser sends. This is the only thing that works for
+  Slack: it marks every link it shows no-referrer, and the desktop app hands
+  the URL straight to the browser, so a click from either is indistinguishable
+  from someone typing the address in and shows as Direct. The tag beats the
+  referrer when both are there, survives the password gate through to the
+  unlock, and is lowercased and held to letters, digits and dashes — anything
+  else is ignored rather than recorded. `?from=slack` and `?from=greenhouse`
+  land under those names; any other tag is shown as it is written.
 - Crawlers and link previewers are never recorded at all: `isBot` in
   `middleware.js` drops anything whose user agent gives it away — the robots
   that say so, the HTTP libraries and headless browsers, the mail filters and
