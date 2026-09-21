@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Agentic design system audit and remediation — John DeSouza</title>
-<meta name="description" content="How I coached a senior product designer and a product designer to build an agent that cut 2,304 button variants to 321 at Best Egg, then ran an agentic audit of the whole design system across 296 files and split the 23 fixes between the team and a Claude agent. A case study by John DeSouza.">
+<meta name="description" content="How I coached three senior product designers to build an agent that cut 2,304 button variants to 321 at Best Egg, then ran an agentic audit of the whole design system across 296 files and split the 23 fixes between the team and a Claude agent. A case study by John DeSouza.">
 <meta property="og:title" content="Agentic design system audit and remediation — John DeSouza">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://john-desouza.com/work/agentic-design-system-audit.html">
@@ -19,7 +19,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <!-- A fresh unlock from the gate: hold the page until its opener is up (initUnlock in main.js). -->
 <script>if (/[?&]unlocked(?=&|$)/.test(location.search)) document.documentElement.classList.add("unlock");</script>
-<link rel="stylesheet" href="../styles.css?v=5f9a045d">
+<link rel="stylesheet" href="../styles.css?v=d89c6435">
 <script defer src="/_vercel/insights/script.js"></script>
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
@@ -64,16 +64,16 @@
     <div class="hero-lead">
       <div class="cs-hero-copy">
       <h1 class="t-display" data-rise style="--i:0">Agentic design system audit and remediation</h1>
-      <p class="t-lede" data-rise style="--i:1">I coached the senior product designer and product designer to build an agent that turned one overloaded button into three components. Then I ran the audit on the whole library myself and split the 23 fixes between the team and a Claude agent.</p>
+      <p class="t-lede" data-rise style="--i:1">I coached three senior product designers to build an agent that turned one overloaded button into three components. Then I ran the audit on the whole library myself and split the 23 fixes between the team and a Claude agent.</p>
     </div>
       <div class="outcome-stat"><p class="eyebrow">Outcome</p><div class="t-stat" data-flow>86%</div><p class="t-small">Fewer button variants, 2,304 to 321, with the rest of the library sized next</p></div>
     </div>
     <figure class="panel hero-panel wide">
-      <img decoding="async" width="1800" height="990" src="../assets/dsr-tokens.webp?v=bd7d79ca" alt="Three token sheets from the design system: a padding scale in multiples of 4 or 8, border shadows for default, hover and disabled cards on light and dark grounds, and eight border radii from none to full">
+      <img decoding="async" width="1600" height="1000" src="../assets/btn-sheet-before.webp?v=82ed5410" alt="The old .Button variant sheet: Primary, Neutral and Danger rows in every state, solid, ghost, borderless and link, across light and dark themes, running off the page">
     </figure>
     <dl class="facts">
       <div><dt>Role</dt><dd>Director of Product Design</dd></div>
-      <div><dt>Team</dt><dd>1 senior product designer, 1 product designer</dd></div>
+      <div><dt>Team</dt><dd>3 senior product designers</dd></div>
       <div><dt>Timeline</dt><dd>2 quarters</dd></div>
       <div><dt>Coverage</dt><dd>296 of 296 files</dd></div>
     </dl>
@@ -85,7 +85,7 @@
     <header class="section-intro">
       <p class="eyebrow">Results</p>
       <h2 class="t-title">Buttons first, then the whole library</h2>
-      <p class="t-lede">The old .Button carried seven properties multiplied together, and most of the results were never used. The pair shipped Button, Icon Button and Link, 321 variants where there had been 2,304, and the counts are the Figma library's own. The full audit that followed found the same pattern across 1,316 assets, and its plan is sized further down.</p>
+      <p class="t-lede">The old .Button carried seven properties multiplied together, and most of the results were never used. The team shipped Button, Icon Button and Link, 321 variants where there had been 2,304, and the counts are the Figma library's own. The full audit that followed found the same pattern across 1,316 assets, and its plan is sized further down.</p>
     </header>
     <div class="proof matrix" data-matrix data-total="2304" data-groups='[{"label":"Button","n":141},{"label":"Icon Button","n":120},{"label":"Link","n":60}]'>
       <div class="proof-head">
@@ -136,7 +136,7 @@
       <div class="row-copy">
         <p class="eyebrow">The design</p>
         <h3 class="t-title">The agent counted, we decided</h3>
-        <p class="t-lede">The agent, built on Claude, ran through every Figma file: it listed each variant, found every instance in the product files and flagged what was unused or duplicated. The pair ran each pass and brought the list to me. As a group we kept 321, split them into Button, Icon Button and Link, and had the agent write the usage guideline.</p>
+        <p class="t-lede">The agent, built on Claude, ran through every Figma file: it listed each variant, found every instance in the product files and flagged what was unused or duplicated. The team ran each pass and brought the list to me. As a group we kept 321, split them into Button, Icon Button and Link, and had the agent write the usage guideline.</p>
       </div>
       <div class="cols">
         <div class="col">
@@ -153,21 +153,6 @@
         </div>
       </div>
       <figure class="panel wide"><img decoding="async" width="1800" height="866" src="../assets/btn-sheet-after.webp?v=63fac1b2" alt="The three new components side by side: the Button sheet, the Icon Button sheet and the Link sheet, every style, state and size on one page" loading="lazy"></figure>
-    </article>
-
-    <article class="row full" id="library">
-      <div class="row-copy">
-        <p class="eyebrow">The library</p>
-        <h3 class="t-title">A design system site that updates itself</h3>
-        <p class="t-lede">With the set settled, we had the agent build an internal design system site: every component rendered live, with its props, code and tokens on one page. It reads the component library in Figma and updates every week, so what the site shows is what the file holds.</p>
-      </div>
-      <div>
-        <div class="walk">
-          <img decoding="async" width="1594" height="1056" src="../assets/btn-walkthrough-poster.jpg?v=38e0db17" data-anim="../assets/btn-walkthrough.webp?v=2d7947a4" alt="The Components page of the Best Egg design system site: 25 components in groups, Actions (Button, Icon Button, Link) and Inputs &amp; selectors (Input, Checkbox, Radio, Switch, Segmented Control, Select Chip), each with a one-line description" loading="lazy">
-          <button class="btn btn-sm play" type="button" aria-pressed="false"><svg viewBox="0 0 12 14" fill="currentColor" aria-hidden="true"><path d="M11.2 6.13 1.6.24A1 1 0 0 0 .1 1.1v11.8a1 1 0 0 0 1.5.86l9.6-5.9a1 1 0 0 0 0-1.72Z"/></svg> <span>Play walkthrough</span></button>
-        </div>
-        <p class="walk-note t-small">Screen recording of the internal design system site: the Button page, its props changed live, with anatomy, guidelines, code and tokens alongside.</p>
-      </div>
     </article>
 
     <article class="row full" id="index">
@@ -193,53 +178,6 @@
       <figure class="panel wide"><img decoding="async" width="1800" height="933" src="../assets/dsr-type.webp?v=176b1a9e" alt="Typography defined three ways in the library: a Type variables sheet with Rza and Gordita, a Product UI sheet of desktop and mobile headings and body copy, and a Marcom UI sheet with its own heading scale" loading="lazy"></figure>
     </article>
 
-    <article class="row" id="findings">
-      <div class="row-copy">
-        <p class="eyebrow">What the index showed</p>
-        <h3 class="t-heading">The system works, the housekeeping is overdue</h3>
-        <p class="t-body">Adoption sat at 90.7% across 1.15 million instances, so nobody was rebuilding components. The findings were housekeeping.</p>
-        <ul class="tensions stack">
-          <li><h4 class="t-subhead">A token system, almost unbound</h4><p class="t-body">Five collections and 229 variables exist. 844,333 hand-set values sit beside them, because publishing a token is not binding it.</p></li>
-          <li><h4 class="t-subhead">A third of the library dormant</h4><p class="t-body">770 components have zero instances, and 59 standalones are the real deprecation candidates.</p></li>
-          <li><h4 class="t-subhead">Half the library is illustrations</h4><p class="t-body">266 of 491 standalone components are hand-drawn art that every designer scrolls past to reach Button. 174 are in use, so they move, not go.</p></li>
-          <li><h4 class="t-subhead">Modelled two or three times over</h4><p class="t-body">153 colour variables beside 97 paint styles covering the same ground, and typography three ways, with a migration stalled on three missing styles.</p></li>
-        </ul>
-      </div>
-      <figure class="panel wide crop" style="--crop-pos: 0 0"><img decoding="async" width="1000" height="560" src="../assets/dsr-colors-close.webp?v=f8d7b10d" alt="A corner of the colour sheets at full size: primitive ramps for base, grayscale and navy from 900 to 50, beside the semantic colours for text and icon" loading="lazy"></figure>
-    </article>
-
-    <article class="row full" id="plan">
-      <div class="row-copy">
-        <p class="eyebrow">The remediation</p>
-        <h3 class="t-title">Twenty-three fixes, split between the team and an agent</h3>
-        <p class="t-lede">The crawler's token was read-only by design, so the plan divides at write access. A Claude agent takes the analysis, specs, mappings and lists. The senior product designer and product designer make every edit to the live library, because bulk edits to a library eight teams depend on belong with someone who can see what they are about to break. The after column is sized from the index, and the monthly job will report the real one.</p>
-      </div>
-      <div class="proof">
-        <div class="proof-head">
-          <div><div class="t-stat" data-flow>66%</div><small>fewer components in the picker once the plan runs, sized: 491 standalone to 166</small></div>
-          <span class="eyebrow">Measured Sep 2026 · After the plan, sized</span>
-        </div>
-        <section class="table-wrap" aria-label="The library as measured in September 2026 against the after state sized from the plan" tabindex="0">
-        <table>
-          <thead><tr><th scope="col">Metric</th><th scope="col">Measured, Sep 2026</th><th scope="col" class="hl">After the plan (sized)</th></tr></thead>
-          <tbody>
-            <tr><th scope="row">Standalone components in the picker</th><td data-label="Measured, Sep 2026">491</td><td class="hl" data-label="After the plan (sized)">166</td></tr>
-            <tr><th scope="row">Illustrations in the UI library</th><td data-label="Measured, Sep 2026">266</td><td class="hl" data-label="After the plan (sized)">0, in their own library</td></tr>
-            <tr><th scope="row">Standalone components with zero instances</th><td data-label="Measured, Sep 2026">59</td><td class="hl" data-label="After the plan (sized)">0</td></tr>
-            <tr><th scope="row">Hand-set values with a token already published</th><td data-label="Measured, Sep 2026">844,333</td><td class="hl" data-label="After the plan (sized)">Bound to the 229 variables</td></tr>
-            <tr><th scope="row">Ways colour is modelled</th><td data-label="Measured, Sep 2026">2</td><td class="hl" data-label="After the plan (sized)">1</td></tr>
-            <tr><th scope="row">Ways type is modelled</th><td data-label="Measured, Sep 2026">3</td><td class="hl" data-label="After the plan (sized)">1</td></tr>
-            <tr><th scope="row">Dead libraries still published</th><td data-label="Measured, Sep 2026">2</td><td class="hl" data-label="After the plan (sized)">0</td></tr>
-            <tr><th scope="row">Component descriptions that mislead</th><td data-label="Measured, Sep 2026">4</td><td class="hl" data-label="After the plan (sized)">0</td></tr>
-            <tr><th scope="row">Trend visibility</th><td data-label="Measured, Sep 2026">One snapshot</td><td class="hl" data-label="After the plan (sized)">Monthly history</td></tr>
-          </tbody>
-        </table>
-        </section>
-      </div>
-    </article>
-  </div>
-</section>
-
 <section class="cs-section" id="role">
   <div class="wrap">
     <header class="section-intro">
@@ -247,24 +185,88 @@
       <h2 class="t-title">The brief, the full audit and the split</h2>
     </header>
     <div class="ledger">
-      <div class="ledger-row"><h3 class="t-heading">The brief</h3><p class="t-body">I decided to run the button audit as an agent instead of by hand and wrote its brief: read every file, list every variant, find every instance, flag anything unused or duplicated and show its working. The senior product designer built it, I coached the pair through briefing it and reading its list against the files, and we decided the split into three as a group.</p></div>
+      <div class="ledger-row"><h3 class="t-heading">The brief</h3><p class="t-body">I decided to run the button audit as an agent instead of by hand and wrote its brief: read every file, list every variant, find every instance, flag anything unused or duplicated and show its working. One of the three senior product designers built it, and I coached the team through briefing it and reading its list against the files. We decided the split into three as a group.</p></div>
       <div class="ledger-row"><h3 class="t-heading">The full audit</h3><p class="t-body">The second pass I ran myself. I wrote the crawler's rules, registered the teams, excluded the archives and the library's own file, took a name-match heuristic out of the adoption formula and reported Brand Studio separately, because marketing collateral does not instance a dropdown.</p></div>
       <div class="ledger-row"><h3 class="t-heading">The split</h3><p class="t-body">The analysis narrows decisions and people make them. Specs and lists went to a Claude agent, edits to the library to the team. 10px appears 1,834 times and 12px 1,796, and the data cannot pick one. The 92 dormant illustrations get a conversation with Brand Studio, not a deletion.</p></div>
     </div>
   </div>
 </section>
 
-<section class="cs-section" id="retro">
-  <div class="wrap">
-    <header class="section-intro">
-      <p class="eyebrow">What I'd do differently</p>
-      <h2 class="t-title">Enumeration, coverage and what held</h2>
-    </header>
-    <div class="note">
-      <p class="t-body"><strong>Enumeration.</strong> Two tools returned nothing for "does this exist" and both silences were read as absence: the audit reported a missing spacing scale that had 16 variables all along. The check against the file now runs before a finding ships.</p>
-      <p class="t-body"><strong>Coverage.</strong> The first run reported 936 unused components, Button included, from an undocumented 50-file limit, and a published recommendation reversed when the eighth team's 121 files arrived. I would close the team list before publishing anything and print every figure's bound beside it.</p>
-      <p class="t-body"><strong>What held.</strong> The crawler's numbers, adoption, instances and duplicates, survived a second tool reading the file directly. The read-only token forced the right split between analysis and action, and the design system site still rebuilds itself from Figma every week.</p>
-    </div>
+    <article class="row full" id="findings">
+      <div class="row-copy">
+        <p class="eyebrow">What the index showed</p>
+        <h3 class="t-title">The system works, the housekeeping is overdue</h3>
+        <p class="t-lede">Adoption sat at 90.7% across 1.15 million instances, so nobody was rebuilding components. The findings were housekeeping.</p>
+      </div>
+      <div class="findings-tabs" data-tabs>
+        <div class="layer-tabs" role="tablist" aria-label="What the audit found">
+          <button class="layer-tab" type="button" role="tab" id="tab-token" aria-controls="panel-token" aria-selected="true"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="13" r="3.5"/><rect x="14" y="9.5" width="7" height="7" rx="1.5"/><path class="ac" d="M10.5 13h3" stroke-dasharray="1.6 2.2"/></svg><span>A token system, almost unbound</span></button>
+          <button class="layer-tab" type="button" role="tab" id="tab-dormant" aria-controls="panel-dormant" aria-selected="false" tabindex="-1"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path class="ac" d="M12 3.5A8.5 8.5 0 0 1 19.86 16" fill="none"/></svg><span>A third of the library dormant</span></button>
+          <button class="layer-tab" type="button" role="tab" id="tab-illustrations" aria-controls="panel-illustrations" aria-selected="false" tabindex="-1"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="2"/><circle class="ac" cx="8" cy="9.5" r="1.6"/><path d="M4 17l5-5 4 4 3-3 4 4"/></svg><span>Half the library is illustrations</span></button>
+          <button class="layer-tab" type="button" role="tab" id="tab-modelled" aria-controls="panel-modelled" aria-selected="false" tabindex="-1"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="12" height="12" rx="2"/><rect class="ac" x="9" y="9" width="12" height="12" rx="2"/></svg><span>Modelled two or three times over</span></button>
+        </div>
+        <div class="layer-stage">
+          <div class="layer active" id="panel-token" role="tabpanel" aria-labelledby="tab-token" tabindex="0">
+            <div class="layer-head"><p class="t-body">Five collections and 229 variables exist. 844,333 hand-set values sit beside them, because publishing a token is not binding it.</p></div>
+          </div>
+          <div class="layer" id="panel-dormant" role="tabpanel" aria-labelledby="tab-dormant" tabindex="0">
+            <div class="layer-head"><p class="t-body">770 components have zero instances, and 59 standalones are the real deprecation candidates.</p></div>
+          </div>
+          <div class="layer" id="panel-illustrations" role="tabpanel" aria-labelledby="tab-illustrations" tabindex="0">
+            <div class="layer-head"><p class="t-body">266 of 491 standalone components are hand-drawn art that every designer scrolls past to reach Button. 174 are in use, so they move, not go.</p></div>
+          </div>
+          <div class="layer" id="panel-modelled" role="tabpanel" aria-labelledby="tab-modelled" tabindex="0">
+            <div class="layer-head"><p class="t-body">153 color variables beside 97 paint styles covering the same ground, and typography three ways, with a migration stalled on three missing styles.</p></div>
+          </div>
+        </div>
+      </div>
+      <figure class="panel wide"><img decoding="async" width="1247" height="720" src="../assets/dsr-colors-full.webp?v=940548d0" alt="Two color sheets side by side: Primitive colors, ramps of 50 to 900 for base, grayscale, navy and five brand hues, and Semantic colors, the same hues applied to text, background, button and border roles" loading="lazy"></figure>
+    </article>
+
+    <article class="row full" id="plan">
+      <div class="row-copy">
+        <p class="eyebrow">The remediation</p>
+        <h3 class="t-title">Twenty-three fixes, split between the team and an agent</h3>
+        <p class="t-lede">The crawler was read-only, so the plan divides at write access. A Claude agent takes the analysis and specs, and the team makes every edit to the library. The after column is sized from the index, and the monthly job will report the real one.</p>
+      </div>
+      <div class="proof">
+        <div class="proof-head">
+          <div><div class="t-stat" data-flow>66%</div><small>fewer components in the picker once the plan runs, sized: 491 standalone to 166</small></div>
+          <span class="eyebrow">Measured · After the plan, sized</span>
+        </div>
+        <section class="table-wrap" aria-label="The library as measured against the after state sized from the plan" tabindex="0">
+        <table>
+          <thead><tr><th scope="col">Metric</th><th scope="col">Measured</th><th scope="col" class="hl">After the plan (sized)</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Standalone components in the picker</th><td data-label="Measured">491</td><td class="hl" data-label="After the plan (sized)">166</td></tr>
+            <tr><th scope="row">Illustrations in the UI library</th><td data-label="Measured">266</td><td class="hl" data-label="After the plan (sized)">0, in their own library</td></tr>
+            <tr><th scope="row">Standalone components with zero instances</th><td data-label="Measured">59</td><td class="hl" data-label="After the plan (sized)">0</td></tr>
+            <tr><th scope="row">Hand-set values with a token already published</th><td data-label="Measured">844,333</td><td class="hl" data-label="After the plan (sized)">Bound to the 229 variables</td></tr>
+            <tr><th scope="row">Ways color is modelled</th><td data-label="Measured">2</td><td class="hl" data-label="After the plan (sized)">1</td></tr>
+            <tr><th scope="row">Ways type is modelled</th><td data-label="Measured">3</td><td class="hl" data-label="After the plan (sized)">1</td></tr>
+            <tr><th scope="row">Dead libraries still published</th><td data-label="Measured">2</td><td class="hl" data-label="After the plan (sized)">0</td></tr>
+            <tr><th scope="row">Component descriptions that mislead</th><td data-label="Measured">4</td><td class="hl" data-label="After the plan (sized)">0</td></tr>
+            <tr><th scope="row">Trend visibility</th><td data-label="Measured">One snapshot</td><td class="hl" data-label="After the plan (sized)">Monthly history</td></tr>
+          </tbody>
+        </table>
+        </section>
+      </div>
+    </article>
+
+<article class="row full" id="library">
+      <div class="row-copy">
+        <p class="eyebrow">The library</p>
+        <h3 class="t-title">A design system site that updates itself</h3>
+        <p class="t-lede">With the set settled, we had the agent build an internal design system site: every component rendered live, with its props, code and tokens on one page. It reads the component library in Figma and updates every week, so what the site shows is what the file holds.</p>
+      </div>
+      <div>
+        <div class="walk">
+          <img decoding="async" width="1594" height="1056" src="../assets/btn-walkthrough-poster.jpg?v=38e0db17" data-anim="../assets/btn-walkthrough.webp?v=2d7947a4" alt="The Components page of the Best Egg design system site: 25 components in groups, Actions (Button, Icon Button, Link) and Inputs &amp; selectors (Input, Checkbox, Radio, Switch, Segmented Control, Select Chip), each with a one-line description" loading="lazy">
+          <button class="btn btn-sm play" type="button" aria-pressed="false"><svg viewBox="0 0 12 14" fill="currentColor" aria-hidden="true"><path d="M11.2 6.13 1.6.24A1 1 0 0 0 .1 1.1v11.8a1 1 0 0 0 1.5.86l9.6-5.9a1 1 0 0 0 0-1.72Z"/></svg> <span>Play walkthrough</span></button>
+        </div>
+        <p class="walk-note t-small">Screen recording of the internal design system site: the Button page, its props changed live, with anatomy, guidelines, code and tokens alongside.</p>
+      </div>
+    </article>
   </div>
 </section>
 
