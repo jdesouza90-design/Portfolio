@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agentic design system audit and remediation — John DeSouza</title>
+<meta name="description" content="How I coached three senior product designers to build an agent that cut 2,304 button variants to 321 at Best Egg, then ran an agentic audit of the whole design system across 296 files and split the 23 fixes between the team and a Claude agent. A case study by John DeSouza.">
+<meta property="og:title" content="Agentic design system audit and remediation — John DeSouza">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://john-desouza.com/work/agentic-design-system-audit.html">
+<meta property="og:image" content="https://john-desouza.com/og-image.png?v=cbd7c531">
+<meta property="og:description" content="An agent cut Best Egg's button from 2,304 variants to 321. Then I audited the whole design system with one and split the fixes between the team and a Claude agent.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.ico?v=a803d66e" sizes="32x32">
+<link rel="icon" href="/favicon.svg?v=fb53733d" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=94379a7d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<!-- A fresh unlock from the gate: hold the page until its opener is up (initUnlock in main.js). -->
+<script>if (/[?&]unlocked(?=&|$)/.test(location.search)) document.documentElement.classList.add("unlock");</script>
+<link rel="stylesheet" href="../styles.css?v=5f9a045d">
+<script defer src="/_vercel/insights/script.js"></script>
+<script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
+<script defer src="/_vercel/speed-insights/script.js"></script>
+</head>
+<body class="case-system">
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="/" aria-label="John DeSouza, home"><span>John DeSouza</span></a>
+    <button class="icon-btn nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M4 9h16"/><path d="M4 15h16"/></svg>
+    </button>
+    <nav class="nav-links" id="site-nav" aria-label="Primary">
+      <ul>
+        <li><a href="/work.html" aria-current="page">Work</a></li>
+        <li><a href="/#leadership">Leadership</a></li>
+        <li><a href="/#about">About</a></li>
+        <li><a class="nav-icon" data-link="linkedin" href="#" aria-label="LinkedIn profile" title="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.125 2.062 2.062 0 0 1 0 4.125zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/></svg><span>LinkedIn</span></a></li>
+        <li class="nav-resume"><a class="nav-download" data-link="resume" href="#"><span>Resume</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11"/><path d="m7 11 5 5 5-5"/><path d="M4 20h16"/></svg></a></li>
+      </ul>
+      <div class="nav-foot">
+        <a class="btn btn-primary" data-link="email" href="#"><span class="icon-swap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>Contact me</a>
+        <a class="btn btn-ghost" data-link="resume" href="#"><span class="icon-swap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11"/><path d="m7 11 5 5 5-5"/><path d="M4 20h16"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="20 6 9 17 4 12"/></svg></span>Resume</a>
+      </div>
+    </nav>
+    <div class="nav-actions">
+      <a class="btn btn-primary btn-sm" data-link="email" href="#"><span class="icon-swap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>Contact me</a>
+    </div>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+<section class="cs-hero">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><span class="crumb-sep" aria-hidden="true">/</span><a href="/work.html">Work</a></li>
+        <li aria-current="page"><span class="crumb-sep" aria-hidden="true">/</span>Agentic design system audit and remediation</li>
+      </ol>
+    </nav>
+    <div class="hero-lead">
+      <div class="cs-hero-copy">
+      <h1 class="t-display" data-rise style="--i:0">Agentic design system audit and remediation</h1>
+      <p class="t-lede" data-rise style="--i:1">I coached three senior product designers to build an agent that turned one overloaded button into three components. Then I ran the audit on the whole library myself and split the 23 fixes between the team and a Claude agent.</p>
+    </div>
+      <div class="outcome-stat"><p class="eyebrow">Outcome</p><div class="t-stat" data-flow>86%</div><p class="t-small">Fewer button variants, 2,304 to 321, with the rest of the library sized next</p></div>
+    </div>
+    <figure class="panel hero-panel wide">
+      <img decoding="async" width="1600" height="1000" src="../assets/btn-sheet-before.webp?v=82ed5410" alt="The old .Button variant sheet: Primary, Neutral and Danger rows in every state, solid, ghost, borderless and link, across light and dark themes, running off the page">
+    </figure>
+    <dl class="facts">
+      <div><dt>Role</dt><dd>Director of Product Design</dd></div>
+      <div><dt>Team</dt><dd>3 senior product designers</dd></div>
+      <div><dt>Timeline</dt><dd>2 quarters</dd></div>
+      <div><dt>Coverage</dt><dd>296 of 296 files</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section class="cs-section" id="results">
+  <div class="wrap">
+    <header class="section-intro">
+      <p class="eyebrow">Results</p>
+      <h2 class="t-title">Buttons first, then the whole library</h2>
+      <p class="t-lede">The old .Button carried seven properties multiplied together, and most of the results were never used. The team shipped Button, Icon Button and Link, 321 variants where there had been 2,304, and the counts are the Figma library's own. The full audit that followed found the same pattern across 1,316 assets, and its plan is sized further down.</p>
+    </header>
+    <div class="proof matrix" data-matrix data-total="2304" data-groups='[{"label":"Button","n":141},{"label":"Icon Button","n":120},{"label":"Link","n":60}]'>
+      <div class="proof-head">
+        <div><div class="t-stat" data-flow>321</div><small>variants across three components, down from 2,304 in one</small></div>
+        <span class="eyebrow matrix-legend"><span><i class="dot" aria-hidden="true"></i>Button · 141</span><span><i class="dot m2" aria-hidden="true"></i>Icon Button · 120</span><span><i class="dot m3" aria-hidden="true"></i>Link · 60</span></span>
+      </div>
+      <div class="matrix-plot" role="img" aria-label="2,304 dots, one per variant of the old .Button, thinning to the 321 that remain: 141 Button, 120 Icon Button and 60 Link"><canvas aria-hidden="true"></canvas></div>
+      <details class="data">
+        <summary>View as a table</summary>
+        <table>
+          <thead><tr><th scope="col">Metric</th><th scope="col">Old .Button</th><th scope="col" class="hl">New system</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Components</th><td>1</td><td class="hl">3: Button, Icon Button, Link</td></tr>
+            <tr><th scope="row">Variants</th><td>2,304</td><td class="hl">321</td></tr>
+            <tr><th scope="row">Properties that multiply</th><td>7</td><td class="hl">4</td></tr>
+            <tr><th scope="row">Icons</th><td>A variant, 4× the matrix</td><td class="hl">A boolean and a swap, no multiplier</td></tr>
+            <tr><th scope="row">Fixed width</th><td>A variant, 2× the matrix</td><td class="hl">Handled inside the component</td></tr>
+            <tr><th scope="row">Disabled state</th><td>One per color</td><td class="hl">Danger, Brand and Action reuse Primary's</td></tr>
+          </tbody>
+        </table>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="cs-section" id="story">
+  <div class="wrap">
+    <header class="section-intro">
+      <p class="eyebrow">How we got there</p>
+      <h2 class="t-title">From one button to the whole library</h2>
+    </header>
+
+    <article class="row" id="problem">
+      <div class="row-copy">
+        <p class="eyebrow">The problem</p>
+        <h3 class="t-heading">Nobody could tell which button was right</h3>
+        <p class="t-body">One component, .Button, held seven properties: style, color, size, icon, fixed width, state and theme. Multiplied out, that was 2,304 variants, most unused and many near-identical. Behind it sat a library of 1,316 assets across 8 teams that nobody had ever measured.</p>
+        <ul class="tensions">
+          <li><strong>Trust</strong><span>An agent's count is a claim until the team checks it against the file.</span></li>
+          <li><strong>Coverage</strong><span>Figma lists no teams, so an unregistered team is simply absent, with no error.</span></li>
+          <li><strong>Adoption</strong><span>A new structure only counts once product designers use it.</span></li>
+        </ul>
+      </div>
+      <figure class="panel wide crop" style="--crop-pos: 0 0"><img decoding="async" width="1000" height="560" src="../assets/btn-sheet-close.webp?v=78251215" alt="A corner of the old .Button sheet at full size: near-identical Primary buttons in default, hover, active and disabled, solid, ghost and borderless, with and without icons" loading="lazy"></figure>
+    </article>
+
+    <article class="row full" id="design">
+      <div class="row-copy">
+        <p class="eyebrow">The design</p>
+        <h3 class="t-title">The agent counted, we decided</h3>
+        <p class="t-lede">The agent, built on Claude, ran through every Figma file: it listed each variant, found every instance in the product files and flagged what was unused or duplicated. The team ran each pass and brought the list to me. As a group we kept 321, split them into Button, Icon Button and Link, and had the agent write the usage guideline.</p>
+      </div>
+      <div class="cols">
+        <div class="col">
+          <div class="col-head"><svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="8" width="5.5" height="8" rx="1.5"/><rect x="9.25" y="8" width="5.5" height="8" rx="1.5"/><rect class="ac" x="16" y="8" width="5.5" height="8" rx="1.5"/></svg><h4 class="t-subhead">Split by purpose</h4></div>
+          <p class="t-body">Button, Icon Button and Link each got their own component, so the name says what it is for.</p>
+        </div>
+        <div class="col">
+          <div class="col-head"><svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="7" width="19" height="10" rx="5"/><circle class="ac-fill" cx="16" cy="12" r="3"/></svg><h4 class="t-subhead">Booleans over variants</h4></div>
+          <p class="t-body">Left and right icons became toggles and the icon itself a swap, so they add nothing to the matrix.</p>
+        </div>
+        <div class="col">
+          <div class="col-head"><svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="3.5" width="7" height="4" rx="1.5"/><rect x="2.5" y="10" width="7" height="4" rx="1.5"/><rect x="2.5" y="16.5" width="7" height="4" rx="1.5"/><path d="M9.5 5.5h2c1.5 0 2 1.5 2.5 3M9.5 12h5M9.5 18.5h2c1.5 0 2-1.5 2.5-3"/><rect class="ac" x="15" y="9" width="6.5" height="6" rx="1.5"/></svg><h4 class="t-subhead">One disabled state</h4></div>
+          <p class="t-body">Danger, Brand and Action reuse Primary's disabled variant instead of defining their own.</p>
+        </div>
+      </div>
+      <figure class="panel wide"><img decoding="async" width="1800" height="866" src="../assets/btn-sheet-after.webp?v=63fac1b2" alt="The three new components side by side: the Button sheet, the Icon Button sheet and the Link sheet, every style, state and size on one page" loading="lazy"></figure>
+    </article>
+
+    <article class="row full" id="index">
+      <div class="row-copy">
+        <p class="eyebrow">The full audit</p>
+        <h3 class="t-title">Then I measured the whole library</h3>
+        <p class="t-lede">Buttons were the visible mess. I ran the next pass myself: an agent built a read-only crawler that reads every file the token can reach for component instances and hand-set values, at 15 files a minute. Eight teams registered by hand, 296 of 296 files analysed, and every figure carries its bound.</p>
+      </div>
+      <div class="cols">
+        <div class="col">
+          <div class="col-head"><svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5h10M4 12h10M4 17.5h10"/><path class="ac" d="M18.5 9.5v5M16 12h5"/></svg><h4 class="t-subhead">Teams by hand</h4></div>
+          <p class="t-body">Figma lists no teams, so I registered eight from browser URLs, and each one changed the answers.</p>
+        </div>
+        <div class="col">
+          <div class="col-head"><svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6H9l2 2h8.5A1.5 1.5 0 0 1 21 9.5v8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"/><path class="ac" d="M9.5 12l5 4M14.5 12l-5 4"/></svg><h4 class="t-subhead">Exclude on purpose</h4></div>
+          <p class="t-body">110 archived files and the library's own file came out, because dead work makes dormant components look alive.</p>
+        </div>
+        <div class="col">
+          <div class="col-head"><svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V11M9.5 19V8M15 19v-6"/><path class="ac" d="M20.5 19V4.5"/><path d="M2.5 21h19"/></svg><h4 class="t-subhead">History built in</h4></div>
+          <p class="t-body">The index overwrote itself each run, so a history table and a monthly job now make direction measurable.</p>
+        </div>
+      </div>
+      <figure class="panel wide"><img decoding="async" width="1800" height="933" src="../assets/dsr-type.webp?v=176b1a9e" alt="Typography defined three ways in the library: a Type variables sheet with Rza and Gordita, a Product UI sheet of desktop and mobile headings and body copy, and a Marcom UI sheet with its own heading scale" loading="lazy"></figure>
+    </article>
+
+<section class="cs-section" id="role">
+  <div class="wrap">
+    <header class="section-intro">
+      <p class="eyebrow">My role</p>
+      <h2 class="t-title">The brief, the full audit and the split</h2>
+    </header>
+    <div class="ledger">
+      <div class="ledger-row"><h3 class="t-heading">The brief</h3><p class="t-body">I decided to run the button audit as an agent instead of by hand and wrote its brief: read every file, list every variant, find every instance, flag anything unused or duplicated and show its working. One of the three senior product designers built it, and I coached the team through briefing it and reading its list against the files. We decided the split into three as a group.</p></div>
+      <div class="ledger-row"><h3 class="t-heading">The full audit</h3><p class="t-body">The second pass I ran myself. I wrote the crawler's rules, registered the teams, excluded the archives and the library's own file, took a name-match heuristic out of the adoption formula and reported Brand Studio separately, because marketing collateral does not instance a dropdown.</p></div>
+      <div class="ledger-row"><h3 class="t-heading">The split</h3><p class="t-body">The analysis narrows decisions and people make them. Specs and lists went to a Claude agent, edits to the library to the team. 10px appears 1,834 times and 12px 1,796, and the data cannot pick one. The 92 dormant illustrations get a conversation with Brand Studio, not a deletion.</p></div>
+    </div>
+  </div>
+</section>
+
+    <article class="row flip" id="findings">
+      <div class="row-copy">
+        <p class="eyebrow">What the index showed</p>
+        <h3 class="t-heading">The system works, the housekeeping is overdue</h3>
+        <p class="t-body">Adoption sat at 90.7% across 1.15 million instances, so nobody was rebuilding components. The findings were housekeeping.</p>
+        <ul class="tensions stack">
+          <li><h4 class="t-subhead">A token system, almost unbound</h4><p class="t-body">Five collections and 229 variables exist. 844,333 hand-set values sit beside them, because publishing a token is not binding it.</p></li>
+          <li><h4 class="t-subhead">A third of the library dormant</h4><p class="t-body">770 components have zero instances, and 59 standalones are the real deprecation candidates.</p></li>
+          <li><h4 class="t-subhead">Half the library is illustrations</h4><p class="t-body">266 of 491 standalone components are hand-drawn art that every designer scrolls past to reach Button. 174 are in use, so they move, not go.</p></li>
+        </ul>
+      </div>
+      <figure class="panel wide"><img decoding="async" width="1247" height="720" src="../assets/dsr-colors-full.webp?v=940548d0" alt="Two color sheets side by side: Primitive colors, ramps of 50 to 900 for base, grayscale, navy and five brand hues, and Semantic colors, the same hues applied to text, background, button and border roles" loading="lazy"></figure>
+    </article>
+
+    <article class="row full" id="plan">
+      <div class="row-copy">
+        <p class="eyebrow">The remediation</p>
+        <h3 class="t-title">Twenty-three fixes, split between the team and an agent</h3>
+        <p class="t-lede">The crawler was read-only, so the plan divides at write access. A Claude agent takes the analysis and specs, and the team makes every edit to the library. The after column is sized from the index, and the monthly job will report the real one.</p>
+      </div>
+      <div class="proof">
+        <div class="proof-head">
+          <div><div class="t-stat" data-flow>66%</div><small>fewer components in the picker once the plan runs, sized: 491 standalone to 166</small></div>
+          <span class="eyebrow">Measured · After the plan, sized</span>
+        </div>
+        <section class="table-wrap" aria-label="The library as measured against the after state sized from the plan" tabindex="0">
+        <table>
+          <thead><tr><th scope="col">Metric</th><th scope="col">Measured</th><th scope="col" class="hl">After the plan (sized)</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Standalone components in the picker</th><td data-label="Measured">491</td><td class="hl" data-label="After the plan (sized)">166</td></tr>
+            <tr><th scope="row">Illustrations in the UI library</th><td data-label="Measured">266</td><td class="hl" data-label="After the plan (sized)">0, in their own library</td></tr>
+            <tr><th scope="row">Standalone components with zero instances</th><td data-label="Measured">59</td><td class="hl" data-label="After the plan (sized)">0</td></tr>
+            <tr><th scope="row">Hand-set values with a token already published</th><td data-label="Measured">844,333</td><td class="hl" data-label="After the plan (sized)">Bound to the 229 variables</td></tr>
+            <tr><th scope="row">Ways color is modelled</th><td data-label="Measured">2</td><td class="hl" data-label="After the plan (sized)">1</td></tr>
+            <tr><th scope="row">Ways type is modelled</th><td data-label="Measured">3</td><td class="hl" data-label="After the plan (sized)">1</td></tr>
+            <tr><th scope="row">Dead libraries still published</th><td data-label="Measured">2</td><td class="hl" data-label="After the plan (sized)">0</td></tr>
+            <tr><th scope="row">Component descriptions that mislead</th><td data-label="Measured">4</td><td class="hl" data-label="After the plan (sized)">0</td></tr>
+            <tr><th scope="row">Trend visibility</th><td data-label="Measured">One snapshot</td><td class="hl" data-label="After the plan (sized)">Monthly history</td></tr>
+          </tbody>
+        </table>
+        </section>
+      </div>
+    </article>
+
+<article class="row full" id="library">
+      <div class="row-copy">
+        <p class="eyebrow">The library</p>
+        <h3 class="t-title">A design system site that updates itself</h3>
+        <p class="t-lede">With the set settled, we had the agent build an internal design system site: every component rendered live, with its props, code and tokens on one page. It reads the component library in Figma and updates every week, so what the site shows is what the file holds.</p>
+      </div>
+      <div>
+        <div class="walk">
+          <img decoding="async" width="1594" height="1056" src="../assets/btn-walkthrough-poster.jpg?v=38e0db17" data-anim="../assets/btn-walkthrough.webp?v=2d7947a4" alt="The Components page of the Best Egg design system site: 25 components in groups, Actions (Button, Icon Button, Link) and Inputs &amp; selectors (Input, Checkbox, Radio, Switch, Segmented Control, Select Chip), each with a one-line description" loading="lazy">
+          <button class="btn btn-sm play" type="button" aria-pressed="false"><svg viewBox="0 0 12 14" fill="currentColor" aria-hidden="true"><path d="M11.2 6.13 1.6.24A1 1 0 0 0 .1 1.1v11.8a1 1 0 0 0 1.5.86l9.6-5.9a1 1 0 0 0 0-1.72Z"/></svg> <span>Play walkthrough</span></button>
+        </div>
+        <p class="walk-note t-small">Screen recording of the internal design system site: the Button page, its props changed live, with anatomy, guidelines, code and tokens alongside.</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="cs-next">
+  <div class="wrap">
+    <p class="eyebrow">Next case study</p>
+    <p class="t-title cs-next-title"><a class="cs-prev-link" href="no-code-tools.html" aria-label="Previous case study"><svg class="cs-next-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg></a><a href="cross-sell.html">Cross-Sell: Vehicle Equity &amp; Home Secured Loans<svg class="cs-next-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a></p>
+    <div class="actions">
+      <a class="btn btn-ghost btn-browse" href="../work.html">All work<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+      <a class="btn btn-primary" data-link="email" href="#"><span class="icon-swap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>Contact me</a>
+    </div>
+    <footer>
+      <span>© <span data-year></span> John DeSouza</span>
+    </footer>
+  </div>
+</section>
+</main>
+<script src="../main.js?v=644014c6"></script>
+</body>
+</html>

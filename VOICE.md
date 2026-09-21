@@ -59,6 +59,7 @@ Cards and triads: a one- or two-word label, then one full sentence with a subjec
 - **Abbreviations** are spelled out on first use on each page. Vehicle Equity and Home Secured, not VEL and HSL. General manager, not GM. Tickers (LINK) and A/B are fine.
 - **Names** as the company writes them: Best Egg, Chainlink Labs, Auth0, Sign-in with Ethereum, Staking v0.1.
 - **Quotes** keep the speaker's grammar. Attribution is a label plus a source (Product confusion · Applicant interview). Public posts get the handle and the date.
+- **Spelling is American** throughout: color, not colour; organize, not organise; favor, not favour.
 
 ## Before and after
 

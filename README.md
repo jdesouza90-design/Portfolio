@@ -11,7 +11,10 @@ Live: https://john-desouza.com
 ```
 index.html                      Home: hero, selected work, how I lead, how I track design, about, contact
 work.html                       Work index: all six case studies
-work/design-system-audit-agent.html  Best Egg · Design system audit agent
+work/agentic-design-system-audit.html  Best Egg · Agentic design system audit and remediation
+work/design-system-audit-agent.html  Best Egg · Design system audit agent (deprecated Sep 2026, folded into the
+                                page above: no index row, out of the ring, noindex; still opens by URL;
+                                its work.html row is parked in a comment)
 work/cross-sell.html            Best Egg · Cross-Sell (Vehicle Equity & Home Secured Loans)
 work/verifications.html         Best Egg · Verifications
 work/refinance-offers.html      Best Egg · Refinance offers on native mobile
@@ -276,7 +279,7 @@ All six case studies are the same document, in this order:
 5. **What I'd do differently**: one narrow note with run-in labels, where a
    retro exists.
    A second deliverable takes a `.row.full` of its own in the story, placed
-   where it happened (the audit agent page's "The library", its walkthrough
+   where it happened (the agentic audit page's "The library", its walkthrough
    between The design and Try it).
 6. **Next**: the closing band with the next case study and contact.
 
@@ -471,7 +474,7 @@ The rules that shape the code:
   `data-annotations`; the table below it is the accessible fallback. The
   line is swept open left to right when the card scrolls in and the closing
   value lands in a pill at the right edge.
-- The audit agent page's proof is a matrix (`[data-matrix]` with `data-total`
+- The agentic audit page's proof (and the parked audit agent page's) is a matrix (`[data-matrix]` with `data-total`
   and `data-groups`): one dot per variant on a canvas, the wall sweeping in
   as the block reveals and thinning to the set that remains, one tinted
   block per component. The comparison table sits behind "View as a table".
