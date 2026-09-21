@@ -180,8 +180,31 @@ function describeUA(ua) {
   return `${browser} on ${os}`;
 }
 
-// Crawlers and link previewers; their fetches aren't visits.
-const isBot = (ua) => !ua || /bot|crawl|spider|slurp|preview|facebookexternalhit|whatsapp|telegram|discord|skype|slack|embedly|quora|pinterest|vkshare|headless|lighthouse|pingdom|uptime/i.test(ua);
+// Crawlers and link previewers; their fetches aren't visits. Four families of
+// them, and a term earns its place here only if no browser could carry it: a
+// name matched too eagerly loses a reader for good, since what is never
+// recorded can never be got back. What no user agent gives away is the scanner
+// that sends a plain Chrome string — most of what arrives from the cloud
+// regions — so the dashboard reads the time beacons for that one instead
+// ("Real visits only" in admin/dash.js), and this list stays conservative.
+const BOT_RE = new RegExp([
+  // Says so itself: the crawlers, the SEO robots, the AI agents.
+  'bot|crawl|spider|slurp|scraper|archiver|heritrix|nutch|feedfetcher|anthropic-ai|chatgpt-user|oai-searchbot|claude-user|perplexity-user|meta-externalagent|cohere-ai|img2dataset|omgili',
+  'google-read-aloud|googleother|google-inspectiontool|google-apps-script|googleimageproxy',
+  // Link previews, and the apps that draw them.
+  // Slackbot, Discordbot and TelegramBot are the crawlers those three send and
+  // `bot` above has them already; their own names are not here, because the
+  // desktop apps put them in the user agent of a person reading (Slack_SSB).
+  'preview|facebookexternalhit|whatsapp|skype|embedly|iframely|quora|pinterest|vkshare|mastodon|bluesky|snapchat|vercel-screenshot|vercel-favicon',
+  // Headless browsers and the HTTP libraries, which is how a scraper arrives
+  // when it hasn't bothered to dress up as anything.
+  'headless|phantomjs|puppeteer|playwright|selenium|webdriver|curl|wget|python-requests|urllib|aiohttp|httpx|scrapy|go-http-client|node-fetch|undici|axios|okhttp|apache-httpclient|java/|libwww-perl|guzzle|postmanruntime|insomnia|restsharp|winhttp',
+  // The mail filters and security scanners a shared link goes through before
+  // anyone clicks it, and the uptime monitors.
+  'safelinks|proofpoint|mimecast|barracuda|forcepoint|symantec|trendmicro|sophos|ironport|messagelabs|zscaler|netskope|bitdefender|microsoft office|ms-office|msoffice|microsoft-cryptoapi',
+  'lighthouse|pingdom|uptime|statuscake|monitoring|site24x7|newrelic|datadog|checkly|w3c_validator',
+].join('|'), 'i');
+export const isBot = (ua) => !ua || BOT_RE.test(ua);   // exported for bot-check.mjs; the edge runtime reads only `default` and `config`
 // Speculative loads (link prefetch, prerender) that nobody has looked at.
 const isPrefetch = (h) => /prefetch|prerender/i.test(h.get('purpose') || h.get('sec-purpose') || h.get('x-purpose') || '');
 

@@ -30,6 +30,7 @@ vercel.json                     Cache and security headers
 .vercelignore                   Keeps the repo's tooling (this file, VOICE.md, stamp.py, dev.mjs, .claude/) off the deployment
 stamp.py                        Re-stamps every ?v= cache hash; run it before committing
 dev.mjs                         Local stand-in for the edge: the gates and the dashboard without deploying
+bot-check.mjs                   Checks middleware.js's bot list against real user agents; run it after changing that list
 ai-process-art.mjs              Draws assets/ai-process.svg, the abstract on the AI card
 assets/                         Mockups, logos, walkthrough recordings exported from the deck
 og-image.png                    Social preview image used when the link is shared
@@ -123,6 +124,14 @@ next deployment.
   logging for that browser for a year; on a browser you don't sign in from,
   open any page once with `?owner` on the URL (e.g. `/?owner`) for the same
   effect.
+- Crawlers and link previewers are never recorded at all: `isBot` in
+  `middleware.js` drops anything whose user agent gives it away — the robots
+  that say so, the HTTP libraries and headless browsers, the mail filters and
+  security scanners that fetch a shared link before anyone clicks it, and the
+  uptime monitors. That decision is made before anything is written down, so a
+  term matched too eagerly loses a reader for good; `node bot-check.mjs` holds
+  the list to real user agents, the browsers people read the site in on one
+  side and the robots on the other. Run it after touching the list.
 - **Real visits only**, the switch beside the period, is on by default and
   leaves out every session that never ran the page: no time beacon, and no
   password typed into a gate. That is what a link scanner looks like — the
