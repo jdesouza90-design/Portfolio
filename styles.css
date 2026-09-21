@@ -1513,8 +1513,9 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 .dash-act.is-armed, .dash-list .dash-act.is-armed:hover { color: var(--danger); }
 .dash-status { margin: var(--sp-3) 0 0; color: var(--ink-3); }
 .dash-status:empty { display: none; }
-.dash-blocked { margin-top: var(--sp-5); padding-top: var(--sp-4); border-top: 1px solid var(--hair); }
-.dash-blocked .t-small { margin: 0 0 var(--sp-3); color: var(--ink-3); }
+.dash-blocked { margin-top: var(--sp-5); padding-top: var(--sp-4); border-top: 1px solid var(--hair); font-size: var(--t-small); line-height: var(--lh-small); color: var(--ink-2); }
+.dash-blocked summary { cursor: pointer; }
+.dash-blocked .t-small { margin: var(--sp-3) 0 var(--sp-3); color: var(--ink-3); }
 .dash-blocked ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 20px; }
 .dash-blocked li { display: inline-flex; align-items: baseline; gap: 10px; font-size: var(--t-small); line-height: var(--lh-small); color: var(--ink-2); }
 .dash-blocked li span { text-decoration: line-through; text-decoration-color: var(--ink-3); }

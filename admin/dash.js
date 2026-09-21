@@ -898,6 +898,7 @@
     const sig = blocked.join('\n');
     if (sig === listedBlocked || (!forceLists && ul.contains(document.activeElement))) return;
     listedBlocked = sig;
+    $('blocked-count').textContent = blocked.length;
     ul.replaceChildren(...blocked.map((host) => {
       const li = document.createElement('li');
       const s = document.createElement('span'); s.textContent = host;
