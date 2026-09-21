@@ -184,13 +184,16 @@
         <h2 class="t-heading" id="h-sessions">Sessions · <span data-period>last 7 days</span></h2>
         <p class="t-small" id="sessions-note">One person's visit, start to finish; a quiet half hour ends it. Newest first. Tried to open is each case study they met the password gate on, and how it ended. Press a hash in the Visitor column to follow one person.</p>
       </div>
-      <!-- The same menus as the feed's, filled by dash.js. A session matches a
-           page or a gate outcome if any of its pages did. -->
+      <!-- The same menus as the feed's, filled by dash.js, over the same seven
+           columns. A session matches a page, a gate, a kind or a source if any
+           one of its events did. -->
       <div class="dash-filters" role="group" aria-label="Filter the sessions" id="session-filters">
+        <div class="dash-filter dash-filter-multi" data-filter="kind" data-all="All kinds" data-none="No kinds" data-noun="kinds" data-legend="Kinds to show"></div>
         <div class="dash-filter dash-filter-multi" data-filter="where" data-all="Everywhere" data-none="Nowhere" data-noun="places" data-legend="Places to show"></div>
         <div class="dash-filter dash-filter-multi" data-filter="page" data-all="All pages" data-none="No pages" data-noun="pages" data-legend="Pages to show"></div>
         <div class="dash-filter dash-filter-multi" data-filter="tried" data-all="Any gate or none" data-none="No gates" data-noun="gates" data-legend="Gates to show"></div>
         <div class="dash-filter dash-filter-multi" data-filter="length" data-all="Any length" data-none="No lengths" data-noun="lengths" data-legend="Session lengths to show"></div>
+        <div class="dash-filter dash-filter-multi" data-filter="ref" data-all="All sources" data-none="No sources" data-noun="sources" data-legend="Sources to show"></div>
         <div class="dash-filter dash-filter-multi" data-filter="device" data-all="All devices" data-none="No devices" data-noun="devices" data-legend="Devices to show"></div>
         <span class="dash-filter dash-filter-visitor is-on" hidden><button class="dash-filter-btn" type="button" aria-describedby="visitor-hint"></button></span>
         <div class="dash-filter-state" id="session-state" hidden>
@@ -215,6 +218,6 @@
 </main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" crossorigin></script>
-<script src="dash.js?v=bc685067"></script>
+<script src="dash.js?v=14d7d517"></script>
 </body>
 </html>

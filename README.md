@@ -92,11 +92,14 @@ quiet half hour, with the pages read, each case study they tried to open and
 how it ended — at the gate, wrong password, unlocked — its length and a "Now"
 mark while they are still here) and a feed that updates every few seconds as people arrive,
 each view showing how long the page was read and what that visit tried to open.
-Both tables narrow: by kind, page, what they tried to open, place, source or
-device on the feed, and by place, page, what they tried to open, length or
-device on the sessions. Every one of those is a menu of checkboxes, all ticked
-to begin with, so any number of values can be kept at once — untick the one
-you don't want, or press None and then tick the two you do. The pill says what
+Both tables narrow by the same six columns — kind, place, page, what they
+tried to open, source and device — and the sessions by how long the session
+lasted as well. A session is made of several events, so its kind, page, gate
+and source filters keep it while any one of its values is ticked: filter to
+Unlocked and you get the sessions that got in, to Greenhouse and the ones that
+arrived from there. Every one of those is a menu of checkboxes, all ticked to
+begin with, so any number of values can be kept at once — untick the one you
+don't want, or press None and then tick the two you do. The pill says what
 is left (`All kinds`, `2 of 4 kinds`, `Everywhere but Austin, TX, US`, `Home
 only`), nothing ticked shows nothing, and Clear filters puts it all back. A
 value stays listed while it is unticked even after the last visit carrying it

@@ -170,11 +170,13 @@
       evs.sort((a, b) => a.t - b.t);
       let s = null;
       for (const e of evs) {
-        if (!s || e.t - s.end > GAP) { s = { visitor, start: e.t, end: e.t, views: [], tried: new Map(), beacons: 0, where: '', device: '' }; out.push(s); }
+        if (!s || e.t - s.end > GAP) { s = { visitor, start: e.t, end: e.t, views: [], tried: new Map(), kinds: new Set(), refs: new Set(), beacons: 0, where: '', device: '' }; out.push(s); }
         s.end = Math.max(s.end, e.t);
         if (e.kind === 'time') { s.beacons++; continue; }
         e.session = s;
         if (!s.where) { s.where = e.where; s.device = e.device; }
+        s.kinds.add(e.kind);                       // every kind of event in it, and every source it came by,
+        s.refs.add(refName(e.ref));                // so the sessions table can be narrowed by either
         if (e.kind === 'viewed') s.views.push(e);
         else if (e.kind in OUTCOME) s.tried.set(e.page, Math.max(s.tried.get(e.page) ?? -1, OUTCOME[e.kind]));
       }
@@ -675,18 +677,25 @@
   }
 
   // ---- Session filters ----
-  // The same menus as the feed's, over the sessions table. A session holds
-  // several pages and can meet several gates, so a page or gate filter keeps it
-  // while any one of them is ticked; length uses the histogram's bands. Places,
-  // pages and devices list whatever the period's sessions hold, commonest
-  // first, and the gate and length lists are fixed. Independent of the feed's
-  // filters, and remembered nowhere: a reload starts with everything ticked.
+  // The same menus as the feed's, over the sessions table, and the same seven
+  // columns. A session holds several pages, can meet several gates, is made of
+  // several kinds of event and can be reached by more than one source, so those
+  // filters keep it while any one of its values is ticked; length uses the
+  // histogram's bands. Places, pages, sources and devices list whatever the
+  // period's sessions hold, commonest first, and the kind, gate and length
+  // lists are fixed. Independent of the feed's filters, and remembered
+  // nowhere: a reload starts with everything ticked.
   const band = (s) => s.length == null ? 'untimed' : BANDS.find(([, lo, hi]) => s.length / 1000 >= lo && s.length / 1000 < hi)[0];
   const SFACET = {            // every value the session has for that column
+    kind:   (s) => [...s.kinds],
     where:  (s) => [s.where || 'unknown'],
     page:   (s) => [...new Set(s.views.map((v) => pageName(v.page)))],
     tried:  (s) => triedValues(s.tried),
     length: (s) => [band(s)],
+    // Every source the session came by. The first event carries where they
+    // arrived from and the rest are the site itself, so a session that went on
+    // to a second page holds On the site as well as Greenhouse or Slack.
+    ref:    (s) => [...s.refs],
     device: (s) => [s.device || 'unknown'],
   };
   const SOPTIONS = {          // the fixed lists, in a telling order
@@ -696,8 +705,9 @@
   const SLABEL = { any: 'Met a gate', none: 'No gate', gated: 'At the gate', 'wrong password': 'Wrong password', unlocked: 'Unlocked', untimed: 'No time beacon' };
   const smenus = {};
   for (const wrap of document.querySelectorAll('#session-filters .dash-filter-multi')) {
-    smenus[wrap.dataset.filter] = multiFilter(wrap, {
-      label: (v) => SLABEL[v] || v,
+    const k = wrap.dataset.filter;
+    smenus[k] = multiFilter(wrap, {
+      label: (v) => (k === 'kind' ? KIND[v] : SLABEL[v]) || v,
       onChange: () => renderSessions(sessions, Date.now()),
     });
   }
@@ -707,7 +717,7 @@
   function renderSessionFilters(all) {
     for (const k in smenus) {
       const counts = new Map(tally(all.flatMap(SFACET[k]), (v) => v));
-      smenus[k].set(SOPTIONS[k] ? [...SOPTIONS[k]] : [...counts.keys()], counts);
+      smenus[k].set(k === 'kind' ? Object.keys(KIND) : SOPTIONS[k] ? [...SOPTIONS[k]] : [...counts.keys()], counts);
     }
   }
   $('session-clear').addEventListener('click', () => {
