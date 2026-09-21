@@ -56,7 +56,7 @@ const PLACES = [
 ];
 const PAGES = ['/', '/', '/', '/work.html', '/work.html', '/work/staking.html', '/work/cross-sell.html', '/work/verifications.html', '/work/refinance-offers.html', '/work/no-code-tools.html', '/work/design-system-audit-agent.html'];
 const REFS = ['direct', 'direct', 'https://www.linkedin.com/', 'https://www.linkedin.com/feed/', 'https://www.google.com/', 'https://mail.google.com/mail/u/0/',
-  'from:slack', 'https://my.greenhouse.io/applications', 'https://app.greenhouse.io/people/12', 'https://boards.greenhouse.io/acme/jobs/4', 'https://app.slack.com/client/T0/C0'];   // the tag a shared link carries, and the hosts the named sources arrive under
+  'from:slack', 'https://my.greenhouse.io/applications', 'https://app.greenhouse.io/people/12', 'https://boards.greenhouse.io/acme/jobs/4', 'https://app.slack.com/client/T0/C0', 'https://jobs.ashbyhq.com/acme/1a2b', 'https://app.ashbyhq.com/candidates/9'];   // the tag a shared link carries, and the hosts the named sources arrive under
 const SPAM = ['https://free-traffic.buttons-for-your-website.com/', 'https://semalt.com/crawler', 'https://a1.semalt.com/', 'https://www.site-audit-ranking.xyz/'];   // referrer spam, to try Block on
 const DEVICES = ['Chrome on macOS', 'Safari on iOS', 'Safari on macOS', 'Chrome on Windows', 'Firefox on macOS', 'Chrome on Android'];
 const pick = (a) => a[Math.floor(Math.random() * a.length)];

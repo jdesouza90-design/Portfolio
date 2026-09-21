@@ -25,6 +25,7 @@
   const SOURCES = [
     [/(^|\.)slack\.com$|(^|\.)slack-redir\.net$/, 'Slack'],
     [/(^|\.)greenhouse\.io$/, 'Greenhouse'],
+    [/(^|\.)ashbyhq\.com$/, 'Ashby'],
   ];
   const named = (host) => (SOURCES.find(([re]) => re.test(host)) || [])[1] || '';
   // `from:x` is the tag on a shared link (middleware.js), which is how a click
