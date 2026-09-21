@@ -563,17 +563,124 @@
     const section = b.closest('.dash-feed');   // found before the redraw takes the button away
     follow(b.dataset.visitor);
     if (followed) section.querySelector('.dash-filter-visitor button').focus();   // the chip above that table; focus scrolls it in under the nav (scroll-margin) and the narrowed table follows
-    else section.querySelector('.dash-filters select').focus();                 // let go: focus stays in the section
+    else section.querySelector('.dash-filter-multi .dash-filter-btn').focus();   // let go: focus stays in the section
   });
-  for (const chip of document.querySelectorAll('.dash-filter-visitor button')) chip.addEventListener('click', () => { follow(followed); chip.closest('.dash-filters').querySelector('select').focus(); });
+  for (const chip of document.querySelectorAll('.dash-filter-visitor button')) chip.addEventListener('click', () => { follow(followed); chip.closest('.dash-filters').querySelector('.dash-filter-multi .dash-filter-btn').focus(); });
 
-  // ---- Session filters: each select narrows the sessions table to one value of its column ----
-  // A session holds several pages and can meet several gates, so a page or
-  // gate filter matches when any of them does; length uses the histogram's
-  // bands. Places, pages and devices list whatever the period's sessions
-  // hold, commonest first, and a chosen value stays listed until it is
-  // cleared; the gate and length lists are fixed. Independent of the feed's.
-  const sfilter = { where: '', page: '', tried: '', length: '', device: '' };
+
+  // ---- A filter menu ----
+  // Every filter on both tables is one of these: a pill that opens a list of
+  // checkboxes, one a value, all ticked to begin with. Unticking narrows, so
+  // any number of values can be kept at once — drop one with a single tick, or
+  // press None and pick out the two you want. A value stays listed while it is
+  // unticked even after the last visit carrying it rolls out of the log, so a
+  // filter never quietly widens again. Nothing ticked shows nothing, and says
+  // so. The menu is rebuilt only when its values change and never while it is
+  // open, so a poll can't move a checkbox out from under the pointer.
+  function multiFilter(wrap, { onChange, label = (v) => v }) {
+    const d = wrap.dataset;
+    const out = new Set();                     // the unticked values; empty is no filter at all
+    let values = [];
+    const store = d.remember || '';
+    if (store) { try { for (const v of JSON.parse(localStorage.getItem(store)) || []) if (typeof v === 'string') out.add(v); } catch (_) { /* nothing remembered */ } }
+    const remember = () => { if (store) { try { localStorage.setItem(store, JSON.stringify([...out])); } catch (_) { /* private mode: the ticks last the visit */ } } };
+
+    const btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'dash-filter-btn';
+    btn.id = `${d.filter}-btn-${wrap.parentElement.id}`;
+    btn.setAttribute('aria-expanded', 'false');
+    const menu = document.createElement('div');
+    menu.className = 'dash-menu'; menu.hidden = true; menu.id = `${d.filter}-menu-${wrap.parentElement.id}`;
+    btn.setAttribute('aria-controls', menu.id);
+    const list = document.createElement('fieldset');
+    list.className = 'dash-menu-list';
+    const legend = document.createElement('legend');
+    legend.className = 'sr-only'; legend.textContent = d.legend;
+    list.appendChild(legend);
+    const foot = document.createElement('div');
+    foot.className = 'dash-menu-foot';
+    const allBtn = document.createElement('button'); allBtn.type = 'button'; allBtn.textContent = 'All';
+    const noneBtn = document.createElement('button'); noneBtn.type = 'button'; noneBtn.textContent = 'None';
+    foot.append(allBtn, noneBtn);
+    menu.append(list, foot);
+    wrap.append(btn, menu);
+
+    const open = () => !menu.hidden;
+    // The card hangs from the pill's left edge, which runs off the window for a
+    // filter near the right of the row. Slid back by however much it overhangs,
+    // never past the left margin, so no menu opens off-screen and the page
+    // never gains a sideways scroll.
+    function place() {
+      menu.style.left = '0px';
+      const pad = 12, edge = document.documentElement.clientWidth - pad;
+      const over = menu.getBoundingClientRect().right - edge;
+      if (over > 0) menu.style.left = `${-Math.min(over, Math.max(0, wrap.getBoundingClientRect().left - pad))}px`;
+    }
+    const show = (on) => {
+      menu.hidden = !on;
+      btn.setAttribute('aria-expanded', String(on));
+      if (on) place();
+    };
+    // What the pill says: the whole list, none of it, the one left out, the one
+    // left in, or the count. A short label of the value itself where there is
+    // room for one, since that is what the reader is actually looking for.
+    const short = (v) => { const t = label(v); return t.length > 18 ? `${t.slice(0, 17)}…` : t; };
+    function relabel() {
+      const dropped = values.filter((v) => out.has(v)), kept = values.length - dropped.length;
+      btn.textContent = !dropped.length ? d.all
+        : kept === 0 ? d.none
+        : dropped.length === 1 ? `${d.all} but ${short(dropped[0])}`
+        : kept === 1 ? `${short(values.find((v) => !out.has(v)))} only`
+        : `${kept} of ${values.length} ${d.noun}`;
+      btn.title = dropped.length ? `Leaving out ${dropped.map(label).join(', ')}` : '';
+      wrap.classList.toggle('is-on', dropped.length > 0);
+    }
+    function set(next, counts) {
+      const all = next.concat([...out].filter((v) => !next.includes(v)));   // an unticked value stays listed after it rolls out
+      if (all.join('\n') !== values.join('\n') && !open()) {
+        values = all;
+        list.replaceChildren(legend, ...values.map((v) => {
+          const l = document.createElement('label'); l.className = 'dash-check';
+          const i = document.createElement('input'); i.type = 'checkbox'; i.value = v; i.checked = !out.has(v);
+          const s = document.createElement('span'); s.className = 'dash-check-label'; s.textContent = label(v);
+          const c = document.createElement('span'); c.className = 'dash-count';
+          l.append(i, s, c);
+          return l;
+        }));
+        if (!values.length) { const p = document.createElement('p'); p.className = 't-small dash-menu-empty'; p.textContent = 'Nothing yet.'; list.appendChild(p); }
+      }
+      if (counts) for (const l of list.querySelectorAll('.dash-check')) l.lastElementChild.textContent = n(counts.get(l.firstElementChild.value) || 0);
+      relabel();
+    }
+    function tick(on) {
+      for (const i of list.querySelectorAll('input')) { i.checked = on; if (on) out.delete(i.value); else out.add(i.value); }
+      if (on) out.clear();
+      remember(); relabel(); onChange();
+    }
+    list.addEventListener('change', (e) => {
+      if (e.target.type !== 'checkbox') return;
+      if (e.target.checked) out.delete(e.target.value); else out.add(e.target.value);
+      remember(); relabel(); onChange();
+    });
+    btn.addEventListener('click', () => show(!open()));
+    allBtn.addEventListener('click', () => tick(true));
+    noneBtn.addEventListener('click', () => tick(false));
+    wrap.addEventListener('keydown', (e) => { if (e.key === 'Escape' && open()) { show(false); btn.focus(); } });
+    wrap.addEventListener('focusout', (e) => { if (e.relatedTarget && !wrap.contains(e.relatedTarget)) show(false); });   // tabbed away; a click on the card's own padding keeps it
+    document.addEventListener('pointerdown', (e) => { if (open() && !wrap.contains(e.target)) show(false); });
+    window.addEventListener('resize', () => { if (open()) place(); });
+    relabel();
+    // `out` is read on every match; `clear` is what Clear filters presses.
+    return { out, set, focus: () => btn.focus(), clear: () => { for (const i of list.querySelectorAll('input')) i.checked = true; out.clear(); remember(); relabel(); }, keeps: (vs) => vs.some((v) => !out.has(v)) };
+  }
+
+  // ---- Session filters ----
+  // The same menus as the feed's, over the sessions table. A session holds
+  // several pages and can meet several gates, so a page or gate filter keeps it
+  // while any one of them is ticked; length uses the histogram's bands. Places,
+  // pages and devices list whatever the period's sessions hold, commonest
+  // first, and the gate and length lists are fixed. Independent of the feed's
+  // filters, and remembered nowhere: a reload starts with everything ticked.
   const band = (s) => s.length == null ? 'untimed' : BANDS.find(([, lo, hi]) => s.length / 1000 >= lo && s.length / 1000 < hi)[0];
   const SFACET = {            // every value the session has for that column
     where:  (s) => [s.where || 'unknown'],
@@ -587,38 +694,28 @@
     length: BANDS.map(([label]) => label).concat('untimed'),
   };
   const SLABEL = { any: 'Met a gate', none: 'No gate', gated: 'At the gate', 'wrong password': 'Wrong password', unlocked: 'Unlocked', untimed: 'No time beacon' };
-  const sfiltering = () => !!followed || Object.values(sfilter).some(Boolean);
-  const smatches = (s) => (!followed || s.visitor === followed) && Object.keys(sfilter).every((k) => !sfilter[k] || SFACET[k](s).includes(sfilter[k]));
-  const sselects = [...document.querySelectorAll('#session-filters select')];
-  const slisted = {};
+  const smenus = {};
+  for (const wrap of document.querySelectorAll('#session-filters .dash-filter-multi')) {
+    smenus[wrap.dataset.filter] = multiFilter(wrap, {
+      label: (v) => SLABEL[v] || v,
+      onChange: () => renderSessions(sessions, Date.now()),
+    });
+  }
+  const snarrowed = () => Object.values(smenus).some((m) => m.out.size);
+  const sfiltering = () => !!followed || snarrowed();
+  const smatches = (s) => (!followed || s.visitor === followed) && Object.keys(smenus).every((k) => smenus[k].keeps(SFACET[k](s)));
   function renderSessionFilters(all) {
-    for (const sel of sselects) {
-      const k = sel.dataset.filter;
-      const values = SOPTIONS[k] ? [...SOPTIONS[k]] : tally(all.flatMap(SFACET[k]), (v) => v).map(([v]) => v);
-      if (sfilter[k] && !values.includes(sfilter[k])) values.push(sfilter[k]);
-      const sig = values.join('\n');
-      if (sig === slisted[k] || document.activeElement === sel) continue;   // never rebuild under an open menu
-      slisted[k] = sig;
-      const allOpt = sel.firstElementChild;
-      sel.replaceChildren(allOpt, ...values.map((v) => { const o = document.createElement('option'); o.value = v; o.textContent = SLABEL[v] || v; return o; }));
-      sel.value = sfilter[k];
+    for (const k in smenus) {
+      const counts = new Map(tally(all.flatMap(SFACET[k]), (v) => v));
+      smenus[k].set(SOPTIONS[k] ? [...SOPTIONS[k]] : [...counts.keys()], counts);
     }
   }
-  $('session-filters').addEventListener('change', (e) => {
-    const sel = e.target.closest('select[data-filter]');
-    if (!sel) return;
-    sfilter[sel.dataset.filter] = sel.value;
-    sel.parentElement.classList.toggle('is-on', sel.value !== '');
-    renderSessions(sessions, Date.now());
-  });
   $('session-clear').addEventListener('click', () => {
-    for (const k in sfilter) sfilter[k] = '';
-    for (const sel of sselects) { sel.value = ''; sel.parentElement.classList.remove('is-on'); }
-    follow('');
-    sselects[0].focus();
+    for (const k in smenus) smenus[k].clear();
+    follow('');                                    // redraws both tables, whether or not anyone was followed
+    smenus[Object.keys(smenus)[0]].focus();
   });
 
-  // ---- Sessions table ----
   function renderSessions(all, now) {
     renderSessionFilters(all);
     const sessions = all.filter(smatches);
@@ -651,7 +748,7 @@
     const on = sfiltering();
     if (on) $('session-count').textContent = `${n(sessions.length)} of ${n(all.length)} ${sessions.length === 1 ? 'matches' : 'match'}${sessions.length > 40 ? ' · newest 40 shown' : ''}`;
     $('session-state').hidden = !on;
-    $('sessions-empty').textContent = followed && all.length && !Object.values(sfilter).some(Boolean) ? 'This visitor has no session in the period.' : on ? 'No sessions match these filters.' : 'No sessions yet.';
+    $('sessions-empty').textContent = followed && all.length && !snarrowed() ? 'This visitor has no session in the period.' : on ? 'No sessions match these filters.' : 'No sessions yet.';
     $('sessions-empty').hidden = sessions.length > 0;
   }
 
@@ -802,123 +899,48 @@
     box.hidden = !blocked.length;
   }
 
-  // ---- Feed filters: each select narrows the feed to one value of its column ----
-  // The options are whatever the feed has seen, commonest first, so a list is
-  // never longer than the site's traffic; the kind and gate lists are fixed,
-  // the gate one shared with the sessions table (SOPTIONS). A chosen value stays listed until
-  // it is cleared, even after the last event with it has rolled out. Places
-  // work the other way round: every place is ticked to begin with and one
-  // can be left out, which is how the owner's own city is kept out of the
-  // feed; the unticked places are remembered in this browser.
-  const filter = { kind: '', page: '', tried: '', ref: '', device: '' };
+  // ---- Feed filters ----
+  // A menu each, filled with whatever the feed has seen, commonest first, so a
+  // list is never longer than the site's traffic; the kind and gate lists are
+  // fixed, the gate one shared with the sessions table (SOPTIONS). The places
+  // menu is the one whose ticks are remembered in this browser (data-remember
+  // in the markup), which is how the owner's own city stays out of the feed for
+  // good; every other menu starts with everything ticked on a fresh load.
   const FACET = {
-    kind:   (e) => e.kind,
-    page:   (e) => pageName(e.page),
+    kind:   (e) => [e.kind],
+    page:   (e) => [pageName(e.page)],
     // A visit shows its whole session's gates, so it matches on any of them.
     tried:  (e) => triedValues(e.session && e.session.tried),
-    where:  (e) => e.where || 'unknown',
-    ref:    (e) => refName(e.ref),
-    device: (e) => e.device || 'unknown',
+    where:  (e) => [e.where || 'unknown'],
+    ref:    (e) => [refName(e.ref)],
+    device: (e) => [e.device || 'unknown'],
   };
-  const PLACES_OUT = 'dash.places-out';
-  const excluded = new Set((() => { try { return JSON.parse(localStorage.getItem(PLACES_OUT)) || []; } catch (_) { return []; } })().filter((p) => typeof p === 'string'));
-  const remember = () => { try { localStorage.setItem(PLACES_OUT, JSON.stringify([...excluded])); } catch (_) { /* private mode: the ticks last the visit */ } };
-  const filtering = () => !!followed || excluded.size > 0 || Object.values(filter).some(Boolean);
-  const holds = (k, e) => { const v = FACET[k](e); return Array.isArray(v) ? v.includes(filter[k]) : v === filter[k]; };
-  const matches = (e) => (!followed || e.visitor === followed) && !excluded.has(FACET.where(e)) && Object.keys(filter).every((k) => !filter[k] || holds(k, e));
-  const selects = [...document.querySelectorAll('#feed-filters select')];
-  const listed = {};          // facet → the options last drawn, so an unchanged list is left alone
+  const menus = {};
+  for (const wrap of document.querySelectorAll('#feed-filters .dash-filter-multi')) {
+    const k = wrap.dataset.filter;
+    menus[k] = multiFilter(wrap, {
+      label: (v) => (k === 'kind' ? KIND[v] : SLABEL[v]) || v,
+      onChange: () => refilter(),
+    });
+  }
+  const filtering = () => !!followed || Object.values(menus).some((m) => m.out.size);
+  const matches = (e) => (!followed || e.visitor === followed) && Object.keys(menus).every((k) => menus[k].keeps(FACET[k](e)));
   function renderFilters(visits) {
-    for (const sel of selects) {
-      const k = sel.dataset.filter;
-      const values = k === 'kind' ? Object.keys(KIND) : SOPTIONS[k] ? [...SOPTIONS[k]] : tally(visits, FACET[k]).map(([v]) => v);
-      if (filter[k] && !values.includes(filter[k])) values.push(filter[k]);
-      const sig = values.join('\n');
-      if (sig === listed[k] || document.activeElement === sel) continue;   // never rebuild under an open menu
-      listed[k] = sig;
-      const all = sel.firstElementChild;                                    // the "all" option comes from the markup
-      sel.replaceChildren(all, ...values.map((v) => { const o = document.createElement('option'); o.value = v; o.textContent = k === 'kind' ? KIND[v] : SLABEL[v] || v; return o; }));
-      sel.value = filter[k];
+    for (const k in menus) {
+      const counts = new Map(tally(visits.flatMap(FACET[k]), (v) => v));
+      menus[k].set(k === 'kind' ? Object.keys(KIND) : SOPTIONS[k] ? [...SOPTIONS[k]] : [...counts.keys()], counts);
     }
-    renderPlaces(visits);
   }
   function refilter() {
     $('feed').replaceChildren();
     rows.clear();
     renderFeed([]);
   }
-  $('feed-filters').addEventListener('change', (e) => {
-    const sel = e.target.closest('select[data-filter]');
-    if (!sel) return;
-    filter[sel.dataset.filter] = sel.value;
-    sel.parentElement.classList.toggle('is-on', sel.value !== '');
-    refilter();
-  });
   $('feed-clear').addEventListener('click', () => {
-    for (const k in filter) filter[k] = '';
-    for (const sel of selects) { sel.value = ''; sel.parentElement.classList.remove('is-on'); }
-    if (followed) follow('');
-    tickPlaces(true);
-    selects[0].focus();
+    for (const k in menus) menus[k].clear();
+    if (followed) follow(''); else refilter();
+    menus[Object.keys(menus)[0]].focus();
   });
-
-  // ---- The places menu: a checkbox a place, commonest first; the unticked ones stay listed after they roll out ----
-  const placeWrap = $('place-filter'), placeBtn = $('place-btn'), placeMenu = $('place-menu'), placeList = $('place-list');
-  let places = [];
-  const placeOpen = () => !placeMenu.hidden;
-  const city = (p) => p.split(',')[0];
-  function labelPlaces() {
-    const out = places.filter((p) => excluded.has(p)), kept = places.length - out.length;
-    placeBtn.textContent = !out.length ? 'Everywhere'
-      : kept === 0 ? 'Nowhere'
-      : out.length === 1 ? `Everywhere but ${city(out[0])}`
-      : kept === 1 ? `${city(places.find((p) => !excluded.has(p)))} only`
-      : out.length <= kept ? `Everywhere but ${out.length} places` : `${kept} places`;
-    placeBtn.title = out.length ? `Leaving out ${out.join(', ')}` : '';
-    placeWrap.classList.toggle('is-on', out.length > 0);
-  }
-  function renderPlaces(visits) {
-    const counts = new Map(tally(visits, FACET.where));
-    const next = [...counts.keys()].concat([...excluded].filter((p) => !counts.has(p)));
-    if (next.join('\n') !== places.join('\n') && !placeOpen()) {          // rebuilt only when the list changes, never under an open menu
-      places = next;
-      const legend = placeList.firstElementChild;
-      placeList.replaceChildren(legend, ...places.map((p) => {
-        const l = document.createElement('label'); l.className = 'dash-check';
-        const i = document.createElement('input'); i.type = 'checkbox'; i.value = p; i.checked = !excluded.has(p);
-        const s = document.createElement('span'); s.className = 'dash-check-label'; s.textContent = p;
-        const c = document.createElement('span'); c.className = 'dash-count';
-        l.append(i, s, c);
-        return l;
-      }));
-      if (!places.length) { const p = document.createElement('p'); p.className = 't-small dash-menu-empty'; p.textContent = 'No places yet.'; placeList.appendChild(p); }
-    }
-    for (const l of placeList.querySelectorAll('.dash-check')) l.lastElementChild.textContent = n(counts.get(l.firstElementChild.value) || 0);   // the tallies move with every poll
-    labelPlaces();
-  }
-  function tickPlaces(on) {
-    for (const i of placeList.querySelectorAll('input')) { i.checked = on; if (on) excluded.delete(i.value); else excluded.add(i.value); }
-    if (on) excluded.clear();
-    remember();
-    refilter();
-  }
-  function showPlaces(open) {
-    placeMenu.hidden = !open;
-    placeBtn.setAttribute('aria-expanded', String(open));
-  }
-  placeBtn.addEventListener('click', () => showPlaces(!placeOpen()));
-  placeList.addEventListener('change', (e) => {
-    const i = e.target;
-    if (i.type !== 'checkbox') return;
-    if (i.checked) excluded.delete(i.value); else excluded.add(i.value);
-    remember();
-    refilter();
-  });
-  $('place-all').addEventListener('click', () => tickPlaces(true));
-  $('place-none').addEventListener('click', () => tickPlaces(false));
-  placeWrap.addEventListener('keydown', (e) => { if (e.key === 'Escape' && placeOpen()) { showPlaces(false); placeBtn.focus(); } });
-  placeWrap.addEventListener('focusout', (e) => { if (e.relatedTarget && !placeWrap.contains(e.relatedTarget)) showPlaces(false); });   // tabbed away; a click on the card's own padding keeps it
-  document.addEventListener('pointerdown', (e) => { if (placeOpen() && !placeWrap.contains(e.target)) showPlaces(false); });
 
   // ---- The feed ----
   const rows = new Map();     // event key → its row, so a time reading can land on it later
@@ -961,8 +983,9 @@
     const shown = (e) => isVisit(e) && isReal(e) && matches(e);
     // A visit's gates fill in over the following polls, so which rows the gate
     // filter keeps can change under it: redraw the feed when they do.
-    const sig = filter.tried ? visits.map((e) => (e.session ? triedSig(e.session.tried) : '')).join('|') : '';
-    if (sig !== triedShown) { triedShown = sig; if (filter.tried) { tb.replaceChildren(); rows.clear(); } }
+    const onTried = menus.tried.out.size > 0;
+    const sig = onTried ? visits.map((e) => (e.session ? triedSig(e.session.tried) : '')).join('|') : '';
+    if (sig !== triedShown) { triedShown = sig; if (onTried) { tb.replaceChildren(); rows.clear(); } }
     // Which rows are a person's moves under the feed too, both ways: a session
     // runs out its grace with no beacon and its rows go, or a reading arrives
     // late and earns them back. Drop what no longer belongs, and start over when

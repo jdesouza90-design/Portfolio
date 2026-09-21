@@ -94,8 +94,16 @@ mark while they are still here) and a feed that updates every few seconds as peo
 each view showing how long the page was read and what that visit tried to open.
 Both tables narrow: by kind, page, what they tried to open, place, source or
 device on the feed, and by place, page, what they tried to open, length or
-device on the sessions. It needs two things set up in
-Vercel:
+device on the sessions. Every one of those is a menu of checkboxes, all ticked
+to begin with, so any number of values can be kept at once — untick the one
+you don't want, or press None and then tick the two you do. The pill says what
+is left (`All kinds`, `2 of 4 kinds`, `Everywhere but Austin, TX, US`, `Home
+only`), nothing ticked shows nothing, and Clear filters puts it all back. A
+value stays listed while it is unticked even after the last visit carrying it
+rolls out of the log, so a filter never quietly widens. The places menu is the
+one whose ticks are remembered in this browser, which is how the owner's own
+city stays out of the feed; every other menu starts fresh on a reload. It
+needs two things set up in Vercel:
 
 1. **A store.** Vercel → Project → Storage → Create Database → Upstash Redis
    (the free plan is plenty), connected to this project. That adds
