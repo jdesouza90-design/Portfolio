@@ -19,7 +19,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <!-- A fresh unlock from the gate: hold the page until its opener is up (initUnlock in main.js). -->
 <script>if (/[?&]unlocked(?=&|$)/.test(location.search)) document.documentElement.classList.add("unlock");</script>
-<link rel="stylesheet" href="../styles.css?v=d89c6435">
+<link rel="stylesheet" href="../styles.css?v=5f9a045d">
 <script defer src="/_vercel/insights/script.js"></script>
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
@@ -192,33 +192,16 @@
   </div>
 </section>
 
-    <article class="row full" id="findings">
+    <article class="row flip" id="findings">
       <div class="row-copy">
         <p class="eyebrow">What the index showed</p>
-        <h3 class="t-title">The system works, the housekeeping is overdue</h3>
-        <p class="t-lede">Adoption sat at 90.7% across 1.15 million instances, so nobody was rebuilding components. The findings were housekeeping.</p>
-      </div>
-      <div class="findings-tabs" data-tabs>
-        <div class="layer-tabs" role="tablist" aria-label="What the audit found">
-          <button class="layer-tab" type="button" role="tab" id="tab-token" aria-controls="panel-token" aria-selected="true"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="13" r="3.5"/><rect x="14" y="9.5" width="7" height="7" rx="1.5"/><path class="ac" d="M10.5 13h3" stroke-dasharray="1.6 2.2"/></svg><span>A token system, almost unbound</span></button>
-          <button class="layer-tab" type="button" role="tab" id="tab-dormant" aria-controls="panel-dormant" aria-selected="false" tabindex="-1"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path class="ac" d="M12 3.5A8.5 8.5 0 0 1 19.86 16" fill="none"/></svg><span>A third of the library dormant</span></button>
-          <button class="layer-tab" type="button" role="tab" id="tab-illustrations" aria-controls="panel-illustrations" aria-selected="false" tabindex="-1"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="2"/><circle class="ac" cx="8" cy="9.5" r="1.6"/><path d="M4 17l5-5 4 4 3-3 4 4"/></svg><span>Half the library is illustrations</span></button>
-          <button class="layer-tab" type="button" role="tab" id="tab-modelled" aria-controls="panel-modelled" aria-selected="false" tabindex="-1"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="12" height="12" rx="2"/><rect class="ac" x="9" y="9" width="12" height="12" rx="2"/></svg><span>Modelled two or three times over</span></button>
-        </div>
-        <div class="layer-stage">
-          <div class="layer active" id="panel-token" role="tabpanel" aria-labelledby="tab-token" tabindex="0">
-            <div class="layer-head"><p class="t-body">Five collections and 229 variables exist. 844,333 hand-set values sit beside them, because publishing a token is not binding it.</p></div>
-          </div>
-          <div class="layer" id="panel-dormant" role="tabpanel" aria-labelledby="tab-dormant" tabindex="0">
-            <div class="layer-head"><p class="t-body">770 components have zero instances, and 59 standalones are the real deprecation candidates.</p></div>
-          </div>
-          <div class="layer" id="panel-illustrations" role="tabpanel" aria-labelledby="tab-illustrations" tabindex="0">
-            <div class="layer-head"><p class="t-body">266 of 491 standalone components are hand-drawn art that every designer scrolls past to reach Button. 174 are in use, so they move, not go.</p></div>
-          </div>
-          <div class="layer" id="panel-modelled" role="tabpanel" aria-labelledby="tab-modelled" tabindex="0">
-            <div class="layer-head"><p class="t-body">153 color variables beside 97 paint styles covering the same ground, and typography three ways, with a migration stalled on three missing styles.</p></div>
-          </div>
-        </div>
+        <h3 class="t-heading">The system works, the housekeeping is overdue</h3>
+        <p class="t-body">Adoption sat at 90.7% across 1.15 million instances, so nobody was rebuilding components. The findings were housekeeping.</p>
+        <ul class="tensions stack">
+          <li><h4 class="t-subhead">A token system, almost unbound</h4><p class="t-body">Five collections and 229 variables exist. 844,333 hand-set values sit beside them, because publishing a token is not binding it.</p></li>
+          <li><h4 class="t-subhead">A third of the library dormant</h4><p class="t-body">770 components have zero instances, and 59 standalones are the real deprecation candidates.</p></li>
+          <li><h4 class="t-subhead">Half the library is illustrations</h4><p class="t-body">266 of 491 standalone components are hand-drawn art that every designer scrolls past to reach Button. 174 are in use, so they move, not go.</p></li>
+        </ul>
       </div>
       <figure class="panel wide"><img decoding="async" width="1247" height="720" src="../assets/dsr-colors-full.webp?v=940548d0" alt="Two color sheets side by side: Primitive colors, ramps of 50 to 900 for base, grayscale, navy and five brand hues, and Semantic colors, the same hues applied to text, background, button and border roles" loading="lazy"></figure>
     </article>

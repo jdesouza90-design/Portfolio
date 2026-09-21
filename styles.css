@@ -680,14 +680,6 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 /* the signal's value sits inside its closing sentence, lit like a line of
    marker ink rather than pulled out into its own tag or band */
 .layer-mark { background: var(--glow); color: var(--accent-ink); padding: .05em .35em; border-radius: 4px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
-/* The findings tabs reuse the tracking-layer tab component standalone, full
-   width under the row intro instead of beside a figure. */
-.row.full .findings-tabs { margin-top: clamp(12px, 2vw, 24px); text-align: left; }
-.findings-tabs .layer-tab { display: inline-flex; align-items: center; gap: 6px; }
-.findings-tabs .layer-tab:first-child { padding-left: 2px; }
-.findings-tabs .tab-icon { width: 18px; height: 18px; flex: none; }
-.findings-tabs .layer-tab[aria-selected="true"] .tab-icon { color: var(--accent); }
-.findings-tabs .tab-icon .ac { stroke: var(--accent); }
 /* Under 1100px the card goes to one column early (the tab strip needs the
    width): the figure becomes a cover above the copy, sized by its width alone. */
 @media (max-width: 1100px) {
