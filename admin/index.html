@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" crossorigin>
-<link rel="stylesheet" href="../styles.css?v=cc467d8d">
+<link rel="stylesheet" href="../styles.css?v=f47a9255">
 </head>
 <body class="dash-body">
 <a class="skip" href="#main">Skip to content</a>
@@ -56,6 +56,21 @@
         <button class="layer-tab" type="button" data-range="day" aria-pressed="false">Last 24 hours</button>
         <button class="layer-tab" type="button" data-range="week" aria-pressed="true">Last 7 days</button>
         <button class="layer-tab" type="button" data-range="month" aria-pressed="false">Last 30 days</button>
+      </div>
+      <!-- Real visits only, on by default: everything from a session that never ran
+           the page is left out, which is what a link scanner and a crawler look like.
+           The length beside it goes further and drops views nobody stayed on. Both
+           only hide; the log keeps every visit and the switch brings them back. -->
+      <div class="dash-real" role="group" aria-label="What counts as a visit">
+        <span class="dash-filter dash-filter-plain"><button class="dash-filter-btn" type="button" id="real-only" aria-pressed="true">Real visits only</button></span>
+        <span class="dash-filter"><select id="real-secs" aria-label="Hide views read for less than">
+          <option value="0">Any length</option>
+          <option value="5">Read 5s or more</option>
+          <option value="10">Read 10s or more</option>
+          <option value="30">Read 30s or more</option>
+          <option value="60">Read 1m or more</option>
+        </select></span>
+        <p class="t-small dash-status" id="real-note" role="status"></p>
       </div>
     </div>
 
@@ -206,6 +221,6 @@
 </main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" crossorigin></script>
-<script src="dash.js?v=568408d9"></script>
+<script src="dash.js?v=6f989619"></script>
 </body>
 </html>

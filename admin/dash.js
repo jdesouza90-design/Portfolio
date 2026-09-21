@@ -58,6 +58,29 @@
   let blocked = [];           // referrer hosts blocked as spam (the edge keeps the set; www. stripped)
   const refHost = (r) => { if (!r || !/^https?:/.test(r)) return ''; try { return new URL(r).hostname.replace(/^www\./, '').toLowerCase(); } catch (_) { return ''; } };
   const isSpam = (e) => { const h = refHost(e.ref); return !!h && blocked.some((b) => h === b || h.endsWith(`.${b}`)); };
+
+  // ---- Real visits ----
+  // A session is a person's when something in it could only have come from a
+  // browser that ran the page: a time beacon, or a password typed into the gate.
+  // A link scanner (the ones Outlook, LinkedIn and the mail filters send ahead of
+  // every shared link) and a headless crawler take the HTML and leave, so neither
+  // ever arrives — which is most of what lands from the cloud regions, Ashburn
+  // and Santa Clara above all. Sessions younger than the grace are taken on
+  // trust: the first beacon is a minute in, and someone reading right now must
+  // not be missing from the dashboard while it is on its way.
+  // Nothing here deletes anything. It is all read-time, and the switch undoes it.
+  const GRACE = 2 * 60000;
+  const REAL_KEY = 'dash.real-only', SECS_KEY = 'dash.real-secs';
+  const stored = (k, fallback) => { try { const v = localStorage.getItem(k); return v === null ? fallback : v; } catch (_) { return fallback; } };
+  const save = (k, v) => { try { localStorage.setItem(k, v); } catch (_) { /* private mode: the choice lasts the visit */ } };
+  let realOnly = stored(REAL_KEY, '1') !== '0';
+  let minSecs = Number(stored(SECS_KEY, '0')) || 0;
+  const ranJS = (s) => s.beacons > 0 || [...s.tried.values()].some((o) => o >= OUTCOME['wrong password']);
+  // A visit is kept when its session is a person's and, where a minimum is set,
+  // the page was read for that long. A view with no reading of its own counts as
+  // none: the beacon it would have come in is exactly what never arrived.
+  const isReal = (e) => (!realOnly || !e.session || e.session.human)
+    && !(minSecs && e.kind === 'viewed' && !(e.secs >= minSecs));
   let lastT = 0;
   let timer = null;
   let lastOk = 0;
@@ -144,6 +167,7 @@
     for (const s of out) {
       s.length = s.end > s.start ? s.end - s.start : (s.beacons ? 0 : null);
       s.live = now - s.end < LIVE;
+      s.human = ranJS(s) || now - s.start < GRACE;
     }
     return out.filter((s) => s.views.length || s.tried.size).sort((a, b) => b.end - a.end);
   }
@@ -616,15 +640,36 @@
     $('sessions-empty').hidden = sessions.length > 0;
   }
 
+  // The line under the switch: what it is holding back, in plain numbers, so the
+  // drop between the filtered dashboard and the all-time count is never a mystery.
+  function renderReal() {
+    const all = events.filter(isVisit);
+    const hidden = all.length - all.filter(isReal).length;
+    const why = realOnly && minSecs ? 'nothing ran the page, or nobody stayed that long'
+      : realOnly ? 'nothing in them ran the page: a scanner or a crawler, not a reader'
+        : 'nobody stayed that long';
+    $('real-note').textContent = !realOnly && !minSecs
+      ? 'Everything recorded is counted, scanners and crawlers included.'
+      : hidden
+        ? `${n(hidden)} of ${n(all.length)} kept visits hidden — ${why}. Views all time still counts them.`
+        : 'Nothing hidden: everything kept looks like a person.';
+  }
+
   // ---- Everything the period scopes, and the strip above it ----
   let sessions = [];
   function renderStats(now) {
     const today = startOfDay(now);
-    const visits = events.filter(isVisit), beacons = events.filter((e) => e.kind === 'time');
+    const beacons = events.filter((e) => e.kind === 'time');
+    // Readings first, then the sessions they decide: every visit event comes out
+    // of buildSessions knowing its own, so what a scanner left can be told apart
+    // from what a person did and dropped here, in the feed and on the map alike.
+    timeOnPages(events.filter((e) => e.kind === 'viewed'), beacons);
+    const everyone = buildSessions(events, now);
+    const visits = events.filter((e) => isVisit(e) && isReal(e));
     const views = visits.filter((e) => e.kind === 'viewed');
-    timeOnPages(views, beacons);
-    const all = buildSessions(events, now);
+    const all = realOnly ? everyone.filter((s) => s.human) : everyone;
     const here = all.filter((s) => s.live);
+    renderReal();
     const todays = visits.filter((e) => e.t >= today);
     const todaysViews = todays.filter((e) => e.kind === 'viewed');
     $('s-now').textContent = n(here.length);
@@ -897,12 +942,23 @@
 
   function renderFeed(fresh) {
     const tb = $('feed');
-    const visits = events.filter(isVisit);
-    const shown = (e) => isVisit(e) && matches(e);
+    const visits = events.filter((e) => isVisit(e) && isReal(e));
+    const shown = (e) => isVisit(e) && isReal(e) && matches(e);
     // A visit's gates fill in over the following polls, so which rows the gate
     // filter keeps can change under it: redraw the feed when they do.
     const sig = filter.tried ? visits.map((e) => (e.session ? triedSig(e.session.tried) : '')).join('|') : '';
     if (sig !== triedShown) { triedShown = sig; if (filter.tried) { tb.replaceChildren(); rows.clear(); } }
+    // Which rows are a person's moves under the feed too, both ways: a session
+    // runs out its grace with no beacon and its rows go, or a reading arrives
+    // late and earns them back. Drop what no longer belongs, and start over when
+    // something that does has no row of its own.
+    const belongs = new Set(visits.filter(matches).map(key));
+    for (const tr of [...tb.children]) if (!belongs.has(tr.dataset.key)) { rows.delete(tr.dataset.key); tr.remove(); }
+    if (tb.children.length) {
+      const arriving = new Set(fresh.map(key));
+      const want = visits.filter(matches).slice(0, 200);
+      if (want.some((e) => !rows.has(key(e)) && !arriving.has(key(e)))) { tb.replaceChildren(); rows.clear(); }
+    }
     if (!tb.children.length) {                       // first paint, or a new filter: everything at once
       tb.replaceChildren(...visits.filter(matches).slice(0, 200).map((e) => row(e, false)));
     } else {
@@ -958,6 +1014,30 @@
   window.addEventListener('resize', setTabLine);
   document.fonts?.ready.then(setTabLine);
   setTabLine();
+
+  // ---- The real-visits switch ----
+  // Both controls are read-time: the log is untouched and the switch puts
+  // everything back. Each choice is remembered in this browser, the way the
+  // place ticks are. Flipping either redraws from the top — what the feed shows
+  // changes wholesale, so the incremental path has nothing to work from.
+  const realBtn = $('real-only'), secsSel = $('real-secs');
+  secsSel.value = String(minSecs);
+  function syncReal() {
+    realBtn.setAttribute('aria-pressed', String(realOnly));
+    realBtn.parentElement.classList.toggle('is-on', realOnly);
+    secsSel.parentElement.classList.toggle('is-on', minSecs > 0);
+  }
+  function redrawAll() {
+    $('feed').replaceChildren();
+    rows.clear();
+    triedShown = null;
+    fitted = false;                                  // the map settles on whatever is left
+    syncReal();
+    if (events.length) { renderStats(Date.now()); renderFeed([]); } else renderReal();
+  }
+  realBtn.addEventListener('click', () => { realOnly = !realOnly; save(REAL_KEY, realOnly ? '1' : '0'); redrawAll(); });
+  secsSel.addEventListener('change', () => { minSecs = Number(secsSel.value) || 0; save(SECS_KEY, String(minSecs)); redrawAll(); });
+  syncReal();
   if ('ResizeObserver' in window) {                  // the histogram is drawn in pixels too
     let w = $('hist').clientWidth;
     new ResizeObserver(() => { if ($('hist').clientWidth !== w) { w = $('hist').clientWidth; if (events.length) renderHist(sessions); } }).observe($('hist'));

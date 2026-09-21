@@ -80,8 +80,8 @@ under the same mute rules, and never emails them.
 
 **The dashboard** at `/admin/` (the "Sign in" link in the home page footer)
 shows it live: who is on the site right now, views and visitors today, then
-one period control (last 24 hours / 7 days / 30 days) over everything below
-it: a visits chart (visitors over a soft area, views as a grey line, hover or
+one period control (last 24 hours / 7 days / 30 days) and the real-visits
+switch over everything below them: a visits chart (visitors over a soft area, views as a grey line, hover or
 arrow through it, a table behind "View as a table"), a histogram of how long
 sessions last, a map of where people are (Leaflet on Esri's light-grey tiles,
 one dot per place sized by visits, placed from Vercel's IP coordinates so it
@@ -123,6 +123,20 @@ next deployment.
   logging for that browser for a year; on a browser you don't sign in from,
   open any page once with `?owner` on the URL (e.g. `/?owner`) for the same
   effect.
+- **Real visits only**, the switch beside the period, is on by default and
+  leaves out every session that never ran the page: no time beacon, and no
+  password typed into a gate. That is what a link scanner looks like — the
+  fetch Outlook, LinkedIn and the mail filters make of a shared link before
+  anyone clicks it — and what a crawler with a browser's user agent looks
+  like, which is most of what arrives from the cloud regions (Ashburn,
+  Santa Clara, Boardman, Dublin). The length menu beside it goes further and
+  drops views nobody stayed on; a view whose beacon never came counts as
+  none. A session under two minutes old is taken on trust, because its first
+  beacon is a minute out and someone reading right now must not be missing
+  from the dashboard. Both only hide, in this browser: nothing is deleted,
+  the edge keeps recording everything, Views all time still counts it all,
+  and the line under the switch says how much is being held back. The two
+  choices are remembered here the way the place ticks are.
 - Referrer spam (views "sent by" a junk domain that nobody clicked) can be
   blocked from the Sent by tally: Block beside the host, then Sure? to
   confirm. That puts the host on a blocklist in the store (`activity:blocked`,

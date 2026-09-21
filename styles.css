@@ -1392,6 +1392,12 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 .dash-range { margin-top: var(--row); }
 .dash-range .layer-tab[aria-pressed="true"] { color: var(--ink); }
 
+/* What counts as a visit: the switch, the length beside it, and the line saying
+   what they hold back. Shares the pill of the feed filters. */
+.dash-real { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: var(--sp-4); }
+.dash-real :is(select, button) { scroll-margin-top: calc(var(--nav-h) + 16px); }
+.dash-real .dash-status { flex: 1 1 24ch; margin: 0; color: var(--ink-3); }
+
 .dash-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-5); margin-top: var(--sp-5); }
 .dash-grid-wide { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
 .dash-card .eyebrow { margin-bottom: var(--sp-4); }
@@ -1473,6 +1479,8 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
   content: ""; position: absolute; right: 16px; top: calc(50% - 5px); width: 7px; height: 7px; pointer-events: none;
   border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg);
 }
+.dash-filter-plain::after { content: none; }                    /* a switch, with no menu behind it: no chevron, and not the room for one */
+.dash-filter-plain .dash-filter-btn { padding-right: 16px; }
 .dash-filter select:hover, .dash-filter-btn:hover { border-color: var(--accent); color: var(--accent-ink); }
 .dash-filter:hover { color: var(--accent-ink); }
 .dash-filter select:focus-visible, .dash-filter-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }

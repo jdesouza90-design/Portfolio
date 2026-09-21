@@ -88,6 +88,15 @@ if (process.env.SEED !== '0') {
       ref = page;
     }
   }
+  // Scanners: the mail filters and crawlers that fetch a shared link from a cloud
+  // region and never run the page, so no beacon ever follows. What "Real visits
+  // only" is there to hide — leave it on and none of this should show.
+  const CLOUD = [['Ashburn', 'VA', 'US', 39.044, -77.487], ['Santa Clara', 'CA', 'US', 37.354, -121.955], ['Boardman', 'OR', 'US', 45.840, -119.688], ['Dublin', 'L', 'IE', 53.344, -6.267]];
+  for (let i = 0; i < 55; i++) {
+    const p = pick(CLOUD), page = pick(PAGES), t = now - Math.floor(Math.random() * 7 * 86400000);
+    const base = { page, where: p.slice(0, 3).join(', '), country: p[2], lat: p[3], lon: p[4], device: pick(['Chrome on Windows', 'Chrome on Linux', 'unknown browser on Linux']), visitor: Math.random().toString(16).slice(2, 8) };
+    rows.push({ t, kind: page.startsWith('/work/') ? 'gated' : 'viewed', ref: pick(['direct', 'direct', 'https://www.linkedin.com/']), ...base });
+  }
   for (let i = 0; i < 40; i++) {                                                                     // spam: a hit on the home page and nothing else, no beacon
     const p = pick(PLACES), ref = pick(SPAM);
     rows.push({ t: now - Math.floor(Math.random() * 7 * 86400000), kind: 'viewed', ref, page: '/', where: p.slice(0, 3).join(', '), country: p[2], lat: p[3], lon: p[4], device: 'Chrome on Windows', visitor: Math.random().toString(16).slice(2, 8) });
