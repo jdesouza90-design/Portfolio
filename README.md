@@ -90,7 +90,10 @@ tallies, a table of sessions (one person's visit start to finish, split at a
 quiet half hour, with the pages read, each case study they tried to open and
 how it ended — at the gate, wrong password, unlocked — its length and a "Now"
 mark while they are still here) and a feed that updates every few seconds as people arrive,
-each view showing how long the page was read and what that visit tried to open. It needs two things set up in
+each view showing how long the page was read and what that visit tried to open.
+Both tables narrow: by kind, page, what they tried to open, place, source or
+device on the feed, and by place, page, what they tried to open, length or
+device on the sessions. It needs two things set up in
 Vercel:
 
 1. **A store.** Vercel → Project → Storage → Create Database → Upstash Redis

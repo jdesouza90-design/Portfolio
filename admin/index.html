@@ -133,12 +133,13 @@
     <section class="dash-feed" aria-labelledby="h-feed">
       <div class="dash-feed-head">
         <h2 class="t-heading" id="h-feed">Live feed</h2>
-        <p class="t-small" id="feed-note">Every page view, newest first. Tried to open is each case study that visit met the password gate on, and how it ended; Time is how long the page was read. Both fill in as they go. Press a hash in the Visitor column to follow one person.</p>
+        <p class="t-small" id="feed-note">Every page view, newest first. Tried to open is each case study that visit met the password gate on, and how it ended; Time is how long the page was read. Both fill in as they go, so the gate filter re-draws the feed as they do. Press a hash in the Visitor column to follow one person.</p>
       </div>
-      <!-- Each select narrows the feed; the options are whatever the feed has seen. -->
+      <!-- Each select narrows the feed; the options are whatever the feed has seen, bar the fixed kind and gate lists. -->
       <div class="dash-filters" role="group" aria-label="Filter the feed" id="feed-filters">
         <span class="dash-filter"><select data-filter="kind" aria-label="Filter by kind"><option value="">All kinds</option></select></span>
         <span class="dash-filter"><select data-filter="page" aria-label="Filter by page"><option value="">All pages</option></select></span>
+        <span class="dash-filter"><select data-filter="tried" aria-label="Filter by what they tried to open"><option value="">Any gate or none</option></select></span>
         <!-- Places are checkboxes, so a place can be left out (the owner's own city, say) while the rest stay. Ticks are remembered in this browser. -->
         <div class="dash-filter dash-filter-multi" id="place-filter">
           <button class="dash-filter-btn" type="button" id="place-btn" aria-expanded="false" aria-controls="place-menu">Everywhere</button>
@@ -205,6 +206,6 @@
 </main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" crossorigin></script>
-<script src="dash.js?v=a2f0271f"></script>
+<script src="dash.js?v=568408d9"></script>
 </body>
 </html>

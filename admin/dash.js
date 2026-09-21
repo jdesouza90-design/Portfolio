@@ -458,6 +458,11 @@
   // A Tried to open cell: each case study met at the gate, with how it ended,
   // or a dash. Both tables draw it; the feed redraws it as outcomes arrive.
   const triedSig = (tried) => [...tried].map(([p, o]) => `${p}:${o}`).join(',');
+  // The gate values a visit or a session carries, for either table's Tried to
+  // open filter: `any` plus each outcome reached, or `none` if no gate was met.
+  const triedValues = (tried) => tried && tried.size
+    ? ['any', ...new Set([...tried.values()].map((o) => Object.keys(OUTCOME)[o]))]
+    : ['none'];
   function fillTried(td, tried) {
     const sig = triedSig(tried);
     if (td.dataset.sig === sig) return;
@@ -534,7 +539,7 @@
   const SFACET = {            // every value the session has for that column
     where:  (s) => [s.where || 'unknown'],
     page:   (s) => [...new Set(s.views.map((v) => pageName(v.page)))],
-    tried:  (s) => s.tried.size ? ['any', ...new Set([...s.tried.values()].map((o) => Object.keys(OUTCOME)[o]))] : ['none'],
+    tried:  (s) => triedValues(s.tried),
     length: (s) => [band(s)],
     device: (s) => [s.device || 'unknown'],
   };
@@ -739,15 +744,18 @@
 
   // ---- Feed filters: each select narrows the feed to one value of its column ----
   // The options are whatever the feed has seen, commonest first, so a list is
-  // never longer than the site's traffic. A chosen value stays listed until
+  // never longer than the site's traffic; the kind and gate lists are fixed,
+  // the gate one shared with the sessions table (SOPTIONS). A chosen value stays listed until
   // it is cleared, even after the last event with it has rolled out. Places
   // work the other way round: every place is ticked to begin with and one
   // can be left out, which is how the owner's own city is kept out of the
   // feed; the unticked places are remembered in this browser.
-  const filter = { kind: '', page: '', ref: '', device: '' };
+  const filter = { kind: '', page: '', tried: '', ref: '', device: '' };
   const FACET = {
     kind:   (e) => e.kind,
     page:   (e) => pageName(e.page),
+    // A visit shows its whole session's gates, so it matches on any of them.
+    tried:  (e) => triedValues(e.session && e.session.tried),
     where:  (e) => e.where || 'unknown',
     ref:    (e) => refName(e.ref),
     device: (e) => e.device || 'unknown',
@@ -756,19 +764,20 @@
   const excluded = new Set((() => { try { return JSON.parse(localStorage.getItem(PLACES_OUT)) || []; } catch (_) { return []; } })().filter((p) => typeof p === 'string'));
   const remember = () => { try { localStorage.setItem(PLACES_OUT, JSON.stringify([...excluded])); } catch (_) { /* private mode: the ticks last the visit */ } };
   const filtering = () => !!followed || excluded.size > 0 || Object.values(filter).some(Boolean);
-  const matches = (e) => (!followed || e.visitor === followed) && !excluded.has(FACET.where(e)) && Object.keys(filter).every((k) => !filter[k] || FACET[k](e) === filter[k]);
+  const holds = (k, e) => { const v = FACET[k](e); return Array.isArray(v) ? v.includes(filter[k]) : v === filter[k]; };
+  const matches = (e) => (!followed || e.visitor === followed) && !excluded.has(FACET.where(e)) && Object.keys(filter).every((k) => !filter[k] || holds(k, e));
   const selects = [...document.querySelectorAll('#feed-filters select')];
   const listed = {};          // facet → the options last drawn, so an unchanged list is left alone
   function renderFilters(visits) {
     for (const sel of selects) {
       const k = sel.dataset.filter;
-      const values = k === 'kind' ? Object.keys(KIND) : tally(visits, FACET[k]).map(([v]) => v);
+      const values = k === 'kind' ? Object.keys(KIND) : SOPTIONS[k] ? [...SOPTIONS[k]] : tally(visits, FACET[k]).map(([v]) => v);
       if (filter[k] && !values.includes(filter[k])) values.push(filter[k]);
       const sig = values.join('\n');
       if (sig === listed[k] || document.activeElement === sel) continue;   // never rebuild under an open menu
       listed[k] = sig;
       const all = sel.firstElementChild;                                    // the "all" option comes from the markup
-      sel.replaceChildren(all, ...values.map((v) => { const o = document.createElement('option'); o.value = v; o.textContent = k === 'kind' ? KIND[v] : v; return o; }));
+      sel.replaceChildren(all, ...values.map((v) => { const o = document.createElement('option'); o.value = v; o.textContent = k === 'kind' ? KIND[v] : SLABEL[v] || v; return o; }));
       sel.value = filter[k];
     }
     renderPlaces(visits);
@@ -853,6 +862,7 @@
 
   // ---- The feed ----
   const rows = new Map();     // event key → its row, so a time reading can land on it later
+  let triedShown = '';        // the gates the drawn rows were filtered on (see renderFeed)
   function row(e, fresh) {
     const tr = document.createElement('tr');
     tr.dataset.t = e.t;
@@ -889,6 +899,10 @@
     const tb = $('feed');
     const visits = events.filter(isVisit);
     const shown = (e) => isVisit(e) && matches(e);
+    // A visit's gates fill in over the following polls, so which rows the gate
+    // filter keeps can change under it: redraw the feed when they do.
+    const sig = filter.tried ? visits.map((e) => (e.session ? triedSig(e.session.tried) : '')).join('|') : '';
+    if (sig !== triedShown) { triedShown = sig; if (filter.tried) { tb.replaceChildren(); rows.clear(); } }
     if (!tb.children.length) {                       // first paint, or a new filter: everything at once
       tb.replaceChildren(...visits.filter(matches).slice(0, 200).map((e) => row(e, false)));
     } else {
