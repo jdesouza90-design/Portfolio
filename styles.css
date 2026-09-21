@@ -1289,6 +1289,12 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
   .table-wrap td[data-label]::before { content: attr(data-label); display: block; margin-bottom: 3px; }
   .table-wrap td.hl { padding: 10px 12px; border-radius: 8px; }
   .table-wrap td.hl::before { color: var(--accent-ink); }
+
+  /* In a proof table the two states are a comparison, not a list: side by
+     side reads at a glance, stacked makes you scroll to see both. */
+  .proof .table-wrap tbody tr { display: flex; flex-wrap: wrap; gap: var(--sp-3) var(--sp-4); }
+  .proof .table-wrap tbody th { flex: 1 1 100%; margin-bottom: 0; }
+  .proof .table-wrap tbody td { flex: 1 1 0; min-width: 0; margin-top: 0; }
 }
 
 @media (max-width: 560px) {
