@@ -1729,7 +1729,7 @@ const CONFIG = {
       let shown = 0;
       groups.forEach((g) => {
         let n = 0;
-        $$(".card", g).forEach((c) => {
+        $$(".post-card", g).forEach((c) => {
           const hit = !q || c.dataset.title.includes(q) || c.dataset.desc.includes(q);
           c.hidden = !hit;
           if (hit) n++;

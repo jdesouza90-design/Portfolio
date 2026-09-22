@@ -574,7 +574,7 @@ def card(p):
     d = datetime.datetime.fromisoformat(p["date"])
     label, chip_class, short = PILLARS[p["pillar"]]
     return f"""
-        <a class="card" href="/blog/{p["slug"]}.html" data-title="{html.escape(p["title"].lower())}" data-desc="{html.escape(p["description"].lower())}" data-pillar="{p["pillar"]}">
+        <a class="post-card" href="/blog/{p["slug"]}.html" data-title="{html.escape(p["title"].lower())}" data-desc="{html.escape(p["description"].lower())}" data-pillar="{p["pillar"]}">
           <span class="card-art"><img src="assets/blog/{p["slug"]}.svg?v={stamp('assets/blog/%s.svg' % p["slug"])}" width="{CW}" height="{CH}" alt="" loading="lazy" decoding="async"></span>
           <span class="card-body">
             <span class="eyebrow">{d.strftime("%B %Y")}</span>
