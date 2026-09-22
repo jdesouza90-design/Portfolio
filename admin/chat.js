@@ -135,7 +135,8 @@
   const form = $('chat-settings-form');
   const COST = { 'claude-haiku-4-5': 0.027, 'claude-sonnet-5': 0.055 };   // dollars a question at worst: every page read fresh into the cache, a long answer
   let defaults = null;
-  const f = { on: $('chat-set-on'), hour: $('chat-set-hour'), day: $('chat-set-day'), chat: $('chat-set-chat'), starters: $('chat-set-starters'), notes: $('chat-set-notes') };
+  const f = { on: $('chat-set-on'), hour: $('chat-set-hour'), day: $('chat-set-day'), chat: $('chat-set-chat'), starters: $('chat-set-starters'), caseStarters: $('chat-set-case-starters'), postStarters: $('chat-set-post-starters'), workStarters: $('chat-set-work-starters'), notes: $('chat-set-notes') };
+  const STARTERS = ['starters', 'caseStarters', 'postStarters', 'workStarters'];
   const modelPick = () => (form.querySelector('input[name="chat-set-model"]:checked') || {}).value;
   const ceiling = () => {
     const day = Math.max(0, Math.round(Number(f.day.value) || 0)), per = COST[modelPick()] || COST['claude-haiku-4-5'];
@@ -148,7 +149,7 @@
     const pick = form.querySelector(`input[name="chat-set-model"][value="${st.model}"]`);
     if (pick) pick.checked = true;
     f.hour.value = st.hourLimit; f.day.value = st.dayLimit; f.chat.value = st.chatLimit;
-    f.starters.value = (st.starters || []).join('\n');
+    for (const k of STARTERS) f[k].value = (st[k] || []).join('\n');
     f.notes.value = st.notes || '';
     ceiling();
   }
@@ -156,7 +157,7 @@
     return {
       on: f.on.checked, model: modelPick(),
       hourLimit: Number(f.hour.value), dayLimit: Number(f.day.value), chatLimit: Number(f.chat.value),
-      starters: f.starters.value.split('\n'), notes: f.notes.value,
+      ...Object.fromEntries(STARTERS.map((k) => [k, f[k].value.split('\n')])), notes: f.notes.value,
     };
   }
   async function loadSettings() {

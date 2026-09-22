@@ -591,13 +591,19 @@ export const CHAT_DEFAULTS = {
   dayLimit: 200,                  // questions the whole site answers in a day: the cost ceiling
   chatLimit: 8,                   // questions one conversation may ask before it ends on John's contact links
   starters: ['What kind of role is John looking for?', 'How does John run a design team?', 'What has John done with AI agents?', 'Tell me about the Staking work'],
+  // The suggestions a page of each kind shows instead: {project} is the case study's name.
+  caseStarters: ["What was John's role on {project}?", 'What were the results?', 'What was the hardest part?', 'Who was on the team?'],
+  postStarters: ["What's the main argument here?", "How does this show up in John's own work?", 'What else has he written?'],
+  workStarters: ['Which project best shows how John leads?', 'Which work involved AI agents?', 'What were his biggest results?'],
   notes: '',                      // what the pages don't say, in John's words; the assistant may repeat it
 };
 const CHAT_SETTINGS_KEY = 'chat:settings';
 const CHAT_SETTINGS_TTL = 30000;  // ms an instance keeps its copy
 
+const STARTER_KEYS = ['starters', 'caseStarters', 'postStarters', 'workStarters'];
 export function cleanSettings(raw) {
-  const s = { ...CHAT_DEFAULTS, starters: [...CHAT_DEFAULTS.starters] };
+  const s = { ...CHAT_DEFAULTS };
+  for (const k of STARTER_KEYS) s[k] = [...CHAT_DEFAULTS[k]];
   if (!raw || typeof raw !== 'object') return s;
   const whole = (v, lo, hi, d) => { const n = Math.round(Number(v)); return v !== '' && v != null && Number.isFinite(n) ? Math.min(hi, Math.max(lo, n)) : d; };
   if (typeof raw.on === 'boolean') s.on = raw.on;
@@ -605,7 +611,9 @@ export function cleanSettings(raw) {
   s.hourLimit = whole(raw.hourLimit, 1, 200, s.hourLimit);
   s.dayLimit = whole(raw.dayLimit, 0, 5000, s.dayLimit);
   s.chatLimit = whole(raw.chatLimit, 1, 50, s.chatLimit);
-  if (Array.isArray(raw.starters)) s.starters = raw.starters.map((q) => String(q ?? '').replace(/\s+/g, ' ').trim().slice(0, 90)).filter(Boolean).slice(0, 4);
+  for (const k of STARTER_KEYS) {
+    if (Array.isArray(raw[k])) s[k] = raw[k].map((q) => String(q ?? '').replace(/\s+/g, ' ').trim().slice(0, 90)).filter(Boolean).slice(0, 4);
+  }
   if (typeof raw.notes === 'string') s.notes = raw.notes.replace(/\r\n?/g, '\n').trim().slice(0, 2000);
   return s;
 }
