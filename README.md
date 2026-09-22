@@ -208,6 +208,19 @@ eight rules every post follows. Read it with `VOICE.md` before writing.
 
 `/blog/` is public. Only `/work/` and `/admin/` are gated.
 
+### The reading column
+
+`--prose` (40rem, about 73 characters) is the measure a post is set on, and the
+head, the claim, the body and the sources all sit on it. The cover steps out to
+52rem. Both come from craft.do, which runs its text at roughly 79% of its cover
+width; matching that ratio matters more than matching its absolute 854px, which
+is 91 characters a line and too wide to read comfortably.
+
+Every gap inside `.prose` is set by naming the tag (`p + p`, `h2 + *`), never by
+`* + *`. The roles in section 2 set `margin: 0` at the same specificity, so a
+universal selector silently loses to them and paragraphs end up with no space
+between them at all.
+
 ### The two documents
 
 The **index** (`blog.html`) is organised by argument, not by date: the three
@@ -354,7 +367,11 @@ Three rules keep it that way:
 - **A blog post's body is the one exception to the class rule.** Posts are
   drafted as prose, so `.prose h2/h3/p/li/blockquote/figcaption` and the index's
   pillar links are listed under their roles in section 2 instead of carrying a
-  class in the markup.
+  class in the markup. A post's `h2` takes Heading and its `h3` takes Subhead,
+  which puts a section heading at 30px on a desktop, the size craft.do sets.
+  Running text keeps the Body size and takes `--lh-prose` (1.62) instead of
+  `--lh-body` (1.55), because a post is read in paragraphs rather than in the
+  two-sentence rows a case study uses.
 - **Nothing after section 2 sets a face, size, weight, line-height or
   letter-spacing.** The exceptions are `.btn`, `.chip` and `.chart-pill`,
   whose line-height is a box metric; the chart's axis and milestone text,
