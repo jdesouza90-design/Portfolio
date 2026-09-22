@@ -275,6 +275,18 @@ a daily post would otherwise copy it 365 times a year. **If the nav or the
 footer changes on the rest of the site, change it in `blog.py` too and re-run**,
 or the blog drifts away from the pages around it.
 
+### Naming, and one trap
+
+Section 13's class names are prefixed (`post-card`, `post-meta`, `post-search`,
+`pillar-nav`). That is not stylistic: `.card` is the site-wide primitive in
+section 4, worn bare by the home page's three `lead-solo` blocks and by every
+card on the admin dashboard. Section 13 sits at the end of the file, so a bare
+`.card` rule here has the same specificity as `.card` and `.lead-solo` and wins
+on source order alone. It shipped that way once and silently turned
+`.card.lead-solo` from `grid` into `flex`, which collapsed Figure A's rings to
+nothing. Before adding a class in this section, grep the rest of the file and
+the other pages for it.
+
 ### Covers
 
 The rest of the site is drawn in hairlines, dot fields, rings and small

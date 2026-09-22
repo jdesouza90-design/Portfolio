@@ -1677,17 +1677,22 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 .featured-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--sp-5); flex-wrap: wrap; margin-bottom: clamp(24px, 3vw, 36px); }
 .featured-title { font-style: italic; max-width: none; }
 
-/* A post as a card: its cover, the month, the title, the blurb */
+/* A post as a card: its cover, the month, the title, the blurb.
+   Named .post-card, not .card: .card is the site-wide primitive
+   (section 4), used bare by the home page's three lead-solo blocks and by
+   admin/index.html's dashboard cards. A same-specificity .card rule here,
+   later in the cascade, would silently win the fight for `display` and
+   `border-radius` on all of them. */
 .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2vw, 24px); }
-.card { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--hair); border-radius: var(--radius-sm); overflow: hidden; text-decoration: none; transition: transform var(--dur-hover) var(--ease), box-shadow var(--dur-hover), border-color var(--dur-hover); }
+.post-card { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--hair); border-radius: var(--radius-sm); overflow: hidden; text-decoration: none; transition: transform var(--dur-hover) var(--ease), box-shadow var(--dur-hover), border-color var(--dur-hover); }
 .card-art { display: block; background: var(--paper-2); }
 .card-art img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; }
 .card-body { display: flex; flex-direction: column; gap: var(--sp-3); padding: clamp(16px, 1.8vw, 22px); }
 .card-title { display: block; max-width: none; }
 .card-desc { display: block; }
-.card .post-meta { margin-top: auto; padding-top: var(--sp-2); flex-wrap: wrap; }
+.post-card .post-meta { margin-top: auto; padding-top: var(--sp-2); flex-wrap: wrap; }
 @media (hover: hover) and (pointer: fine) {
-  .card:hover { transform: translateY(-3px); border-color: var(--hair-2); box-shadow: var(--shadow-lift); }
+  .post-card:hover { transform: translateY(-3px); border-color: var(--hair-2); box-shadow: var(--shadow-lift); }
 }
 
 /* All posts: a search and a layout choice above the groups */
@@ -1702,16 +1707,16 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 .view-toggle svg { width: 14px; height: 14px; }
 .view-toggle button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
 .posts-empty { padding-block: var(--sp-6); }
-.card[hidden] { display: none; }
+.post-card[hidden] { display: none; }
 
 /* The list layout: the cover shrinks to a stripe beside the copy */
 .cards[data-view="list"] { grid-template-columns: minmax(0, 1fr); gap: 0; }
-.cards[data-view="list"] .card { flex-direction: row; align-items: stretch; border-radius: 0; border-width: 0 0 1px; background: none; }
-.cards[data-view="list"] .card:first-child { border-top: 1px solid var(--hair); }
+.cards[data-view="list"] .post-card { flex-direction: row; align-items: stretch; border-radius: 0; border-width: 0 0 1px; background: none; }
+.cards[data-view="list"] .post-card:first-child { border-top: 1px solid var(--hair); }
 .cards[data-view="list"] .card-art { flex: none; width: clamp(96px, 14vw, 168px); align-self: center; border-radius: var(--radius-sm); overflow: hidden; margin: var(--sp-4) 0 var(--sp-4) var(--sp-4); }
 .cards[data-view="list"] .card-desc { display: none; }
 @media (hover: hover) and (pointer: fine) {
-  .cards[data-view="list"] .card:hover { transform: none; box-shadow: none; background: var(--surface); }
+  .cards[data-view="list"] .post-card:hover { transform: none; box-shadow: none; background: var(--surface); }
 }
 
 /* ---- Post: one column, centred on the measure ---- */
