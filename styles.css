@@ -1643,12 +1643,15 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 /* The way into the blog is the argument, not the date. Two columns of serif
    lines, each one jumping to its own group below. */
 .pillar-nav ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-3) var(--sp-8); }
-.pillar-nav a { display: block; text-decoration: none; max-width: none; text-wrap: balance; transition: color var(--dur-hover); }
+.pillar-nav a { display: block; text-decoration: none; max-width: none; text-wrap: balance; transition: color var(--dur-hover), opacity var(--dur-hover); }
 .pillar-nav svg { width: .5em; height: .5em; margin-left: .3em; display: inline-block; transition: transform var(--dur-hover) var(--ease); }
 .pillar-count { display: inline-block; margin-left: .6em; white-space: nowrap; vertical-align: .18em; }
 @media (hover: hover) and (pointer: fine) {
   .pillar-nav a:hover { color: var(--accent-ink); }
   .pillar-nav a:hover svg { transform: translateX(.22em); }
+  /* Pointing at one line quiets the others (after craft.do's blog) */
+  .pillar-nav ul:has(a:hover) a:not(:hover),
+  .ticker:has(.ticker-item:hover) .ticker-item:not(:hover) { opacity: .3; }
 }
 .pillar-head { scroll-margin-top: calc(var(--nav-h) + var(--sp-5)); margin-bottom: var(--sp-5); }
 .pillar-group + .pillar-group { margin-top: var(--row); }
@@ -1668,9 +1671,21 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 
 /* The recent run: titles and dates on one line, swiped sideways on a phone */
 .ticker { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(210px, 1fr); gap: var(--sp-6); overflow-x: auto; padding-block: var(--sp-5); border-block: 1px solid var(--hair); scrollbar-width: thin; }
-.ticker-item { display: block; text-decoration: none; transition: color var(--dur-hover); }
+.ticker-item { display: block; text-decoration: none; transition: color var(--dur-hover), opacity var(--dur-hover); }
 .ticker-item time { display: block; margin-top: var(--sp-2); color: var(--ink-3); }
 .ticker-item:hover { color: var(--accent-ink); }
+/* With motion allowed, main.js turns the strip into a slow loop: the run is
+   repeated until it is wider than the strip, doubled, and moved one run's
+   width at a time. Hovering or tabbing into it holds it; so does the button. */
+.ticker-frame { position: relative; }
+.ticker.marquee { display: block; overflow: hidden; padding-right: 0; -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 88%, transparent); }
+.ticker-track { display: flex; width: max-content; animation: ticker var(--ticker-dur, 40s) linear infinite; }
+.ticker.marquee .ticker-item { flex: none; width: clamp(210px, 24vw, 300px); padding-right: var(--sp-6); }
+.ticker.marquee:is(:hover, :focus-within) .ticker-track,
+.ticker-frame.held .ticker-track { animation-play-state: paused; }
+.ticker-frame .art-ctl { top: 50%; right: 0; bottom: auto; transform: translateY(-50%); background: var(--surface); }
+@keyframes ticker { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .ticker-track { animation: none; } }
 
 /* The latest three, on their own ground */
 .featured { background: var(--paper-2); border: 1px solid var(--hair); border-radius: var(--radius); padding: clamp(24px, 3.4vw, 48px); }
@@ -1685,15 +1700,19 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
    `border-radius` on all of them. */
 .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2vw, 24px); }
 .post-card { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--hair); border-radius: var(--radius-sm); overflow: hidden; text-decoration: none; transition: transform var(--dur-hover) var(--ease), box-shadow var(--dur-hover), border-color var(--dur-hover); }
-.card-art { display: block; background: var(--paper-2); }
-.card-art img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; }
-.card-body { display: flex; flex-direction: column; gap: var(--sp-3); padding: clamp(16px, 1.8vw, 22px); }
-.card-title { display: block; max-width: none; }
-.card-desc { display: block; }
-.post-card .post-meta { margin-top: auto; padding-top: var(--sp-2); flex-wrap: wrap; }
+.card-art { display: block; background: var(--paper-2); overflow: hidden; }
+.card-art img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; transition: transform 500ms var(--ease); }
+.card-body { flex: 1; display: flex; flex-direction: column; gap: var(--sp-3); padding: clamp(16px, 1.8vw, 22px); }
+.card-title { display: block; max-width: none; transition: opacity var(--dur-hover); }
+.card-desc { display: block; transition: opacity var(--dur-hover); }
+/* The foot sits on the card's floor, the chip and the read time a gap apart */
+.post-card .post-meta { display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; margin-top: auto; padding-top: var(--sp-2); }
 @media (hover: hover) and (pointer: fine) {
   .post-card:hover { transform: translateY(-3px); border-color: var(--hair-2); box-shadow: var(--shadow-lift); }
+  .post-card:hover :is(.card-title, .card-desc) { opacity: .7; }
+  .post-card:hover .card-art img { transform: scale(1.05); }
 }
+@media (prefers-reduced-motion: reduce) { .card-art img { transition: none; } }
 
 /* All posts: a search and a layout choice above the groups */
 .posts-head { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-5); flex-wrap: wrap; margin-bottom: clamp(28px, 3vw, 44px); }
