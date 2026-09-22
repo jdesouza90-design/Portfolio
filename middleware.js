@@ -30,7 +30,8 @@
 // The chat (api/chat.js) is a function of its own, not matched here, but it
 // shares this file's helpers (the exports below): the unlock cookie, which is
 // why that cookie covers the whole site, the store, the visitor id and the
-// log. Its questions are kept in chat:log and go to the dashboard with the feed.
+// log. Its questions are kept in chat:log and read by the dashboard's Chat page
+// (/api/activity?chats).
 
 export const config = { matcher: ['/', '/index.html', '/work.html', '/work/:path*', '/admin/:path*', '/api/activity', '/api/ping', '/api/scores', '/api/board', '/api/chat-settings'] };
 
@@ -108,7 +109,7 @@ function page({ path, error, unconfigured, ref, admin }) {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/styles.css?v=46588407">
+<link rel="stylesheet" href="/styles.css?v=acf46010">
 </head>
 <body>
 <main class="gate-wrap"><div class="gate">
@@ -532,6 +533,10 @@ function parseEvents(raw, since) {
 async function feed(url) {
   if (!store()) return json({ configured: false, now: Date.now(), total: 0, events: [], blocked: [], chats: [] });
   const since = Number(url.searchParams.get('since')) || 0;
+  if (url.searchParams.has('chats')) {                 // the Chat page (admin/chat.js) reads the questions alone
+    const [chatRaw] = await redis([['LRANGE', CHAT_KEY, 0, (since ? CHAT_POLL : CHAT_KEEP) - 1]]);
+    return json({ configured: true, now: Date.now(), chats: parseEvents(chatRaw, since) });
+  }
   const span = since ? FEED_POLL : FEED_KEEP;
   const [raw, total, blocked, chatRaw] = await redis([['LRANGE', FEED_KEY, 0, span - 1], ['GET', COUNT_KEY], ['SMEMBERS', BLOCK_KEY], ['LRANGE', CHAT_KEY, 0, (since ? CHAT_POLL : CHAT_KEEP) - 1]]);
   let events = parseEvents(raw, since);

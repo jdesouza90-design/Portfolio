@@ -17,7 +17,7 @@ s = re.sub(r'(resume: "/(assets/[^"?]+))(?:\?v=[a-f0-9]+)?"',
 open('main.js', 'w').write(s)
 
 css_h, js_h = h('styles.css'), h('main.js')
-pages = (['index.html', 'work.html', 'blog.html', 'admin/index.html']
+pages = (['index.html', 'work.html', 'blog.html', 'admin/index.html', 'admin/game.html', 'admin/chat.html']
          + sorted(glob.glob('work/*.html')) + sorted(glob.glob('blog/*.html')))
 for f in pages + ['middleware.js']:
     s = open(f).read()
