@@ -139,7 +139,7 @@
 /* The sans does the work: subhead, lede, body, small, micro */
 .t-subhead, .t-lede, .t-body, .t-small, .t-micro, .eyebrow,
 .testimonial-foot cite b,
-.layer-tab, .work-cta, .gate-form input,
+.layer-tab, .work-cta, .gate-form input, .arcade-post input,
 .btn, .chip, .nav-links ul a, .back, .crumbs, .tools span, footer,
 .facts dt, table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
 .gallery figcaption, .proof-head small, .tooltip, .chart-pill, details.data,
@@ -150,7 +150,7 @@ thead th, .gauge .lbl, .table-wrap td[data-label]::before, .dash-kind, .dash-now
   { font-size: var(--t-subhead); line-height: var(--lh-subhead); letter-spacing: var(--ls-subhead); font-weight: 500; color: var(--ink); }
 .t-lede
   { font-size: var(--t-lede); line-height: var(--lh-lede); letter-spacing: var(--ls-lede); font-weight: 400; color: var(--ink-2); max-width: var(--m-lede); }
-.t-body, .layer-tab, .work-cta, .gate-form input
+.t-body, .layer-tab, .work-cta, .gate-form input, .arcade-post input
   { font-size: var(--t-body); line-height: var(--lh-body); font-weight: 400; color: var(--ink-2); max-width: var(--m-body); }
 .t-small, .btn, .chip, .nav-links ul a, .back, .crumbs, .tools span, footer,
 .facts dt, table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
@@ -173,7 +173,7 @@ strong, b, tbody th, .t-body a, .t-lede a,
    or number in a block. */
 strong, b, tbody th, .chip, .tools span, .avatar, .testimonial-mark, .tooltip b, .tip-val, .crumbs [aria-current], .dash-label { color: var(--ink); }
 .chart-pill { color: var(--surface); }
-footer, .walk-note, .testimonial-foot cite, .kudos cite, .exp-dates, .crumb-sep, .gate-form input::placeholder { color: var(--ink-3); }
+footer, .walk-note, .testimonial-foot cite, .kudos cite, .exp-dates, .crumb-sep, .gate-form input::placeholder, .arcade-post input::placeholder { color: var(--ink-3); }
 .work-cta, .t-body a, .t-lede a, .outcome-stat .t-stat, .proof-head .t-stat, thead .hl { color: var(--accent-ink); }
 
 /* Number flow: a headline stat that main.js rolls in digit by digit. Each
@@ -815,6 +815,14 @@ footer a:hover { color: var(--ink); }
 }
 .arcade-screen:focus-visible { outline-offset: 2px; border-radius: var(--radius); }
 .arcade-screen canvas { display: block; margin-inline: auto; image-rendering: pixelated; image-rendering: crisp-edges; }
+/* After a round: the name for the leaderboard, in the gate's input */
+.arcade-post { display: flex; flex-direction: column; gap: 12px; margin-top: var(--sp-5); max-width: 520px; }
+.arcade-post-row { display: flex; gap: 12px; }
+.arcade-post input { flex: 1 1 auto; min-width: 0; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--hair-2); background: var(--surface-2); color: var(--ink); text-transform: uppercase; }
+.arcade-post input::placeholder { text-transform: none; }
+.arcade-post input:focus { outline: 2px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
+.arcade-post .btn { flex: 0 0 auto; justify-content: center; }
+.arcade-post-note:empty { display: none; }
 
 /* --------------------------------------------------------------------------
    7. Case study

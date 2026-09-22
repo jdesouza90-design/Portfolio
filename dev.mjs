@@ -20,7 +20,8 @@ process.env.KV_REST_API_URL = 'http://store.local';
 process.env.KV_REST_API_TOKEN = 'local';
 
 // ---- In-memory Redis behind the REST shape middleware.js speaks ----
-const lists = new Map(), values = new Map(), sets = new Map();
+const lists = new Map(), values = new Map(), sets = new Map(), zsets = new Map();   // a sorted set is [[score, member]], kept in order
+const zsorted = (key) => (zsets.get(key) || []).sort((a, b) => a[0] - b[0] || (a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : 0));
 const cmd = ([op, key, ...args]) => {
   switch (op) {
     case 'LPUSH': { const l = lists.get(key) || []; l.unshift(...args); lists.set(key, l); return l.length; }
@@ -30,6 +31,11 @@ const cmd = ([op, key, ...args]) => {
     case 'INCR': { const v = (Number(values.get(key)) || 0) + 1; values.set(key, String(v)); return v; }
     case 'DECRBY': { const v = (Number(values.get(key)) || 0) - Number(args[0]); values.set(key, String(v)); return v; }
     case 'GET': return values.get(key) ?? null;
+    case 'SET': { if (args.includes('NX') && values.has(key)) return null; values.set(key, args[0]); const ex = args.indexOf('EX'); if (ex >= 0) setTimeout(() => values.delete(key), Number(args[ex + 1]) * 1000).unref(); return 'OK'; }
+    case 'ZADD': { const z = zsorted(key).filter((e) => e[1] !== args[1]); z.push([Number(args[0]), args[1]]); zsets.set(key, z); return 1; }
+    case 'ZRANK': { const i = zsorted(key).findIndex((e) => e[1] === args[0]); return i < 0 ? null : i; }
+    case 'ZRANGE': { const z = zsorted(key), end = Number(args[1]); const part = z.slice(Number(args[0]), end < 0 ? z.length + end + 1 : end + 1); return args.includes('WITHSCORES') ? part.flatMap(([sc, m]) => [m, String(sc)]) : part.map((e) => e[1]); }
+    case 'ZREMRANGEBYRANK': { const z = zsorted(key), start = Number(args[0]); const n = z.length > start ? z.length - start : 0; zsets.set(key, z.slice(0, start)); return n; }
     case 'SADD': { const st = sets.get(key) || new Set(); const before = st.size; for (const a of args) st.add(a); sets.set(key, st); return st.size - before; }
     case 'SREM': { const st = sets.get(key) || new Set(); let n = 0; for (const a of args) n += st.delete(a) ? 1 : 0; return n; }
     case 'SMEMBERS': return [...(sets.get(key) || [])];
@@ -104,6 +110,8 @@ if (process.env.SEED !== '0') {
   }
   rows.sort((a, b) => b.t - a.t);
   lists.set('activity', rows.filter((r) => r.t <= now).map((r) => JSON.stringify(r)));
+  const names = ['ADA', 'GRACE', 'LINUS', 'MARGARET', 'KEN', 'BARBARA'];
+  zsets.set('golf:board', names.map((n, i) => [24 + i * 2 + Math.floor(Math.random() * 2), `${now - i * 3600000}:${n}`]));
   values.set('activity:count', String(rows.filter((r) => r.kind === 'viewed').length + 1840));
 }
 

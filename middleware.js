@@ -7,6 +7,7 @@
 //   /api/activity   the feed the dashboard polls, and the referrer blocklist it
 //                   edits (POST); needs the admin cookie
 //   /api/ping       the beacon main.js sends with the time a page has been read
+//   /api/scores     the Nine holes leaderboard: read it (GET), post a round (POST)
 //   everything else public, but every page view is recorded
 //
 // A correct case-study password sends the reader on with ?unlocked, which
@@ -22,7 +23,7 @@
 // from the dashboard: a host on the blocklist (activity:blocked, kept by the
 // dashboard's Block buttons) has its views neither recorded nor counted.
 
-export const config = { matcher: ['/', '/index.html', '/work.html', '/work/:path*', '/admin/:path*', '/api/activity', '/api/ping'] };
+export const config = { matcher: ['/', '/index.html', '/work.html', '/work/:path*', '/admin/:path*', '/api/activity', '/api/ping', '/api/scores'] };
 
 const COOKIE = 'cs_access';
 const MAX_AGE = 60 * 60 * 24 * 30;          // 30 days
@@ -91,7 +92,7 @@ function page({ path, error, unconfigured, ref, admin }) {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/styles.css?v=59f2e9f9">
+<link rel="stylesheet" href="/styles.css?v=4b9e1d40">
 </head>
 <body>
 <main class="gate-wrap"><div class="gate">
@@ -337,6 +338,50 @@ async function ping(request, salt) {
 }
 
 
+// ---- Leaderboard -------------------------------------------------------------
+// GET /api/scores                 →  { configured, scores: [{name, score}] }
+// POST /api/scores {name, score}  →  { configured, scores, rank }
+// The Nine holes board: fewest strokes first, ties to whoever got there first.
+// A sorted set scored by strokes whose members are `<ms>:<NAME>`, so equal
+// scores fall into time order and the same name can hold more than one place.
+// Names are drawn on the game's pixel face, so only A–Z, 0–9 and single
+// spaces survive, ten at most. A round is 9 holes at one stroke or more, and a
+// visitor may post once every RATE_SECS. Anything past the first BOARD_KEEP
+// places is dropped.
+
+const BOARD_KEY = 'golf:board';
+const BOARD_SHOW = 5;                       // places the game draws
+const BOARD_KEEP = 100;                     // places kept
+const RATE_SECS = 20;
+const cleanName = (s) => String(s || '').toUpperCase().replace(/[^A-Z0-9 ]/g, '').replace(/\s+/g, ' ').trim().slice(0, 10).trim();
+
+async function board() {
+  const [raw] = await redis([['ZRANGE', BOARD_KEY, 0, BOARD_SHOW - 1, 'WITHSCORES']]);
+  const scores = [];
+  for (let i = 0; i + 1 < (raw || []).length; i += 2) scores.push({ name: String(raw[i]).replace(/^\d+:/, ''), score: Number(raw[i + 1]) });
+  return scores;
+}
+
+async function scores(request, salt) {
+  if (!store()) return json({ configured: false, scores: [] });
+  if (request.method === 'GET') return json({ configured: true, scores: await board() });
+  if (request.method !== 'POST') return new Response(null, { status: 405, headers: { Allow: 'GET, POST' } });
+  let name = '', score = 0;
+  try {
+    const body = JSON.parse(await request.text());
+    name = cleanName(body.name);
+    score = Number(body.score);
+  } catch (_) {}
+  if (!name) return json({ error: 'A name needs a letter or a number' }, 400);
+  if (!Number.isInteger(score) || score < 9 || score > 999) return json({ error: 'Not a round of nine holes' }, 400);
+  const [fresh] = await redis([['SET', `golf:rate:${await visitorId(request, salt)}`, '1', 'EX', RATE_SECS, 'NX']]);
+  if (!fresh) return json({ error: 'One round at a time. Try again in a few seconds' }, 429);
+  const member = `${Date.now()}:${name}`;
+  const [, rank] = await redis([['ZADD', BOARD_KEY, score, member], ['ZRANK', BOARD_KEY, member], ['ZREMRANGEBYRANK', BOARD_KEY, BOARD_KEEP, -1]]);
+  return json({ configured: true, scores: await board(), rank: rank === null || rank >= BOARD_KEEP ? null : rank + 1 });
+}
+
+
 // ---- The feed ---------------------------------------------------------------
 // GET /api/activity?since=<ms>  →  { configured, now, total, events, blocked }
 // `events` is newest first, only those after `since` when it is given. The
@@ -410,6 +455,7 @@ export default async function middleware(request, context) {
   const isAdmin = url.pathname.startsWith('/admin');
   const isFeed = url.pathname === '/api/activity';
   const isPing = url.pathname === '/api/ping';
+  const isScores = url.pathname === '/api/scores';
   const isWork = url.pathname.startsWith('/work/');
 
   // ---- Dashboard and its feed: the owner's password ----
@@ -468,6 +514,7 @@ export default async function middleware(request, context) {
     if (!muted) after(ping(request, expected));
     return new Response(null, { status: 204, headers: { 'Cache-Control': 'no-store' } });
   }
+  if (isScores) return scores(request, expected).catch((err) => { console.error('scores: failed', err); return json({ error: 'The board is not answering' }, 502); });
 
   if (!isWork) {                             // public page: record the view and serve it
     if (request.method === 'GET') log('viewed');
