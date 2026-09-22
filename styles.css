@@ -915,6 +915,11 @@ footer a:hover { color: var(--ink); }
 .row .panel img { max-height: 100%; }
 .row .panel.crop { padding: var(--panel-pad) 0 0 var(--panel-pad); align-items: flex-start; justify-content: flex-start; }
 .row .panel.crop img { width: 100%; height: 100%; max-width: none; object-fit: cover; object-position: var(--crop-pos, 0 0); border-radius: 10px 0 0 0; }
+/* .panel.dock: a tall phone screen whose top sits inside the ground and whose
+   rest runs off the bottom edge, so it reads as the phone continuing past the
+   panel. The screen carries its own keyed corners, so it takes the cutout shadow. */
+.row .panel.dock { align-items: flex-start; padding-bottom: 0; }
+.row .panel.dock img { width: var(--dock-w, 78%); max-width: none; max-height: none; height: auto; border-radius: 0; box-shadow: none; filter: var(--shadow-cutout); }
 /* .panel.cutout holds one UI card cut out with transparent corners, floating on the ground */
 .row .panel.cutout img { border-radius: 0; box-shadow: none; filter: var(--shadow-cutout); }
 
@@ -1199,11 +1204,21 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
     transform var(--dur-reveal) var(--ease-soft) calc(var(--reveal-i, 0) * 60ms);
 }
 .anim [data-reveal].in { opacity: 1; transform: none; }
+/* Columns in a revealed block enter one after another, left to right, while
+   the block is still settling (a column row reads as a sequence, not a slab). */
+.anim [data-reveal] .cols > .col {
+  opacity: 0; transform: translateX(-32px);
+  transition: opacity .6s linear, transform .6s var(--ease-soft);
+}
+.anim [data-reveal] .cols > .col:nth-child(2) { --col-i: 1; }
+.anim [data-reveal] .cols > .col:nth-child(3) { --col-i: 2; }
+.anim [data-reveal] .cols > .col:nth-child(4) { --col-i: 3; }
+.anim [data-reveal].in .cols > .col { opacity: 1; transform: none; transition-delay: calc(200ms + var(--col-i, 0) * 160ms); }   /* the wait only on the way in, so hiding at load is instant */
 [data-rise] { animation: rise .6s var(--ease) both; animation-delay: calc(var(--i, 0) * 70ms); }
 @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .anim [data-reveal], [data-rise] { opacity: 1; transform: none; transition: none; animation: none; }
+  .anim [data-reveal], [data-rise], .anim [data-reveal] .cols > .col { opacity: 1; transform: none; transition: none; animation: none; }
   .opener-body > * { opacity: 1; }                          /* the opener shows still, then goes */
   .opener-seam { transform: none; }
   .gauge .fill, .gauge .needle { animation: none !important; }
@@ -1402,6 +1417,8 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
   .row .panel { height: auto; aspect-ratio: auto; padding: 24px 20px; }
   .row .panel img { max-height: min(520px, 68vh); }
   .row .panel.crop { aspect-ratio: 4 / 3; padding: 20px 0 0 20px; }
+  .row .panel.dock { aspect-ratio: 1; padding: 24px 0 0; justify-content: center; }
+  .row .panel.dock img { --dock-w: 82%; }
   .row.full .panel { padding: 20px; }
   .tensions { margin-top: 24px; }
 
