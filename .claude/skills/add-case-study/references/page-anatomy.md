@@ -110,7 +110,7 @@ still, and the plain text stays for screen readers). Write the stat as plain tex
 | Two phone screens | `<figure class="panel hero-panel two">` + two `img` |
 | Three phone screens | `<figure class="panel hero-panel three">` + three `img` |
 | One wide product shot | `<figure class="panel hero-panel wide">` + one `img` (rounded, shadowed) |
-| One wide illustration | `<figure class="panel hero-panel wide flat">` + one `img` (no shadow, no radius) |
+| One wide illustration | `<figure class="panel hero-panel wide flat">` + one `img` (rounded, no shadow) |
 
 ```html
 <figure class="panel hero-panel two">
@@ -273,7 +273,7 @@ live in the section intro above, so the row starts on the body):
   <figure class="panel"><img decoding="async" width="450" height="1200" src="../assets/cs-decline.webp" alt="The original decline screen: 'Unfortunately, we are unable to approve your application at this time', followed by a third-party partner offer." loading="lazy"></figure>
 </article>
 ```
-Panel modifiers: `.panel.flat` for an illustration (no shadow), `.panel.wide` for a
+Panel modifiers: `.panel.flat` for an illustration (rounded like every panel image, but no shadow), `.panel.wide` for a
 landscape shot, `.panel.wide.crop` with `style="--crop-pos: 30% 0"` to show one corner of a
 large screen at full scale, `.panel.cutout` for one UI card cut out of its screen with
 transparent rounded corners (sharp `extract` + an SVG `dest-in` mask; see Refinance offers),

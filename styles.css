@@ -307,7 +307,7 @@ main, .nav { position: relative; z-index: 1; }
 }
 .panel img, .case-media img { width: auto; max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 14px; box-shadow: var(--shadow-screen); }
 .panel.wide img { border-radius: 10px; }
-.panel.flat img { border-radius: 0; box-shadow: none; }
+.panel.flat img { box-shadow: none; }   /* an illustration: keeps the 14px radius of every panel image, drops the screen shadow */
 .panel > .gallery { width: 100%; }
 
 /* Section intro: a centred label + title (+ lede), the way a section opens */
