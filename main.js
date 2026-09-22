@@ -1955,7 +1955,8 @@ const CONFIG = {
       .filter((m) => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string").slice(-40);
     let unlocked = !!state.unlocked;
     let busy = null;                                   // the AbortController of the answer being read
-    const save = (open) => { try { sessionStorage.setItem(KEY, JSON.stringify({ open, msgs })); } catch (_) { /* nothing to keep it in */ } };
+    let offered = !!saved.offered;                     // the walkthrough offer, made once a tab
+    const save = (open) => { try { sessionStorage.setItem(KEY, JSON.stringify({ open, msgs, offered })); } catch (_) { /* nothing to keep it in */ } };
 
     /* The button and the panel */
     const launch = make("button", "btn btn-primary chat-launch");
@@ -2144,8 +2145,26 @@ const CONFIG = {
         if (!text && !failed) reply.remove();          // stopped before a word arrived
         status.textContent = failed || (text ? `Assistant: ${plain(text)}` : "");
         if (asked && !unlocked) passwordCard();
+        else if (text && !offered && msgs.filter((m) => m.role === "user").length >= 3) offerWalkthrough();
       }
       save(dlg.open);
+      stick();
+    };
+
+    /* After the third answer, once: an offer from John himself to walk them
+       through the work, with the two ways to reach him. */
+    const offerWalkthrough = () => {
+      offered = true;
+      const card = make("div", "chat-offer");
+      card.append(make("p", "chat-offer-text", "Want the full story? I'm happy to walk you through any of this work myself."));
+      const row = make("div", "chat-offer-row");
+      const mail = make("a", "btn btn-primary btn-sm", "Email John");
+      mail.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent("Walkthrough of your work")}`;
+      const li = make("a", "btn btn-ghost btn-sm", "Message on LinkedIn");
+      li.href = CONFIG.linkedin; li.target = "_blank"; li.rel = "noopener";
+      row.append(mail, li);
+      card.append(row);
+      log.append(card);
       stick();
     };
 
