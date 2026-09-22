@@ -1461,9 +1461,261 @@ const CONFIG = {
     touch();
   };
 
+  /* ---- Arcade: "Nine holes" ----
+     A one-button golf game on the last screen. The canvas is a pixel grid, 64
+     tall and as wide as the block allows at a whole-number scale (4 CSS px a
+     pixel, 3 on a phone), so every sprite pixel stays square. Each hole puts
+     the cup somewhere to the right, a wind, and on most holes a bunker or a
+     pond between. One press stops the swinging aim arrow, the next stops the
+     power meter and hits; the ball flies, bounces and rolls, and drops when
+     it crosses the cup slowly enough. Nine holes, par 3 each; the best round
+     is kept in localStorage. Anything can press it: the button's click
+     (Enter, tap, mouse), or Space and the up arrow on keydown. The loop runs
+     only while something moves, and pauses when the block leaves the screen
+     or the tab is hidden. Sprites are strings: 1 is ink, 2 accent. */
+  const initArcade = () => {
+    const root = $(".arcade");
+    const btn = root && $(".arcade-screen", root);
+    const c = root && $("canvas", root);
+    if (!root || !btn || !c || !c.getContext) return;
+    const ctx = c.getContext("2d");
+    const bestWrap = $(".arcade-score", root), best = $("[data-best]", root), status = $(".arcade-status", root);
+    const tok = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+    const INK = tok("--ink") || "#14100C", INK3 = tok("--ink-3") || "#6F675D", HAIR = tok("--hair-2") || "#CFC9BF";
+    const ACCENT = tok("--accent") || "#3B6B44", GREEN = tok("--accent-2") || "#6E9A5A", FLAG = tok("--danger") || "#C0392B", SAND = tok("--surface") || "#FFFFFF";
+    const H = 64, GROUND = 52, TEE = 12, HOLES = 9, PAR = 3;   // logical pixels; the ground line is GROUND
+    let W = 192, scale = 4;
+
+    /* Sprites: the golfer at address, at the top of the backswing, and after the hit */
+    const GOLFER = [
+      ["..11....", "..11....", "...1....", "..222...", ".2222.1.", "..22..1.", "..22..1.", "..1.1.1.", "..1.1.1.", ".11.11.1"],
+      ["1...11..", ".1..11..", "..1..1..", "..1222..", "...2222.", "..22....", "..22....", "..1.1...", "..1.1...", ".11.11.."],
+      ["..11...1", "..11..1.", "...1.1..", "..2221..", ".2222...", "..22....", "..22....", "..1.1...", "..1.1...", ".11.11.."],
+    ];
+    const CLOUD = ["..111..", ".11111.", "1111111"];
+    /* A 3×5 pixel face for the words on screen; the site's faces stay in the DOM */
+    const FONT = {
+      A: "010101111101101", B: "110101110101110", C: "111100100100111", D: "110101101101110", E: "111100110100111",
+      G: "111100101101111", H: "101101111101101", I: "111010010010111", K: "101101110101101", L: "100100100100111",
+      M: "101111111101101", N: "110101101101101", O: "111101101101111", P: "111101111100100", R: "111101110101101",
+      S: "111100111001111", T: "111010010010010", U: "101101101101111", V: "101101101101010", W: "101101101111101",
+      X: "101101010101101", Y: "101101010010010",
+      0: "111101101101111", 1: "010110010010111", 2: "111001111100111", 3: "111001111001111", 4: "101101111001001",
+      5: "111100111001111", 6: "111100111101111", 7: "111001001001001", 8: "111101111101111", 9: "111101111001111",
+      " ": "000000000000000", "+": "000010111010000", "-": "000000111000000", "<": "001010100010001", ">": "100010001010100",
+    };
+    const px = (x, y, col) => { ctx.fillStyle = col; ctx.fillRect(x, y, 1, 1); };
+    const sprite = (art, x, y, col, flip = false) => art.forEach((row, j) => {
+      for (let i = 0; i < row.length; i++) if (row[i] !== ".") px(x + (flip ? row.length - 1 - i : i), y + j, row[i] === "2" ? ACCENT : col);
+    });
+    const text = (str, x, y, col, size = 1) => {
+      ctx.fillStyle = col;
+      Array.from(str).forEach((ch, n) => {
+        const g = FONT[ch] || FONT[" "];
+        for (let k = 0; k < 15; k++) if (g[k] === "1") ctx.fillRect(x + (n * 4 + (k % 3)) * size, y + Math.floor(k / 3) * size, size, size);
+      });
+    };
+    const width = (str, size = 1) => (str.length * 4 - 1) * size;
+    const centre = (str, y, col, size = 1) => text(str, Math.floor((W - width(str, size)) / 2), y, col, size);
+
+    /* State */
+    const G = 220, FRICTION = 70, BOUNCE = 0.45;   // px/s²; px/s²; how much of a landing comes back up
+    const AIM = 1.4, POWER = 1.0;                  // seconds for a full swing of the arrow and of the meter
+    let state = "idle";                            // idle | aim | power | fly | holed | over
+    let paused = false, raf = 0, last = 0, clock = 0;
+    let hole = 0, strokes = 0, total = 0, cup = 0, wind = 0, hazard = null, holeStroke = 0;
+    let ball = { x: TEE, y: GROUND - 2, vx: 0, vy: 0 }, from = TEE, angle = 45, power = 0, pose = 0;
+    let clouds = [], tufts = [];
+    let hi = 0;
+    try { hi = Number(localStorage.getItem("golf-best")) || 0; } catch (e) { /* private mode */ }
+    const showBest = () => { if (hi) { best.textContent = String(hi); bestWrap.hidden = false; } };
+    showBest();
+    const rand = (a, b) => a + Math.random() * (b - a);
+    const seed = () => {
+      clouds = Array.from({ length: Math.max(2, Math.round(W / 70)) }, () => ({ x: rand(0, W), y: rand(4, 22) }));
+      tufts = Array.from({ length: Math.round(W / 7) }, () => Math.floor(rand(0, W)));
+    };
+    const say = (m) => { if (status) status.textContent = m; };
+    const NAMES = { 1: "ACE", 2: "BIRDIE", 3: "PAR", 4: "BOGEY", 5: "DOUBLE", 6: "TRIPLE" };
+    const named = (n) => NAMES[n] || "OUCH";
+    const vmax = () => Math.sqrt((W - TEE) * 1.15 * G);   // full power carries a little past the far edge
+    const dir = () => (ball.x + 1 > cup ? -1 : 1);         // past the cup, the golfer turns and hits back
+
+    const layHole = () => {
+      strokes = 0;
+      cup = Math.round(rand(W * 0.55, W * 0.92));
+      wind = Math.round(rand(-25, 25));
+      const kind = Math.random();
+      if (kind < 0.35 || W < 120) hazard = null;
+      else {
+        const w = Math.round(rand(12, 22)), x = Math.round(rand(TEE + 24, cup - w - 12));
+        hazard = { kind: kind < 0.7 ? "sand" : "water", x, w };
+      }
+      ball = { x: TEE, y: GROUND - 2, vx: 0, vy: 0 };
+      from = TEE; pose = 0; clock = 0;
+      state = "aim";
+    };
+    const hit = () => {
+      const v = 30 + power * (vmax() - 30), a = (angle * Math.PI) / 180;
+      ball.vx = Math.cos(a) * v * dir(); ball.vy = -Math.sin(a) * v;
+      from = ball.x; strokes++; total++; pose = 2;
+      state = "fly";
+    };
+    const inHazard = (x) => hazard && x >= hazard.x && x <= hazard.x + hazard.w;
+    const settle = () => {                         // the ball has stopped: back to aiming, or it was the cup
+      ball.vx = 0; ball.vy = 0; ball.y = GROUND - 2; pose = 0; clock = 0;
+      state = "aim";
+    };
+    const holed = () => {
+      holeStroke = strokes; ball.y = GROUND; ball.vx = 0; ball.vy = 0;
+      state = "holed";
+      say(`Hole ${hole}. ${named(strokes).toLowerCase()}, ${strokes} ${strokes === 1 ? "stroke" : "strokes"}.`);
+    };
+    const finish = () => {
+      state = "over";
+      if (!hi || total < hi) { hi = total; showBest(); try { localStorage.setItem("golf-best", String(hi)); } catch (e) { /* fine */ } }
+      say(`Round over. ${total} strokes, par ${HOLES * PAR}. Best ${hi}.`);
+    };
+
+    /* Drawing */
+    const scene = () => {
+      ctx.clearRect(0, 0, W, H);
+      clouds.forEach((k) => sprite(CLOUD, Math.round(k.x), Math.round(k.y), HAIR));
+      tufts.forEach((x) => px(x, GROUND - 1, GREEN));
+      ctx.fillStyle = ACCENT; ctx.fillRect(0, GROUND, W, 1);
+      if (hazard) {
+        ctx.fillStyle = hazard.kind === "sand" ? SAND : HAIR;
+        ctx.fillRect(hazard.x, GROUND, hazard.w, 3);
+        for (let x = hazard.x + 1; x < hazard.x + hazard.w - 1; x += 3) px(x, GROUND + 1 + (x % 2), INK3);   // grains, or ripples
+      }
+      // the cup: a gap in the line with ink walls, and the flag beside it
+      ctx.clearRect(cup - 1, GROUND, 3, 2);
+      px(cup - 2, GROUND, INK); px(cup + 2, GROUND, INK); px(cup - 1, GROUND + 2, INK); px(cup, GROUND + 2, INK); px(cup + 1, GROUND + 2, INK);
+      ctx.fillStyle = INK; ctx.fillRect(cup + 2, GROUND - 12, 1, 12);
+      ctx.fillStyle = FLAG; ctx.fillRect(cup + 3, GROUND - 12, 3, 2); ctx.fillRect(cup + 3, GROUND - 10, 2, 1);
+      if (state !== "idle" && state !== "over") {
+        if (state !== "fly") { const left = dir() < 0; sprite(GOLFER[pose], Math.round(ball.x) + (left ? 2 : -8), GROUND - 10, INK, left); }
+        if (state !== "holed") { ctx.fillStyle = INK; ctx.fillRect(Math.round(ball.x), Math.max(0, Math.round(ball.y)), 2, ball.y < 0 ? 1 : 2); }   // above the frame, a mark at the top
+        text(`HOLE ${hole}`, 4, 4, INK);
+        const s = `STROKE ${strokes}`; text(s, W - 4 - width(s), 4, INK);
+        const gust = Math.min(3, Math.round(Math.abs(wind) / 8));
+        const arrows = (wind < 0 ? "<" : ">").repeat(gust) || "-";
+        centre(`WIND ${arrows}`, 4, INK3);
+      }
+      if (state === "aim") {                       // the arrow from the ball, four dots long
+        const a = (angle * Math.PI) / 180;
+        for (let i = 3; i <= 12; i += 3) px(Math.round(ball.x + 1 + Math.cos(a) * i * dir()), Math.round(ball.y + 1 - Math.sin(a) * i), INK);
+      }
+      if (state === "power") {                     // the meter under the wind
+        const w = 32, x = Math.floor((W - w) / 2);
+        ctx.fillStyle = HAIR; ctx.fillRect(x, 12, w, 3);
+        ctx.fillStyle = ACCENT; ctx.fillRect(x, 12, Math.round(w * power), 3);
+      }
+    };
+    const idle = () => { scene(); centre("NINE HOLES", 14, INK, 2); centre("PRESS TO PLAY", 30, INK3); };
+    const holedFrame = () => { scene(); centre(named(holeStroke), 14, INK, 2); centre(hole < HOLES ? "PRESS FOR NEXT" : "PRESS FOR SCORE", 30, INK3); };
+    const overFrame = () => {
+      scene();
+      const d = total - HOLES * PAR, diff = d === 0 ? "EVEN" : d > 0 ? `+${d}` : `${d}`;
+      centre(`ROUND ${total}`, 14, INK, 2);
+      centre(`PAR ${HOLES * PAR}  ${diff}`, 30, INK3);
+      centre("PRESS TO PLAY AGAIN", 40, INK3);
+    };
+    const pausedFrame = () => { scene(); centre("PAUSED", 22, INK, 2); };
+    const frame = () => {
+      if (paused) pausedFrame();
+      else if (state === "idle") idle();
+      else if (state === "holed") holedFrame();
+      else if (state === "over") overFrame();
+      else scene();
+    };
+    const moving = () => state === "aim" || state === "power" || state === "fly";
+
+    /* Loop: runs while the arrow swings, the meter fills or the ball moves */
+    const step = (t) => {
+      raf = 0;
+      if (!moving() || paused) return;
+      const dt = Math.min(0.05, (t - last) / 1000) || 0;
+      last = t; clock += dt;
+      clouds.forEach((k) => { k.x += wind * 0.02 * dt; if (k.x < -8) k.x = W; if (k.x > W + 1) k.x = -7; });
+      if (state === "aim") angle = 15 + 60 * (0.5 - 0.5 * Math.cos((2 * Math.PI * clock) / AIM));
+      if (state === "power") power = 0.5 - 0.5 * Math.cos((2 * Math.PI * clock) / POWER);
+      if (state === "fly") {
+        ball.vy += G * dt;
+        if (ball.y < GROUND - 2) ball.vx += wind * dt;
+        ball.x += ball.vx * dt; ball.y += ball.vy * dt;
+        if (ball.x < 0) { ball.x = 0; ball.vx = Math.abs(ball.vx) * 0.3; }
+        if (ball.x > W - 2) { ball.x = W - 2; ball.vx = -Math.abs(ball.vx) * 0.3; }
+        const speed = Math.hypot(ball.vx, ball.vy);
+        if (ball.y >= GROUND - 3 && Math.abs(ball.x + 1 - cup) < 2 && speed < 90) { holed(); frame(); return; }
+        if (ball.y >= GROUND - 2) {
+          ball.y = GROUND - 2;
+          if (inHazard(ball.x + 1)) {
+            if (hazard.kind === "water") {       // a penalty stroke and back to where it was hit from
+              strokes++; total++; ball.x = from; say("Water. One penalty stroke.");
+            }
+            settle();                             // sand stops it dead; the loop carries on for the aim
+          }
+          if (ball.vy > 30) { ball.vy = -ball.vy * BOUNCE; ball.vx *= 0.7; }
+          else {
+            ball.vy = 0;
+            const f = FRICTION * dt;
+            ball.vx = Math.abs(ball.vx) <= f ? 0 : ball.vx - Math.sign(ball.vx) * f;
+            if (ball.vx === 0) settle();
+          }
+        }
+      }
+      scene();
+      raf = requestAnimationFrame(step);
+    };
+    const run = () => { if (!raf && moving() && !paused) { last = performance.now(); raf = requestAnimationFrame(step); } };
+    const act = () => {
+      if (paused) { paused = false; run(); return; }
+      if (state === "idle" || state === "over") { hole = 1; total = 0; layHole(); say("Hole 1. Press to aim, press to swing."); }
+      else if (state === "aim") { state = "power"; clock = 0; power = 0; pose = 1; }
+      else if (state === "power") hit();
+      else if (state === "holed") { if (hole < HOLES) { hole++; layHole(); say(`Hole ${hole}.`); } else finish(); }
+      frame(); run();
+    };
+    const setPaused = (on) => {
+      if (!moving() || paused === on) return;
+      paused = on;
+      if (on) { if (raf) cancelAnimationFrame(raf); raf = 0; frame(); } else run();
+    };
+
+    /* Input: pointerdown covers tap and mouse; Space, Enter and the up arrow
+       act on keydown and are swallowed there, so Space neither scrolls the
+       page nor fires the button's own click on keyup. The click handler is
+       left for clicks made without a pointer or a key (assistive tech). */
+    btn.addEventListener("click", (e) => { if (e.detail === 0) act(); });
+    btn.addEventListener("pointerdown", (e) => { if (e.button === 0) { e.preventDefault(); btn.focus({ preventScroll: true }); act(); } });
+    btn.addEventListener("keydown", (e) => {
+      if (e.key === " " || e.key === "ArrowUp" || e.key === "Enter") { e.preventDefault(); if (!e.repeat) act(); }
+    });
+    btn.addEventListener("keyup", (e) => { if (e.key === " ") e.preventDefault(); });
+
+    /* Size: as wide as the button at a whole-number scale, redrawn on change.
+       A hole laid for another width is re-laid so the cup stays on screen. */
+    const size = () => {
+      const box = btn.clientWidth - 2;             // inside the hairline border
+      scale = box < 600 ? 3 : 4;
+      W = Math.max(96, Math.floor(box / scale));
+      c.width = W; c.height = H;
+      c.style.width = `${W * scale}px`; c.style.height = `${H * scale}px`;
+      seed();
+      if (state === "idle" || state === "over" || cup > W - 8) { if (state !== "idle" && state !== "over") layHole(); else cup = Math.round(W * 0.8); }
+      frame();
+    };
+    if ("ResizeObserver" in window) new ResizeObserver(size).observe(btn); else { size(); window.addEventListener("resize", size); }
+
+    /* Pause off screen and in a background tab */
+    if ("IntersectionObserver" in window) new IntersectionObserver(([en]) => setPaused(!en.isIntersecting), { threshold: 0.4 }).observe(btn);
+    document.addEventListener("visibilitychange", () => { if (document.hidden) setPaused(true); });
+  };
+
   /* ---- Footer year ---- */
   const initYear = () => $$("[data-year]").forEach((el) => (el.textContent = new Date().getFullYear()));
 
-  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initMatrix, initConfig, initFlows, initStrips, initTableWraps, initPortrait, initClock, initYear]
+  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initMatrix, initConfig, initFlows, initStrips, initTableWraps, initPortrait, initClock, initArcade, initYear]
     .forEach((init) => { try { init(); } catch (err) { console.error(`main.js: ${init.name} failed`, err); } });
 })();
