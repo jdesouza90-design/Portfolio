@@ -7,7 +7,7 @@
 
    Order: tokens → type roles → base → primitives → nav → home → case study
           → gate → unlock opener → motion → per-project grounds → phone
-          → dashboard
+          → dashboard → blog
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -113,8 +113,10 @@
    color, measure and a zero margin. Headings and paragraphs carry their
    role as a class in the markup (.t-title, .t-body, .eyebrow); the inline
    and structural text of a component (a cell, a cite, a button) is listed
-   under its role here. Nothing after this section sets a face, size, weight,
-   line-height or letter-spacing, with three exceptions: .btn and .chip set
+   under its role here, and so is a blog post's body: the copy is drafted as
+   prose, so .prose h2/h3/p/li/blockquote/figcaption are listed here rather
+   than classed in the markup. Nothing after this section sets a face, size,
+   weight, line-height or letter-spacing, with three exceptions: .btn and .chip set
    the line-height of their own box; the dashboard's visitor hashes and the
    map's credit line take the micro size without the role's caps; and the
    phone rules at the end move a few things a role up or down.
@@ -122,23 +124,26 @@
 
 /* The serif speaks: display, title, heading, stat, quote. It is never bold. */
 .t-display, .t-title, .t-heading, .t-stat, .t-quote,
-.brand, .facts dd, .avatar.glyph
+.brand, .facts dd, .avatar.glyph,
+.prose h2, .prose h3, .prose blockquote p, .pillar-nav a
   { font-family: var(--font-display); font-weight: 400; color: var(--ink); margin: 0; }
 .t-display
   { font-size: var(--t-display); line-height: var(--lh-display); letter-spacing: var(--ls-display); max-width: var(--m-display); text-wrap: balance; }
-.t-title
+.t-title, .prose h2, .pillar-nav a
   { font-size: var(--t-title); line-height: var(--lh-title); letter-spacing: var(--ls-title); max-width: var(--m-title); text-wrap: balance; }
-.t-heading, .brand, .facts dd, .avatar.glyph
+.t-heading, .brand, .facts dd, .avatar.glyph, .prose h3
   { font-size: var(--t-heading); line-height: var(--lh-heading); letter-spacing: var(--ls-heading); max-width: var(--m-heading); text-wrap: balance; }
 .t-stat
   { font-size: var(--t-stat); line-height: var(--lh-stat); letter-spacing: var(--ls-stat); }
-.t-quote
+.t-quote, .prose blockquote p
   { font-size: var(--t-quote); line-height: var(--lh-quote); letter-spacing: var(--ls-quote); max-width: var(--m-quote); text-wrap: pretty; }
 .t-stat, .facts dd { font-variant-numeric: lining-nums tabular-nums; }
 
 /* The sans does the work: subhead, lede, body, small, micro */
 .t-subhead, .t-lede, .t-body, .t-small, .t-micro, .eyebrow,
 .testimonial-foot cite b,
+.prose p, .prose li, .prose figcaption, .prose blockquote cite,
+.post-meta, .post-cta, .sources li, .pillar-count,
 .layer-tab, .work-cta, .gate-form input,
 .btn, .chip, .nav-links ul a, .back, .crumbs, .tools span, footer,
 .facts dt, table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
@@ -150,19 +155,20 @@ thead th, .gauge .lbl, .table-wrap td[data-label]::before, .dash-kind, .dash-now
   { font-size: var(--t-subhead); line-height: var(--lh-subhead); letter-spacing: var(--ls-subhead); font-weight: 500; color: var(--ink); }
 .t-lede
   { font-size: var(--t-lede); line-height: var(--lh-lede); letter-spacing: var(--ls-lede); font-weight: 400; color: var(--ink-2); max-width: var(--m-lede); }
-.t-body, .layer-tab, .work-cta, .gate-form input
+.t-body, .layer-tab, .work-cta, .gate-form input, .prose p, .prose li
   { font-size: var(--t-body); line-height: var(--lh-body); font-weight: 400; color: var(--ink-2); max-width: var(--m-body); }
 .t-small, .btn, .chip, .nav-links ul a, .back, .crumbs, .tools span, footer,
 .facts dt, table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
 .gallery figcaption, .proof-head small, .tooltip, .chart-pill, details.data,
-.dash-live, .dash-list li, .leaflet-container, .leaflet-popup-content
+.dash-live, .dash-list li, .leaflet-container, .leaflet-popup-content,
+.prose figcaption, .prose blockquote cite, .post-meta, .post-cta, .sources li, .pillar-count
   { font-size: var(--t-small); line-height: var(--lh-small); font-weight: 400; color: var(--ink-2); }
 .t-micro, .eyebrow, thead th, .gauge .lbl, .table-wrap td[data-label]::before, .dash-kind, .dash-now
   { font-size: var(--t-micro); line-height: var(--lh-micro); letter-spacing: var(--ls-micro); text-transform: uppercase; font-weight: 500; color: var(--ink-2); }
 .eyebrow { display: block; }
 
 /* Weight: 500 is the one emphasis, for whatever names or acts. */
-strong, b, tbody th, .t-body a, .t-lede a,
+strong, b, tbody th, .t-body a, .t-lede a, .prose p a, .prose li a, .post-cta,
 .btn, .chip, .chart-pill, .tooltip b, .tip-val, .nav-links ul a, .back, .crumbs, .tools span, .layer-tab, .layer-mark, .work-cta, .avatar, .testimonial-mark
   { font-weight: 500; }
 
@@ -173,8 +179,10 @@ strong, b, tbody th, .t-body a, .t-lede a,
    or number in a block. */
 strong, b, tbody th, .chip, .tools span, .avatar, .testimonial-mark, .tooltip b, .tip-val, .crumbs [aria-current], .dash-label { color: var(--ink); }
 .chart-pill { color: var(--surface); }
-footer, .walk-note, .testimonial-foot cite, .kudos cite, .exp-dates, .crumb-sep, .gate-form input::placeholder { color: var(--ink-3); }
+footer, .walk-note, .testimonial-foot cite, .kudos cite, .exp-dates, .crumb-sep, .gate-form input::placeholder,
+.prose figcaption, .prose blockquote cite, .pillar-count { color: var(--ink-3); }
 .work-cta, .t-body a, .t-lede a, .outcome-stat .t-stat, .proof-head .t-stat, thead .hl { color: var(--accent-ink); }
+.prose p a, .prose li a, .sources a { color: var(--accent-ink); }
 
 /* Number flow: a headline stat that main.js rolls in digit by digit. Each
    digit is a column of 0 to 9 behind a soft mask, and the whole stat is lit
@@ -1613,4 +1621,122 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 @media (prefers-reduced-motion: reduce) {
   .dash-live[data-state="on"] .dash-live-dot, .dash-table tr.is-new, .visit-dot.is-new { animation: none; }
   .dash-bar, .visit-dot, .dash-hist .col { transition: none; }
+}
+
+/* --------------------------------------------------------------------------
+   13. Blog
+   Two documents: the index (a hairline list of posts, newest first) and the
+   post itself (one column of running text on a 34rem measure). A post is the
+   only place on the site with long-form prose, so it is the only place a
+   heading, a list or a link sits inside a paragraph stream; those bare tags
+   take their roles back in section 2, so nothing here sets type. Self
+   contained like the dashboard above, phone rules included.
+   -------------------------------------------------------------------------- */
+
+/* ---- Index: the three arguments, then the posts under each ---- */
+/* The way into the blog is the argument, not the date. Three serif lines in
+   two columns, each one jumping to its own group below. */
+.pillar-nav ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-3); }
+.pillar-nav a { display: inline-flex; align-items: baseline; gap: .4em; text-decoration: none; max-width: none; transition: color var(--dur-hover); }
+.pillar-count { margin-left: .5em; align-self: center; }
+.pillar-nav svg { width: .52em; height: .52em; flex: none; transition: transform var(--dur-hover) var(--ease); }
+@media (hover: hover) and (pointer: fine) {
+  .pillar-nav a:hover { color: var(--accent-ink); }
+  .pillar-nav a:hover svg { transform: translateX(.22em); }
+}
+.pillar-head { scroll-margin-top: calc(var(--nav-h) + var(--sp-5)); margin-bottom: var(--sp-5); }
+.pillar-empty { padding-block: var(--sp-5); }
+/* The feed, beside the eyebrow that names the section */
+.feed-link { display: inline-flex; margin-left: 8px; vertical-align: -2px; color: var(--ink-3); transition: color var(--dur-hover); }
+.feed-link svg { width: 13px; height: 13px; }
+.feed-link:hover { color: var(--accent-ink); }
+
+/* ---- Index: one hairline row per post ---- */
+.posts { border-top: 1px solid var(--hair); }
+.post-row {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--sp-4) var(--sp-6);
+  align-items: start;
+  padding-block: clamp(28px, 3.4vw, 44px);
+  border-bottom: 1px solid var(--hair);
+  text-decoration: none;
+  transition: background var(--dur-hover), padding-inline var(--dur-hover) var(--ease);
+}
+@media (hover: hover) and (pointer: fine) {
+  .post-row:hover { background: var(--surface); padding-inline: var(--sp-4); }
+  .post-row:hover .post-cta { color: var(--accent-ink); }
+  .post-row:hover .post-cta svg { transform: translateX(5px); }
+}
+.post-row .t-heading { max-width: 34ch; }
+.post-row .t-body { max-width: 62ch; margin-top: var(--sp-3); }
+.post-aside { display: flex; flex-direction: column; align-items: flex-end; gap: var(--sp-3); text-align: right; }
+.post-meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2); color: var(--ink-3); }
+.post-meta .dot { color: var(--hair-2); }
+.post-cta { display: inline-flex; align-items: center; gap: 7px; color: var(--ink); transition: color var(--dur-hover); }
+.post-cta svg { width: 15px; height: 15px; transition: transform var(--dur-hover) var(--ease); }
+
+/* The pillar a post argues, as a chip: a dot in the pillar's own tone so the
+   three arguments are tellable apart down the list without reading a label. */
+.pillar { white-space: nowrap; }
+.pillar::before {
+  content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+  margin-right: 7px; vertical-align: 1px; background: var(--accent-2);
+}
+.pillar-craft::before { background: #C98F3E; }
+.pillar-fintech::before { background: var(--ink-2); }
+
+/* ---- Post: one column, centred on the measure ---- */
+.post-hero { padding-top: calc(var(--nav-h) + clamp(32px, 6vw, 72px)); padding-bottom: clamp(32px, 4vw, 52px); }
+.post-hero .wrap > * { max-width: 34rem; margin-inline: auto; }
+.post-hero .crumbs { margin-bottom: clamp(24px, 3vw, 36px); }
+.post-hero .t-display, .post-hero .t-lede, .post-hero .post-meta { text-align: center; }
+.post-hero h1 { max-width: 26ch; }
+.post-hero .post-meta { justify-content: center; }
+.post-hero .t-lede { margin-top: var(--sp-5); }
+.post-hero .post-meta { margin-top: clamp(24px, 3vw, 34px); padding-top: var(--sp-5); border-top: 1px solid var(--hair); }
+
+/* The claim: the one sentence the post defends, standing above the body */
+.claim { max-width: 34rem; margin: clamp(32px, 4vw, 48px) auto 0; padding-left: clamp(20px, 3vw, 32px); border-left: 2px solid var(--accent); }
+
+.prose { max-width: 34rem; margin-inline: auto; }
+.claim + .prose { margin-top: clamp(32px, 4vw, 48px); }
+.prose > * + * { margin-top: var(--sp-4); }
+.prose h2 { margin-top: clamp(40px, 4.5vw, 64px); }
+.prose h3 { margin-top: clamp(28px, 3vw, 40px); }
+.prose h2 + *, .prose h3 + * { margin-top: var(--sp-4); }
+.prose ul, .prose ol { padding-left: 1.35em; }
+.prose li + li { margin-top: var(--sp-2); }
+.prose li::marker { color: var(--ink-3); }
+.prose a { text-decoration: underline; text-decoration-color: var(--hair-2); text-underline-offset: 3px; transition: text-decoration-color var(--dur-hover); }
+.prose a:hover { text-decoration-color: var(--accent); }
+.prose blockquote { margin: clamp(32px, 4vw, 48px) 0; padding-left: clamp(20px, 3vw, 32px); border-left: 1px solid var(--hair-2); }
+.prose blockquote cite { display: block; margin-top: var(--sp-3); font-style: normal; }
+.prose hr { margin-block: clamp(40px, 5vw, 64px); border: 0; border-top: 1px solid var(--hair); }
+.prose figure { margin: clamp(32px, 4vw, 48px) 0; }
+.prose figcaption { margin-top: var(--sp-3); }
+
+/* Sources: the post's receipts, a hairline list under the body */
+.sources { max-width: 34rem; margin: clamp(48px, 6vw, 80px) auto 0; padding-top: var(--sp-5); border-top: 1px solid var(--hair); }
+.sources ol { margin-top: var(--sp-4); padding-left: 1.35em; }
+.sources li + li { margin-top: var(--sp-3); }
+.sources a { text-decoration: underline; text-decoration-color: var(--hair-2); text-underline-offset: 3px; transition: text-decoration-color var(--dur-hover); }
+.sources a:hover { text-decoration-color: var(--accent); }
+
+/* Next post, the closing band of a post. Mirrors .cs-next. */
+.post-next { text-align: center; }
+.post-next .t-title { margin-top: var(--sp-3); margin-inline: auto; }
+.post-next .actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: clamp(28px, 3vw, 40px); }
+
+@media (max-width: 560px) {
+  /* The index row's date and cue drop under the copy and turn left with it;
+     the post column is already one column, so only its rails come in. */
+  .post-hero .t-display, .post-hero .t-lede, .post-hero .post-meta { text-align: left; }
+  .post-hero .post-meta { justify-content: flex-start; }
+  .post-row { grid-template-columns: minmax(0, 1fr); }
+  .post-aside { align-items: flex-start; text-align: left; flex-direction: row; flex-wrap: wrap; gap: var(--sp-4); }
+  .post-hero .wrap > * { margin-inline: 0; }
+  .post-hero h1, .post-row .t-heading { max-width: none; }
+  .claim, .prose blockquote { padding-left: var(--sp-4); }
+  .post-next { text-align: left; }
+  .post-next .t-title { margin-inline: 0; }
+  .post-next .actions { justify-content: flex-start; }
 }

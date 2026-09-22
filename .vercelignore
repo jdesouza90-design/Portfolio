@@ -4,7 +4,10 @@
 .htmlvalidate.json
 README.md
 VOICE.md
+POSITION.md
 stamp.py
+blog.py
+blog/posts
 ai-process-art.mjs
 dev.mjs
 bot-check.mjs
