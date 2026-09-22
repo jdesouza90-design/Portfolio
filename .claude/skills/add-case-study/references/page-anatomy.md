@@ -9,7 +9,7 @@ Contents
 1. Conventions that apply everywhere
 2. Hero
 3. Results and the proof variants
-4. How we got there: row types and their contents
+4. The story: row types and their contents
 5. My role
 6. What I'd do differently
 7. Next
@@ -223,22 +223,25 @@ published usage metrics for this project, so the outcome is qualitative" or equi
 
 ---
 
-## 4. How we got there: row types and their contents
+## 4. The story: row types and their contents
 
 ```html
 <section class="cs-section" id="story">
   <div class="wrap">
     <header class="section-intro">
-      <p class="eyebrow">How we got there</p>
-      <h2 class="t-title">{{STORY_TITLE}}</h2>
+      <p class="eyebrow">The problem</p>
+      <h2 class="t-title">{{PROBLEM_HEADING}}</h2>
     </header>
     {{ROWS}}
   </div>
 </section>
 ```
 
-The story title is the arc in a fragment: "From a dead end to a second offer", "From a
-progress bar to a checklist", "A wallet login that reads like any other".
+The story opens on the problem. Its section intro is the eyebrow "The problem" and the
+problem's heading as the Title; the problem row underneath carries the body and the
+tensions list and has no heading of its own. There is no separate "How we got there"
+header with an arc title ("From a dead end to a second offer"): it used to sit above the
+problem and mostly restated it, so it was removed from every page in September 2026.
 
 Rows alternate. The pattern the pages use, in order: problem (`.row`), design (`.row.full`),
 then any of decisions (`.row.full`), a second surface (`.row.flip`), research (`.row.flip`),
@@ -255,12 +258,11 @@ or visual. Split rows (`.row`, `.row.flip`) take `t-heading` + `t-body`; full-wi
 | `.row.flip` | panel left, copy right | research quotes with a screen, a second surface |
 | `.row.full` | copy on top, visual full width | galleries, flows, decision grids, walkthroughs, quote grids |
 
-**Problem row** (always first; the tensions list is its signature):
+**Problem row** (always first; the tensions list is its signature; its eyebrow and heading
+live in the section intro above, so the row starts on the body):
 ```html
 <article class="row" id="problem">
   <div class="row-copy">
-    <p class="eyebrow">The problem</p>
-    <h3 class="t-heading">{{PROBLEM_HEADING}}</h3>
     <p class="t-body">{{PROBLEM_BODY}}</p>
     <ul class="tensions">
       <li><strong>Pivot</strong><span>The decline had to become a second offer, not a rejection.</span></li>
