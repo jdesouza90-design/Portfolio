@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=63f1442f">
+<link rel="stylesheet" href="styles.css?v=2c734207">
 <script defer src="/_vercel/insights/script.js"></script>
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
@@ -339,15 +339,24 @@
       <div class="arcade-head">
         <div>
           <p class="eyebrow">Bonus level</p>
-          <p class="t-subhead">Nine holes.</p>
-          <p class="t-small">Press to aim, press to swing. Par 27, and the wind counts. Space, Enter or tap.</p>
+          <p class="t-subhead"><span data-holes>Nine holes</span>.</p>
+          <p class="t-small">Press to aim, press to swing, and near the cup one press putts. Par <span data-par>27</span>, and the wind counts. Space, Enter or tap.</p>
         </div>
         <p class="t-small arcade-score" hidden>Best round <span data-best></span></p>
       </div>
-      <button class="arcade-screen" type="button" aria-label="Nine holes, a golf game. Press to aim, press again to swing.">
+      <button class="arcade-screen" type="button" aria-label="Nine holes, a golf game. Press to aim, press again to swing. Near the cup, one press putts.">
         <canvas width="192" height="64" aria-hidden="true"></canvas>
       </button>
       <p class="sr-only arcade-status" aria-live="polite"></p>
+      <ol class="sr-only arcade-board" aria-label="Leaderboard, fewest strokes first" hidden></ol>
+      <form class="arcade-post" hidden>
+        <label class="t-small" for="arcade-name">Put your round on the leaderboard. Letters and numbers, up to 10.</label>
+        <div class="arcade-post-row">
+          <input id="arcade-name" name="name" type="text" maxlength="10" autocomplete="nickname" autocapitalize="characters" spellcheck="false" required placeholder="Your name">
+          <button class="btn btn-primary" type="submit">Post score</button>
+        </div>
+        <p class="t-small arcade-post-note" role="status"></p>
+      </form>
     </div>
     <footer>
       <span>© <span data-year></span> John DeSouza</span>
@@ -358,6 +367,6 @@
 </section>
 
 </main>
-<script src="main.js?v=949cce16"></script>
+<script src="main.js?v=f546daee"></script>
 </body>
 </html>

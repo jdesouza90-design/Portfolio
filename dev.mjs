@@ -28,7 +28,8 @@ const MOCK_CLAUDE = !process.env.ANTHROPIC_API_KEY;
 if (MOCK_CLAUDE) process.env.ANTHROPIC_API_KEY = 'dev-stand-in';
 
 // ---- In-memory Redis behind the REST shape middleware.js speaks ----
-const lists = new Map(), values = new Map(), sets = new Map(), expires = new Map();
+const lists = new Map(), values = new Map(), sets = new Map(), zsets = new Map(), expires = new Map();   // a sorted set is [[score, member]], kept in order
+const zsorted = (key) => (zsets.get(key) || []).sort((a, b) => a[0] - b[0] || (a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : 0));
 const live = (key) => { const at = expires.get(key); if (at && at <= Date.now()) { values.delete(key); expires.delete(key); } return values.has(key); };
 const cmd = ([op, key, ...args]) => {
   switch (op) {
@@ -46,6 +47,13 @@ const cmd = ([op, key, ...args]) => {
       if (ex >= 0) expires.set(key, Date.now() + Number(opts[ex + 1]) * 1000); else expires.delete(key);
       return 'OK';
     }
+    case 'ZADD': { const z = zsorted(key).filter((e) => e[1] !== args[1]); z.push([Number(args[0]), args[1]]); zsets.set(key, z); return 1; }
+    case 'ZREM': { const z = zsorted(key); const keep = z.filter((e) => !args.includes(e[1])); zsets.set(key, keep); return z.length - keep.length; }
+    case 'ZCARD': return (zsets.get(key) || []).length;
+    case 'DEL': { expires.delete(key); const had = [lists, values, sets, zsets].some((m) => m.delete(key)); return had ? 1 : 0; }
+    case 'ZRANK': { const i = zsorted(key).findIndex((e) => e[1] === args[0]); return i < 0 ? null : i; }
+    case 'ZRANGE': { const z = zsorted(key), end = Number(args[1]); const part = z.slice(Number(args[0]), end < 0 ? z.length + end + 1 : end + 1); return args.includes('WITHSCORES') ? part.flatMap(([sc, m]) => [m, String(sc)]) : part.map((e) => e[1]); }
+    case 'ZREMRANGEBYRANK': { const z = zsorted(key), start = Number(args[0]); const n = z.length > start ? z.length - start : 0; zsets.set(key, z.slice(0, start)); return n; }
     case 'SADD': { const st = sets.get(key) || new Set(); const before = st.size; for (const a of args) st.add(a); sets.set(key, st); return st.size - before; }
     case 'SREM': { const st = sets.get(key) || new Set(); let n = 0; for (const a of args) n += st.delete(a) ? 1 : 0; return n; }
     case 'SMEMBERS': return [...(sets.get(key) || [])];
@@ -160,6 +168,8 @@ if (process.env.SEED !== '0') {
   }
   rows.sort((a, b) => b.t - a.t);
   lists.set('activity', rows.filter((r) => r.t <= now).map((r) => JSON.stringify(r)));
+  const names = ['ADA', 'GRACE', 'LINUS', 'MARGARET', 'KEN', 'BARBARA'];
+  zsets.set('golf:board', names.map((n, i) => [24 + i * 2 + Math.floor(Math.random() * 2), `${now - i * 3600000}:${n}`]));
   values.set('activity:count', String(rows.filter((r) => r.kind === 'viewed').length + 1840));
 
   // What people asked the chat, for the dashboard's Questions table.

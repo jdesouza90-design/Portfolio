@@ -1163,7 +1163,7 @@
   }
 
   // ---- Chat settings ----
-  // The form under Questions. It reads /api/settings once (the settings, the
+  // The form under Questions. It reads /api/chat-settings once (the settings, the
   // models, the defaults, and whether the key and the store are there) and
   // saves the whole form back; the edge cleans what it is given and answers
   // with what it kept, which the form then shows.
@@ -1196,7 +1196,7 @@
   }
   async function loadSettings() {
     try {
-      const res = await fetch('/api/settings', { cache: 'no-store', credentials: 'same-origin' });
+      const res = await fetch('/api/chat-settings', { cache: 'no-store', credentials: 'same-origin' });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       defaults = data.defaults;
@@ -1234,7 +1234,7 @@
     btn.disabled = true;
     $('settings-status').textContent = 'Saving…';
     try {
-      const res = await fetch('/api/settings', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ settings: read() }) });
+      const res = await fetch('/api/chat-settings', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ settings: read() }) });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
       fill(data.settings);

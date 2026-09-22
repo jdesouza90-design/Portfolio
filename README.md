@@ -40,8 +40,10 @@ admin/index.html                Activity dashboard: who is on the site, live (it
                                 asked the chat, and the chat's settings
 admin/dash.js                   The dashboard's script: polls the feed, builds sessions, draws the charts and the map,
                                 lists the chat's questions and saves its settings
-middleware.js                   Vercel Edge Middleware: the two password gates, the activity log, its feed, the
-                                time-on-page beacon and the chat's settings; its helpers are shared with api/chat.js
+admin/golf.js                   The dashboard's Nine holes section: the leaderboard (delete, clear), banned words, the game's settings
+middleware.js                   Vercel Edge Middleware: the two password gates, the activity log, its feed and the time-on-page beacon,
+                                the Nine holes leaderboard (/api/scores; its name filter, and /api/board for the dashboard)
+                                and the chat's settings (/api/chat-settings); its helpers are shared with api/chat.js
 api/chat.js                     The chat: a Vercel Function that answers from the site's pages with Claude (see The chat)
 package.json                    The one dependency, the Anthropic SDK, which Vercel installs for api/chat.js
 vercel.json                     Cache and security headers; bundles the pages with api/chat.js

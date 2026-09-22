@@ -7,7 +7,10 @@
 //   /api/activity   the feed the dashboard polls, and the referrer blocklist it
 //                   edits (POST); needs the admin cookie
 //   /api/ping       the beacon main.js sends with the time a page has been read
-//   /api/settings   the chat's settings, read and saved from the dashboard;
+//   /api/scores     the Nine holes leaderboard: read it (GET), post a round (POST)
+//   /api/board      the leaderboard as the dashboard edits it: every entry, delete
+//                   one, ban or unban a word; needs the admin cookie
+//   /api/chat-settings the chat's settings, read and saved from the dashboard;
 //                   needs the admin cookie
 //   everything else public, but every page view is recorded
 //
@@ -29,7 +32,7 @@
 // why that cookie covers the whole site, the store, the visitor id and the
 // log. Its questions are kept in chat:log and go to the dashboard with the feed.
 
-export const config = { matcher: ['/', '/index.html', '/work.html', '/work/:path*', '/admin/:path*', '/api/activity', '/api/ping', '/api/settings'] };
+export const config = { matcher: ['/', '/index.html', '/work.html', '/work/:path*', '/admin/:path*', '/api/activity', '/api/ping', '/api/scores', '/api/board', '/api/chat-settings'] };
 
 export const COOKIE = 'cs_access';
 export const MAX_AGE = 60 * 60 * 24 * 30;   // 30 days
@@ -105,7 +108,7 @@ function page({ path, error, unconfigured, ref, admin }) {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/styles.css?v=63f1442f">
+<link rel="stylesheet" href="/styles.css?v=2c734207">
 </head>
 <body>
 <main class="gate-wrap"><div class="gate">
@@ -353,6 +356,151 @@ async function ping(request, salt) {
 }
 
 
+// ---- Leaderboard -------------------------------------------------------------
+// GET /api/scores                 →  { configured, scores: [{name, score}], settings }
+// POST /api/scores {name, score}  →  { configured, scores, settings, rank }
+// The Nine holes board: fewest strokes first, ties to whoever got there first.
+// A sorted set scored by strokes whose members are `<ms>:<NAME>`, so equal
+// scores fall into time order and the same name can hold more than one place.
+// Names are drawn on the game's pixel face, so only A–Z, 0–9 and single
+// spaces survive, ten at most. A round is 9 holes at one stroke or more, and a
+// visitor may post once every RATE_SECS. Anything past the first BOARD_KEEP
+// places is dropped.
+
+const BOARD_KEY = 'golf:board';
+const BOARD_SHOW = 5;                       // places the game draws
+const BOARD_KEEP = 100;                     // places kept
+const RATE_SECS = 20;
+const SETTINGS_KEY = 'golf:settings';       // the game's settings as the dashboard last saved them, JSON
+
+// What the dashboard can tune, as [default, least, most, step]. The game
+// plays the defaults until something is saved, and whenever the store is out.
+const GAME = {
+  holes: [9, 1, 18, 1],                     // holes in a round
+  par: [3, 2, 6, 1],                        // par on each hole
+  cup: [5, 3, 11, 2],                       // the cup's width in game pixels, odd
+  putt: [28, 0, 60, 1],                     // how close to the cup the putter comes out; 0 never
+  wind: [25, 0, 60, 1],                     // the strongest wind a hole can have
+  aim: [1.4, 0.5, 3, 0.1],                  // seconds for the aim arrow's full swing
+  power: [1, 0.4, 3, 0.1],                  // seconds for the power meter's full swing
+  hazards: [65, 0, 100, 5],                 // percent of holes with a bunker or a pond
+};
+function settingsFrom(raw) {
+  let o = {};
+  try { o = (typeof raw === 'string' ? JSON.parse(raw) : raw) || {}; } catch (_) {}
+  const out = {};
+  for (const [k, [d, lo, hi, step]] of Object.entries(GAME)) {
+    let v = Number(o[k]);
+    if (!Number.isFinite(v)) v = d;
+    v = k === 'cup' ? Math.round((v - 1) / 2) * 2 + 1 : Math.round(v / step) * step;
+    out[k] = Number(Math.min(hi, Math.max(lo, v)).toFixed(2));
+  }
+  out.open = o.open !== false;              // whether the board takes new rounds
+  return out;
+}
+const BAN_KEY = 'golf:banned';              // Redis set of words the owner has kept off the board, beside the list below
+
+// Names that never reach the board. Digits are read as the letters they stand
+// in for (5H1T), spaces are dropped (F U C K), and each check is made twice:
+// on the name as typed and squeezed, runs of a letter cut to one (FUUUCK).
+// BAD is matched anywhere in the name, so it lists a squeezed spelling beside
+// any word with a double letter; WORDS only as a whole word or the whole name
+// (a plural s allowed), because as fragments they sit inside ordinary names:
+// CLASS, HANCOCK, GRAPE, SPICY, RACCOON, TORPEDO, SUSSEX, CANAL. The owner's
+// own banned words (the dashboard) are matched anywhere, as BAD is.
+const BAD = ['FUCK', 'FUK', 'FCUK', 'FVCK', 'SHIT', 'CUNT', 'NIGG', 'NIGA', 'NIGR', 'NIGER', 'FAGGOT', 'FAGOT', 'PUSSY', 'PUSY', 'WHORE', 'SLUT',
+  'BITCH', 'BASTARD', 'ASSHOLE', 'ASHOLE', 'ARSEHOLE', 'PENIS', 'VAGIN', 'DILDO', 'JIZZ', 'JIZ', 'TWAT', 'WANK', 'KIKE', 'CHINK', 'RETARD',
+  'NAZI', 'HITLER', 'KKK', 'PORN', 'MOLEST', 'WETBACK', 'TRANNY', 'TRANY', 'BOLLOCK', 'BOLOCK', 'BLOWJOB', 'HANDJOB', 'SEMEN', 'CLIT', 'RAPIST',
+  'PEDOPHIL', 'COCKSUCK', 'COKSUCK', 'TITTIE', 'TITIE', 'BOOBIE', 'MOTHERF', 'DICKHEAD', 'DIKHEAD', 'SKANK', 'SCHLONG', 'TESTICL', 'ERECTION', 'ORGASM'];
+const WORDS = ['ASS', 'ASSES', 'ARSE', 'TIT', 'TITS', 'TITY', 'TITTY', 'COCK', 'COK', 'DICK', 'DIK', 'CUM', 'RAPE', 'SPIC', 'COON', 'HOMO', 'FAG',
+  'SEX', 'SEXY', 'ANAL', 'ANUS', 'PEDO', 'NUDE', 'BOOB', 'DYKE', 'PISS', 'NIG', 'JAP', 'GOOK', 'HOE', 'THOT', 'NIGGA', 'NIGA', 'PRICK', 'BALLS', 'BUTT'];
+const LEET = { 0: 'O', 1: 'I', 3: 'E', 4: 'A', 5: 'S', 7: 'T', 8: 'B', 9: 'G' };
+const squeeze = (s) => s.replace(/(.)\1+/g, '$1');
+function banned(name, extra = []) {
+  const read = name.replace(/[0-9]/g, (d) => LEET[d] || d);
+  const words = read.split(' ').filter(Boolean);
+  const plain = read.replace(/ /g, '');
+  const forms = [plain, squeeze(plain)];
+  const isWord = (w) => WORDS.includes(w) || (/[SZ]$/.test(w) && WORDS.includes(w.slice(0, -1)));
+  if ([...words, ...words.map(squeeze), ...forms].some(isWord)) return true;
+  return BAD.concat(extra).some((b) => b && forms.some((f) => f.includes(b)));
+}
+
+const cleanName = (s) => String(s || '').toUpperCase().replace(/[^A-Z0-9 ]/g, '').replace(/\s+/g, ' ').trim().slice(0, 10).trim();
+
+async function board() {
+  const [raw, set] = await redis([['ZRANGE', BOARD_KEY, 0, BOARD_SHOW - 1, 'WITHSCORES'], ['GET', SETTINGS_KEY]]);
+  const scores = [];
+  for (let i = 0; i + 1 < (raw || []).length; i += 2) scores.push({ name: String(raw[i]).replace(/^\d+:/, ''), score: Number(raw[i + 1]) });
+  return { scores, settings: settingsFrom(set) };
+}
+
+async function scores(request, salt) {
+  if (!store()) return json({ configured: false, scores: [], settings: settingsFrom(null) });
+  if (request.method === 'GET') return json({ configured: true, ...(await board()) });
+  if (request.method !== 'POST') return new Response(null, { status: 405, headers: { Allow: 'GET, POST' } });
+  let name = '', score = 0;
+  try {
+    const body = JSON.parse(await request.text());
+    name = cleanName(body.name);
+    score = Number(body.score);
+  } catch (_) {}
+  if (!name) return json({ error: 'A name needs a letter or a number' }, 400);
+  const [set, extra] = await redis([['GET', SETTINGS_KEY], ['SMEMBERS', BAN_KEY]]);
+  if (banned(name, extra || [])) return json({ error: 'That name can\'t go on the board. Pick another' }, 400);
+  const settings = settingsFrom(set);
+  if (!settings.open) return json({ error: 'The leaderboard is closed to new rounds for now' }, 403);
+  if (!Number.isInteger(score) || score < settings.holes || score > 999) return json({ error: 'Not a whole round' }, 400);
+  const [fresh] = await redis([['SET', `golf:rate:${await visitorId(request, salt)}`, '1', 'EX', RATE_SECS, 'NX']]);
+  if (!fresh) return json({ error: 'One round at a time. Try again in a few seconds' }, 429);
+  const member = `${Date.now()}:${name}`;
+  const [, rank] = await redis([['ZADD', BOARD_KEY, score, member], ['ZRANK', BOARD_KEY, member], ['ZREMRANGEBYRANK', BOARD_KEY, BOARD_KEEP, -1]]);
+  return json({ configured: true, ...(await board()), rank: rank === null || rank >= BOARD_KEEP ? null : rank + 1 });
+}
+
+
+// GET /api/board                  →  { entries: [{id, name, score, t}], banned }
+// POST /api/board {remove: id}     →  the same, without that entry
+// POST /api/board {ban: word}      →  the same, the word added and every name it catches gone, plus {removed}
+// POST /api/board {unban: word}    →  the same, the word taken off
+// POST /api/board {clear: true}    →  the same, every entry gone
+// POST /api/board {settings: {…}}  →  the same, the game's settings saved (clamped to GAME)
+// Every kept place, the banned words and the settings, for the dashboard's Nine holes section.
+async function boardAdmin(request) {
+  if (!store()) return json({ error: 'No store is connected' }, 503);
+  let removed = 0;
+  if (request.method === 'POST') {
+    let body = {};
+    try { body = JSON.parse(await request.text()) || {}; } catch (_) {}
+    if (body.settings && typeof body.settings === 'object') {
+      await redis([['SET', SETTINGS_KEY, JSON.stringify(settingsFrom(body.settings))]]);
+    } else if (body.clear === true) {
+      [removed] = await redis([['ZCARD', BOARD_KEY]]);
+      await redis([['DEL', BOARD_KEY]]);
+    } else if (typeof body.remove === 'string') {
+      [removed] = await redis([['ZREM', BOARD_KEY, body.remove]]);
+    } else if (typeof body.ban === 'string' || typeof body.unban === 'string') {
+      const word = cleanName(body.ban ?? body.unban).replace(/ /g, '');
+      if (!word) return json({ error: 'A word needs a letter or a number' }, 400);
+      if (typeof body.unban === 'string') await redis([['SREM', BAN_KEY, word]]);
+      else {
+        const [all] = await redis([['ZRANGE', BOARD_KEY, 0, -1]]);
+        const gone = (all || []).filter((m) => banned(String(m).replace(/^\d+:/, ''), [word]));
+        removed = gone.length;
+        await redis([['SADD', BAN_KEY, word], ...(removed ? [['ZREM', BOARD_KEY, ...gone]] : [])]);
+      }
+    } else return json({ error: 'Nothing to do' }, 400);
+  }
+  const [raw, words, set] = await redis([['ZRANGE', BOARD_KEY, 0, -1, 'WITHSCORES'], ['SMEMBERS', BAN_KEY], ['GET', SETTINGS_KEY]]);
+  const entries = [];
+  for (let i = 0; i + 1 < (raw || []).length; i += 2) {
+    const id = String(raw[i]), m = /^(\d+):(.*)$/.exec(id) || [, 0, id];
+    entries.push({ id, name: m[2], score: Number(raw[i + 1]), t: Number(m[1]) });
+  }
+  return json({ entries, banned: (words || []).sort(), settings: settingsFrom(set), limits: GAME, removed });
+}
+
+
 // ---- The feed ---------------------------------------------------------------
 // GET /api/activity?since=<ms>  →  { configured, now, total, events, blocked, chats }
 // `events` is newest first, only those after `since` when it is given. The
@@ -420,13 +568,13 @@ async function editBlocklist(request) {
 
 
 // ---- Chat settings ----------------------------------------------------------
-// GET /api/settings  →  { store, key, settings, models, defaults }
-// POST /api/settings {settings}  →  { settings }, as saved
+// GET /api/chat-settings  →  { store, key, settings, models, defaults }
+// POST /api/chat-settings {settings}  →  { settings }, as saved
 // What the dashboard's Chat settings form edits: whether the chat shows at
 // all, the model, the two limits, the suggested questions and John's notes
 // for the assistant. Kept in the store as one JSON value; without a store the
 // defaults below apply and nothing can be saved. The chat reads them through
-// chatSettings(), each instance keeping its copy for SETTINGS_TTL, so a save
+// chatSettings(), each instance keeping its copy for CHAT_SETTINGS_TTL, so a save
 // reaches every visitor within half a minute and no redeploy is needed.
 // The API key is not a setting: it stays in Vercel's environment variables.
 
@@ -439,8 +587,8 @@ export const CHAT_DEFAULTS = {
   starters: ['What kind of role is John looking for?', 'How does John run a design team?', 'What has John done with AI agents?', 'Tell me about the Staking work'],
   notes: '',                      // what the pages don't say, in John's words; the assistant may repeat it
 };
-const SETTINGS_KEY = 'chat:settings';
-const SETTINGS_TTL = 30000;       // ms an instance keeps its copy
+const CHAT_SETTINGS_KEY = 'chat:settings';
+const CHAT_SETTINGS_TTL = 30000;  // ms an instance keeps its copy
 
 export function cleanSettings(raw) {
   const s = { ...CHAT_DEFAULTS, starters: [...CHAT_DEFAULTS.starters] };
@@ -457,9 +605,9 @@ export function cleanSettings(raw) {
 
 let settingsAt = 0, settingsCopy = null;
 export async function chatSettings() {
-  if (settingsCopy && Date.now() - settingsAt < SETTINGS_TTL) return settingsCopy;
+  if (settingsCopy && Date.now() - settingsAt < CHAT_SETTINGS_TTL) return settingsCopy;
   try {
-    const [raw] = (await redis([['GET', SETTINGS_KEY]])) || [null];
+    const [raw] = (await redis([['GET', CHAT_SETTINGS_KEY]])) || [null];
     settingsCopy = cleanSettings(raw ? JSON.parse(raw) : null);
     settingsAt = Date.now();
   } catch (err) {
@@ -477,7 +625,7 @@ async function settingsRoute(request) {
   try { body = JSON.parse(await request.text()); } catch (_) {}
   if (!body || typeof body.settings !== 'object') return json({ error: 'No settings sent' }, 400);
   const settings = cleanSettings(body.settings);
-  await redis([['SET', SETTINGS_KEY, JSON.stringify(settings)]]);
+  await redis([['SET', CHAT_SETTINGS_KEY, JSON.stringify(settings)]]);
   settingsCopy = settings; settingsAt = Date.now();
   return info(settings);
 }
@@ -490,17 +638,23 @@ export default async function middleware(request, context) {
   const path = url.pathname + url.search;
   const isAdmin = url.pathname.startsWith('/admin');
   const isFeed = url.pathname === '/api/activity';
-  const isSettings = url.pathname === '/api/settings';
+  const isSettings = url.pathname === '/api/chat-settings';
   const isPing = url.pathname === '/api/ping';
+  const isScores = url.pathname === '/api/scores';
+  const isBoard = url.pathname === '/api/board';
   const isWork = url.pathname.startsWith('/work/');
 
-  // ---- Dashboard, its feed and the chat settings: the owner's password ----
-  if (isAdmin || isFeed || isSettings) {
+  // ---- Dashboard, its feed, the board and the chat settings: the owner's password ----
+  if (isAdmin || isFeed || isBoard || isSettings) {
     const password = process.env.ADMIN_PASSWORD;
     if (!password) return isAdmin ? new Response(page({ path, unconfigured: true, admin: true }), { status: 503, headers }) : json({ error: 'ADMIN_PASSWORD is not set' }, 503);
     const expected = await adminTokenFor(password);
     const signedIn = readCookie(request, ADMIN_COOKIE) === expected;
 
+    if (isBoard) {
+      if (!signedIn) return json({ error: 'Sign in at /admin/ first' }, 401);
+      return boardAdmin(request).catch((err) => { console.error('board: failed', err); return json({ error: 'The store is not answering' }, 502); });
+    }
     if (isFeed || isSettings) {
       if (!signedIn) return json({ error: 'Sign in at /admin/ first' }, 401);
       if (isSettings) return settingsRoute(request);
@@ -551,6 +705,7 @@ export default async function middleware(request, context) {
     if (!muted) after(ping(request, expected));
     return new Response(null, { status: 204, headers: { 'Cache-Control': 'no-store' } });
   }
+  if (isScores) return scores(request, expected).catch((err) => { console.error('scores: failed', err); return json({ error: 'The board is not answering' }, 502); });
 
   if (!isWork) {                             // public page: record the view and serve it
     if (request.method === 'GET') log('viewed');

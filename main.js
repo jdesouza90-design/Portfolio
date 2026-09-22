@@ -1509,8 +1509,13 @@ const CONFIG = {
      the cup somewhere to the right, a wind, and on most holes a bunker or a
      pond between. One press stops the swinging aim arrow, the next stops the
      power meter and hits; the ball flies, bounces and rolls, and drops when
-     it crosses the cup slowly enough. Nine holes, par 3 each; the best round
-     is kept in localStorage. Anything can press it: the button's click
+     it crosses the cup slowly enough. Once the ball stops within a few steps
+     of the cup it's a putt: no arrow, one press rolls it, and a putt struck
+     too firm runs past. Nine holes, par 3 each; the best round
+     is kept in localStorage, and a finished round can be posted by name to
+     the shared leaderboard (/api/scores), whose top five the start screen
+     draws: beside the title when there is room, in turn with it when there
+     is not (or in place of it, for reduced motion). Anything can press it: the button's click
      (Enter, tap, mouse), or Space and the up arrow on keydown. The loop runs
      only while something moves, and pauses when the block leaves the screen
      or the tab is hidden. Sprites are strings: 1 is ink, 2 accent. */
@@ -1521,10 +1526,16 @@ const CONFIG = {
     if (!root || !btn || !c || !c.getContext) return;
     const ctx = c.getContext("2d");
     const bestWrap = $(".arcade-score", root), best = $("[data-best]", root), status = $(".arcade-status", root);
+    const list = $(".arcade-board", root), post = $(".arcade-post", root);
+    const nameIn = post && $("input", post), postBtn = post && $("button", post), note = post && $(".arcade-post-note", post);
     const tok = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
     const INK = tok("--ink") || "#14100C", INK3 = tok("--ink-3") || "#6F675D", HAIR = tok("--hair-2") || "#CFC9BF";
     const ACCENT = tok("--accent") || "#3B6B44", GREEN = tok("--accent-2") || "#6E9A5A", FLAG = tok("--danger") || "#C0392B", SAND = tok("--surface") || "#FFFFFF";
-    const H = 64, GROUND = 52, TEE = 12, HOLES = 9, PAR = 3;   // logical pixels; the ground line is GROUND
+    const H = 64, GROUND = 52, TEE = 12;           // logical pixels; the ground line is GROUND
+    /* The tunable part, which the dashboard sets (GAME in middleware.js has
+       the same defaults and the limits). /api/scores hands the saved values
+       over with the board; a change arriving mid-round waits for the next. */
+    let HOLES = 9, PAR = 3, CUP = 5, PUTT = 28, WIND = 25, AIM = 1.4, POWER = 1.0, HAZARDS = 0.65, pending = null;
     let W = 192, scale = 4;
 
     /* Sprites: the golfer at address, at the top of the backswing, and after the hit */
@@ -1537,6 +1548,7 @@ const CONFIG = {
     /* A 3×5 pixel face for the words on screen; the site's faces stay in the DOM */
     const FONT = {
       A: "010101111101101", B: "110101110101110", C: "111100100100111", D: "110101101101110", E: "111100110100111",
+      F: "111100110100100", J: "001001001101111", Q: "111101101111011", Z: "111001010100111",
       G: "111100101101111", H: "101101111101101", I: "111010010010111", K: "101101110101101", L: "100100100100111",
       M: "101111111101101", N: "110101101101101", O: "111101101101111", P: "111101111100100", R: "111101110101101",
       S: "111100111001111", T: "111010010010010", U: "101101101101111", V: "101101101101010", W: "101101101111101",
@@ -1557,17 +1569,20 @@ const CONFIG = {
       });
     };
     const width = (str, size = 1) => (str.length * 4 - 1) * size;
-    const centre = (str, y, col, size = 1) => text(str, Math.floor((W - width(str, size)) / 2), y, col, size);
+    const centre = (str, y, col, size = 1, mid = W / 2) => text(str, Math.floor(mid - width(str, size) / 2), y, col, size);
 
     /* State */
     const G = 220, FRICTION = 70, BOUNCE = 0.45;   // px/s²; px/s²; how much of a landing comes back up
-    const AIM = 1.4, POWER = 1.0;                  // seconds for a full swing of the arrow and of the meter
+    const PUTT_V = 92, PUTT_DROP = 55;             // within PUTT px of the cup it's a putt: rolled, at most ~60px, and too firm lips out
     let state = "idle";                            // idle | aim | power | fly | holed | over
     let paused = false, raf = 0, last = 0, clock = 0;
     let hole = 0, strokes = 0, total = 0, cup = 0, wind = 0, hazard = null, holeStroke = 0;
-    let ball = { x: TEE, y: GROUND - 2, vx: 0, vy: 0 }, from = TEE, angle = 45, power = 0, pose = 0;
+    let ball = { x: TEE, y: GROUND - 2, vx: 0, vy: 0 }, from = TEE, angle = 45, power = 0, pose = 0, putting = false;
     let clouds = [], tufts = [];
     let hi = 0;
+    let leaders = [], boardOn = false, taking = true, mine = -1, attract = false, posted = false;   // the shared board, and this round's place on it
+    const BW = 64;                                 // the board's width: place, a ten-letter name, strokes
+    const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     try { hi = Number(localStorage.getItem("golf-best")) || 0; } catch (e) { /* private mode */ }
     const showBest = () => { if (hi) { best.textContent = String(hi); bestWrap.hidden = false; } };
     showBest();
@@ -1577,35 +1592,55 @@ const CONFIG = {
       tufts = Array.from({ length: Math.round(W / 7) }, () => Math.floor(rand(0, W)));
     };
     const say = (m) => { if (status) status.textContent = m; };
-    const NAMES = { 1: "ACE", 2: "BIRDIE", 3: "PAR", 4: "BOGEY", 5: "DOUBLE", 6: "TRIPLE" };
-    const named = (n) => NAMES[n] || "OUCH";
+    const NAMES = { "-3": "ALBATROSS", "-2": "EAGLE", "-1": "BIRDIE", 0: "PAR", 1: "BOGEY", 2: "DOUBLE", 3: "TRIPLE" };
+    const named = (n) => (n === 1 ? "ACE" : NAMES[n - PAR] || "OUCH");
+    const COUNT = ["", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE", "TEN", "ELEVEN", "TWELVE", "THIRTEEN", "FOURTEEN", "FIFTEEN", "SIXTEEN", "SEVENTEEN", "EIGHTEEN"];
+    const title = () => `${COUNT[HOLES] || HOLES} HOLE${HOLES === 1 ? "" : "S"}`;
+    const bestKey = () => (HOLES === 9 && PAR === 3 ? "golf-best" : `golf-best-${HOLES}x${PAR}`);   // a best only stands against rounds of the same length
+    const apply = (st) => {
+      if (!st) return;
+      if (state !== "idle" && state !== "over") { pending = st; return; }
+      pending = null;
+      HOLES = st.holes; PAR = st.par; CUP = st.cup; PUTT = st.putt; WIND = st.wind; AIM = st.aim; POWER = st.power; HAZARDS = st.hazards / 100;
+      const words = title().charAt(0) + title().slice(1).toLowerCase();
+      $$("[data-holes]", root).forEach((el) => (el.textContent = words));
+      $$("[data-par]", root).forEach((el) => (el.textContent = String(HOLES * PAR)));
+      btn.setAttribute("aria-label", `${words}, a golf game. Press to aim, press again to swing. Near the cup, one press putts.`);
+      try { hi = Number(localStorage.getItem(bestKey())) || 0; } catch (e) { hi = 0; }
+      bestWrap.hidden = !hi; showBest();
+    };
     const vmax = () => Math.sqrt((W - TEE) * 1.15 * G);   // full power carries a little past the far edge
     const dir = () => (ball.x + 1 > cup ? -1 : 1);         // past the cup, the golfer turns and hits back
 
     const layHole = () => {
       strokes = 0;
       cup = Math.round(rand(W * 0.55, W * 0.92));
-      wind = Math.round(rand(-25, 25));
+      wind = Math.round(rand(-WIND, WIND));
       const kind = Math.random();
-      if (kind < 0.35 || W < 120) hazard = null;
+      if (kind >= HAZARDS || W < 120) hazard = null;
       else {
         const w = Math.round(rand(12, 22)), x = Math.round(rand(TEE + 24, cup - w - 12));
-        hazard = { kind: kind < 0.7 ? "sand" : "water", x, w };
+        hazard = { kind: kind < HAZARDS * 0.55 ? "sand" : "water", x, w };
       }
       ball = { x: TEE, y: GROUND - 2, vx: 0, vy: 0 };
-      from = TEE; pose = 0; clock = 0;
+      from = TEE; pose = 0; clock = 0; putting = false;
       state = "aim";
     };
     const hit = () => {
-      const v = 30 + power * (vmax() - 30), a = (angle * Math.PI) / 180;
-      ball.vx = Math.cos(a) * v * dir(); ball.vy = -Math.sin(a) * v;
+      if (putting) { ball.vx = (8 + power * (PUTT_V - 8)) * dir(); ball.vy = 0; }   // along the ground, no loft
+      else {
+        const v = 30 + power * (vmax() - 30), a = (angle * Math.PI) / 180;
+        ball.vx = Math.cos(a) * v * dir(); ball.vy = -Math.sin(a) * v;
+      }
       from = ball.x; strokes++; total++; pose = 2;
       state = "fly";
     };
     const inHazard = (x) => hazard && x >= hazard.x && x <= hazard.x + hazard.w;
-    const settle = () => {                         // the ball has stopped: back to aiming, or it was the cup
+    const settle = () => {                         // the ball has stopped: back to aiming, or straight to the putter when it's close
       ball.vx = 0; ball.vy = 0; ball.y = GROUND - 2; pose = 0; clock = 0;
-      state = "aim";
+      putting = PUTT > 0 && Math.abs(ball.x + 1 - cup) <= PUTT && !inHazard(ball.x + 1);
+      if (putting) { state = "power"; power = 0; say("On the green. Press to putt."); }
+      else state = "aim";
     };
     const holed = () => {
       holeStroke = strokes; ball.y = GROUND; ball.vx = 0; ball.vy = 0;
@@ -1614,9 +1649,52 @@ const CONFIG = {
     };
     const finish = () => {
       state = "over";
-      if (!hi || total < hi) { hi = total; showBest(); try { localStorage.setItem("golf-best", String(hi)); } catch (e) { /* fine */ } }
-      say(`Round over. ${total} strokes, par ${HOLES * PAR}. Best ${hi}.`);
+      if (!hi || total < hi) { hi = total; showBest(); try { localStorage.setItem(bestKey(), String(hi)); } catch (e) { /* fine */ } }
+      say(`Round over. ${total} strokes, par ${HOLES * PAR}. Best ${hi}.${boardOn && taking ? " Add your name below to post it to the leaderboard." : ""}`);
+      if (boardOn && taking && post) {
+        posted = false; post.hidden = false; nameIn.parentElement.hidden = false; nameIn.labels[0].hidden = false; note.textContent = "";
+        nameIn.removeAttribute("aria-invalid"); postBtn.disabled = false;
+        if (!nameIn.value) try { nameIn.value = localStorage.getItem("golf-name") || ""; } catch (e) { /* private mode */ }
+      }
     };
+
+    /* The leaderboard: read once on load, replaced by what a post returns */
+    const ordinal = (n) => `${n}${["st", "nd", "rd"][((n + 90) % 100 - 10) % 10 - 1] || "th"}`;
+    const setBoard = (rows) => {
+      leaders = Array.isArray(rows) ? rows.slice(0, 5) : [];
+      if (!list) return;
+      list.replaceChildren(...leaders.map((r) => { const li = document.createElement("li"); li.textContent = `${r.name}, ${r.score} strokes`; return li; }));
+      list.hidden = !leaders.length;
+    };
+    fetch("/api/scores", { headers: { Accept: "application/json" } })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (!d) return; apply(d.settings); if (d.configured) { boardOn = true; taking = !d.settings || d.settings.open; setBoard(d.scores); } frame(); })
+      .catch(() => { /* no board: the game plays on its own */ });
+    const clean = (v) => v.toUpperCase().replace(/[^A-Z0-9 ]/g, "").replace(/\s+/g, " ");
+    if (post) {
+      nameIn.addEventListener("input", () => { const v = clean(nameIn.value); if (v !== nameIn.value) nameIn.value = v; nameIn.removeAttribute("aria-invalid"); });
+      post.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const name = clean(nameIn.value).trim();
+        if (!name) { nameIn.setAttribute("aria-invalid", "true"); note.textContent = "Add a letter or a number."; nameIn.focus(); return; }
+        if (posted) return;
+        postBtn.disabled = true; note.textContent = "Posting…";
+        fetch("/api/scores", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name, score: total }) })
+          .then((r) => r.json().then((d) => ({ ok: r.ok, d })))
+          .then(({ ok, d }) => {
+            if (!ok) throw new Error(d.error || "The board isn't answering");
+            posted = true;
+            try { localStorage.setItem("golf-name", name); } catch (err) { /* fine */ }
+            setBoard(d.scores);
+            mine = d.rank && d.rank <= leaders.length ? d.rank - 1 : -1;
+            note.textContent = d.rank ? `Posted. ${name} is ${ordinal(d.rank)} on the leaderboard with ${total}.` : `Posted, though ${total} is outside the top 100.`;
+            nameIn.parentElement.hidden = true; nameIn.labels[0].hidden = true;
+            btn.focus({ preventScroll: true });
+            state = "idle"; attract = true; frame();
+          })
+          .catch((err) => { postBtn.disabled = false; note.textContent = `${err.message}.`; });
+      });
+    }
 
     /* Drawing */
     const scene = () => {
@@ -1629,23 +1707,30 @@ const CONFIG = {
         ctx.fillRect(hazard.x, GROUND, hazard.w, 3);
         for (let x = hazard.x + 1; x < hazard.x + hazard.w - 1; x += 3) px(x, GROUND + 1 + (x % 2), INK3);   // grains, or ripples
       }
-      // the cup: a gap in the line with ink walls, and the flag beside it
-      ctx.clearRect(cup - 1, GROUND, 3, 2);
-      px(cup - 2, GROUND, INK); px(cup + 2, GROUND, INK); px(cup - 1, GROUND + 2, INK); px(cup, GROUND + 2, INK); px(cup + 1, GROUND + 2, INK);
-      ctx.fillStyle = INK; ctx.fillRect(cup + 2, GROUND - 12, 1, 12);
-      ctx.fillStyle = FLAG; ctx.fillRect(cup + 3, GROUND - 12, 3, 2); ctx.fillRect(cup + 3, GROUND - 10, 2, 1);
+      // the cup: a gap in the line CUP px wide with ink walls and floor, and the flag beside it
+      const r = CUP >> 1;
+      ctx.clearRect(cup - r, GROUND, CUP, 3);
+      ctx.fillStyle = INK; ctx.fillRect(cup - r - 1, GROUND, 1, 3); ctx.fillRect(cup + r + 1, GROUND, 1, 3); ctx.fillRect(cup - r, GROUND + 3, CUP, 1);
+      ctx.fillRect(cup + r + 1, GROUND - 12, 1, 12);
+      ctx.fillStyle = FLAG; ctx.fillRect(cup + r + 2, GROUND - 12, 3, 2); ctx.fillRect(cup + r + 2, GROUND - 10, 2, 1);
       if (state !== "idle" && state !== "over") {
         if (state !== "fly") { const left = dir() < 0; sprite(GOLFER[pose], Math.round(ball.x) + (left ? 2 : -8), GROUND - 10, INK, left); }
         if (state !== "holed") { ctx.fillStyle = INK; ctx.fillRect(Math.round(ball.x), Math.max(0, Math.round(ball.y)), 2, ball.y < 0 ? 1 : 2); }   // above the frame, a mark at the top
         text(`HOLE ${hole}`, 4, 4, INK);
         const s = `STROKE ${strokes}`; text(s, W - 4 - width(s), 4, INK);
-        const gust = Math.min(3, Math.round(Math.abs(wind) / 8));
-        const arrows = (wind < 0 ? "<" : ">").repeat(gust) || "-";
-        centre(`WIND ${arrows}`, 4, INK3);
+        if (putting && state !== "fly") centre("PUTT", 4, INK3);
+        else {
+          const gust = Math.min(3, Math.round(Math.abs(wind) / 8));
+          const arrows = (wind < 0 ? "<" : ">").repeat(gust) || "-";
+          centre(`WIND ${arrows}`, 4, INK3);
+        }
       }
       if (state === "aim") {                       // the arrow from the ball, four dots long
         const a = (angle * Math.PI) / 180;
         for (let i = 3; i <= 12; i += 3) px(Math.round(ball.x + 1 + Math.cos(a) * i * dir()), Math.round(ball.y + 1 - Math.sin(a) * i), INK);
+      }
+      if (state === "power" && putting) {          // the line of the putt, three dots along the ground
+        for (let i = 4; i <= 12; i += 4) px(Math.round(ball.x + 1 + i * dir()), GROUND - 1, INK3);
       }
       if (state === "power") {                     // the meter under the wind
         const w = 32, x = Math.floor((W - w) / 2);
@@ -1653,7 +1738,32 @@ const CONFIG = {
         ctx.fillStyle = ACCENT; ctx.fillRect(x, 12, Math.round(w * power), 3);
       }
     };
-    const idle = () => { scene(); centre("NINE HOLES", 14, INK, 2); centre("PRESS TO PLAY", 30, INK3); };
+    const leaderRows = (x, y) => {
+      text("LEADERS", x, y, INK3);
+      leaders.forEach((r, i) => {
+        const row = y + 8 + i * 8, col = i === mine ? ACCENT : INK, sc = String(r.score);
+        text(String(i + 1), x, row, INK3); text(r.name, x + 7, row, col); text(sc, x + BW - width(sc), row, col);
+      });
+    };
+    const idle = () => {
+      hazard = null;
+      const board = boardOn && leaders.length;
+      if (board && W >= 200) {                     // room for both: the title left, the board right, the flag between
+        const bx = W - 8 - BW;
+        cup = bx - 16; scene();
+        centre(title(), 14, INK, 2, (bx - 14) / 2); centre("PRESS TO PLAY", 30, INK3, 1, (bx - 14) / 2);
+        leaderRows(bx, 6);
+      } else if (board && (attract || calm)) {     // narrow: the board on its own, the flag off screen
+        cup = -20; scene();
+        leaderRows(Math.floor((W - BW) / 2), 6);
+      } else { cup = Math.round(W * 0.8); scene(); centre(title(), 14, INK, 2); centre("PRESS TO PLAY", 30, INK3); }
+    };
+    /* On a narrow screen the start screen shows the title and the board in
+       turn, every five seconds; any press ends it by starting a round. */
+    setInterval(() => {
+      if (state !== "idle" || paused || calm || document.hidden || !boardOn || !leaders.length || W >= 200) return;
+      attract = !attract; frame();
+    }, 5000);
     const holedFrame = () => { scene(); centre(named(holeStroke), 14, INK, 2); centre(hole < HOLES ? "PRESS FOR NEXT" : "PRESS FOR SCORE", 30, INK3); };
     const overFrame = () => {
       scene();
@@ -1688,7 +1798,7 @@ const CONFIG = {
         if (ball.x < 0) { ball.x = 0; ball.vx = Math.abs(ball.vx) * 0.3; }
         if (ball.x > W - 2) { ball.x = W - 2; ball.vx = -Math.abs(ball.vx) * 0.3; }
         const speed = Math.hypot(ball.vx, ball.vy);
-        if (ball.y >= GROUND - 3 && Math.abs(ball.x + 1 - cup) < 2 && speed < 90) { holed(); frame(); return; }
+        if (ball.y >= GROUND - 3 && Math.abs(ball.x + 1 - cup) <= CUP >> 1 && speed < (putting ? PUTT_DROP : 90)) { holed(); frame(); return; }
         if (ball.y >= GROUND - 2) {
           ball.y = GROUND - 2;
           if (inHazard(ball.x + 1)) {
@@ -1712,7 +1822,11 @@ const CONFIG = {
     const run = () => { if (!raf && moving() && !paused) { last = performance.now(); raf = requestAnimationFrame(step); } };
     const act = () => {
       if (paused) { paused = false; run(); return; }
-      if (state === "idle" || state === "over") { hole = 1; total = 0; layHole(); say("Hole 1. Press to aim, press to swing."); }
+      if (state === "idle" || state === "over") {
+        if (pending) { const st = pending; state = "idle"; apply(st); }
+        hole = 1; total = 0; mine = -1; attract = false; layHole(); say("Hole 1. Press to aim, press to swing.");
+        if (post) post.hidden = true;
+      }
       else if (state === "aim") { state = "power"; clock = 0; power = 0; pose = 1; }
       else if (state === "power") hit();
       else if (state === "holed") { if (hole < HOLES) { hole++; layHole(); say(`Hole ${hole}.`); } else finish(); }

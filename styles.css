@@ -147,19 +147,19 @@
 .prose p, .prose li, .prose h3, .prose figcaption, .prose blockquote cite,
 .post-meta, .post-cta, .sources li, .pillar-count,
 .byline, .card-desc, .ticker-item, .post-search input, .view-toggle button,
-.layer-tab, .work-cta, .gate-form input,
+.layer-tab, .work-cta, .gate-form input, .arcade-post input,
 .btn, .chip, .nav-links ul a, .back, .crumbs, .tools span, footer,
 .facts dt, table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
 .gallery figcaption, .proof-head small, .tooltip, .chart-pill, details.data,
 .dash-live, .dash-list li, .leaflet-container, .leaflet-popup-content,
 thead th, .gauge .lbl, .table-wrap td[data-label]::before, .dash-kind, .dash-now,
-.chat-msg, .chat-form textarea, .chat-unlock label, .chat-unlock input, .chat-unlocked, .chat-error, .dash-form :is(label, input, textarea, legend)
+.chat-msg, .chat-form textarea, .chat-unlock label, .chat-unlock input, .chat-unlocked, .chat-error, .dash-settings :is(label, input, textarea, legend)
   { font-family: var(--font-body); margin: 0; }
 .t-subhead, .testimonial-foot cite b, .prose h3
   { font-size: var(--t-subhead); line-height: var(--lh-subhead); letter-spacing: var(--ls-subhead); font-weight: 500; color: var(--ink); }
 .t-lede
   { font-size: var(--t-lede); line-height: var(--lh-lede); letter-spacing: var(--ls-lede); font-weight: 400; color: var(--ink-2); max-width: var(--m-lede); }
-.t-body, .layer-tab, .work-cta, .gate-form input, .chat-form textarea, .chat-unlock input, .dash-form :is(input, textarea)
+.t-body, .layer-tab, .work-cta, .gate-form input, .arcade-post input, .chat-form textarea, .chat-unlock input, .dash-settings :is(input, textarea)
   { font-size: var(--t-body); line-height: var(--lh-body); font-weight: 400; color: var(--ink-2); max-width: var(--m-body); }
 .t-small, .btn, .chip, .nav-links ul a, .back, .crumbs, .tools span, footer,
 .facts dt, table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
@@ -167,7 +167,7 @@ thead th, .gauge .lbl, .table-wrap td[data-label]::before, .dash-kind, .dash-now
 .dash-live, .dash-list li, .leaflet-container, .leaflet-popup-content,
 .prose figcaption, .prose blockquote cite, .post-meta, .post-cta, .sources li, .pillar-count,
 .byline, .byline-mark, .card-desc, .ticker-item, .post-search input, .view-toggle button,
-.chat-msg, .chat-unlock label, .chat-unlocked, .chat-error, .dash-form :is(label, legend)
+.chat-msg, .chat-unlock label, .chat-unlocked, .chat-error, .dash-settings :is(label, legend)
   { font-size: var(--t-small); line-height: var(--lh-small); font-weight: 400; color: var(--ink-2); }
 .prose p, .prose li
   { font-size: var(--t-body); line-height: var(--lh-prose); font-weight: 400; color: var(--ink-2); max-width: none; }
@@ -178,7 +178,7 @@ thead th, .gauge .lbl, .table-wrap td[data-label]::before, .dash-kind, .dash-now
 /* Weight: 500 is the one emphasis, for whatever names or acts. */
 strong, b, tbody th, .t-body a, .t-lede a, .prose p a, .prose li a, .post-cta,
 .btn, .chip, .chart-pill, .tooltip b, .tip-val, .nav-links ul a, .back, .crumbs, .tools span, .layer-tab, .layer-mark, .work-cta, .avatar, .testimonial-mark,
-.chat-msg a, .chat-unlock label, .chat-unlocked, .dash-form :is(label, legend)
+.chat-msg a, .chat-unlock label, .chat-unlocked, .dash-settings :is(label, legend)
   { font-weight: 500; }
 
 /* Tone: ink for what leads, ink-2 for what runs (the roles' default), ink-3
@@ -188,7 +188,7 @@ strong, b, tbody th, .t-body a, .t-lede a, .prose p a, .prose li a, .post-cta,
    or number in a block. */
 strong, b, tbody th, .chip, .tools span, .avatar, .testimonial-mark, .tooltip b, .tip-val, .crumbs [aria-current], .dash-label { color: var(--ink); }
 .chart-pill { color: var(--surface); }
-footer, .walk-note, .testimonial-foot cite, .kudos cite, .exp-dates, .crumb-sep, .gate-form input::placeholder, .chat-form textarea::placeholder,
+footer, .walk-note, .testimonial-foot cite, .kudos cite, .exp-dates, .crumb-sep, .gate-form input::placeholder, .arcade-post input::placeholder, .chat-form textarea::placeholder,
 .prose figcaption, .prose blockquote cite, .pillar-count { color: var(--ink-3); }
 .work-cta, .t-body a, .t-lede a, .outcome-stat .t-stat, .proof-head .t-stat, thead .hl { color: var(--accent-ink); }
 .prose p a, .prose li a, .sources a, .chat-msg a { color: var(--accent-ink); }
@@ -832,6 +832,14 @@ footer a:hover { color: var(--ink); }
 }
 .arcade-screen:focus-visible { outline-offset: 2px; border-radius: var(--radius); }
 .arcade-screen canvas { display: block; margin-inline: auto; image-rendering: pixelated; image-rendering: crisp-edges; }
+/* After a round: the name for the leaderboard, in the gate's input */
+.arcade-post { display: flex; flex-direction: column; gap: 12px; margin-top: var(--sp-5); max-width: 520px; }
+.arcade-post-row { display: flex; gap: 12px; }
+.arcade-post input { flex: 1 1 auto; min-width: 0; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--hair-2); background: var(--surface-2); color: var(--ink); text-transform: uppercase; }
+.arcade-post input::placeholder { text-transform: none; }
+.arcade-post input:focus { outline: 2px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
+.arcade-post .btn { flex: 0 0 auto; justify-content: center; }
+.arcade-post-note:empty { display: none; }
 
 /* --------------------------------------------------------------------------
    7. Case study
@@ -1596,6 +1604,35 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 .dash-blocked ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 20px; }
 .dash-blocked li { display: inline-flex; align-items: baseline; gap: 10px; font-size: var(--t-small); line-height: var(--lh-small); color: var(--ink-2); }
 .dash-blocked li span { text-decoration: line-through; text-decoration-color: var(--ink-3); }
+
+/* Nine holes: the leaderboard (a dash-list with a place and a date), and the
+   side column's two small forms, their inputs in the gate input's clothes at
+   the small size. */
+.dash-golf-side { display: grid; gap: var(--sp-5); align-content: start; }
+.dash-board li { align-items: baseline; }
+.dash-board .dash-rank { flex: none; width: 3ch; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.dash-board .dash-when { flex: none; color: var(--ink-3); }
+.dash-board .dash-act { flex: none; min-width: 6ch; text-align: right; color: var(--ink-3); }
+.dash-board .dash-act:hover { color: var(--accent-ink); }
+.dash-card-head .dash-act { margin-bottom: var(--sp-4); }
+.dash-form { display: grid; gap: 12px; }
+.dash-fields { display: grid; gap: 10px; }
+.dash-field { display: flex; align-items: center; justify-content: space-between; gap: 16px; font-size: var(--t-small); line-height: var(--lh-small); color: var(--ink-2); }
+.dash-field small { display: block; font-size: var(--t-micro); line-height: var(--lh-micro); color: var(--ink-3); }
+.dash-form input:is([type="number"], [type="text"]) { font-family: var(--font-body); font-size: var(--t-small); line-height: var(--lh-small); padding: 7px 10px; border-radius: 10px; border: 1px solid var(--hair-2); background: var(--surface-2); color: var(--ink); }
+.dash-form input[type="number"] { flex: none; width: 9ch; font-variant-numeric: tabular-nums; }
+.dash-form input[type="text"] { flex: 1 1 auto; min-width: 0; text-transform: uppercase; }
+.dash-form input[type="text"]::placeholder { text-transform: none; color: var(--ink-3); }
+.dash-form input[type="checkbox"] { flex: none; width: 18px; height: 18px; accent-color: var(--accent); }
+.dash-form input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
+.dash-form input[aria-invalid="true"] { border-color: var(--danger); }
+.dash-form-row { display: flex; gap: 10px; }
+.dash-form-foot { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+.dash-form .dash-status:empty, #board-status:empty { display: none; }
+.dash-form .dash-status, #board-status { margin: 0; color: var(--ink-2); }
+.dash-bans { list-style: none; margin: var(--sp-4) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 20px; }
+.dash-bans:empty { display: none; }
+.dash-bans li { display: inline-flex; align-items: baseline; gap: 10px; font-size: var(--t-small); line-height: var(--lh-small); color: var(--ink-2); }
 .dash-menu-empty { padding: 8px 16px; color: var(--ink-3); }
 .dash-filter-state { margin-left: auto; display: flex; align-items: center; gap: 14px; }
 .dash-filter-state .t-small { margin: 0; color: var(--ink-3); font-variant-numeric: tabular-nums; }
@@ -1639,27 +1676,27 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 /* Chat settings: one card of labelled fields, two columns, the save at the
    foot behind a hairline. The fields wear the gate's field; the switch and
    the model choice are native controls in the accent. */
-.dash-form { display: flex; flex-direction: column; gap: var(--sp-5); padding: var(--card-pad); }
-.dash-form-state { color: var(--ink-2); }
-.dash-form-state.is-warn { color: var(--danger); }
-.dash-form-fields { border: 0; margin: 0; padding: 0; min-width: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-6) var(--sp-7); }
-.dash-form-fields[disabled] { opacity: .55; }
-.dash-field { display: flex; flex-direction: column; align-items: flex-start; gap: var(--sp-2); min-width: 0; border: 0; margin: 0; padding: 0; }
-.dash-field-wide { grid-column: 1 / -1; }
-.dash-field > label, .dash-field > legend { color: var(--ink); padding: 0; }
-.dash-form input[type="number"], .dash-form textarea { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--hair-2); background: var(--surface-2); color: var(--ink); max-width: none; }
-.dash-form input[type="number"] { max-width: 14ch; font-variant-numeric: tabular-nums; }
-.dash-form textarea { resize: vertical; }
-.dash-form :is(input[type="number"], textarea):focus { outline: 2px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
+.dash-settings { display: flex; flex-direction: column; gap: var(--sp-5); padding: var(--card-pad); }
+.dash-settings-state { color: var(--ink-2); }
+.dash-settings-state.is-warn { color: var(--danger); }
+.dash-settings-fields { border: 0; margin: 0; padding: 0; min-width: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-6) var(--sp-7); }
+.dash-settings-fields[disabled] { opacity: .55; }
+.dash-setting { display: flex; flex-direction: column; align-items: flex-start; gap: var(--sp-2); min-width: 0; border: 0; margin: 0; padding: 0; }
+.dash-setting-wide { grid-column: 1 / -1; }
+.dash-setting > label, .dash-setting > legend { color: var(--ink); padding: 0; }
+.dash-settings input[type="number"], .dash-settings textarea { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--hair-2); background: var(--surface-2); color: var(--ink); max-width: none; }
+.dash-settings input[type="number"] { max-width: 14ch; font-variant-numeric: tabular-nums; }
+.dash-settings textarea { resize: vertical; }
+.dash-settings :is(input[type="number"], textarea):focus { outline: 2px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
 .dash-help { color: var(--ink-3); max-width: 64ch; }
 .dash-switch, .dash-choice { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; color: var(--ink); }
 .dash-switch input, .dash-choice input { flex: none; width: 18px; height: 18px; margin: 0; accent-color: var(--accent); cursor: pointer; }
 .dash-switch input:focus-visible, .dash-choice input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .dash-choice-row { display: flex; flex-wrap: wrap; gap: var(--sp-3) var(--sp-6); margin-top: var(--sp-1); }
 .dash-choices > legend { margin-bottom: var(--sp-2); }
-.dash-form-foot { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-3) var(--sp-4); padding-top: var(--sp-5); border-top: 1px solid var(--hair); }
-.dash-form-foot .dash-status { flex: 1 1 24ch; margin: 0; }
-@media (max-width: 640px) { .dash-form-fields { grid-template-columns: 1fr; gap: var(--sp-5); } }
+.dash-settings-foot { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-3) var(--sp-4); padding-top: var(--sp-5); border-top: 1px solid var(--hair); }
+.dash-settings-foot .dash-status { flex: 1 1 24ch; margin: 0; }
+@media (max-width: 640px) { .dash-settings-fields { grid-template-columns: 1fr; gap: var(--sp-5); } }
 
 @media (max-width: 1000px) { .dash-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 900px) { .dash-grid, .dash-grid-wide { grid-template-columns: 1fr; } }
