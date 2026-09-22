@@ -589,6 +589,7 @@ export const CHAT_DEFAULTS = {
   model: 'claude-haiku-4-5',
   hourLimit: 30,                  // questions one visitor may ask in an hour
   dayLimit: 200,                  // questions the whole site answers in a day: the cost ceiling
+  chatLimit: 8,                   // questions one conversation may ask before it ends on John's contact links
   starters: ['What kind of role is John looking for?', 'How does John run a design team?', 'What has John done with AI agents?', 'Tell me about the Staking work'],
   notes: '',                      // what the pages don't say, in John's words; the assistant may repeat it
 };
@@ -603,6 +604,7 @@ export function cleanSettings(raw) {
   if (typeof raw.model === 'string' && Object.hasOwn(CHAT_MODELS, raw.model)) s.model = raw.model;
   s.hourLimit = whole(raw.hourLimit, 1, 200, s.hourLimit);
   s.dayLimit = whole(raw.dayLimit, 0, 5000, s.dayLimit);
+  s.chatLimit = whole(raw.chatLimit, 1, 50, s.chatLimit);
   if (Array.isArray(raw.starters)) s.starters = raw.starters.map((q) => String(q ?? '').replace(/\s+/g, ' ').trim().slice(0, 90)).filter(Boolean).slice(0, 4);
   if (typeof raw.notes === 'string') s.notes = raw.notes.replace(/\r\n?/g, '\n').trim().slice(0, 2000);
   return s;

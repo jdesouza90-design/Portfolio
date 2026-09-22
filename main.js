@@ -2068,7 +2068,7 @@ const CONFIG = {
     };
     const sync = () => { send.disabled = !busy && !input.value.trim(); };
 
-    const LIMIT = 8;                                   // questions a conversation may ask; api/chat.js holds the same line
+    const LIMIT = Number(state.limit) || 8;            // questions a conversation may ask (Chat settings); api/chat.js holds the same line
     const questions = () => msgs.filter((m) => m.role === "user").length;
     const ask = (question) => {
       if (busy || questions() >= LIMIT) return;

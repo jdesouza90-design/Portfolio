@@ -135,7 +135,7 @@
   const form = $('chat-settings-form');
   const COST = { 'claude-haiku-4-5': 0.027, 'claude-sonnet-5': 0.055 };   // dollars a question at worst: every page read fresh into the cache, a long answer
   let defaults = null;
-  const f = { on: $('chat-set-on'), hour: $('chat-set-hour'), day: $('chat-set-day'), starters: $('chat-set-starters'), notes: $('chat-set-notes') };
+  const f = { on: $('chat-set-on'), hour: $('chat-set-hour'), day: $('chat-set-day'), chat: $('chat-set-chat'), starters: $('chat-set-starters'), notes: $('chat-set-notes') };
   const modelPick = () => (form.querySelector('input[name="chat-set-model"]:checked') || {}).value;
   const ceiling = () => {
     const day = Math.max(0, Math.round(Number(f.day.value) || 0)), per = COST[modelPick()] || COST['claude-haiku-4-5'];
@@ -147,7 +147,7 @@
     f.on.checked = !!st.on;
     const pick = form.querySelector(`input[name="chat-set-model"][value="${st.model}"]`);
     if (pick) pick.checked = true;
-    f.hour.value = st.hourLimit; f.day.value = st.dayLimit;
+    f.hour.value = st.hourLimit; f.day.value = st.dayLimit; f.chat.value = st.chatLimit;
     f.starters.value = (st.starters || []).join('\n');
     f.notes.value = st.notes || '';
     ceiling();
@@ -155,7 +155,7 @@
   function read() {
     return {
       on: f.on.checked, model: modelPick(),
-      hourLimit: Number(f.hour.value), dayLimit: Number(f.day.value),
+      hourLimit: Number(f.hour.value), dayLimit: Number(f.day.value), chatLimit: Number(f.chat.value),
       starters: f.starters.value.split('\n'), notes: f.notes.value,
     };
   }
