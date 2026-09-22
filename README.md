@@ -573,8 +573,10 @@ scrolls to it, and every page gets it the same way:
   the move happens where the reader is looking rather than at the bottom
   edge. As the page runs out of scroll the line drops toward the bottom
   edge, so the last blocks on a page (the closing band, the footer) never
-  wait for room that isn't there. On first paint everything already on
-  screen rises at once; nothing on the first screen waits for a scroll.
+  wait for room that isn't there. On first paint the hero (the page's
+  first section) rises at once wherever it sits on screen; the sections
+  after it wait for the line, so an intro peeking at the bottom of the
+  first screen rises when the reader scrolls to it.
 - **Blocks that cross the line in the same frame follow each other 60ms
   apart**, in document order (`--reveal-i`, capped at 240ms). The stagger
   is per batch, so a block arriving alone never waits.

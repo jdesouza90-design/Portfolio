@@ -41,8 +41,17 @@ const CONFIG = {
     const io = "IntersectionObserver" in window ? new IntersectionObserver(([en]) => { seen = en.isIntersecting; sync(); }, { threshold }) : null;
     if (io) io.observe(el);
     document.addEventListener("visibilitychange", sync);
+    // Backstop for the observer: iOS Safari has been known to drop an
+    // IntersectionObserver callback during a fast flick-scroll, which leaves
+    // `seen` stuck false and the block paused on screen with nothing left to
+    // wake it. A geometry check on scroll corrects it either way.
+    const check = io ? onViewportChange(() => {
+      const r = el.getBoundingClientRect();
+      const v = r.bottom > 0 && r.top < window.innerHeight;
+      if (v !== seen) { seen = v; sync(); }
+    }) : null;
     const visible = () => seen && !document.hidden;
-    visible.stop = () => { if (io) io.disconnect(); document.removeEventListener("visibilitychange", sync); };
+    visible.stop = () => { if (io) { io.disconnect(); check.stop(); } document.removeEventListener("visibilitychange", sync); };
     return visible;
   };
   // A canvas sized to its box in device pixels, capped at 2x; returns the ratio.
@@ -312,19 +321,22 @@ const CONFIG = {
     // Backstop for the observer. It measures only the elements still hidden and
     // detaches itself once they have all been revealed, so a long page is not
     // paying for a full measure pass on every scroll tick for the rest of the visit.
-    // On first paint the whole viewport counts (nothing on the first screen
-    // should wait for a scroll); after that the line applies.
+    // On first paint the hero counts wherever it sits on screen (a hero never
+    // waits for a scroll); every later section waits at the line, so an intro
+    // peeking at the bottom of the first screen rises when the reader gets there.
+    const hero = $("main > section");
     let pending = revealEls.slice();
     const sweep = (firstPaint) => {
       if (!pending.length) return;
       const vh = window.innerHeight;
       const room = Math.max(0, document.documentElement.scrollHeight - vh - window.scrollY);
-      const line = firstPaint ? vh : vh - Math.min(vh * (1 - LINE), room);
+      const line = vh - Math.min(vh * (1 - LINE), room);
       const still = [];
       for (const el of pending) {
         if (el.classList.contains("in")) continue;
         const r = el.getBoundingClientRect();
-        if (r.top < line && r.bottom > 0) { show(el); io.unobserve(el); }
+        const edge = firstPaint && hero && hero.contains(el) ? vh : line;
+        if (r.top < edge && r.bottom > 0) { show(el); io.unobserve(el); }
         else still.push(el);
       }
       pending = still;
