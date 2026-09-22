@@ -1209,10 +1209,18 @@
       }));
       fill(data.settings);
       const state = [];
+      let warn = !data.key || !data.store;
       state.push(data.key ? 'The API key is set in Vercel.' : 'The API key isn\'t set, so the chat stays hidden whatever this says. Add ANTHROPIC_API_KEY in Vercel (Settings → Environment Variables) and redeploy.');
       if (!data.store) state.push('No store is connected, so these are the defaults and a save has nowhere to go.');
+      // What the chat function can read: the pages vercel.json bundles with it.
+      const chat = await fetch('/api/chat', { cache: 'no-store', credentials: 'same-origin' }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+      if (chat && chat.pages) {
+        const { open, gated } = chat.pages;
+        if (open) state.push(`It reads ${n(open)} public page${open === 1 ? '' : 's'} and ${n(gated)} case stud${gated === 1 ? 'y' : 'ies'}.`);
+        else { state.push('It can\'t find the pages it answers from. Check includeFiles for api/chat.js in vercel.json.'); warn = true; }
+      }
       $('chat-settings-state').textContent = state.join(' ');
-      $('chat-settings-state').classList.toggle('is-warn', !data.key || !data.store);
+      $('chat-settings-state').classList.toggle('is-warn', warn);
       $('chat-settings-fields').disabled = false;
       $('chat-settings-save').disabled = !data.store;
       $('chat-settings-defaults').disabled = false;

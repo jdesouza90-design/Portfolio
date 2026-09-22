@@ -5,7 +5,8 @@
 //   GET  /api/chat                    { ready, unlocked, starters }: whether it
 //                                     is set up and switched on, whether this
 //                                     visitor has unlocked the case studies, and
-//                                     the suggested questions to offer
+//                                     the suggested questions to offer; for the
+//                                     owner, `pages` too: how many it can read
 //   POST /api/chat {messages, page}   the answer as a stream, one JSON event a line:
 //                                       {t: 'text', v}      a piece of the answer
 //                                       {t: 'password'}     the model asked for the case-study password
@@ -185,11 +186,14 @@ const json = (body, status = 200, extra) => {
 
 const salt = async () => (process.env.CASE_STUDY_PASSWORD ? tokenFor(process.env.CASE_STUDY_PASSWORD) : 'unset');   // the middleware's, so a visitor has one id across views and questions
 
+async function isOwner(request) {                                              // signed in to the dashboard
+  const admin = process.env.ADMIN_PASSWORD;
+  return !!admin && cookieValues(request, ADMIN_COOKIE).includes(await adminTokenFor(admin));
+}
 async function isUnlocked(request) {
   const pw = process.env.CASE_STUDY_PASSWORD;
   if (pw && cookieValues(request, COOKIE).includes(await tokenFor(pw))) return true;
-  const admin = process.env.ADMIN_PASSWORD;                                     // the owner, signed in to the dashboard
-  return !!admin && cookieValues(request, ADMIN_COOKIE).includes(await adminTokenFor(admin));
+  return isOwner(request);
 }
 
 // The page a question was asked on, as the ping beacon takes it.
@@ -268,7 +272,12 @@ let client = null;
 
 export async function GET(request) {
   const settings = await chatSettings();
-  return json({ ready: !!process.env.ANTHROPIC_API_KEY && settings.on, unlocked: await isUnlocked(request), starters: settings.starters });
+  const body = { ready: !!process.env.ANTHROPIC_API_KEY && settings.on, unlocked: await isUnlocked(request), starters: settings.starters };
+  if (await isOwner(request)) {                  // the dashboard's check that the pages came with the function
+    const count = (t) => (t.match(/<page url=/g) || []).length;
+    try { const p = await sitePages(); body.pages = { open: count(p.open), gated: count(p.gated) }; } catch (_) { body.pages = { open: 0, gated: 0 }; }
+  }
+  return json(body);
 }
 
 export async function POST(request) {
