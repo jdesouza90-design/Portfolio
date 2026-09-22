@@ -132,9 +132,9 @@ def nav(current):
     <nav class="nav-links" id="site-nav" aria-label="Primary">
       <ul>
         <li><a href="/work.html"{mark('/work.html')}>Work</a></li>
-        <li><a href="/blog.html"{mark('/blog.html')}>Blog</a></li>
         <li><a href="/#leadership">Leadership</a></li>
         <li><a href="/#about">About</a></li>
+        <li><a href="/blog.html"{mark('/blog.html')}>Blog</a></li>
         <li><a class="nav-icon" data-link="linkedin" href="#" aria-label="LinkedIn profile" title="LinkedIn">{LINKEDIN_SVG}<span>LinkedIn</span></a></li>
         <li class="nav-resume"><a class="nav-download" data-link="resume" href="#"><span>Resume</span>{DOWN_SVG}</a></li>
       </ul>
