@@ -1,5 +1,11 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "api/chat.js": {
+      "maxDuration": 60,
+      "includeFiles": "{index.html,work.html,blog.html,blog/*.html,work/*.html}"
+    }
+  },
   "headers": [
     {
       "source": "/assets/(.*)",

@@ -16,6 +16,7 @@
     '/work/refinance-offers.html': 'Refinance offers', '/work/staking.html': 'Staking',
     '/work/no-code-tools.html': 'No-code tools', '/work/sign-in-with-ethereum.html': 'Sign-in with Ethereum',
     '/work/design-system-audit-agent.html': 'Design system audit agent',
+    '/api/chat': 'Chat',                           // a password typed into the chat
   };
   const pageName = (p) => NAMES[p] || p.replace(/^\/work\//, '').replace(/\.html$/, '') || p;
   // Places worth calling by name rather than by host. Each arrives under
@@ -69,6 +70,8 @@
   };
 
   let events = [];            // newest first, views and time beacons alike
+  let chats = [];             // the chat's questions and answers, newest first (middleware.js CHAT_KEY)
+  const chatSeen = new Set();
   let total = 0;
   let blocked = [];           // referrer hosts blocked as spam (the edge keeps the set; www. stripped)
   const refHost = (r) => { if (!r || !/^https?:/.test(r)) return ''; try { return new URL(r).hostname.replace(/^www\./, '').toLowerCase(); } catch (_) { return ''; } };
@@ -558,12 +561,19 @@
     renderFollowed();
     refilter();
     renderSessions(sessions, Date.now());
+    renderQuestions(Date.now());
   }
   document.addEventListener('click', (e) => {
     const b = e.target.closest('.dash-visitor');
     if (!b) return;
     const section = b.closest('.dash-feed');   // found before the redraw takes the button away
-    follow(b.dataset.visitor);
+    const v = b.dataset.visitor;
+    follow(v);
+    if (!section.querySelector('.dash-filters')) {   // the questions have no filter row: focus stays on that person's hash
+      const again = section.querySelector(`.dash-visitor[data-visitor="${CSS.escape(v)}"]`);
+      if (again) again.focus();
+      return;
+    }
     if (followed) section.querySelector('.dash-filter-visitor button').focus();   // the chip above that table; focus scrolls it in under the nav (scroll-margin) and the narrowed table follows
     else section.querySelector('.dash-filter-multi .dash-filter-btn').focus();   // let go: focus stays in the section
   });
@@ -811,6 +821,7 @@
     sessions = all.filter((s) => s.start >= start);
     renderHist(sessions);
     renderSessions(sessions, now);
+    renderQuestions(now);
 
     const latest = views[0];
     const reading = here.map((s) => s.views.length ? pageName(s.views[s.views.length - 1].page) : 'a password gate');
@@ -1106,6 +1117,143 @@
     });
   }
 
+  // ---- Questions ----
+  // What people asked the chat in the period, newest first. The answer folds
+  // under its first line; a hash follows that visitor through the feed and
+  // sessions like the other tables' do. Redrawn whole: it is short, and the
+  // period, the follow and new arrivals all change it.
+  const clip = (s, n) => (s.length > n ? `${s.slice(0, n - 1).trimEnd()}…` : s);
+  const plainAnswer = (a) => String(a || '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').replace(/\*\*/g, '').replace(/\s+/g, ' ').trim();
+  function renderQuestions(now) {
+    const start = rangeStart(now);
+    const shown = chats.filter((c) => c.t >= start && (!followed || c.visitor === followed));
+    const tb = $('questions');
+    tb.replaceChildren(...shown.slice(0, 100).map((c) => {
+      const tr = document.createElement('tr');
+      const cell = (cls, label) => { const td = document.createElement('td'); td.className = `c-${cls}`; if (label) td.dataset.label = label; tr.appendChild(td); return td; };
+      const when = cell('time');
+      when.textContent = ago(c.t, now); when.title = stamp(c.t);
+      cell('question', 'Question').textContent = c.q || '';
+      const ans = cell('answer', 'Answer');
+      const text = plainAnswer(c.a);
+      if (text.length > 90) {
+        const d = document.createElement('details');
+        const sm = document.createElement('summary'); sm.textContent = clip(text, 90);
+        const full = document.createElement('p');
+        full.textContent = String(c.a).replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').replace(/\*\*/g, '').trim();   // its own lines kept: a list reads as one
+        d.append(sm, full); ans.appendChild(d);
+      } else ans.textContent = text || '–';
+      if (c.asked || c.unlocked) {
+        const b = document.createElement('span');
+        b.className = 'dash-kind';
+        b.dataset.kind = c.unlocked ? 'unlocked' : 'gated';
+        b.textContent = c.unlocked ? 'Unlocked' : 'Asked for the password';
+        ans.appendChild(b);
+      }
+      cell('page', 'Page').textContent = c.page ? pageName(c.page) : '–';
+      cell('where', 'Where').textContent = c.where || 'unknown';
+      visitorCell(cell('visitor', 'Visitor'), c.visitor);
+      return tr;
+    }));
+    $('questions-empty').hidden = shown.length > 0;
+    const people = new Set(shown.map((c) => c.visitor)).size;
+    $('questions-note').textContent = shown.length
+      ? `${n(shown.length)} question${shown.length === 1 ? '' : 's'} from ${n(people)} ${people === 1 ? 'person' : 'people'}, newest first, with the answer each got. A password typed into the chat is never kept. Press a hash in the Visitor column to follow that person through the feed and sessions.`
+      : 'What people asked the chat, newest first, with its answer. A password typed into it is never kept.';
+  }
+
+  // ---- Chat settings ----
+  // The form under Questions. It reads /api/chat-settings once (the settings, the
+  // models, the defaults, and whether the key and the store are there) and
+  // saves the whole form back; the edge cleans what it is given and answers
+  // with what it kept, which the form then shows.
+  const form = $('chat-settings-form');
+  const COST = { 'claude-haiku-4-5': 0.027, 'claude-sonnet-5': 0.055 };   // dollars a question at worst: every page read fresh into the cache, a long answer
+  let defaults = null;
+  const f = { on: $('chat-set-on'), hour: $('chat-set-hour'), day: $('chat-set-day'), starters: $('chat-set-starters'), notes: $('chat-set-notes') };
+  const modelPick = () => (form.querySelector('input[name="chat-set-model"]:checked') || {}).value;
+  const ceiling = () => {
+    const day = Math.max(0, Math.round(Number(f.day.value) || 0)), per = COST[modelPick()] || COST['claude-haiku-4-5'];
+    $('chat-set-day-help').textContent = day
+      ? `The cost ceiling. At ${n(day)} a day the chat can spend at most about $${(day * per).toFixed(2)} a day on this model. Most days it spends a small part of that.`
+      : 'At 0 the chat answers nothing, the same as switching it off.';
+  };
+  function fill(st) {
+    f.on.checked = !!st.on;
+    const pick = form.querySelector(`input[name="chat-set-model"][value="${st.model}"]`);
+    if (pick) pick.checked = true;
+    f.hour.value = st.hourLimit; f.day.value = st.dayLimit;
+    f.starters.value = (st.starters || []).join('\n');
+    f.notes.value = st.notes || '';
+    ceiling();
+  }
+  function read() {
+    return {
+      on: f.on.checked, model: modelPick(),
+      hourLimit: Number(f.hour.value), dayLimit: Number(f.day.value),
+      starters: f.starters.value.split('\n'), notes: f.notes.value,
+    };
+  }
+  async function loadSettings() {
+    try {
+      const res = await fetch('/api/chat-settings', { cache: 'no-store', credentials: 'same-origin' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      defaults = data.defaults;
+      $('chat-set-model').replaceChildren(...Object.entries(data.models).map(([id, label]) => {
+        const l = document.createElement('label'); l.className = 'dash-choice';
+        const r = document.createElement('input'); r.type = 'radio'; r.name = 'chat-set-model'; r.value = id;
+        r.addEventListener('change', ceiling);
+        l.append(r, ` ${label}`);
+        return l;
+      }));
+      fill(data.settings);
+      const state = [];
+      let warn = !data.key || !data.store;
+      state.push(data.key ? 'The API key is set in Vercel.' : 'The API key isn\'t set, so the chat stays hidden whatever this says. Add ANTHROPIC_API_KEY in Vercel (Settings → Environment Variables) and redeploy.');
+      if (!data.store) state.push('No store is connected, so these are the defaults and a save has nowhere to go.');
+      // What the chat function can read: the pages vercel.json bundles with it.
+      const chat = await fetch('/api/chat', { cache: 'no-store', credentials: 'same-origin' }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+      if (chat && chat.pages) {
+        const { open, gated } = chat.pages;
+        if (open) state.push(`It reads ${n(open)} public page${open === 1 ? '' : 's'} and ${n(gated)} case stud${gated === 1 ? 'y' : 'ies'}.`);
+        else { state.push('It can\'t find the pages it answers from. Check includeFiles for api/chat.js in vercel.json.'); warn = true; }
+      }
+      $('chat-settings-state').textContent = state.join(' ');
+      $('chat-settings-state').classList.toggle('is-warn', warn);
+      $('chat-settings-fields').disabled = false;
+      $('chat-settings-save').disabled = !data.store;
+      $('chat-settings-defaults').disabled = false;
+    } catch (err) {
+      console.error(err);
+      $('chat-settings-state').textContent = 'The settings couldn\'t be loaded. Reload to try again.';
+      $('chat-settings-state').classList.add('is-warn');
+    }
+  }
+  f.day.addEventListener('input', ceiling);
+  $('chat-settings-defaults').addEventListener('click', () => {
+    if (!defaults) return;
+    fill(defaults);
+    $('chat-settings-status').textContent = 'Defaults filled in. Save to use them.';
+  });
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = $('chat-settings-save');
+    btn.disabled = true;
+    $('chat-settings-status').textContent = 'Saving…';
+    try {
+      const res = await fetch('/api/chat-settings', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ settings: read() }) });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+      fill(data.settings);
+      $('chat-settings-status').textContent = `Saved at ${new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}. Visitors get it within half a minute.`;
+    } catch (err) {
+      $('chat-settings-status').textContent = `Not saved: ${err.message}`;
+    }
+    btn.disabled = false;
+  });
+  loadSettings();
+
   async function poll() {
     try {
       const res = await fetch(`/api/activity${lastT ? `?since=${lastT}` : ''}`, { cache: 'no-store', credentials: 'same-origin' });
@@ -1125,6 +1273,9 @@
       for (const e of data.events) seen.add(key(e));
       if (fresh.length) events = fresh.concat(events).sort((a, b) => b.t - a.t).slice(0, KEEP);
       if (data.events.length) lastT = Math.max(lastT, data.events[0].t);
+      const newChats = (data.chats || []).filter((c) => !chatSeen.has(`${c.t}|${c.visitor}`));
+      for (const c of newChats) chatSeen.add(`${c.t}|${c.visitor}`);
+      if (newChats.length) chats = newChats.concat(chats).sort((a, b) => b.t - a.t).slice(0, 1000);
       total = data.total;
       lastOk = Date.now();
       renderStats(Date.now());

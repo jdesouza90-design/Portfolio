@@ -7,7 +7,7 @@
 
    Order: tokens → type roles → base → primitives → nav → home → case study
           → gate → unlock opener → motion → per-project grounds → phone
-          → dashboard → blog
+          → dashboard → blog → chat
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -152,20 +152,22 @@
 .facts dt, table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
 .gallery figcaption, .proof-head small, .tooltip, .chart-pill, details.data,
 .dash-live, .dash-list li, .leaflet-container, .leaflet-popup-content,
-thead th, .gauge .lbl, .table-wrap td[data-label]::before, .dash-kind, .dash-now
+thead th, .gauge .lbl, .table-wrap td[data-label]::before, .dash-kind, .dash-now,
+.chat-msg, .chat-form textarea, .chat-unlock label, .chat-unlock input, .chat-unlocked, .chat-error, .dash-settings :is(label, input, textarea, legend)
   { font-family: var(--font-body); margin: 0; }
 .t-subhead, .testimonial-foot cite b, .prose h3
   { font-size: var(--t-subhead); line-height: var(--lh-subhead); letter-spacing: var(--ls-subhead); font-weight: 500; color: var(--ink); }
 .t-lede
   { font-size: var(--t-lede); line-height: var(--lh-lede); letter-spacing: var(--ls-lede); font-weight: 400; color: var(--ink-2); max-width: var(--m-lede); }
-.t-body, .layer-tab, .work-cta, .gate-form input, .arcade-post input
+.t-body, .layer-tab, .work-cta, .gate-form input, .arcade-post input, .chat-form textarea, .chat-unlock input, .dash-settings :is(input, textarea)
   { font-size: var(--t-body); line-height: var(--lh-body); font-weight: 400; color: var(--ink-2); max-width: var(--m-body); }
 .t-small, .btn, .chip, .nav-links ul a, .back, .crumbs, .tools span, footer,
 .facts dt, table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
 .gallery figcaption, .proof-head small, .tooltip, .chart-pill, details.data,
 .dash-live, .dash-list li, .leaflet-container, .leaflet-popup-content,
 .prose figcaption, .prose blockquote cite, .post-meta, .post-cta, .sources li, .pillar-count,
-.byline, .byline-mark, .card-desc, .ticker-item, .post-search input, .view-toggle button
+.byline, .byline-mark, .card-desc, .ticker-item, .post-search input, .view-toggle button,
+.chat-msg, .chat-unlock label, .chat-unlocked, .chat-error, .dash-settings :is(label, legend)
   { font-size: var(--t-small); line-height: var(--lh-small); font-weight: 400; color: var(--ink-2); }
 .prose p, .prose li
   { font-size: var(--t-body); line-height: var(--lh-prose); font-weight: 400; color: var(--ink-2); max-width: none; }
@@ -175,7 +177,8 @@ thead th, .gauge .lbl, .table-wrap td[data-label]::before, .dash-kind, .dash-now
 
 /* Weight: 500 is the one emphasis, for whatever names or acts. */
 strong, b, tbody th, .t-body a, .t-lede a, .prose p a, .prose li a, .post-cta,
-.btn, .chip, .chart-pill, .tooltip b, .tip-val, .nav-links ul a, .back, .crumbs, .tools span, .layer-tab, .layer-mark, .work-cta, .avatar, .testimonial-mark
+.btn, .chip, .chart-pill, .tooltip b, .tip-val, .nav-links ul a, .back, .crumbs, .tools span, .layer-tab, .layer-mark, .work-cta, .avatar, .testimonial-mark,
+.chat-msg a, .chat-unlock label, .chat-unlocked, .dash-settings :is(label, legend)
   { font-weight: 500; }
 
 /* Tone: ink for what leads, ink-2 for what runs (the roles' default), ink-3
@@ -185,10 +188,10 @@ strong, b, tbody th, .t-body a, .t-lede a, .prose p a, .prose li a, .post-cta,
    or number in a block. */
 strong, b, tbody th, .chip, .tools span, .avatar, .testimonial-mark, .tooltip b, .tip-val, .crumbs [aria-current], .dash-label { color: var(--ink); }
 .chart-pill { color: var(--surface); }
-footer, .walk-note, .testimonial-foot cite, .kudos cite, .exp-dates, .crumb-sep, .gate-form input::placeholder, .arcade-post input::placeholder,
+footer, .walk-note, .testimonial-foot cite, .kudos cite, .exp-dates, .crumb-sep, .gate-form input::placeholder, .arcade-post input::placeholder, .chat-form textarea::placeholder,
 .prose figcaption, .prose blockquote cite, .pillar-count { color: var(--ink-3); }
 .work-cta, .t-body a, .t-lede a, .outcome-stat .t-stat, .proof-head .t-stat, thead .hl { color: var(--accent-ink); }
-.prose p a, .prose li a, .sources a { color: var(--accent-ink); }
+.prose p a, .prose li a, .sources a, .chat-msg a { color: var(--accent-ink); }
 
 /* Number flow: a headline stat that main.js rolls in digit by digit. Each
    digit is a column of 0 to 9 behind a soft mask, and the whole stat is lit
@@ -1659,6 +1662,42 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 .dash-table tr.is-new { animation: dash-new 4s linear both; }   /* an arrival glows green, then settles */
 @keyframes dash-new { from { background: var(--glow); } to { background: transparent; } }
 
+/* Questions: what people asked the chat. The question leads in ink; the
+   answer folds under its first line, with a chip when the password came up. */
+.dash-questions { min-width: 980px; }
+.dash-questions .c-question { max-width: 30ch; color: var(--ink); }
+.dash-questions .c-answer { max-width: 54ch; }
+.dash-questions .c-answer summary { cursor: pointer; }
+.dash-questions .c-answer summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.dash-questions .c-answer details p { margin-top: var(--sp-2); white-space: pre-line; }
+.dash-questions .c-answer .dash-kind { margin-top: var(--sp-2); }
+.dash-questions .c-page { white-space: nowrap; }
+
+/* Chat settings: one card of labelled fields, two columns, the save at the
+   foot behind a hairline. The fields wear the gate's field; the switch and
+   the model choice are native controls in the accent. */
+.dash-settings { display: flex; flex-direction: column; gap: var(--sp-5); padding: var(--card-pad); }
+.dash-settings-state { color: var(--ink-2); }
+.dash-settings-state.is-warn { color: var(--danger); }
+.dash-settings-fields { border: 0; margin: 0; padding: 0; min-width: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-6) var(--sp-7); }
+.dash-settings-fields[disabled] { opacity: .55; }
+.dash-setting { display: flex; flex-direction: column; align-items: flex-start; gap: var(--sp-2); min-width: 0; border: 0; margin: 0; padding: 0; }
+.dash-setting-wide { grid-column: 1 / -1; }
+.dash-setting > label, .dash-setting > legend { color: var(--ink); padding: 0; }
+.dash-settings input[type="number"], .dash-settings textarea { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--hair-2); background: var(--surface-2); color: var(--ink); max-width: none; }
+.dash-settings input[type="number"] { max-width: 14ch; font-variant-numeric: tabular-nums; }
+.dash-settings textarea { resize: vertical; }
+.dash-settings :is(input[type="number"], textarea):focus { outline: 2px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
+.dash-help { color: var(--ink-3); max-width: 64ch; }
+.dash-switch, .dash-choice { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; color: var(--ink); }
+.dash-switch input, .dash-choice input { flex: none; width: 18px; height: 18px; margin: 0; accent-color: var(--accent); cursor: pointer; }
+.dash-switch input:focus-visible, .dash-choice input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.dash-choice-row { display: flex; flex-wrap: wrap; gap: var(--sp-3) var(--sp-6); margin-top: var(--sp-1); }
+.dash-choices > legend { margin-bottom: var(--sp-2); }
+.dash-settings-foot { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-3) var(--sp-4); padding-top: var(--sp-5); border-top: 1px solid var(--hair); }
+.dash-settings-foot .dash-status { flex: 1 1 24ch; margin: 0; }
+@media (max-width: 640px) { .dash-settings-fields { grid-template-columns: 1fr; gap: var(--sp-5); } }
+
 @media (max-width: 1000px) { .dash-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 900px) { .dash-grid, .dash-grid-wide { grid-template-columns: 1fr; } }
 @media (max-width: 640px) {
@@ -1865,3 +1904,141 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
   .post-next .t-title { margin-inline: 0; }
   .post-next .actions { justify-content: flex-start; }
 }
+
+/* --------------------------------------------------------------------------
+   14. Chat
+   The assistant (main.js initChat, api/chat.js). The primary button waits in
+   the bottom corner of every page; it opens a panel built from the site's own
+   parts: a surface card with a hairline and the lift shadow, a card head
+   (eyebrow, subhead, the round close), the conversation, and a composer that
+   wears the gate field's ring. Answers read as plain text on the card, the
+   visitor's questions sit to the right on paper-2, and the password field the
+   model asks for is a small card of its own. On a phone the panel is a modal
+   sheet over the whole screen, and the page behind holds still, as it does
+   under the menu. The panel sits under the nav (z 50) and the opener (z 80);
+   the modal sheet is in the top layer.
+   -------------------------------------------------------------------------- */
+:root { --chat-edge: clamp(16px, 2.4vw, 28px); }
+.chat-launch {
+  position: fixed; z-index: 45;
+  right: calc(var(--chat-edge) + env(safe-area-inset-right, 0px)); bottom: calc(var(--chat-edge) + env(safe-area-inset-bottom, 0px));
+  box-shadow: var(--shadow-lift);
+  opacity: 0; transform: translateY(12px); visibility: hidden;
+  transition: opacity var(--dur-ui) var(--ease), transform var(--dur-ui) var(--ease), visibility 0s var(--dur-ui), background var(--dur-hover), box-shadow var(--dur-hover), color var(--dur-hover);
+}
+.chat-launch.is-in { opacity: 1; transform: none; visibility: visible; transition-delay: 0s; }
+.chat-launch.is-in[aria-expanded="true"] { opacity: 0; transform: translateY(8px); visibility: hidden; transition-delay: 0s, 0s, var(--dur-ui), 0s, 0s, 0s; }
+.chat-launch.is-in:active { transform: scale(.97); }
+@media (hover: hover) and (pointer: fine) {
+  .chat-launch.is-in:hover { transform: translateY(-2px); }
+  .chat-launch.is-in:hover:active { transform: translateY(-2px) scale(.97); }
+}
+.chat-launch svg { width: 18px; height: 18px; }
+
+.chat {
+  position: fixed; z-index: 46; margin: 0; padding: 0;
+  inset: auto calc(var(--chat-edge) + env(safe-area-inset-right, 0px)) calc(var(--chat-edge) + env(safe-area-inset-bottom, 0px)) auto;
+  width: min(420px, calc(100vw - 2 * var(--chat-edge)));
+  height: min(660px, calc(100vh - var(--nav-h) - 2 * var(--chat-edge)));
+  height: min(660px, calc(100dvh - var(--nav-h) - 2 * var(--chat-edge)));
+  max-width: none; max-height: none;
+  border: 1px solid var(--hair); border-radius: var(--radius);
+  background: var(--surface); color: var(--ink);
+  box-shadow: var(--shadow-lift), 0 2px 8px rgba(20, 16, 12, .06);
+  display: none; flex-direction: column; overflow: hidden;
+  opacity: 0; transform: translateY(12px) scale(.98); transform-origin: 100% 100%;
+  transition: opacity var(--dur-ui) var(--ease), transform var(--dur-ui) var(--ease);
+}
+.chat[open] { display: flex; }
+.chat.is-open { opacity: 1; transform: none; }
+.chat::backdrop { background: var(--paper); }
+
+.chat-head { flex: none; display: flex; align-items: flex-start; justify-content: space-between; gap: var(--sp-4); padding: var(--sp-5) var(--sp-5) var(--sp-4); border-bottom: 1px solid var(--hair); }
+.chat-head .t-subhead:focus { outline: none; }        /* focused by script on a touch screen, so the keyboard stays down */
+.chat-close { flex: none; margin: -6px -8px 0 0; }
+
+.chat-log {
+  flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain;
+  display: flex; flex-direction: column; gap: var(--sp-4); padding: var(--sp-5);
+}
+.chat-log:focus-visible { outline: 2px solid var(--accent); outline-offset: -4px; border-radius: 8px; }
+.chat-msg { max-width: 100%; color: var(--ink); overflow-wrap: anywhere; }
+.chat-msg.is-user { align-self: flex-end; max-width: 85%; padding: 9px 14px; border-radius: 14px 14px 4px 14px; background: var(--paper-2); white-space: pre-wrap; }
+.chat-msg p + p, .chat-msg p + ul, .chat-msg ul + p { margin-top: var(--sp-2); }
+.chat-msg ul { margin: 0; padding-left: 1.15em; }
+.chat-msg li + li { margin-top: 4px; }
+.chat-msg li::marker { color: var(--ink-3); }
+.chat-msg a { text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--accent-ink) 35%, transparent); text-underline-offset: 3px; transition: text-decoration-color var(--dur-hover); }
+.chat-msg a:hover { text-decoration-color: currentColor; }
+.chat-error { color: var(--danger); }
+.chat-starters { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.chat-starters .btn { white-space: normal; text-align: left; line-height: 1.3; }   /* a long suggestion wraps inside its pill */
+
+/* Waiting for the first word: three dots that rise in turn. */
+.chat-wait { display: inline-flex; gap: 5px; padding: 8px 0; }
+.chat-wait i { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-3); animation: chat-wait 1.2s var(--ease-soft) infinite; }
+.chat-wait i:nth-child(2) { animation-delay: .15s; }
+.chat-wait i:nth-child(3) { animation-delay: .3s; }
+@keyframes chat-wait { 0%, 60%, 100% { opacity: .3; transform: none; } 30% { opacity: 1; transform: translateY(-3px); } }
+
+/* The password field: the gate's field in a small card of its own. */
+.chat-unlock { display: flex; flex-direction: column; gap: var(--sp-3); padding: var(--sp-4); border: 1px solid var(--hair); border-radius: var(--radius-sm); background: var(--paper); }
+.chat-unlock label { color: var(--ink); }
+.chat-unlock-row { display: flex; gap: var(--sp-2); }
+.chat-unlock input { flex: 1; min-width: 0; padding: 9px 14px; border-radius: 12px; border: 1px solid var(--hair-2); background: var(--surface); color: var(--ink); }
+.chat-unlock input:focus { outline: 2px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
+.chat-unlock input[aria-invalid="true"] { border-color: var(--danger); }
+.chat-unlock input[aria-invalid="true"]:focus { outline-color: var(--danger); }
+.chat-unlock .t-small a { color: var(--accent-ink); }
+.chat-unlocked { display: inline-flex; align-items: center; gap: 8px; align-self: flex-start; padding: 3px 10px; border-radius: 20px; background: var(--glow); color: var(--accent-ink); }
+
+/* The composer: a pill that takes the gate field's ring while you type. The
+   box grows with the question up to six lines (field-sizing), and holds two
+   lines where the browser can't grow it. */
+.chat-form {
+  flex: none; display: flex; align-items: flex-end; gap: var(--sp-2);
+  margin: var(--sp-1) var(--sp-4) 0; padding: 6px 6px 6px 16px;
+  border: 1px solid var(--hair-2); border-radius: 22px; background: var(--surface);
+  transition: border-color var(--dur-hover);
+}
+.chat-form:focus-within { border-color: var(--accent); outline: 2px solid var(--accent); outline-offset: 2px; }
+.chat-form textarea {
+  flex: 1; min-width: 0; max-width: none; margin: 0; padding: 5px 0; border: 0; background: none; color: var(--ink); resize: none; outline: none;
+  field-sizing: content; min-block-size: calc(1lh + 10px); max-block-size: calc(6lh + 10px);
+}
+@supports not (field-sizing: content) { .chat-form textarea { height: calc(2lh + 10px); } }
+.chat-send {
+  flex: none; width: 36px; height: 36px; padding: 0; border: 0; border-radius: 50%; display: grid; place-items: center; cursor: pointer;
+  background: var(--ink); color: var(--paper);
+  transition: background var(--dur-hover), color var(--dur-hover), transform var(--dur-press) var(--ease);
+}
+.chat-send:active { transform: scale(.94); }
+.chat-send:disabled { background: var(--paper-2); color: var(--ink-3); cursor: default; transform: none; }
+@media (hover: hover) and (pointer: fine) { .chat-send:not(:disabled):hover { background: var(--accent); color: var(--surface); } }
+.chat-send:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.chat-send svg { width: 18px; height: 18px; }
+.chat-foot { flex: none; padding: var(--sp-3) var(--sp-5) var(--sp-4); color: var(--ink-3); text-align: center; text-wrap: balance; max-width: none; }
+
+@media (max-width: 640px) {
+  /* On a phone the button is the mark alone, a round one, so it covers as
+     little of the page as it can; its name stays for screen readers. */
+  .chat-launch { width: 52px; height: 52px; padding: 0; justify-content: center; border-radius: 50%; }
+  .chat-launch span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .chat-launch svg { width: 22px; height: 22px; }
+  /* The sheet: the whole screen, flush, rising in. The close sits where the
+     menu's toggle does; main.js keeps its height to the visible area while
+     the keyboard is up. */
+  .chat:modal { inset: 0; width: 100%; height: 100%; height: 100dvh; border: 0; border-radius: 0; box-shadow: none; transform: translateY(16px); }
+  .chat:modal.is-open { transform: none; }
+  .chat-head { padding: calc(var(--sp-4) + env(safe-area-inset-top, 0px)) var(--gutter) var(--sp-4); }
+  .chat-log { padding: var(--sp-5) var(--gutter); }
+  .chat-form { margin-inline: var(--gutter); }
+  .chat-foot { padding: var(--sp-3) var(--gutter) calc(var(--sp-3) + env(safe-area-inset-bottom, 0px)); }
+  html.chat-locked { overflow: hidden; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chat, .chat.is-open, .chat:modal, .chat-launch, .chat-launch.is-in { transform: none; }
+  .chat, .chat-launch { transition-property: opacity, visibility, background, color; transition-duration: 0s; }
+  .chat-wait i { animation: none; opacity: .6; }
+}
+@media print { .chat-launch, .chat { display: none !important; } }

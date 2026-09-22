@@ -1908,9 +1908,352 @@ const CONFIG = {
     if (saved === "list") view("list");
   };
 
+  /* ---- Chat ----
+     The assistant (api/chat.js). A button in the bottom corner opens a panel
+     that answers questions about the work from the site's own pages. Nothing
+     shows until /api/chat says it is switched on, so a site without the key,
+     or the static preview server, simply has no button. The answer streams in
+     as one JSON event a line and is drawn as light Markdown: paragraphs, "- "
+     lists, bold and links, every piece built as text, never parsed as HTML.
+     The conversation lives in sessionStorage, so a link to a case study
+     carries it over to the next page (and on a laptop the panel reopens
+     there). On a phone the panel is a modal sheet over the whole screen, like
+     the menu; elsewhere it sits in the corner and the page stays usable.
+     Locked case studies: when a question needs one, the model asks for the
+     password with a tool, the panel answers with a password field, and a
+     right password unlocks the case studies site-wide and asks the question
+     again. A password typed as a question does the same, and the bubble that
+     carried it is masked. */
+  const initChat = () => {
+    if (!window.ReadableStream || !window.TextDecoder || !window.HTMLDialogElement) return;
+    fetch("/api/chat", { cache: "no-store", credentials: "same-origin" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((state) => { if (state && state.ready) buildChat(state); })
+      .catch(() => {});
+  };
+
+  const buildChat = (state) => {
+    const KEY = "chat.v1";
+    const INTRO = "I'm an AI assistant. I answer from the pages on this site, so ask about John's projects, how he leads or what he's looking for next.";
+    const UNLOCKED = "Unlocked. The case studies are open now, so ask me about the results, the numbers or how the work was done.";
+    const phone = window.matchMedia("(max-width: 640px)");
+    const fine = window.matchMedia("(pointer: fine)");
+    const root = document.documentElement;
+    const icon = (d) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${d}</svg>`;
+    const ICON = {
+      bubble: icon('<path d="M4.5 6.5A2.5 2.5 0 0 1 7 4h10a2.5 2.5 0 0 1 2.5 2.5v7A2.5 2.5 0 0 1 17 16h-6.5L6 19.5V16h0a1.5 1.5 0 0 1-1.5-1.5z"/><path d="M8.5 8.5h7M8.5 11.5h4.5"/>'),
+      close: icon('<path d="M6 6l12 12M18 6 6 18"/>'),
+      send: icon('<path d="M12 18.5V5.5M6.5 11 12 5.5l5.5 5.5"/>'),
+      stop: icon('<rect x="7.5" y="7.5" width="9" height="9" rx="1.5"/>'),
+    };
+    const make = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
+
+    // What this tab has said so far, and whether the panel was open.
+    let saved = {};
+    try { saved = JSON.parse(sessionStorage.getItem(KEY)) || {}; } catch (_) { /* private mode: a fresh start */ }
+    let msgs = (Array.isArray(saved.msgs) ? saved.msgs : [])
+      .filter((m) => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string").slice(-40);
+    let unlocked = !!state.unlocked;
+    let busy = null;                                   // the AbortController of the answer being read
+    const save = (open) => { try { sessionStorage.setItem(KEY, JSON.stringify({ open, msgs })); } catch (_) { /* nothing to keep it in */ } };
+
+    /* The button and the panel */
+    const launch = make("button", "btn btn-primary chat-launch");
+    launch.type = "button";
+    launch.setAttribute("aria-haspopup", "dialog");
+    launch.setAttribute("aria-controls", "chat");
+    launch.setAttribute("aria-expanded", "false");
+    launch.innerHTML = `${ICON.bubble}<span>Ask about my work</span>`;
+
+    const dlg = make("dialog", "chat");
+    dlg.id = "chat";
+    dlg.setAttribute("aria-labelledby", "chat-title");
+    dlg.innerHTML = `
+      <div class="chat-head">
+        <div>
+          <p class="eyebrow">AI assistant</p>
+          <h2 class="t-subhead" id="chat-title" tabindex="-1">Ask about my work</h2>
+        </div>
+        <button class="icon-btn chat-close" type="button" aria-label="Close the chat">${ICON.close}</button>
+      </div>
+      <div class="chat-log" role="region" aria-label="Conversation" tabindex="0"></div>
+      <form class="chat-form">
+        <label class="sr-only" for="chat-input">Ask a question</label>
+        <textarea id="chat-input" rows="1" maxlength="600" placeholder="Ask a question" enterkeyhint="send" autocomplete="off"></textarea>
+        <button class="chat-send" type="submit" aria-label="Send">${ICON.send}</button>
+      </form>
+      <p class="t-small chat-foot">The assistant answers from this site and can get things wrong. I read the questions people ask.</p>
+      <p class="sr-only" role="status" id="chat-status"></p>`;
+    document.body.append(launch, dlg);
+    const log = $(".chat-log", dlg), form = $(".chat-form", dlg), input = $("#chat-input", dlg);
+    const send = $(".chat-send", dlg), title = $("#chat-title", dlg), status = $("#chat-status", dlg);
+
+    /* Light Markdown, built as nodes. Links go to the site's own pages, to
+       https or to mail; anything else stays text. */
+    const inline = (text, into) => {
+      const re = /\[([^\]\n]+)\]\(([^)\s]+)\)|\*\*([^*\n]+)\*\*/g;
+      let at = 0, m;
+      while ((m = re.exec(text))) {
+        if (m.index > at) into.append(text.slice(at, m.index));
+        if (m[3]) into.append(make("strong", "", m[3]));
+        else if (/^(\/(?![\/\\])|https:\/\/|mailto:)/.test(m[2])) {   // a site path (never //host or /\host), https or mail
+          const a = make("a", "", m[1]);
+          a.href = m[2];
+          if (/^https:/.test(m[2]) && new URL(m[2]).host !== location.host) { a.target = "_blank"; a.rel = "noopener"; }
+          into.append(a);
+        } else into.append(m[1]);
+        at = re.lastIndex;
+      }
+      if (at < text.length) into.append(text.slice(at));
+      return into;
+    };
+    const render = (text, into) => {
+      const who = make("span", "sr-only", "Assistant: ");
+      into.replaceChildren(who);
+      let para = [], list = null;
+      const flush = () => { if (para.length) into.append(inline(para.join(" "), make("p"))); para = []; };
+      for (const line of text.split("\n")) {
+        const item = /^\s*(?:[-*•]|\d+\.)\s+(.*)$/.exec(line);
+        if (item) { flush(); if (!list) { list = make("ul"); into.append(list); } list.append(inline(item[1], make("li"))); }
+        else if (!line.trim()) { flush(); list = null; }
+        else { list = null; para.push(line.trim()); }
+      }
+      flush();
+    };
+    const plain = (text) => text.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1").replace(/\*\*/g, "");
+
+    /* The log: the greeting, the suggested questions until the first one is
+       asked, then the turns. It follows the answer down as it streams unless
+       the reader has scrolled up to read something. */
+    let pinned = true;
+    log.addEventListener("scroll", () => { pinned = log.scrollHeight - log.scrollTop - log.clientHeight < 48; }, { passive: true });
+    const stick = (force) => { if (force || pinned) log.scrollTop = log.scrollHeight; };
+    const bubble = (role, content) => {
+      const m = make("div", `chat-msg is-${role}`);
+      if (role === "user") m.append(make("span", "sr-only", "You: "), content);
+      else render(content, m);
+      log.append(m);
+      return m;
+    };
+    let starters = null;
+    const drawLog = () => {
+      log.replaceChildren();
+      bubble("assistant", INTRO);
+      if (!msgs.length && Array.isArray(state.starters) && state.starters.length) {
+        starters = make("ul", "chat-starters");
+        starters.setAttribute("aria-label", "Suggested questions");
+        state.starters.forEach((q) => {
+          const b = make("button", "btn btn-ghost btn-sm", q);
+          b.type = "button";
+          b.addEventListener("click", () => ask(q));
+          const li = make("li");
+          li.append(b);
+          starters.append(li);
+        });
+        log.append(starters);
+      }
+      msgs.forEach((m) => bubble(m.role, m.content));
+      stick(true);
+    };
+
+    /* Asking. The reply is read line by line off the stream and drawn once a
+       frame; the send button becomes Stop while it arrives. */
+    const setBusy = (on) => {
+      send.innerHTML = on ? ICON.stop : ICON.send;
+      send.setAttribute("aria-label", on ? "Stop the answer" : "Send");
+      log.setAttribute("aria-busy", String(on));
+      sync();
+    };
+    const sync = () => { send.disabled = !busy && !input.value.trim(); };
+
+    const ask = (question) => {
+      if (busy) return;
+      const q = (question ?? input.value).trim();
+      if (!q) return;
+      if (starters) { starters.remove(); starters = null; }
+      input.value = "";
+      msgs.push({ role: "user", content: q });
+      const mine = bubble("user", q);
+      save(true);
+      answer(mine);
+    };
+
+    const answer = async (mine) => {
+      const reply = make("div", "chat-msg is-assistant is-waiting");
+      const dots = make("span", "chat-wait");
+      dots.setAttribute("aria-hidden", "true");
+      dots.append(make("i"), make("i"), make("i"));
+      reply.append(dots);
+      log.append(reply);
+      stick(true);
+      status.textContent = "Answering…";
+      busy = new AbortController();
+      setBusy(true);
+      let text = "", asked = false, opened = false, failed = "", frame = 0;
+      const paint = () => { frame = 0; reply.classList.remove("is-waiting"); render(text, reply); stick(); };
+      try {
+        const res = await fetch("/api/chat", {
+          method: "POST", credentials: "same-origin", signal: busy.signal,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ messages: msgs.slice(-16), page: location.pathname }),
+        });
+        if (!res.ok || !res.body) {
+          const body = await res.json().catch(() => ({}));
+          throw new Error(body.error || "The assistant couldn't answer just now. Try again in a moment.");
+        }
+        const reader = res.body.getReader(), dec = new TextDecoder();
+        let buf = "";
+        for (;;) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buf += dec.decode(value, { stream: true });
+          let nl;
+          while ((nl = buf.indexOf("\n")) >= 0) {
+            const line = buf.slice(0, nl);
+            buf = buf.slice(nl + 1);
+            let ev;
+            try { ev = JSON.parse(line); } catch (_) { continue; }
+            if (ev.t === "text") { text += ev.v; if (!frame) frame = requestAnimationFrame(paint); }
+            else if (ev.t === "password") asked = true;
+            else if (ev.t === "unlocked") opened = true;
+            else if (ev.t === "error") failed = ev.v;
+          }
+        }
+      } catch (err) {
+        if (err.name !== "AbortError") failed = err.message || "The assistant couldn't be reached. Try again in a moment.";
+      }
+      cancelAnimationFrame(frame);
+      busy = null;
+      setBusy(false);
+
+      if (opened) {                                    // the question was the password
+        msgs.pop();
+        if (mine) mine.replaceChildren(make("span", "sr-only", "You entered the password: "), "••••••••");
+        reply.remove();
+        unlocked = true;
+        msgs.push({ role: "assistant", content: UNLOCKED });
+        bubble("assistant", UNLOCKED);
+        status.textContent = UNLOCKED;
+      } else {
+        if (text) { render(text, reply); reply.classList.remove("is-waiting"); msgs.push({ role: "assistant", content: text }); }
+        if (failed) {
+          if (!text) reply.replaceChildren();
+          reply.classList.remove("is-waiting");
+          reply.append(make("p", "chat-error", failed));
+        }
+        if (!text && !failed) reply.remove();          // stopped before a word arrived
+        status.textContent = failed || (text ? `Assistant: ${plain(text)}` : "");
+        if (asked && !unlocked) passwordCard();
+      }
+      save(dlg.open);
+      stick();
+    };
+
+    /* The password field the model asks for. A right password unlocks the
+       case studies (the cookie the gate sets) and asks the last question again. */
+    let cards = 0;
+    const passwordCard = () => {
+      const id = `chat-pw-${++cards}`;
+      const card = make("form", "chat-unlock");
+      card.noValidate = true;
+      card.innerHTML = `
+        <label for="${id}">Case-study password</label>
+        <div class="chat-unlock-row">
+          <input id="${id}" type="password" autocomplete="current-password" required aria-describedby="${id}-note">
+          <button class="btn btn-primary btn-sm" type="submit">Unlock</button>
+        </div>
+        <p class="t-small chat-error" id="${id}-error" role="alert" hidden></p>
+        <p class="t-small" id="${id}-note">Don't have it? <a href="${CONFIG.linkedin}" target="_blank" rel="noopener">Message John on LinkedIn</a> and he'll send it.</p>`;
+      log.append(card);
+      stick(true);
+      const field = $("input", card), err = $(".chat-error", card), btn = $("button", card);
+      field.focus({ preventScroll: true });
+      card.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!field.value.trim()) { field.focus(); return; }
+        btn.disabled = true;
+        let body = {};
+        try {
+          const res = await fetch("/api/chat", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ password: field.value }) });
+          body = await res.json().catch(() => ({}));
+        } catch (_) { body = { error: "The assistant couldn't be reached. Try again in a moment." }; }
+        btn.disabled = false;
+        if (!body.unlocked) {
+          err.textContent = body.error || "That password didn't match.";
+          err.hidden = false;
+          if (card === log.lastElementChild) stick(true);   // the line under the field, in view
+          field.setAttribute("aria-invalid", "true");
+          field.setAttribute("aria-describedby", `${id}-error ${id}-note`);
+          field.select();
+          return;
+        }
+        unlocked = true;
+        const done = make("p", "chat-unlocked", "Case studies unlocked");
+        done.setAttribute("role", "status");
+        card.replaceWith(done);
+        $$(".chat-unlock", log).forEach((c) => c.remove());   // any earlier field is moot now
+        input.focus({ preventScroll: true });
+        if (msgs.length && msgs[msgs.length - 1].role === "assistant") answer(null);   // the question that needed it, answered in full
+      });
+    };
+
+    /* Opening and closing. On a phone the panel is modal and the page behind
+       holds still; elsewhere the page stays in reach. Focus goes to the box
+       where a keyboard is at hand, to the title on a touch screen (so the
+       keyboard doesn't cover the suggestions), and back to the button after. */
+    const vv = window.visualViewport;
+    const fit = () => {                                // the sheet follows the visible area as a phone keyboard opens and closes
+      if (!dlg.open || !phone.matches || !vv) return;
+      dlg.style.height = `${vv.height}px`;
+      dlg.style.top = `${vv.offsetTop}px`;
+    };
+    if (vv) { vv.addEventListener("resize", fit); vv.addEventListener("scroll", fit); }
+    let closing = 0;
+    const open = (focus) => {
+      clearTimeout(closing);
+      if (!dlg.open) {
+        if (phone.matches) { dlg.showModal(); root.classList.add("chat-locked"); fit(); }
+        else dlg.show();
+      }
+      requestAnimationFrame(() => dlg.classList.add("is-open"));
+      launch.setAttribute("aria-expanded", "true");
+      save(true);
+      stick(true);
+      if (focus) (fine.matches ? input : title).focus({ preventScroll: true });
+    };
+    const close = () => {
+      if (!dlg.open) return;
+      dlg.classList.remove("is-open");
+      launch.setAttribute("aria-expanded", "false");
+      root.classList.remove("chat-locked");
+      save(false);
+      launch.focus({ preventScroll: true });
+      clearTimeout(closing);
+      closing = setTimeout(() => { dlg.close(); dlg.style.height = dlg.style.top = ""; }, reduced ? 0 : 200);
+    };
+    launch.addEventListener("click", () => open(true));
+    $(".chat-close", dlg).addEventListener("click", close);
+    dlg.addEventListener("cancel", (e) => { e.preventDefault(); close(); });   // Escape on the modal sheet
+    dlg.addEventListener("keydown", (e) => { if (e.key === "Escape" && !phone.matches) { e.preventDefault(); close(); } });
+    phone.addEventListener("change", () => { if (!dlg.open) return; dlg.close(); root.classList.remove("chat-locked"); open(false); });
+    log.addEventListener("click", (e) => { if (e.target.closest("a[href^='/']")) save(!phone.matches); });   // on to another page: reopen there, except on a phone
+
+    /* The composer: Enter sends, Shift+Enter breaks the line. */
+    form.addEventListener("submit", (e) => { e.preventDefault(); if (busy) busy.abort(); else ask(); });
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); if (!busy) ask(); }
+    });
+    input.addEventListener("input", sync);
+    sync();
+
+    drawLog();
+    requestAnimationFrame(() => launch.classList.add("is-in"));
+    if (saved.open && !phone.matches) open(false);
+  };
+
   /* ---- Footer year ---- */
   const initYear = () => $$("[data-year]").forEach((el) => (el.textContent = new Date().getFullYear()));
 
-  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initMatrix, initConfig, initFlows, initTicker, initStrips, initTableWraps, initPortrait, initClock, initArcade, initPostList, initYear]
+  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initMatrix, initConfig, initFlows, initTicker, initStrips, initTableWraps, initPortrait, initClock, initArcade, initPostList, initChat, initYear]
     .forEach((init) => { try { init(); } catch (err) { console.error(`main.js: ${init.name} failed`, err); } });
 })();

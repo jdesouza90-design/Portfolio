@@ -35,16 +35,21 @@ robots.txt                      Crawl rules, and where the sitemap is
 styles.css                      Tokens, the ten type roles, components, case-study layout, the blog
 main.js                         CONFIG links, then one function per feature: nav, scroll reveal, tabs, carousel,
                                 walkthroughs, AI strands, fields (hero dots, contact rings), chart, number flow,
-                                swipe strips, table frames, About portrait height, the Nine holes arcade
-admin/index.html                Activity dashboard: who is on the site, live (its own password)
-admin/dash.js                   The dashboard's script: polls the feed, builds sessions, draws the charts and the map
+                                swipe strips, table frames, About portrait height, the Nine holes arcade, the chat panel
+admin/index.html                Activity dashboard: who is on the site, live (its own password), what people
+                                asked the chat, and the chat's settings
+admin/dash.js                   The dashboard's script: polls the feed, builds sessions, draws the charts and the map,
+                                lists the chat's questions and saves its settings
 admin/golf.js                   The dashboard's Nine holes section: the leaderboard (delete, clear), banned words, the game's settings
 middleware.js                   Vercel Edge Middleware: the two password gates, the activity log, its feed and the time-on-page beacon,
-                                and the Nine holes leaderboard (/api/scores; its name filter, and /api/board for the dashboard)
-vercel.json                     Cache and security headers
+                                the Nine holes leaderboard (/api/scores; its name filter, and /api/board for the dashboard)
+                                and the chat's settings (/api/chat-settings); its helpers are shared with api/chat.js
+api/chat.js                     The chat: a Vercel Function that answers from the site's pages with Claude (see The chat)
+package.json                    The one dependency, the Anthropic SDK, which Vercel installs for api/chat.js
+vercel.json                     Cache and security headers; bundles the pages with api/chat.js
 .vercelignore                   Keeps the repo's tooling (this file, VOICE.md, stamp.py, dev.mjs, .claude/) off the deployment
 stamp.py                        Re-stamps every ?v= cache hash; run it before committing
-dev.mjs                         Local stand-in for the edge: the gates and the dashboard without deploying
+dev.mjs                         Local stand-in for the edge: the gates, the chat and the dashboard without deploying
 bot-check.mjs                   Checks middleware.js's bot list against real user agents; run it after changing that list
 ai-process-art.mjs              Draws assets/ai-process.svg, the abstract on the AI card
 assets/                         Mockups, logos, walkthrough recordings exported from the deck
@@ -53,8 +58,10 @@ og-image.png                    Social preview image used when the link is share
 
 ## Deploying
 
-Push to `main` and Vercel builds and publishes automatically. For a one-off
-manual deploy, run `npx vercel --prod` from this folder. `.vercelignore` keeps
+Push to `main` and Vercel builds and publishes automatically. There is no build
+step: Vercel installs `package.json`'s one dependency for the chat function and
+serves everything else as files. For a one-off manual deploy, run
+`npx vercel --prod` from this folder. `.vercelignore` keeps
 everything that is not the site (this README, `VOICE.md`, `stamp.py`, the
 validator config, `.claude/`) out of the deployment, so none of it is served.
 
@@ -66,8 +73,11 @@ before any file is served. The home page and the work index stay public.
 - The password is the `CASE_STUDY_PASSWORD` environment variable, set in
   Vercel → Project → Settings → Environment Variables. It is deliberately not
   stored in this repo.
-- A correct password sets a cookie scoped to `/work` that lasts 30 days, so a
-  visitor unlocks all six case studies once.
+- A correct password sets a cookie that lasts 30 days, so a visitor unlocks
+  all six case studies once. It covers the whole site (it was scoped to
+  `/work` until the chat needed to read it), and an unlock clears any old
+  `/work` copy. The password can also be entered in the chat, which sets the
+  same cookie.
 - Changing the password invalidates every existing cookie, because the cookie
   value is derived from the password.
 - If the variable is missing the gate fails closed and says so.
@@ -198,6 +208,49 @@ next deployment.
   all-time count for good, and the edge stops recording it within a minute.
   Blocked hosts sit under the tally with an Unblock each. The site itself
   still serves them; only the dashboard stops counting.
+
+## The chat
+
+A button in the bottom corner of every public page ("Ask about my work"; a
+round mark on a phone) opens an assistant that answers questions about the
+work. `main.js` builds the panel (`initChat`) and `api/chat.js`, a Vercel
+Function, answers with Claude Haiku 4.5 by default.
+
+- **Switching it on.** Add `ANTHROPIC_API_KEY` in Vercel → Project → Settings →
+  Environment Variables and redeploy. Until the key is there, `/api/chat` says
+  it isn't ready and no button appears anywhere. The dashboard's Chat settings
+  can also switch it off without touching the key.
+- **What it knows.** The site's own pages, read from disk when an instance
+  starts and cut down to text: home, the work index and the blog for
+  everyone, plus the case studies for a visitor who has unlocked them. A page
+  marked `noindex` is parked and never read. Nothing else is written down for
+  it, so editing a page is editing what it knows. The notes field in Chat
+  settings adds what the pages don't say.
+- **The password.** Asked for something only a case study has, the model
+  calls its `ask_for_password` tool and the panel shows a password field. A
+  right password sets the gate's own cookie and asks the question again. A
+  password typed into the message box is caught before it reaches the model
+  and never logged. Tries are limited to 10 an hour a visitor, and each one
+  lands in the activity feed (page Chat) and the email, as the gate's do.
+- **Chat settings** (the dashboard, under Questions): on or off, the model
+  (Haiku 4.5 or Sonnet 5), questions one visitor can ask an hour (30),
+  questions the site answers a day (200, the cost ceiling), the suggested
+  questions and the notes. They are kept in the Redis store as one value and
+  reach visitors within half a minute, no redeploy. Without a store the
+  defaults apply and nothing can be saved.
+- **What it records.** Every question and answer goes to the Redis list
+  `chat:log` (the last 1,000), shown under Questions with the page it was
+  asked on, the place and the visitor hash. The owner's browsers are muted,
+  as they are for views.
+- **What it costs.** The instructions and public pages are about 10,000 tokens
+  and the case studies about 9,000 more, both cached. A question costs about a
+  third of a cent when the cache is warm and up to about 2.7 cents when it
+  isn't, so the daily cap of 200 bounds a bad day at roughly $5 on Haiku.
+- **Trying it locally.** `node dev.mjs` serves `/api/chat` through the function
+  with a scripted stand-in for Claude (no key, nothing spent): it streams,
+  links, lists and asks for the password like the real one. Run it with
+  `ANTHROPIC_API_KEY` set to talk to Claude. The static `http.server` has no
+  `/api/chat`, so it shows no button.
 
 ## The blog
 
