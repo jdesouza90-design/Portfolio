@@ -14,16 +14,17 @@ The chrome (head, nav, closing band, footer) lives here, once. If the nav or the
 footer changes on the rest of the site, change it here and re-run, or the blog
 drifts away from the pages around it.
 """
-import json, re, sys, glob, os, html, datetime, hashlib
+import json, re, sys, glob, os, html, datetime, hashlib, math
 
 SITE = "https://john-desouza.com"
 AUTHOR = "John DeSouza"
 WPM = 225
 
+# label (the nav and the group heading), chip class, and a short form for a card.
 PILLARS = {
-    "leadership": ("Design leadership",            "pillar"),
-    "craft":      ("Where product design is going", "pillar pillar-craft"),
-    "fintech":    ("Fintech, web3 and trust",      "pillar pillar-fintech"),
+    "leadership": ("Design leadership",             "pillar",              "Leadership"),
+    "craft":      ("Where product design is going", "pillar pillar-craft", "The craft"),
+    "fintech":    ("Fintech, web3 and trust",       "pillar pillar-fintech", "Fintech"),
 }
 
 # Pages outside the blog that belong in the sitemap, with their change weight.
@@ -74,9 +75,120 @@ def pretty_date(iso):
     return "%d %s %d" % (d.day, d.strftime("%B"), d.year)
 
 
+# ------------------------------------------------------------ cover art ----
+# A seeded bundle of strands on the pillar's ground: one motif, three
+# behaviours, so the pillars read as a family and a card is still tellable
+# apart at a glance. Seeded from the slug, so a cover never changes once the
+# post is written. Same idea as ai-process-art.mjs, in this pipeline's language.
+
+CW, CH = 1200, 800
+
+# Ground and accent per pillar. The accent matches the pillar dot on the index.
+TONES = {
+    "leadership": ("#F1F0EA", "#E0E3D8", "#3B6B44"),
+    "craft":      ("#F6F1E6", "#EFE2CC", "#C98F3E"),
+    "fintech":    ("#F1F0EE", "#DEDBD4", "#5C564E"),
+}
+
+
+def _rng(seed):
+    s = seed & 0xFFFFFFFF
+    def rnd():
+        nonlocal s
+        s = (s + 0x6D2B79F5) & 0xFFFFFFFF
+        t = (s ^ (s >> 15)) * (1 | s) & 0xFFFFFFFF
+        t = (t + ((t ^ (t >> 7)) * (61 | t) & 0xFFFFFFFF)) & 0xFFFFFFFF ^ t
+        return ((t ^ (t >> 14)) & 0xFFFFFFFF) / 4294967296
+    return rnd
+
+
+def _smooth(u):
+    u = min(1.0, max(0.0, u))
+    return u * u * (3 - 2 * u)
+
+
+def _path(pts):
+    """Catmull-Rom through the points, as cubic beziers."""
+    d = "M%.0f %.0f" % (pts[0][0], pts[0][1])
+    for i in range(len(pts) - 1):
+        p0 = pts[i - 1] if i > 0 else pts[i]
+        p1, p2 = pts[i], pts[i + 1]
+        p3 = pts[i + 2] if i + 2 < len(pts) else p2
+        c1 = (p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6)
+        c2 = (p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6)
+        d += "C%.0f %.0f %.0f %.0f %.0f %.0f" % (c1[0], c1[1], c2[0], c2[1], p2[0], p2[1])
+    return d
+
+
+def _strand(pillar, t, rnd):
+    """One curve across the canvas. t is 0..1, its place in the bundle."""
+    amp = 10 + rnd() * 34
+    lam = 150 + rnd() * 200
+    phi = rnd() * math.tau
+    jitter = (rnd() - .5) * 26
+    pts = []
+    x = -20
+    while x <= CW + 20:
+        u = (x + 20) / (CW + 40)
+        s = _smooth(u)
+        if pillar == "leadership":
+            # One voice at the left, spreading into many across the canvas.
+            y = CH / 2 + (t - .5) * (CH - 90) * s + jitter * s
+        elif pillar == "craft":
+            # The mirror of leadership: many at the left, consolidating right.
+            y = CH / 2 + (t - .5) * (CH - 90) * (1 - s) + jitter * (1 - s)
+        else:
+            # Two bundles meeting at a line, leaving as fewer, steadier runs.
+            m = _smooth(abs(u - .5) * 2)
+            y = CH / 2 + (t - .5) * (CH - 90) * m + jitter * (1 - m)
+        wob = amp * math.sin(x / lam + phi) * ((1 - s) ** .6 + .25)
+        pts.append((x, y + wob))
+        x += 34
+    return pts
+
+
+def cover(slug, pillar):
+    seed = 0
+    for ch in slug:
+        seed = (seed * 131 + ord(ch)) & 0xFFFFFFFF
+    rnd = _rng(seed or 1)
+    g0, g1, accent = TONES[pillar]
+
+    n = 46
+    ink = []
+    for i in range(n):
+        t = i / (n - 1)
+        pts = _strand(pillar, t, rnd)
+        ink.append('<path d="%s" stroke-width="%.2f"/>' % (_path(pts), .7 + rnd() * .7))
+
+    # The one strand that carries the accent, picked off-centre so it reads.
+    at = .28 + rnd() * .44
+    lead = _path(_strand(pillar, at, rnd))
+
+    gate = ''
+    if pillar == "fintech":
+        gate = '<path d="M%d 60V%d" stroke="%s" stroke-width="1.5" stroke-opacity=".5"/>' % (CW // 2, CH - 60, accent)
+
+    return (
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 %d %d" width="%d" height="%d" role="img" aria-hidden="true">'
+        '<defs>'
+        '<linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="%s"/><stop offset="1" stop-color="%s"/></linearGradient>'
+        '<linearGradient id="f" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="%d" y2="0">'
+        '<stop offset="0" stop-color="#14100C" stop-opacity=".07"/>'
+        '<stop offset=".55" stop-color="#14100C" stop-opacity=".22"/>'
+        '<stop offset="1" stop-color="#14100C" stop-opacity=".07"/></linearGradient>'
+        '</defs>'
+        '<rect width="%d" height="%d" fill="url(#g)"/>'
+        '<g fill="none" stroke="url(#f)" stroke-linecap="round">%s</g>'
+        '%s'
+        '<path d="%s" fill="none" stroke="%s" stroke-width="3" stroke-linecap="round"/>'
+        '</svg>\n'
+    ) % (CW, CH, CW, CH, g0, g1, CW, CW, CH, "".join(ink), gate, lead, accent)
+
+
 # ---------------------------------------------------------------- chrome ----
 
-def head(*, title, desc, url, css, extra="", og_type="website", ld=""):
+def head(*, title, desc, url, css, extra="", og_type="website", ld="", italic=False):
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -97,7 +209,7 @@ def head(*, title, desc, url, css, extra="", og_type="website", ld=""):
 <link rel="alternate" type="application/rss+xml" title="{AUTHOR} — Blog" href="{SITE}/feed.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:{"ital,wght@0,400;1,400" if italic else "wght@400"}&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{css}styles.css?v={stamp('styles.css')}">
 <script defer src="/_vercel/insights/script.js"></script>
 <script>window.si = window.si || function () {{ (window.siq = window.siq || []).push(arguments); }};</script>
@@ -199,7 +311,7 @@ def person_ld():
 
 def render_post(p, nxt):
     url = "%s/blog/%s.html" % (SITE, p["slug"])
-    pillar_label, pillar_class = PILLARS[p["pillar"]]
+    pillar_label, pillar_class, _short = PILLARS[p["pillar"]]
     d = datetime.datetime.fromisoformat(p["date"])
 
     ld = {
@@ -239,7 +351,7 @@ def render_post(p, nxt):
         extra += '\n<meta property="article:tag" content="%s">' % html.escape(kw)
 
     out = head(title="%s — %s" % (p["title"], AUTHOR), desc=p["description"],
-               url=url, css="../", extra=extra, og_type="article", ld=ld_block)
+               url=url, css="../", extra=extra, og_type="article", ld=ld_block, italic=True)
     out += nav(None)
 
     sources = ""
@@ -268,8 +380,11 @@ def render_post(p, nxt):
     <p class="eyebrow" data-rise style="--i:0">{pillar_label}</p>
     <h1 class="t-display" data-rise style="--i:1">{html.escape(p["title"])}</h1>
     <p class="t-lede" data-rise style="--i:2">{p["lede"]}</p>
+    <p class="byline t-small"><span class="byline-mark" aria-hidden="true">JD</span>Written by {AUTHOR}</p>
     <p class="post-meta t-small">
-      <time datetime="{p["date"]}">{pretty_date(p["date"])}</time>
+      <span>Published on <time datetime="{p["date"]}">{pretty_date(p["date"])}</time></span>
+      <span class="dot" aria-hidden="true">·</span>
+      <span>in {pillar_label}</span>
       <span class="dot" aria-hidden="true">·</span>
       <span>{p["minutes"]} min read</span>
     </p>
@@ -278,6 +393,9 @@ def render_post(p, nxt):
 
 <section class="section tight">
   <div class="wrap">
+    <figure class="post-art" data-reveal>
+      <img src="../assets/blog/{p["slug"]}.svg?v={stamp('assets/blog/%s.svg' % p["slug"])}" width="{CW}" height="{CH}" alt="" decoding="async">
+    </figure>
     <div class="claim" data-reveal>
       <p class="t-quote">{p["claim"]}</p>
     </div>
@@ -332,16 +450,15 @@ def render_index(posts):
     }
     ld_block = '<script type="application/ld+json">%s</script>\n' % json.dumps(ld, separators=(",", ":"))
 
-    out = head(title="Blog — %s" % AUTHOR, desc=desc, url=url, css="", ld=ld_block)
+    out = head(title="Blog — %s" % AUTHOR, desc=desc, url=url, css="", ld=ld_block, italic=True)
     out += nav("/blog.html")
 
-    # The three arguments, as the way in. Each one names a pillar and jumps to
-    # its posts, so the index leads with what the blog is for rather than with
-    # whatever happened to go up this morning.
+    # 1. The three arguments, as the way in: the blog is organised by what it
+    #    argues, not by what happened to go up this morning.
     links = ""
-    for key, (label, _) in PILLARS.items():
+    for key, (label, _, _short) in PILLARS.items():
         n = sum(1 for p in posts if p["pillar"] == key)
-        links += f"""        <li><a href="#{key}"><span>{label}</span>{PILLAR_ARROW}<span class="pillar-count t-small">{n} post{"" if n == 1 else "s"}</span></a></li>\n"""
+        links += f"""        <li><a href="#{key}"><span class="pillar-label">{label}{PILLAR_ARROW}</span><span class="pillar-count t-small">{n} post{"" if n == 1 else "s"}</span></a></li>\n"""
 
     out += f"""
 <section class="cs-hero solo">
@@ -364,42 +481,96 @@ def render_index(posts):
 </section>
 """
 
-    for key, (label, chip_class) in PILLARS.items():
-        group = [p for p in posts if p["pillar"] == key]
+    # 2. The recent run, as a strip of titles and dates.
+    if len(posts) > 1:
+        strip = ""
+        for p in posts[:6]:
+            strip += f"""        <a class="ticker-item" href="/blog/{p["slug"]}.html">
+          <span class="t-small">{html.escape(p["title"])}</span>
+          <time class="t-small" datetime="{p["date"]}">{pretty_date(p["date"])}</time>
+        </a>\n"""
         out += f"""
 <section class="section tight">
   <div class="wrap">
-    <h2 class="t-title pillar-head" id="{key}" data-reveal>{label}</h2>
-    <div class="posts" data-reveal>
-"""
-        if not group:
-            out += '      <p class="t-body pillar-empty">Nothing here yet.</p>\n'
-        for p in group:
-            out += f"""      <a class="post-row" href="/blog/{p["slug"]}.html">
-        <div>
-          <h3 class="t-heading">{html.escape(p["title"])}</h3>
-          <p class="t-body">{p["description"]}</p>
-        </div>
-        <div class="post-aside">
-          <p class="post-meta t-small">
-            <time datetime="{p["date"]}">{pretty_date(p["date"])}</time>
-            <span class="dot" aria-hidden="true">·</span>
-            <span>{p["minutes"]} min</span>
-          </p>
-          <span class="post-cta">Read{ARROW_SVG}</span>
-        </div>
-      </a>
-"""
-        out += """    </div>
+    <div class="ticker" data-strip-label="Recent posts, scroll sideways">
+{strip}    </div>
   </div>
 </section>
 """
 
+    # 3. The latest three, on their own ground, with their covers.
+    if posts:
+        cards = "".join(card(p) for p in posts[:3])
+        out += f"""
+<section class="section tight">
+  <div class="wrap">
+    <div class="featured" data-reveal>
+      <div class="featured-head">
+        <h2 class="t-title featured-title">Latest</h2>
+        <a class="post-cta" href="#all">All posts{ARROW_SVG}</a>
+      </div>
+      <div class="cards">{cards}
+      </div>
+    </div>
+  </div>
+</section>
+"""
+
+    # 4. Everything, filterable, grouped under the pillar it argues.
+    out += """
+<section class="section tight" id="all">
+  <div class="wrap">
+    <div class="posts-head" data-reveal>
+      <h2 class="t-title">All posts</h2>
+      <div class="posts-controls">
+        <div class="post-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input type="search" id="post-search" placeholder="Search posts" autocomplete="off">
+          <label class="sr-only" for="post-search">Search posts</label>
+        </div>
+        <div class="view-toggle" role="group" aria-label="Layout">
+          <button type="button" data-view="grid" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Grid</button>
+          <button type="button" data-view="list" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M4 6h16M4 12h16M4 18h16"/></svg>List</button>
+        </div>
+      </div>
+    </div>
+"""
+    for key, (label, _, _short) in PILLARS.items():
+        group = [p for p in posts if p["pillar"] == key]
+        body = "".join(card(p) for p in group) or '\n        <p class="t-body pillar-empty">Nothing here yet.</p>'
+        out += f"""
+    <section class="pillar-group" data-pillar="{key}" data-reveal>
+      <h3 class="t-heading pillar-head" id="{key}">{label}</h3>
+      <div class="cards" data-view="grid">{body}
+      </div>
+    </section>
+"""
+    out += """
+    <p class="posts-empty t-body" hidden>Nothing matches that search.</p>
+  </div>
+</section>
+"""
     out += contact_band(
         "Want to argue about one of these?",
         "I'm looking for a Director of Product Design role. I'm also happy to just talk shop.",
         "Posts are my own views. Case studies reflect my role and my teams' work at each company.")
     return out
+
+
+def card(p):
+    """One post as a card: its cover, the month, the title and the blurb."""
+    d = datetime.datetime.fromisoformat(p["date"])
+    label, chip_class, short = PILLARS[p["pillar"]]
+    return f"""
+        <a class="card" href="/blog/{p["slug"]}.html" data-title="{html.escape(p["title"].lower())}" data-desc="{html.escape(p["description"].lower())}" data-pillar="{p["pillar"]}">
+          <span class="card-art"><img src="assets/blog/{p["slug"]}.svg?v={stamp('assets/blog/%s.svg' % p["slug"])}" width="{CW}" height="{CH}" alt="" loading="lazy" decoding="async"></span>
+          <span class="card-body">
+            <span class="eyebrow">{d.strftime("%B %Y")}</span>
+            <span class="t-heading card-title">{html.escape(p["title"])}</span>
+            <span class="t-small card-desc">{p["description"]}</span>
+            <span class="post-meta t-small"><span class="chip {chip_class}">{short}</span><span>{p["minutes"]} min</span></span>
+          </span>
+        </a>"""
 
 
 def render_sitemap(posts):
@@ -460,6 +631,17 @@ def main():
         sys.exit("run this from the repo root")
     posts = read_posts()
 
+    # Draw any cover that is missing. A cover is seeded from the slug, so it is
+    # stable once written; delete the file to redraw one.
+    os.makedirs("assets/blog", exist_ok=True)
+    drawn = []
+    for p in posts:
+        path = "assets/blog/%s.svg" % p["slug"]
+        if not os.path.exists(path):
+            if not check:
+                open(path, "w").write(cover(p["slug"], p["pillar"]))
+            drawn.append(path)
+
     wanted = {}
     for i, p in enumerate(posts):
         # Next is the post below this one, and the oldest wraps to the newest,
@@ -484,7 +666,10 @@ def main():
                if os.path.splitext(os.path.basename(f))[0] not in slugs]
 
     if check:
-        if stale or orphans:
+        if drawn:
+            for f in drawn:
+                print("missing cover: %s" % f)
+        if stale or orphans or drawn:
             for f in stale:
                 print("out of date: %s" % f)
             for f in orphans:
@@ -495,6 +680,8 @@ def main():
 
     for f in orphans:
         print("orphan, delete it yourself if that is right: %s" % f)
+    if drawn:
+        print("drew %d cover%s" % (len(drawn), "" if len(drawn) == 1 else "s"))
     print("%d posts · wrote %d file%s%s" % (
         len(posts), len(stale), "" if len(stale) == 1 else "s",
         (": " + ", ".join(sorted(stale))) if stale else " (all current)"))

@@ -125,7 +125,7 @@
 /* The serif speaks: display, title, heading, stat, quote. It is never bold. */
 .t-display, .t-title, .t-heading, .t-stat, .t-quote,
 .brand, .facts dd, .avatar.glyph,
-.prose h2, .prose h3, .prose blockquote p, .pillar-nav a
+.prose h2, .prose h3, .prose blockquote p, .pillar-nav a, .byline-mark
   { font-family: var(--font-display); font-weight: 400; color: var(--ink); margin: 0; }
 .t-display
   { font-size: var(--t-display); line-height: var(--lh-display); letter-spacing: var(--ls-display); max-width: var(--m-display); text-wrap: balance; }
@@ -144,6 +144,7 @@
 .testimonial-foot cite b,
 .prose p, .prose li, .prose figcaption, .prose blockquote cite,
 .post-meta, .post-cta, .sources li, .pillar-count,
+.byline, .card-desc, .ticker-item, .post-search input, .view-toggle button,
 .layer-tab, .work-cta, .gate-form input,
 .btn, .chip, .nav-links ul a, .back, .crumbs, .tools span, footer,
 .facts dt, table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
@@ -161,7 +162,8 @@ thead th, .gauge .lbl, .table-wrap td[data-label]::before, .dash-kind, .dash-now
 .facts dt, table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
 .gallery figcaption, .proof-head small, .tooltip, .chart-pill, details.data,
 .dash-live, .dash-list li, .leaflet-container, .leaflet-popup-content,
-.prose figcaption, .prose blockquote cite, .post-meta, .post-cta, .sources li, .pillar-count
+.prose figcaption, .prose blockquote cite, .post-meta, .post-cta, .sources li, .pillar-count,
+.byline, .byline-mark, .card-desc, .ticker-item, .post-search input, .view-toggle button
   { font-size: var(--t-small); line-height: var(--lh-small); font-weight: 400; color: var(--ink-2); }
 .t-micro, .eyebrow, thead th, .gauge .lbl, .table-wrap td[data-label]::before, .dash-kind, .dash-now
   { font-size: var(--t-micro); line-height: var(--lh-micro); letter-spacing: var(--ls-micro); text-transform: uppercase; font-weight: 500; color: var(--ink-2); }
@@ -1633,56 +1635,80 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
    contained like the dashboard above, phone rules included.
    -------------------------------------------------------------------------- */
 
-/* ---- Index: the three arguments, then the posts under each ---- */
-/* The way into the blog is the argument, not the date. Three serif lines in
-   two columns, each one jumping to its own group below. */
-.pillar-nav ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-3); }
-.pillar-nav a { display: inline-flex; align-items: baseline; gap: .4em; text-decoration: none; max-width: none; transition: color var(--dur-hover); }
-.pillar-count { margin-left: .5em; align-self: center; }
-.pillar-nav svg { width: .52em; height: .52em; flex: none; transition: transform var(--dur-hover) var(--ease); }
+/* ---- Index: the three arguments, a recent strip, the latest, then all ---- */
+/* The way into the blog is the argument, not the date. Two columns of serif
+   lines, each one jumping to its own group below. */
+.pillar-nav ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-3) var(--sp-8); }
+.pillar-nav a { display: block; text-decoration: none; max-width: none; text-wrap: balance; transition: color var(--dur-hover); }
+.pillar-nav svg { width: .5em; height: .5em; margin-left: .3em; display: inline-block; transition: transform var(--dur-hover) var(--ease); }
+.pillar-count { display: inline-block; margin-left: .6em; white-space: nowrap; vertical-align: .18em; }
 @media (hover: hover) and (pointer: fine) {
   .pillar-nav a:hover { color: var(--accent-ink); }
   .pillar-nav a:hover svg { transform: translateX(.22em); }
 }
 .pillar-head { scroll-margin-top: calc(var(--nav-h) + var(--sp-5)); margin-bottom: var(--sp-5); }
+.pillar-group + .pillar-group { margin-top: var(--row); }
 .pillar-empty { padding-block: var(--sp-5); }
 /* The feed, beside the eyebrow that names the section */
 .feed-link { display: inline-flex; margin-left: 8px; vertical-align: -2px; color: var(--ink-3); transition: color var(--dur-hover); }
 .feed-link svg { width: 13px; height: 13px; }
 .feed-link:hover { color: var(--accent-ink); }
 
-/* ---- Index: one hairline row per post ---- */
-.posts { border-top: 1px solid var(--hair); }
-.post-row {
-  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--sp-4) var(--sp-6);
-  align-items: start;
-  padding-block: clamp(28px, 3.4vw, 44px);
-  border-bottom: 1px solid var(--hair);
-  text-decoration: none;
-  transition: background var(--dur-hover), padding-inline var(--dur-hover) var(--ease);
-}
+/* The read-on cue: a label and an arrow that steps forward on hover */
+.post-cta { display: inline-flex; align-items: center; gap: 7px; color: var(--ink); text-decoration: none; transition: color var(--dur-hover); }
+.post-cta svg { width: 15px; height: 15px; flex: none; transition: transform var(--dur-hover) var(--ease); }
 @media (hover: hover) and (pointer: fine) {
-  .post-row:hover { background: var(--surface); padding-inline: var(--sp-4); }
-  .post-row:hover .post-cta { color: var(--accent-ink); }
-  .post-row:hover .post-cta svg { transform: translateX(5px); }
+  .post-cta:hover { color: var(--accent-ink); }
+  .post-cta:hover svg { transform: translateX(5px); }
 }
-.post-row .t-heading { max-width: 34ch; }
-.post-row .t-body { max-width: 62ch; margin-top: var(--sp-3); }
-.post-aside { display: flex; flex-direction: column; align-items: flex-end; gap: var(--sp-3); text-align: right; }
-.post-meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2); color: var(--ink-3); }
-.post-meta .dot { color: var(--hair-2); }
-.post-cta { display: inline-flex; align-items: center; gap: 7px; color: var(--ink); transition: color var(--dur-hover); }
-.post-cta svg { width: 15px; height: 15px; transition: transform var(--dur-hover) var(--ease); }
 
-/* The pillar a post argues, as a chip: a dot in the pillar's own tone so the
-   three arguments are tellable apart down the list without reading a label. */
-.pillar { white-space: nowrap; }
-.pillar::before {
-  content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%;
-  margin-right: 7px; vertical-align: 1px; background: var(--accent-2);
+/* The recent run: titles and dates on one line, swiped sideways on a phone */
+.ticker { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(210px, 1fr); gap: var(--sp-6); overflow-x: auto; padding-block: var(--sp-5); border-block: 1px solid var(--hair); scrollbar-width: thin; }
+.ticker-item { display: block; text-decoration: none; transition: color var(--dur-hover); }
+.ticker-item time { display: block; margin-top: var(--sp-2); color: var(--ink-3); }
+.ticker-item:hover { color: var(--accent-ink); }
+
+/* The latest three, on their own ground */
+.featured { background: var(--paper-2); border: 1px solid var(--hair); border-radius: var(--radius); padding: clamp(24px, 3.4vw, 48px); }
+.featured-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--sp-5); flex-wrap: wrap; margin-bottom: clamp(24px, 3vw, 36px); }
+.featured-title { font-style: italic; max-width: none; }
+
+/* A post as a card: its cover, the month, the title, the blurb */
+.cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2vw, 24px); }
+.card { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--hair); border-radius: var(--radius-sm); overflow: hidden; text-decoration: none; transition: transform var(--dur-hover) var(--ease), box-shadow var(--dur-hover), border-color var(--dur-hover); }
+.card-art { display: block; background: var(--paper-2); }
+.card-art img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; }
+.card-body { display: flex; flex-direction: column; gap: var(--sp-3); padding: clamp(16px, 1.8vw, 22px); }
+.card-title { display: block; max-width: none; }
+.card-desc { display: block; }
+.card .post-meta { margin-top: auto; padding-top: var(--sp-2); flex-wrap: wrap; }
+@media (hover: hover) and (pointer: fine) {
+  .card:hover { transform: translateY(-3px); border-color: var(--hair-2); box-shadow: var(--shadow-lift); }
 }
-.pillar-craft::before { background: #C98F3E; }
-.pillar-fintech::before { background: var(--ink-2); }
+
+/* All posts: a search and a layout choice above the groups */
+.posts-head { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-5); flex-wrap: wrap; margin-bottom: clamp(28px, 3vw, 44px); }
+.posts-controls { display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; }
+.post-search { display: flex; align-items: center; gap: 8px; padding: 9px 14px; border: 1px solid var(--hair-2); border-radius: 999px; background: var(--surface); }
+.post-search svg { width: 15px; height: 15px; color: var(--ink-3); flex: none; }
+.post-search input { border: 0; background: none; outline: none; min-width: 170px; color: var(--ink); }
+.post-search:focus-within { border-color: var(--accent); }
+.view-toggle { display: flex; padding: 3px; gap: 2px; border: 1px solid var(--hair-2); border-radius: 999px; background: var(--surface); }
+.view-toggle button { display: inline-flex; align-items: center; gap: 6px; padding: 7px 13px; border: 0; border-radius: 999px; background: none; color: var(--ink-2); cursor: pointer; transition: background var(--dur-hover), color var(--dur-hover); }
+.view-toggle svg { width: 14px; height: 14px; }
+.view-toggle button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.posts-empty { padding-block: var(--sp-6); }
+.card[hidden] { display: none; }
+
+/* The list layout: the cover shrinks to a stripe beside the copy */
+.cards[data-view="list"] { grid-template-columns: minmax(0, 1fr); gap: 0; }
+.cards[data-view="list"] .card { flex-direction: row; align-items: stretch; border-radius: 0; border-width: 0 0 1px; background: none; }
+.cards[data-view="list"] .card:first-child { border-top: 1px solid var(--hair); }
+.cards[data-view="list"] .card-art { flex: none; width: clamp(96px, 14vw, 168px); align-self: center; border-radius: var(--radius-sm); overflow: hidden; margin: var(--sp-4) 0 var(--sp-4) var(--sp-4); }
+.cards[data-view="list"] .card-desc { display: none; }
+@media (hover: hover) and (pointer: fine) {
+  .cards[data-view="list"] .card:hover { transform: none; box-shadow: none; background: var(--surface); }
+}
 
 /* ---- Post: one column, centred on the measure ---- */
 .post-hero { padding-top: calc(var(--nav-h) + clamp(32px, 6vw, 72px)); padding-bottom: clamp(32px, 4vw, 52px); }
@@ -1692,7 +1718,12 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 .post-hero h1 { max-width: 26ch; }
 .post-hero .post-meta { justify-content: center; }
 .post-hero .t-lede { margin-top: var(--sp-5); }
-.post-hero .post-meta { margin-top: clamp(24px, 3vw, 34px); padding-top: var(--sp-5); border-top: 1px solid var(--hair); }
+.byline { display: flex; align-items: center; justify-content: center; gap: 9px; margin-top: clamp(24px, 3vw, 32px); }
+.byline-mark { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--paper-2); border: 1px solid var(--hair); color: var(--ink); }
+/* The cover, full content width above the body */
+.post-art { margin: 0 0 clamp(32px, 4vw, 52px); border-radius: var(--radius); overflow: hidden; border: 1px solid var(--hair); }
+.post-art img { width: 100%; aspect-ratio: 5 / 2; object-fit: cover; }
+.post-hero .post-meta { margin-top: var(--sp-4); }
 
 /* The claim: the one sentence the post defends, standing above the body */
 .claim { max-width: 34rem; margin: clamp(32px, 4vw, 48px) auto 0; padding-left: clamp(20px, 3vw, 32px); border-left: 2px solid var(--accent); }
@@ -1731,10 +1762,13 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
      the post column is already one column, so only its rails come in. */
   .post-hero .t-display, .post-hero .t-lede, .post-hero .post-meta { text-align: left; }
   .post-hero .post-meta { justify-content: flex-start; }
-  .post-row { grid-template-columns: minmax(0, 1fr); }
-  .post-aside { align-items: flex-start; text-align: left; flex-direction: row; flex-wrap: wrap; gap: var(--sp-4); }
+  .pillar-nav ul { grid-template-columns: minmax(0, 1fr); }
+  .cards { grid-template-columns: minmax(0, 1fr); }
+  .posts-controls { width: 100%; }
+  .post-search { flex: 1; }
   .post-hero .wrap > * { margin-inline: 0; }
-  .post-hero h1, .post-row .t-heading { max-width: none; }
+  .byline { justify-content: flex-start; }
+  .post-hero h1 { max-width: none; }
   .claim, .prose blockquote { padding-left: var(--sp-4); }
   .post-next { text-align: left; }
   .post-next .t-title { margin-inline: 0; }

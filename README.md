@@ -207,6 +207,15 @@ eight rules every post follows. Read it with `VOICE.md` before writing.
 
 `/blog/` is public. Only `/work/` and `/admin/` are gated.
 
+### The two documents
+
+The **index** (`blog.html`) is organised by argument, not by date: the three
+pillars as serif links, a strip of the recent run, the latest three on their own
+ground, then everything grouped under its pillar with a search and a grid/list
+toggle. The **post** is a centred head (title, standfirst, byline, published
+line), its cover full width, the claim, then one column of running text on a
+34rem measure. Both follow craft.do/blog, rebuilt on the site's own tokens.
+
 ### One post is one file
 
 Everything under `blog/` except `blog/posts/` is **generated**. Editing
@@ -251,6 +260,20 @@ The chrome (head, nav, closing band, footer) lives in `blog.py`, once, because
 a daily post would otherwise copy it 365 times a year. **If the nav or the
 footer changes on the rest of the site, change it in `blog.py` too and re-run**,
 or the blog drifts away from the pages around it.
+
+### Covers
+
+Every post gets `assets/blog/<slug>.svg`, drawn by `blog.py` the first time it
+builds that post: a seeded bundle of strands on the pillar's ground, one motif
+with three behaviours (leadership spreads to the right, the craft consolidates,
+fintech meets at a gate) so the pillars read as a family and a card is still
+tellable apart. The seed is the slug, so a cover never changes once it is
+written. To redraw one, delete the file and re-run. Same idea as
+`ai-process-art.mjs`, kept inside `blog.py` so one command still produces a
+complete post.
+
+The index and the post pages load Crimson Pro's italic as well as its roman, for
+the featured band's heading. No other page pays for it.
 
 ### Writing one
 

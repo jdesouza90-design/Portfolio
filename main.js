@@ -1367,13 +1367,13 @@ const CONFIG = {
      scrolls has to be reachable from the keyboard, so it gets a tab stop only
      while it actually overflows. */
   const initStrips = () => {
-    const strips = $$(".gallery, .hero-panel.three");
+    const strips = $$(".gallery, .hero-panel.three, .ticker");
     if (!strips.length) return;
     const stops = () => strips.forEach((s) => {
       if (s.scrollWidth > s.clientWidth + 1) {
         s.tabIndex = 0;
         if (s.tagName !== "FIGURE") s.setAttribute("role", "group");
-        s.setAttribute("aria-label", "Screens, scroll sideways");
+        s.setAttribute("aria-label", s.dataset.stripLabel || "Screens, scroll sideways");
       } else { s.removeAttribute("tabindex"); s.removeAttribute("aria-label"); if (s.tagName !== "FIGURE") s.removeAttribute("role"); }
     });
     stops();
@@ -1713,9 +1713,49 @@ const CONFIG = {
     document.addEventListener("visibilitychange", () => { if (document.hidden) setPaused(true); });
   };
 
+  /* ---- Blog post list ----
+     Search filters the cards by title and blurb, hiding a pillar group once
+     nothing in it matches; the toggle switches every group between the card
+     grid and the hairline list. Both are progressive: without JS the grid is
+     already there and the controls simply do nothing. */
+  const initPostList = () => {
+    const head = $("#post-search");
+    const groups = $$(".pillar-group");
+    if (!head || !groups.length) return;
+    const empty = $(".posts-empty");
+
+    const filter = () => {
+      const q = head.value.trim().toLowerCase();
+      let shown = 0;
+      groups.forEach((g) => {
+        let n = 0;
+        $$(".card", g).forEach((c) => {
+          const hit = !q || c.dataset.title.includes(q) || c.dataset.desc.includes(q);
+          c.hidden = !hit;
+          if (hit) n++;
+        });
+        g.hidden = q ? n === 0 : false;
+        shown += n;
+      });
+      if (empty) empty.hidden = shown > 0;
+    };
+
+    const view = (name) => {
+      $$(".pillar-group .cards").forEach((c) => (c.dataset.view = name));
+      $$(".view-toggle button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.view === name)));
+      try { localStorage.setItem("blog-view", name); } catch { /* private window: the choice just doesn't persist */ }
+    };
+
+    head.addEventListener("input", debounce(filter, 120));
+    $$(".view-toggle button").forEach((b) => b.addEventListener("click", () => view(b.dataset.view)));
+    let saved = null;
+    try { saved = localStorage.getItem("blog-view"); } catch { /* ignore */ }
+    if (saved === "list") view("list");
+  };
+
   /* ---- Footer year ---- */
   const initYear = () => $$("[data-year]").forEach((el) => (el.textContent = new Date().getFullYear()));
 
-  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initMatrix, initConfig, initFlows, initStrips, initTableWraps, initPortrait, initClock, initArcade, initYear]
+  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initMatrix, initConfig, initFlows, initStrips, initTableWraps, initPortrait, initClock, initArcade, initPostList, initYear]
     .forEach((init) => { try { init(); } catch (err) { console.error(`main.js: ${init.name} failed`, err); } });
 })();
