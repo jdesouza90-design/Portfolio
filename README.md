@@ -36,11 +36,10 @@ styles.css                      Tokens, the ten type roles, components, case-stu
 main.js                         CONFIG links, then one function per feature: nav, scroll reveal, tabs, carousel,
                                 walkthroughs, AI strands, fields (hero dots, contact rings), chart, number flow,
                                 swipe strips, table frames, About portrait height, the Nine holes arcade, the chat panel
-admin/index.html                Activity dashboard: who is on the site, live (its own password), what people
-                                asked the chat, and the chat's settings
-admin/dash.js                   The dashboard's script: polls the feed, builds sessions, draws the charts and the map,
-                                lists the chat's questions and saves its settings
-admin/golf.js                   The dashboard's Nine holes section: the leaderboard (delete, clear), banned words, the game's settings
+admin/index.html                Dashboard, Activity page: who is on the site, live (its own password); tabs lead to the other two
+admin/dash.js                   Its script: polls the feed, builds sessions, draws the charts and the map; ?visitor= follows one person
+admin/game.html, golf.js        Dashboard, Nine holes page: the leaderboard (delete, clear), banned words, the game's settings
+admin/chat.html, chat.js        Dashboard, Chat page: what people asked the chat (/api/activity?chats) and the chat's settings
 middleware.js                   Vercel Edge Middleware: the two password gates, the activity log, its feed and the time-on-page beacon,
                                 the Nine holes leaderboard (/api/scores; its name filter, and /api/board for the dashboard)
                                 and the chat's settings (/api/chat-settings); its helpers are shared with api/chat.js
@@ -232,7 +231,7 @@ Function, answers with Claude Haiku 4.5 by default.
   password typed into the message box is caught before it reaches the model
   and never logged. Tries are limited to 10 an hour a visitor, and each one
   lands in the activity feed (page Chat) and the email, as the gate's do.
-- **Chat settings** (the dashboard, under Questions): on or off, the model
+- **Chat settings** (the dashboard's Chat page, under Questions): on or off, the model
   (Haiku 4.5 or Sonnet 5), questions one visitor can ask an hour (30),
   questions the site answers a day (200, the cost ceiling), questions in one
   chat (8; after the last one the chat ends on John's email and LinkedIn, and
@@ -653,7 +652,7 @@ runs clean through axe-core (WCAG 2.x A/AA and best-practice rules) and
 `html-validate`. To check a page after editing it:
 
 ```
-npx html-validate index.html work.html blog.html admin/index.html work/*.html blog/*.html
+npx html-validate index.html work.html blog.html admin/*.html work/*.html blog/*.html
 ```
 
 The rules that shape the code:

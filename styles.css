@@ -1467,6 +1467,16 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 .dash-live[data-state="off"] .dash-live-dot { background: var(--danger); }
 @keyframes live-pulse { from { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 38%, transparent); } to { box-shadow: 0 0 0 10px transparent; } }
 
+/* The three dashboard pages (Activity, Nine holes, Chat): the site's tab strip,
+   as links, the current page underlined in ink where the strip's hairline is. */
+.dash-tabs { margin-bottom: clamp(28px, 4vw, 44px); }
+.dash-tabs ul { list-style: none; padding: 0; margin: 0; }
+.dash-tabs li { display: flex; flex: none; }
+.dash-tabs .layer-tab { text-decoration: none; color: var(--ink-2); padding-left: clamp(12px, 1.6vw, 18px); }   /* each link is its li's first child, so the strip's own first-tab rule would catch them all */
+.dash-tabs .layer-tab:hover { color: var(--ink); }
+.dash-tabs .layer-tab[aria-current="page"] { color: var(--ink); border-bottom-color: var(--ink); box-shadow: inset 0 -1px 0 var(--ink); }
+.dash-tabs .layer-tabs::after { content: none; }
+.dash-tabs li:first-child .layer-tab { padding-left: 2px; }
 .dash-head { padding-bottom: clamp(32px, 4vw, 48px); }
 .dash-sub { color: var(--ink-2); max-width: 60ch; }
 .dash { padding-bottom: var(--section); }
@@ -1475,6 +1485,7 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 
 /* The period: one row of tabs, and everything under it follows. */
 .dash-range { margin-top: var(--row); }
+.dash-notice[hidden] + .dash-range { margin-top: 0; }   /* first on the Chat page, where no stat strip sits above it */
 .dash-range .layer-tab[aria-pressed="true"] { color: var(--ink); }
 
 /* What counts as a visit: the switch, the length beside it, and the line saying

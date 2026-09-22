@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chat — John DeSouza</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/favicon.ico?v=a803d66e" sizes="32x32">
+<link rel="icon" href="/favicon.svg?v=fb53733d" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=94379a7d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css?v=acf46010">
+</head>
+<body class="dash-body">
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav dash-nav">
+  <div class="wrap">
+    <a class="brand" href="/" aria-label="John DeSouza, home"><span>John DeSouza</span></a>
+    <div class="dash-nav-actions">
+      <a class="btn btn-ghost btn-sm" href="/admin/?signout">Sign out</a>
+    </div>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+
+<section class="cs-hero dash-head">
+  <div class="wrap">
+    <nav class="dash-tabs" aria-label="Dashboard pages">
+      <ul class="layer-tabs">
+        <li><a class="layer-tab" href="/admin/">Activity</a></li>
+        <li><a class="layer-tab" href="/admin/game.html">Nine holes</a></li>
+        <li><a class="layer-tab" href="/admin/chat.html" aria-current="page">Chat</a></li>
+      </ul>
+    </nav>
+    <h1 class="t-title" data-rise style="--i:1">The chat.</h1>
+    <p class="t-lede dash-sub" data-rise style="--i:2">What people ask the assistant on the site, and the settings it answers by.</p>
+  </div>
+</section>
+
+<section class="dash">
+  <div class="wrap">
+
+    <p class="dash-notice card" id="notice" hidden></p>
+
+    <div class="dash-range" data-rise style="--i:3">
+      <div class="layer-tabs" role="group" aria-label="Period" id="range">
+        <button class="layer-tab" type="button" data-range="day" aria-pressed="false">Last 24 hours</button>
+        <button class="layer-tab" type="button" data-range="week" aria-pressed="true">Last 7 days</button>
+        <button class="layer-tab" type="button" data-range="month" aria-pressed="false">Last 30 days</button>
+      </div>
+    </div>
+
+    <section class="dash-feed" aria-labelledby="h-questions">
+      <div class="dash-feed-head">
+        <h2 class="t-heading" id="h-questions">Questions · <span data-period>last 7 days</span></h2>
+        <p class="t-small" id="questions-note">What people asked the chat, newest first, with its answer. A password typed into it is never kept. Press a hash in the Visitor column to follow that person through the feed and sessions.</p>
+      </div>
+      <div class="table-wrap">
+        <table class="dash-table dash-questions">
+          <thead>
+            <tr><th scope="col">Asked</th><th scope="col">Question</th><th scope="col">Answer</th><th scope="col">Page</th><th scope="col">Where</th><th scope="col">Visitor</th></tr>
+          </thead>
+          <tbody id="questions"></tbody>
+        </table>
+      </div>
+      <p class="t-small dash-empty" id="questions-empty" hidden>No questions yet. They appear here as people ask.</p>
+    </section>
+
+    <section class="dash-feed" id="chat-settings" aria-labelledby="h-chat-settings">
+      <div class="dash-feed-head">
+        <h2 class="t-heading" id="h-chat-settings">Chat settings</h2>
+        <p class="t-small">How the assistant on the site behaves. A save reaches every visitor within half a minute, with no redeploy.</p>
+      </div>
+      <form class="card dash-settings" id="chat-settings-form" novalidate>
+        <p class="t-small dash-settings-state" id="chat-settings-state">Loading the settings…</p>
+        <fieldset class="dash-settings-fields" id="chat-settings-fields" disabled>
+          <legend class="sr-only">Chat settings</legend>
+
+          <div class="dash-setting dash-setting-wide">
+            <label class="dash-switch"><input type="checkbox" id="chat-set-on" aria-describedby="chat-set-on-help"> Show the chat on the site</label>
+            <p class="t-small dash-help" id="chat-set-on-help">Off hides the button on every page. Questions already asked stay here.</p>
+          </div>
+
+          <fieldset class="dash-setting dash-setting-wide dash-choices" aria-describedby="chat-set-model-help">
+            <legend>Model</legend>
+            <div class="dash-choice-row" id="chat-set-model"></div>
+            <p class="t-small dash-help" id="chat-set-model-help">Haiku answers from the pages quickly and cheaply. Sonnet takes a little longer and judges hard questions better, at about twice the cost a question.</p>
+          </fieldset>
+
+          <div class="dash-setting">
+            <label for="chat-set-hour">Questions one visitor can ask in an hour</label>
+            <input type="number" id="chat-set-hour" min="1" max="200" step="1" inputmode="numeric" aria-describedby="chat-set-hour-help">
+            <p class="t-small dash-help" id="chat-set-hour-help">Stops one person, or a script, from running up the bill.</p>
+          </div>
+          <div class="dash-setting">
+            <label for="chat-set-day">Questions the site answers in a day</label>
+            <input type="number" id="chat-set-day" min="0" max="5000" step="1" inputmode="numeric" aria-describedby="chat-set-day-help">
+            <p class="t-small dash-help" id="chat-set-day-help">The cost ceiling.</p>
+          </div>
+
+          <div class="dash-setting">
+            <label for="chat-set-chat">Questions in one chat</label>
+            <input type="number" id="chat-set-chat" min="1" max="50" step="1" inputmode="numeric" aria-describedby="chat-set-chat-help">
+            <p class="t-small dash-help" id="chat-set-chat-help">After the last one, the chat ends on your email and LinkedIn. The offer to walk them through the work comes after the third.</p>
+          </div>
+
+          <div class="dash-setting dash-setting-wide">
+            <label for="chat-set-starters">Suggested questions</label>
+            <textarea id="chat-set-starters" rows="4" aria-describedby="chat-set-starters-help"></textarea>
+            <p class="t-small dash-help" id="chat-set-starters-help">One a line, up to four. They show under the greeting until the first question is asked.</p>
+          </div>
+
+          <div class="dash-setting dash-setting-wide">
+            <label for="chat-set-notes">Notes for the assistant</label>
+            <textarea id="chat-set-notes" rows="5" maxlength="2000" aria-describedby="chat-set-notes-help"></textarea>
+            <p class="t-small dash-help" id="chat-set-notes-help">What the pages don't say that you want it to know, like the roles you're open to or where you're based. It may repeat anything here to visitors.</p>
+          </div>
+        </fieldset>
+        <div class="dash-settings-foot">
+          <button class="btn btn-primary" type="submit" id="chat-settings-save" disabled>Save settings</button>
+          <button class="btn btn-ghost" type="button" id="chat-settings-defaults" disabled>Restore defaults</button>
+          <p class="t-small dash-status" id="chat-settings-status" role="status"></p>
+        </div>
+      </form>
+    </section>
+
+  </div>
+</section>
+
+</main>
+
+<script src="chat.js?v=a7148e47"></script>
+</body>
+</html>
