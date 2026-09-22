@@ -1959,12 +1959,35 @@ const CONFIG = {
     const save = (open) => { try { sessionStorage.setItem(KEY, JSON.stringify({ open, msgs, offered })); } catch (_) { /* nothing to keep it in */ } };
 
     /* The button and the panel */
+    /* What the button offers follows the page: a case study names its
+       project and asks about it, a post asks about the post, the work index
+       about the work. Everywhere else it is the dashboard's own questions. */
+    const topic = (() => {
+      const path = location.pathname;
+      const h1 = ($(".cs-hero h1, main h1") || {}).textContent || "";
+      const name = h1.split(":")[0].trim();
+      if (/^\/work\/[\w-]+\.html$/.test(path) && name) {
+        const short = name.length <= 26 ? name : "this project";
+        return { label: `Ask about ${short}`, starters: [
+          `What was John's role on ${short}?`, "What were the results?", "What was the hardest part?", "Who was on the team?"] };
+      }
+      if (/^\/blog\/[\w-]+\.html$/.test(path)) {
+        return { label: "Ask about this post", starters: [
+          "What's the main argument here?", "How does this show up in John's own work?", "What else has he written?"] };
+      }
+      if (/^\/work(\.html)?$/.test(path)) {
+        return { label: "Ask about the work", starters: [
+          "Which project best shows how John leads?", "Which work involved AI agents?", "What were his biggest results?"] };
+      }
+      return { label: "Ask about my work", starters: state.starters };
+    })();
+
     const launch = make("button", "btn btn-primary chat-launch");
     launch.type = "button";
     launch.setAttribute("aria-haspopup", "dialog");
     launch.setAttribute("aria-controls", "chat");
     launch.setAttribute("aria-expanded", "false");
-    launch.innerHTML = `${ICON.bubble}<span>Ask about my work</span>`;
+    launch.innerHTML = `${ICON.bubble}<span>${topic.label}</span>`;
 
     const dlg = make("dialog", "chat");
     dlg.id = "chat";
@@ -1973,7 +1996,7 @@ const CONFIG = {
       <div class="chat-head">
         <div>
           <p class="eyebrow">AI assistant</p>
-          <h2 class="t-subhead" id="chat-title" tabindex="-1">Ask about my work</h2>
+          <h2 class="t-subhead" id="chat-title" tabindex="-1">${topic.label}</h2>
         </div>
         <button class="icon-btn chat-close" type="button" aria-label="Close the chat">${ICON.close}</button>
       </div>
@@ -2040,10 +2063,10 @@ const CONFIG = {
     const drawLog = () => {
       log.replaceChildren();
       bubble("assistant", INTRO);
-      if (!msgs.length && Array.isArray(state.starters) && state.starters.length) {
+      if (!msgs.length && Array.isArray(topic.starters) && topic.starters.length) {
         starters = make("ul", "chat-starters");
         starters.setAttribute("aria-label", "Suggested questions");
-        state.starters.forEach((q) => {
+        topic.starters.forEach((q) => {
           const b = make("button", "btn btn-ghost btn-sm", q);
           b.type = "button";
           b.addEventListener("click", () => ask(q));

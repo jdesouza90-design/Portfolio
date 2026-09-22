@@ -302,7 +302,7 @@ def contact_band(heading, lede, note):
 </section>
 
 </main>
-<script src="main.js?v={stamp('main.js')}"></script>
+<script src="{css}main.js?v={stamp('main.js')}"></script>
 </body>
 </html>
 """
