@@ -796,6 +796,26 @@ footer { padding: 30px 0 44px; display: flex; justify-content: space-between; ga
 footer a { color: var(--ink-2); text-decoration: none; }
 footer a:hover { color: var(--ink); }
 
+/* Arcade: the bonus level under Contact. One button holds the whole game so
+   Space, Enter and a tap all mean the same thing; the canvas inside it is a
+   pixel grid drawn at a whole-number scale (main.js sets the width) so every
+   pixel stays square. Sand ground and hairline as the panels, ink and accent
+   for the sprites. */
+.arcade { margin-top: clamp(40px, 5vw, 64px); }
+.arcade-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; margin-bottom: var(--sp-5); }
+.arcade-head .t-small { max-width: 44ch; }
+.arcade-score { flex: 0 0 auto; font-variant-numeric: tabular-nums; color: var(--ink); }
+.arcade-screen {
+  display: block; width: 100%; padding: 0; margin: 0; cursor: pointer;
+  border: 1px solid var(--hair); border-radius: var(--radius); overflow: hidden;
+  background-color: #EFE8DB;
+  background-image: linear-gradient(155deg, #F4EFE5 0%, #E4DAC6 100%);
+  touch-action: manipulation;   /* no double-tap zoom while jumping */
+  -webkit-tap-highlight-color: transparent;
+}
+.arcade-screen:focus-visible { outline-offset: 2px; border-radius: var(--radius); }
+.arcade-screen canvas { display: block; margin-inline: auto; image-rendering: pixelated; image-rendering: crisp-edges; }
+
 /* --------------------------------------------------------------------------
    7. Case study
    One skeleton for every project: hero → facts → results → story rows →
@@ -1348,6 +1368,8 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 
   /* Contact */
   .contact { padding: 32px 24px; gap: 28px; }
+  .arcade { margin-top: 40px; }
+  .arcade-head { flex-direction: column; align-items: flex-start; gap: 12px; margin-bottom: var(--sp-4); }
   footer { padding: 24px 0 36px; flex-direction: column; gap: 8px; }
 
   /* Case study hero and facts */

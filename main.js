@@ -1461,9 +1461,189 @@ const CONFIG = {
     touch();
   };
 
+  /* ---- Arcade: "Ship it" ----
+     A one-button runner on the last screen. The canvas is a pixel grid, 64
+     tall and as wide as the block allows at a whole-number scale (4 CSS px a
+     pixel, 3 on a phone), so every sprite pixel stays square. The runner
+     jumps bugs and crates that scroll in from the right; the run speeds up
+     with distance and the score is the distance. Anything in the page can
+     start or jump it: the button's click (Enter, tap, mouse), or Space and
+     the up arrow on keydown so the jump lands on the press, not the release.
+     The loop only runs during a game, and pauses when the block leaves the
+     screen or the tab is hidden. Sprites are strings: 1 is ink, 2 accent. */
+  const initArcade = () => {
+    const root = $(".arcade");
+    const btn = root && $(".arcade-screen", root);
+    const c = root && $("canvas", root);
+    if (!root || !btn || !c || !c.getContext) return;
+    const ctx = c.getContext("2d");
+    const best = $("[data-best]", root), status = $(".arcade-status", root);
+    const tok = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+    const INK = tok("--ink") || "#14100C", INK3 = tok("--ink-3") || "#6F675D", HAIR = tok("--hair-2") || "#CFC9BF", ACCENT = tok("--accent") || "#3B6B44";
+    const H = 64, GROUND = 52;                 // logical pixels; the feet sit on GROUND
+    let W = 192, scale = 4;
+
+    /* Sprites */
+    const RUN = [
+      ["..1111..", "..1111..", "...11...", ".222222.", "2.2222.2", "..2222..", "..2222..", "..1..1..", ".1....1.", "11....11"],
+      ["..1111..", "..1111..", "...11...", ".222222.", "2.2222.2", "..2222..", "..2222..", "..1..1..", "..1..1..", ".11..11."],
+    ];
+    const JUMP = ["..1111..", "..1111..", "...11...", ".222222.", "2.2222.2", "..2222..", "..2222..", ".1....1.", "1......1", "........"];
+    const BUG = ["1..11..1", ".111111.", "11111111", ".111111.", "1.1..1.1"];
+    const CRATE = ["111111", "1....1", "1.11.1", "1....1", "111111"];
+    const CLOUD = ["..111..", ".11111.", "1111111"];
+    const KINDS = [
+      { art: BUG, w: 8, h: 5 },
+      { art: CRATE, w: 6, h: 5 },
+      { art: CRATE.concat(CRATE), w: 6, h: 10 },
+    ];
+    /* A 3×5 pixel face for the words on screen; the site's faces stay in the DOM */
+    const FONT = {
+      A: "010101111101101", B: "110101110101110", C: "111100100100111", D: "110101101101110", E: "111100110100111",
+      G: "111100101101111", H: "101101111101101", I: "111010010010111", L: "100100100100111", M: "101111111101101",
+      N: "110101101101101", O: "111101101101111", P: "111101111100100", R: "111101110101101", S: "111100111001111",
+      T: "111010010010010", U: "101101101101111", V: "101101101101010", Y: "101101010010010",
+      0: "111101101101111", 1: "010110010010111", 2: "111001111100111", 3: "111001111001111", 4: "101101111001001",
+      5: "111100111001111", 6: "111100111101111", 7: "111001001001001", 8: "111101111101111", 9: "111101111001111",
+      " ": "000000000000000", ".": "000000000000010",
+    };
+    const px = (x, y, col) => { ctx.fillStyle = col; ctx.fillRect(x, y, 1, 1); };
+    const sprite = (art, x, y, col) => art.forEach((row, j) => {
+      for (let i = 0; i < row.length; i++) if (row[i] !== ".") px(x + i, y + j, row[i] === "2" ? ACCENT : col);
+    });
+    const text = (str, x, y, col, size = 1) => {
+      ctx.fillStyle = col;
+      Array.from(str).forEach((ch, n) => {
+        const g = FONT[ch] || FONT[" "];
+        for (let k = 0; k < 15; k++) if (g[k] === "1") ctx.fillRect(x + (n * 4 + (k % 3)) * size, y + Math.floor(k / 3) * size, size, size);
+      });
+    };
+    const width = (str, size = 1) => (str.length * 4 - 1) * size;
+    const centre = (str, y, col, size = 1) => text(str, Math.floor((W - width(str, size)) / 2), y, col, size);
+
+    /* State */
+    const G = 300, V0 = 110;                   // px/s²; px/s, a jump of about 20px with 0.7s in the air
+    const PLAYER_X = 20;
+    let state = "idle";                        // idle | run | over
+    let paused = false, raf = 0, last = 0;
+    let dist = 0, speed = 0, py = 0, vy = 0, nextAt = 0, obstacles = [], clouds = [], specks = [];
+    let hi = 0;
+    try { hi = Number(localStorage.getItem("arcade-best")) || 0; } catch (e) { /* private mode */ }
+    best.textContent = String(hi);
+    const rand = (a, b) => a + Math.random() * (b - a);
+    const seed = () => {
+      clouds = Array.from({ length: Math.max(2, Math.round(W / 70)) }, () => ({ x: rand(0, W), y: rand(4, 22) }));
+      specks = Array.from({ length: Math.round(W / 6) }, () => ({ x: rand(0, W), y: Math.floor(rand(GROUND + 3, H - 1)) }));
+    };
+    const say = (m) => { if (status) status.textContent = m; };
+
+    const reset = () => {
+      dist = 0; speed = 60; py = 0; vy = 0; obstacles = []; nextAt = W * 0.6;
+    };
+    const jump = () => { if (py === 0) vy = -V0; };
+    const spawn = () => {
+      const kind = KINDS[Math.floor(rand(0, KINDS.length))];
+      obstacles.push({ kind, x: W + 2 });
+      nextAt = dist + rand(90, 160) + speed * 0.4;   // the gap grows with speed so the run stays jumpable
+    };
+    const collide = (o) => {
+      const p = { x: PLAYER_X + 1, y: GROUND - 10 + py + 1, w: 6, h: 9 };
+      const q = { x: o.x + 1, y: GROUND - o.kind.h + 1, w: o.kind.w - 2, h: o.kind.h - 1 };
+      return p.x < q.x + q.w && p.x + p.w > q.x && p.y < q.y + q.h && p.y + p.h > q.y;
+    };
+
+    /* Drawing */
+    const scene = () => {
+      ctx.clearRect(0, 0, W, H);
+      clouds.forEach((k) => sprite(CLOUD, Math.round(k.x), Math.round(k.y), HAIR));
+      ctx.fillStyle = INK; ctx.fillRect(0, GROUND, W, 1);
+      specks.forEach((k) => px(Math.round(k.x), k.y, INK3));
+      obstacles.forEach((o) => sprite(o.kind.art, Math.round(o.x), GROUND - o.kind.h, INK));
+      const frame = py < 0 ? JUMP : RUN[Math.floor(dist / 6) % 2];
+      sprite(frame, PLAYER_X, GROUND - 10 + Math.round(py), INK);
+      text(String(Math.floor(dist / 8)).padStart(5, "0"), W - 4 - width("00000"), 4, INK);
+    };
+    const idle = () => {
+      scene();
+      centre("SHIP IT", 14, INK, 2);
+      centre("PRESS TO PLAY", 30, INK3);
+    };
+    const over = () => {
+      scene();
+      centre("GAME OVER", 14, INK, 2);
+      centre("PRESS TO RETRY", 30, INK3);
+    };
+    const pausedFrame = () => { scene(); centre("PAUSED", 22, INK, 2); };
+
+    /* Loop */
+    const step = (t) => {
+      raf = 0;
+      if (state !== "run" || paused) return;
+      const dt = Math.min(0.05, (t - last) / 1000) || 0;
+      last = t;
+      speed = Math.min(130, 60 + dist / 40);
+      dist += speed * dt;
+      vy += G * dt; py += vy * dt;
+      if (py > 0) { py = 0; vy = 0; }
+      obstacles.forEach((o) => (o.x -= speed * dt));
+      obstacles = obstacles.filter((o) => o.x + o.kind.w > 0);
+      clouds.forEach((k) => { k.x -= speed * 0.15 * dt; if (k.x < -8) { k.x = W + rand(0, 20); k.y = rand(4, 22); } });
+      specks.forEach((k) => { k.x -= speed * dt; if (k.x < 0) k.x += W; });
+      if (dist >= nextAt) spawn();
+      if (obstacles.some(collide)) {
+        state = "over";
+        const score = Math.floor(dist / 8);
+        if (score > hi) { hi = score; best.textContent = String(hi); try { localStorage.setItem("arcade-best", String(hi)); } catch (e) { /* fine */ } }
+        say(`Game over. Score ${score}. Best ${hi}.`);
+        over();
+        return;
+      }
+      scene();
+      raf = requestAnimationFrame(step);
+    };
+    const run = () => { if (!raf && state === "run" && !paused) { last = performance.now(); raf = requestAnimationFrame(step); } };
+    const act = () => {
+      if (paused) { paused = false; run(); return; }
+      if (state === "run") { jump(); return; }
+      reset(); state = "run"; say("Running."); run();
+    };
+    const setPaused = (on) => {
+      if (state !== "run" || paused === on) return;
+      paused = on;
+      if (on) { if (raf) cancelAnimationFrame(raf); raf = 0; pausedFrame(); } else run();
+    };
+
+    /* Input: pointerdown covers tap and mouse; Space, Enter and the up arrow
+       act on keydown and are swallowed there, so Space neither scrolls the
+       page nor fires the button's own click on keyup. The click handler is
+       left for clicks made without a pointer or a key (assistive tech). */
+    btn.addEventListener("click", (e) => { if (e.detail === 0) act(); });   // keyboard-made clicks only
+    btn.addEventListener("pointerdown", (e) => { if (e.button === 0) { e.preventDefault(); btn.focus({ preventScroll: true }); act(); } });
+    btn.addEventListener("keydown", (e) => {
+      if (e.key === " " || e.key === "ArrowUp" || e.key === "Enter") { e.preventDefault(); if (!e.repeat) act(); }
+    });
+    btn.addEventListener("keyup", (e) => { if (e.key === " ") e.preventDefault(); });
+
+    /* Size: as wide as the button at a whole-number scale, redrawn on change */
+    const size = () => {
+      const box = btn.clientWidth - 2;         // inside the hairline border
+      scale = box < 600 ? 3 : 4;
+      W = Math.max(96, Math.floor(box / scale));
+      c.width = W; c.height = H;
+      c.style.width = `${W * scale}px`; c.style.height = `${H * scale}px`;
+      seed();
+      if (state === "run" && !paused) scene(); else if (state === "run") pausedFrame(); else if (state === "over") over(); else idle();
+    };
+    if ("ResizeObserver" in window) new ResizeObserver(size).observe(btn); else { size(); window.addEventListener("resize", size); }
+
+    /* Pause off screen and in a background tab */
+    if ("IntersectionObserver" in window) new IntersectionObserver(([en]) => setPaused(!en.isIntersecting), { threshold: 0.4 }).observe(btn);
+    document.addEventListener("visibilitychange", () => { if (document.hidden) setPaused(true); });
+  };
+
   /* ---- Footer year ---- */
   const initYear = () => $$("[data-year]").forEach((el) => (el.textContent = new Date().getFullYear()));
 
-  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initMatrix, initConfig, initFlows, initStrips, initTableWraps, initPortrait, initClock, initYear]
+  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initMatrix, initConfig, initFlows, initStrips, initTableWraps, initPortrait, initClock, initArcade, initYear]
     .forEach((init) => { try { init(); } catch (err) { console.error(`main.js: ${init.name} failed`, err); } });
 })();

@@ -9,7 +9,8 @@ Live: https://john-desouza.com
 ## Structure
 
 ```
-index.html                      Home: hero, selected work, how I lead, how I track design, about, contact
+index.html                      Home: hero, selected work, how I lead, how I track design, about, contact,
+                                and a bonus level (Ship it, a one-button pixel runner above the footer)
 work.html                       Work index: all six case studies
 work/agentic-design-system-audit.html  Best Egg · Agentic design system audit and remediation
 work/design-system-audit-agent.html  Best Egg · Design system audit agent (deprecated Sep 2026, folded into the
@@ -25,7 +26,7 @@ work/sign-in-with-ethereum.html Auth0 · Sign-in with Ethereum (hidden for now: 
 styles.css                      Tokens, the ten type roles, components, case-study layout
 main.js                         CONFIG links, then one function per feature: nav, scroll reveal, tabs, carousel,
                                 walkthroughs, AI strands, fields (hero dots, contact rings), chart, number flow,
-                                swipe strips, table frames, About portrait height
+                                swipe strips, table frames, About portrait height, the Ship it arcade
 admin/index.html                Activity dashboard: who is on the site, live (its own password)
 admin/dash.js                   The dashboard's script: polls the feed, builds sessions, draws the charts and the map
 middleware.js                   Vercel Edge Middleware: the two password gates, the activity log, its feed and the time-on-page beacon
