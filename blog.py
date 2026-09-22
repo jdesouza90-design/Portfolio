@@ -477,7 +477,7 @@ def render_index(posts):
   <div class="wrap">
     <div class="cs-hero-copy">
       <p class="eyebrow" data-rise style="--i:0">Blog<a class="feed-link" href="/feed.xml" aria-label="RSS feed">{RSS_SVG}</a></p>
-      <h1 class="t-display" data-rise style="--i:1">Arguments the industry is having.</h1>
+      <h1 class="t-display" data-rise style="--i:1">Notes from the field.</h1>
       <p class="t-lede" data-rise style="--i:2">Where product design is heading, how I lead through it, and what thirteen years in lending, crypto and identity says about what comes next. One position per post. Every number links to its source.</p>
     </div>
   </div>
