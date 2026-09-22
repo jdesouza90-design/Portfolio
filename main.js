@@ -2054,6 +2054,7 @@ const CONFIG = {
         log.append(starters);
       }
       msgs.forEach((m) => bubble(m.role, m.content));
+      if (questions() >= LIMIT) endConversation(false);
       stick(true);
     };
 
@@ -2067,8 +2068,10 @@ const CONFIG = {
     };
     const sync = () => { send.disabled = !busy && !input.value.trim(); };
 
+    const LIMIT = 8;                                   // questions a conversation may ask; api/chat.js holds the same line
+    const questions = () => msgs.filter((m) => m.role === "user").length;
     const ask = (question) => {
-      if (busy) return;
+      if (busy || questions() >= LIMIT) return;
       const q = (question ?? input.value).trim();
       if (!q) return;
       if (starters) { starters.remove(); starters = null; }
@@ -2145,7 +2148,8 @@ const CONFIG = {
         if (!text && !failed) reply.remove();          // stopped before a word arrived
         status.textContent = failed || (text ? `Assistant: ${plain(text)}` : "");
         if (asked && !unlocked) passwordCard();
-        else if (text && !offered && msgs.filter((m) => m.role === "user").length >= 3) offerWalkthrough();
+        else if (text && questions() >= LIMIT) endConversation(true);
+        else if (text && !offered && questions() >= 3) offerWalkthrough();
       }
       save(dlg.open);
       stick();
@@ -2153,6 +2157,25 @@ const CONFIG = {
 
     /* After the third answer, once: an offer from John himself to walk them
        through the work, with the two ways to reach him. */
+    /* The hard stop: after the eighth question the composer goes, and the
+       conversation ends on the two ways to reach John. */
+    const endConversation = (announce) => {
+      form.hidden = true;
+      if ($(".chat-end", log)) return;
+      const card = make("div", "chat-offer chat-end");
+      card.append(make("p", "chat-offer-text", "That's the limit for one chat. For anything more, I'd rather answer you myself."));
+      const row = make("div", "chat-offer-row");
+      const mail = make("a", "btn btn-primary btn-sm", "Email John");
+      mail.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent("Following up on your work")}`;
+      const li = make("a", "btn btn-ghost btn-sm", "Message on LinkedIn");
+      li.href = CONFIG.linkedin; li.target = "_blank"; li.rel = "noopener";
+      row.append(mail, li);
+      card.append(row);
+      log.append(card);
+      if (announce) status.textContent = `${status.textContent} That's the limit for one chat.`;
+      stick();
+    };
+
     const offerWalkthrough = () => {
       offered = true;
       const card = make("div", "chat-offer");
