@@ -1,0 +1,64 @@
+<!-- {
+  "title": "An agent with a wallet is a consent problem",
+  "description": "Mastercard and Visa both shipped agent payment credentials in 2026. Liability follows authorization, which makes delegation an interface problem before it is a protocol one.",
+  "pillar": "fintech",
+  "date": "2026-09-22T07:00:00-04:00",
+  "lede": "The rails for agents that spend money got built this year. The screen where a person decides what their agent is allowed to do, and finds out when it got that wrong, mostly did not.",
+  "claim": "Liability follows authorization. That makes the consent screen the most consequential surface in agentic commerce, and it is currently the least designed.",
+  "keywords": ["agentic commerce", "AI agent payments", "fintech design", "delegated authorization", "stablecoins"],
+  "sources": [
+    "<a href=\"https://www.fenwick.com/insights/publications/is-2026-the-year-of-agentic-payments\">Is 2026 the Year of Agentic Payments?</a>, Fenwick, on where liability lands when an agent transacts outside its authorized scope.",
+    "<a href=\"https://www.elibrary.imf.org/view/journals/068/2026/004/article-A001-en.xml\">How Agentic AI Will Reshape Payments</a>, IMF Notes 2026/004.",
+    "<a href=\"https://www.airwallex.com/en-us/blog/ai-agent-payments\">AI Agent Payments: US Regulation and Treasury Guide</a>, on scoped spend limits, cryptographic identity and circuit breakers as the emerging control pattern."
+  ]
+} -->
+
+      <p>In June, Mastercard launched Agent Pay for Machines with more than 30 partners, credentialing agents through what it calls Verifiable Intent, across both cards and stablecoins. Visa's Trusted Agent Protocol lets a person delegate Visa credentials to vetted shopping agents. The IMF published a note on how this reshapes payments.</p>
+
+      <p>The infrastructure question is being answered quickly and competently. The design question has barely been asked.</p>
+
+      <h2>Liability follows authorization</h2>
+
+      <p>That phrase is doing enormous work in every legal analysis of agentic payments I have read. If the agent stayed inside the scope its principal authorized, the loss flows one way. If it went outside, it flows the other.</p>
+
+      <p>Which means the moment a person grants that scope is the moment that decides who eats a bad outcome months later. In a card dispute, the question will not be whether the agent behaved reasonably. It will be what the person agreed to, and whether they can be said to have understood it.</p>
+
+      <p>That is a screen. Somebody is designing it right now, probably in a sprint, probably under an engineer's ticket, and it will determine the financial exposure of everyone who uses the product.</p>
+
+      <p>I have watched this exact thing get treated as paperwork before. It never is.</p>
+
+      <h2>The mistake the industry just finished making</h2>
+
+      <p>Crypto spent a decade answering "people cannot use this" with better documentation, and the answer turned out to be that the product was exposing its own machinery and calling it transparency. Seed phrases, gas, chain IDs. Account abstraction finally fixed it, and it fixed it by deciding what a person never needs to see rather than by explaining it better.</p>
+
+      <p>Agentic payments are set up to repeat that, and the early patterns already look familiar. Scoped spend limits, cryptographic identity checks, circuit breakers. Every one of those is the right control. Every one of them is also a mechanism, and mechanisms have a way of arriving on the first screen because that is where they are easiest to put.</p>
+
+      <p>"Grant this agent a $500 monthly limit with merchant category restrictions" is a control panel. It is not a decision a person can actually make, because it asks them to predict which categories a shopping agent will need before they have watched one work.</p>
+
+      <p>The honest version of that screen is closer to what it would say out loud: what is this thing allowed to do without asking me, what will it always ask about, and how do I find out fast when it does something I did not expect.</p>
+
+      <h2>Three states nobody is designing</h2>
+
+      <p>Delegation is not one moment, it is three, and the industry is building the first and ignoring the rest.</p>
+
+      <ul>
+        <li><strong>The grant.</strong> Where scope is set. Currently drifting toward a permissions matrix, which is how you get consent that is legally valid and practically uninformed.</li>
+        <li><strong>The notice.</strong> What reaches a person while the agent is acting. If every action pings them, they turn notifications off and the audit trail is theatre. If nothing does, the first they hear of it is the statement.</li>
+        <li><strong>The dispute.</strong> The one that matters. Something went wrong, and the person has to reconstruct what their agent did and on whose authority. Almost nothing I have seen treats this as a product surface at all.</li>
+      </ul>
+
+      <p>That last one is where trust actually gets decided, and it is always designed last, by whoever has time, after the demo has already been approved.</p>
+
+      <h2>Why I keep coming back to this</h2>
+
+      <p>I have spent thirteen years in three fields that are now converging on exactly this problem. In consumer lending the lesson was paid for expensively: when a screen goes quiet after somebody has money on the line, they do not wait patiently, they call. At Chainlink Labs and Auth0 the lesson was that a credential is not a special category of thing that deserves its own frightening vocabulary. It is a credential, and it should behave like every other one.</p>
+
+      <p>Agentic payments need both lessons at once, and the people building the rails are mostly coming from neither tradition.</p>
+
+      <h2>The question to ask</h2>
+
+      <p>For any agent that acts on someone's behalf: when this goes wrong, can the person tell what happened, prove what they authorized, and stop it happening again?</p>
+
+      <p>If the answer is no, adding a clearer consent dialog at the start does not fix it. The dialog is what gets written when the decision has been made not to design the rest.</p>
+
+      <p>The rails are getting built either way. Whether the consent is real is still open, and that part is ours.</p>
