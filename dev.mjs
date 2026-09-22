@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // Local stand-in for Vercel's edge: serves the static files through
-// middleware.js with an in-memory Redis and made-up geolocation, so the gates
-// and the activity dashboard can be exercised without deploying.
+// middleware.js, and /api/chat through api/chat.js, with an in-memory Redis
+// and made-up geolocation, so the gates, the chat and the activity dashboard
+// can be exercised without deploying.
 //
 //   node dev.mjs            → http://127.0.0.1:4174
 //   password for /work:     cs        dashboard: admin
@@ -10,6 +11,10 @@
 // request, so its views and time-on-page beacons pair up as they would live;
 // open pages in a private window (the dashboard's own browser is muted) to
 // see the dashboard move. SEED=0 skips the sample history.
+//
+// The chat answers from a scripted stand-in for Claude, so nothing is spent
+// and no key is needed; it streams, links, lists and asks for the password
+// the way the real one does. Run with ANTHROPIC_API_KEY set to talk to Claude.
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -18,18 +23,29 @@ process.env.CASE_STUDY_PASSWORD ||= 'cs';
 process.env.ADMIN_PASSWORD ||= 'admin';
 process.env.KV_REST_API_URL = 'http://store.local';
 process.env.KV_REST_API_TOKEN = 'local';
+process.chdir(path.dirname(new URL(import.meta.url).pathname));   // the chat reads the pages from the working directory, as it does on Vercel
+const MOCK_CLAUDE = !process.env.ANTHROPIC_API_KEY;
+if (MOCK_CLAUDE) process.env.ANTHROPIC_API_KEY = 'dev-stand-in';
 
 // ---- In-memory Redis behind the REST shape middleware.js speaks ----
-const lists = new Map(), values = new Map(), sets = new Map();
+const lists = new Map(), values = new Map(), sets = new Map(), expires = new Map();
+const live = (key) => { const at = expires.get(key); if (at && at <= Date.now()) { values.delete(key); expires.delete(key); } return values.has(key); };
 const cmd = ([op, key, ...args]) => {
   switch (op) {
     case 'LPUSH': { const l = lists.get(key) || []; l.unshift(...args); lists.set(key, l); return l.length; }
     case 'LTRIM': { const l = lists.get(key) || []; lists.set(key, l.slice(Number(args[0]), Number(args[1]) + 1)); return 'OK'; }
     case 'LRANGE': { const l = lists.get(key) || []; const end = Number(args[1]); return l.slice(Number(args[0]), end < 0 ? undefined : end + 1); }
     case 'LREM': { const l = lists.get(key) || []; const i = l.indexOf(args[1]); if (i < 0) return 0; l.splice(i, 1); return 1; }   // count 1: the first match
-    case 'INCR': { const v = (Number(values.get(key)) || 0) + 1; values.set(key, String(v)); return v; }
+    case 'INCR': { live(key); const v = (Number(values.get(key)) || 0) + 1; values.set(key, String(v)); return v; }
     case 'DECRBY': { const v = (Number(values.get(key)) || 0) - Number(args[0]); values.set(key, String(v)); return v; }
-    case 'GET': return values.get(key) ?? null;
+    case 'GET': return live(key) ? values.get(key) : null;
+    case 'SET': {                                                   // SET key value [EX secs] [NX]
+      const opts = args.slice(1).map(String), nx = opts.includes('NX'), ex = opts.indexOf('EX');
+      if (nx && live(key)) return null;
+      values.set(key, String(args[0]));
+      if (ex >= 0) expires.set(key, Date.now() + Number(opts[ex + 1]) * 1000); else expires.delete(key);
+      return 'OK';
+    }
     case 'SADD': { const st = sets.get(key) || new Set(); const before = st.size; for (const a of args) st.add(a); sets.set(key, st); return st.size - before; }
     case 'SREM': { const st = sets.get(key) || new Set(); let n = 0; for (const a of args) n += st.delete(a) ? 1 : 0; return n; }
     case 'SMEMBERS': return [...(sets.get(key) || [])];
@@ -43,8 +59,48 @@ globalThis.fetch = async (url, init) => {
     return new Response(JSON.stringify(body.map((c) => { try { return { result: cmd(c) }; } catch (e) { return { error: e.message }; } })), { headers: { 'Content-Type': 'application/json' } });
   }
   if (String(url).startsWith('https://api.resend.com')) return new Response('{}', { status: 200 });
+  if (MOCK_CLAUDE && String(url).startsWith('https://api.anthropic.com/v1/messages')) return standIn(JSON.parse(init.body));
   return realFetch(url, init);
 };
+
+// ---- A scripted Claude ----
+// Answers in the Messages API's own event stream, a few words at a time. With
+// the case studies locked, a question about results or numbers gets one
+// sentence and the ask_for_password tool, as the brief tells the real one to.
+function standIn(body) {
+  const unlocked = body.system.some((b) => b.text.startsWith('<case_studies>'));
+  const last = body.messages[body.messages.length - 1];
+  const q = String(last.content).replace(/\s+/g, ' ').slice(0, 120);
+  const wantsDetail = /result|number|metric|how many|how much|process|screens?|password|detail/i.test(q);
+  const events = [];
+  const ev = (type, data) => events.push(`event: ${type}\ndata: ${JSON.stringify({ type, ...data })}\n\n`);
+  const text = !unlocked && wantsDetail
+    ? 'That detail is in the password-protected case study, so it opens once you enter the password.'
+    : unlocked && wantsDetail
+      ? `Unlocked, so here are the numbers. The [Staking case study](/work/staking.html) reached **25M LINK** staked, with the pool full within three hours of launch.\n\n- One product designer, across three time zones\n- Launched December 2022\n\n(Local stand-in, not Claude. You asked: "${q}")`
+      : `This is the local stand-in, not Claude, so the answer is scripted. On the live site Claude reads the pages and answers "${q}" from them.\n\nFor example, [the Staking case study](/work/staking.html) puts **pool capacity**, reward rate and eligibility next to the stake action.\n\n- John sets direction and coaches\n- His team designs and ships\n\nAsk about results to see the password step.`;
+  ev('message_start', { message: { id: 'msg_dev', type: 'message', role: 'assistant', model: body.model, content: [], stop_reason: null, stop_sequence: null, usage: { input_tokens: 40, output_tokens: 1, cache_creation_input_tokens: 0, cache_read_input_tokens: 9000 } } });
+  ev('content_block_start', { index: 0, content_block: { type: 'text', text: '' } });
+  for (const piece of text.match(/\S+\s*|\s+/g)) ev('content_block_delta', { index: 0, delta: { type: 'text_delta', text: piece } });
+  ev('content_block_stop', { index: 0 });
+  const asks = !unlocked && wantsDetail;
+  if (asks) {
+    ev('content_block_start', { index: 1, content_block: { type: 'tool_use', id: 'toolu_dev', name: 'ask_for_password', input: {} } });
+    ev('content_block_delta', { index: 1, delta: { type: 'input_json_delta', partial_json: '{}' } });
+    ev('content_block_stop', { index: 1 });
+  }
+  ev('message_delta', { delta: { stop_reason: asks ? 'tool_use' : 'end_turn', stop_sequence: null }, usage: { output_tokens: 60 } });
+  ev('message_stop', {});
+  const enc = new TextEncoder();
+  let i = 0;
+  return new Response(new ReadableStream({
+    async pull(controller) {
+      if (i >= events.length) { controller.close(); return; }
+      await new Promise((ok) => setTimeout(ok, i < 2 ? 400 : 35));   // a pause before the first word, then a steady trickle
+      controller.enqueue(enc.encode(events[i++]));
+    },
+  }), { headers: { 'content-type': 'text/event-stream', 'request-id': 'req_dev' } });
+}
 
 // ---- Sample history so the tallies have something to show ----
 // Sixty-odd sessions over the last week: a visitor reads one to four pages,
@@ -105,6 +161,21 @@ if (process.env.SEED !== '0') {
   rows.sort((a, b) => b.t - a.t);
   lists.set('activity', rows.filter((r) => r.t <= now).map((r) => JSON.stringify(r)));
   values.set('activity:count', String(rows.filter((r) => r.kind === 'viewed').length + 1840));
+
+  // What people asked the chat, for the dashboard's Questions table.
+  const ASKED = [
+    ['/', 'What kind of role is John looking for?', 'John is a Director of Product Design looking to build or rebuild a design org. The home page closes on exactly that: [get in touch](/) if you are hiring for one.', false],
+    ['/work.html', 'What were the results of the Cross-Sell work?', 'That detail is in the password-protected case study, so it opens once you enter the password.', false],
+    ['/work/staking.html', 'How big was the team on Staking?', 'One product designer, across three time zones, with John as Senior Product Design Manager. See [the Staking case study](/work/staking.html).', true],
+    ['/', 'How does John run a design team?', 'He sets the strategy and the framework decisions get made against, then spends most of his week on feedback: weekly reviews, structured critique and time with specific people.', false],
+    ['/blog.html', 'Has he written about AI hiring?', 'Yes. [Stop hiring for AI fluency](/blog/stop-hiring-for-ai-fluency.html) argues for hiring on judgment over tool fluency.', false],
+  ];
+  const chats = ASKED.map(([page, q, a, unlocked], i) => {
+    const p = pick(PLACES);
+    return { t: now - Math.floor((i + Math.random()) * 9 * 3600000), page, q, a, unlocked, asked: !unlocked && /password/.test(a), model: 'claude-haiku-4-5', stop: 'end_turn',
+      usage: { in: 40, read: 9800, wrote: 0, out: 70 }, where: p.slice(0, 3).join(', '), country: p[2], device: pick(DEVICES), visitor: Math.random().toString(16).slice(2, 8) };
+  });
+  lists.set('chat:log', chats.sort((a, b) => b.t - a.t).map((r) => JSON.stringify(r)));
 }
 
 // ---- A browser keeps one made-up identity ----
@@ -120,8 +191,9 @@ function identify(req) {
   return { id, fresh, ...identities.get(id) };
 }
 
-// ---- Serve through the middleware ----
+// ---- Serve through the middleware, and the chat through its function ----
 const { default: middleware, config } = await import('./middleware.js');
+const chat = await import('./api/chat.js');
 const matchers = config.matcher.map((m) => new RegExp('^' + m.replace(/[.]/g, '\\.').replace(/\/:path\*$/, '(?:/.*)?') + '$'));
 const TYPES = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.mjs': 'text/javascript', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.ico': 'image/x-icon', '.mp4': 'video/mp4', '.pdf': 'application/pdf', '.json': 'application/json' };
 const root = path.dirname(new URL(import.meta.url).pathname);
@@ -136,8 +208,9 @@ function serveStatic(pathname, res, cookies = []) {
 }
 
 const server = http.createServer(async (req, res) => {
-  const url = new URL(req.url, 'http://127.0.0.1');
-  const matched = matchers.some((m) => m.test(url.pathname));
+  const url = new URL(req.url, `http://${req.headers.host || '127.0.0.1'}`);
+  const isChat = url.pathname === '/api/chat';
+  const matched = isChat || matchers.some((m) => m.test(url.pathname));
   if (!matched) return serveStatic(url.pathname, res);
 
   const who = identify(req), p = who.place;
@@ -149,7 +222,13 @@ const server = http.createServer(async (req, res) => {
   const body = req.method === 'POST' ? await new Promise((ok) => { const c = []; req.on('data', (d) => c.push(d)); req.on('end', () => ok(Buffer.concat(c))); }) : undefined;
   const request = new Request(url, { method: req.method, headers: h, body });
   const jobs = [];
-  const out = await middleware(request, { waitUntil: (pr) => jobs.push(pr) });
+  let out;
+  if (isChat) {
+    const handler = chat[req.method];
+    out = handler ? await handler(request) : new Response(null, { status: 405, headers: { Allow: 'GET, POST' } });
+  } else {
+    out = await middleware(request, { waitUntil: (pr) => jobs.push(pr) });
+  }
   await Promise.all(jobs);
   const identity = who.fresh ? [`dev_id=${who.id}; Path=/; Max-Age=31536000; SameSite=Lax`] : [];
   if (!out) return serveStatic(url.pathname, res, identity);
@@ -159,7 +238,14 @@ const server = http.createServer(async (req, res) => {
   const cookies = (out.headers.getSetCookie ? out.headers.getSetCookie() : []).map((c) => c.replace('; Secure', ''));   // plain http locally
   if (cookies.length || identity.length) headers['set-cookie'] = cookies.concat(identity);
   res.writeHead(out.status, headers);
-  res.end(Buffer.from(await out.arrayBuffer()));
+  if (!out.body) { res.end(); return; }
+  // Passed on as it arrives, so the chat streams here as it does on Vercel.
+  const reader = out.body.getReader();
+  res.on('close', () => { if (!res.writableEnded) reader.cancel().catch(() => {}); });
+  try {
+    for (;;) { const { done, value } = await reader.read(); if (done) break; res.write(value); }
+  } catch (_) { /* the browser left */ }
+  res.end();
 });
 
 const port = Number(process.env.PORT) || 4174;

@@ -1,0 +1,9 @@
+{
+  "name": "john-desouza-portfolio",
+  "private": true,
+  "type": "module",
+  "description": "The static site, its edge middleware and the chat function (api/chat.js). No build step: Vercel installs the one dependency for the function and serves the rest as files.",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.128.0"
+  }
+}

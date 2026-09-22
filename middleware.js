@@ -2,11 +2,13 @@
 // Runs before the static files are served.
 //
 //   /work/*         the case-study password (CASE_STUDY_PASSWORD); the owner's
-//                   admin cookie opens them too
+//                   admin cookie opens them too, and so does an unlock in the chat
 //   /admin/*        the dashboard, the owner's password (ADMIN_PASSWORD)
 //   /api/activity   the feed the dashboard polls, and the referrer blocklist it
 //                   edits (POST); needs the admin cookie
 //   /api/ping       the beacon main.js sends with the time a page has been read
+//   /api/settings   the chat's settings, read and saved from the dashboard;
+//                   needs the admin cookie
 //   everything else public, but every page view is recorded
 //
 // A correct case-study password sends the reader on with ?unlocked, which
@@ -21,16 +23,24 @@
 // with ?owner, mutes logging for your own browser. Referrer spam is blocked
 // from the dashboard: a host on the blocklist (activity:blocked, kept by the
 // dashboard's Block buttons) has its views neither recorded nor counted.
+//
+// The chat (api/chat.js) is a function of its own, not matched here, but it
+// shares this file's helpers (the exports below): the unlock cookie, which is
+// why that cookie covers the whole site, the store, the visitor id and the
+// log. Its questions are kept in chat:log and go to the dashboard with the feed.
 
-export const config = { matcher: ['/', '/index.html', '/work.html', '/work/:path*', '/admin/:path*', '/api/activity', '/api/ping'] };
+export const config = { matcher: ['/', '/index.html', '/work.html', '/work/:path*', '/admin/:path*', '/api/activity', '/api/ping', '/api/settings'] };
 
-const COOKIE = 'cs_access';
-const MAX_AGE = 60 * 60 * 24 * 30;          // 30 days
-const ADMIN_COOKIE = 'admin_access';
+export const COOKIE = 'cs_access';
+export const MAX_AGE = 60 * 60 * 24 * 30;   // 30 days
+export const ADMIN_COOKIE = 'admin_access';
 const ADMIN_MAX_AGE = 60 * 60 * 24 * 30;    // 30 days
-const OWNER_COOKIE = 'cs_owner';
+export const OWNER_COOKIE = 'cs_owner';
 const OWNER_MAX_AGE = 60 * 60 * 24 * 365;   // a year
 
+export const CHAT_KEY = 'chat:log';         // Redis list of the chat's questions and answers, newest first
+export const CHAT_KEEP = 1000;              // entries kept
+const CHAT_POLL = 50;                       // entries a poll reads
 const FEED_KEY = 'activity';                // Redis list, newest first
 const COUNT_KEY = 'activity:count';         // all-time page views
 const FEED_KEEP = 4000;                     // entries kept in the list (views and time beacons), all sent on the dashboard's first load
@@ -43,18 +53,22 @@ async function sha256(s) {
   const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
   return Array.from(new Uint8Array(hash)).map((b) => b.toString(16).padStart(2, '0')).join('');
 }
-const tokenFor = (password) => sha256(`cs-gate:v1:${password}`);
-const adminTokenFor = (password) => sha256(`admin-gate:v1:${password}`);
+export const tokenFor = (password) => sha256(`cs-gate:v1:${password}`);
+export const adminTokenFor = (password) => sha256(`admin-gate:v1:${password}`);
 
-function readCookie(request, name) {
-  const header = request.headers.get('cookie') || '';
-  for (const part of header.split(';')) {
+// Every value a cookie name carries. Two can arrive under one name: the
+// unlock cookie moved from Path=/work to Path=/, and a browser holding both
+// sends the /work one first.
+export function cookieValues(request, name) {
+  const out = [];
+  for (const part of (request.headers.get('cookie') || '').split(';')) {
     const [k, ...rest] = part.trim().split('=');
-    if (k === name) return rest.join('=');
+    if (k === name) out.push(rest.join('='));
   }
-  return null;
+  return out;
 }
-const setCookie = (name, value, path, maxAge) => `${name}=${value}; Path=${path}; Max-Age=${maxAge}; HttpOnly; Secure; SameSite=Lax`;
+export const readCookie = (request, name) => cookieValues(request, name)[0] ?? null;
+export const setCookie = (name, value, path, maxAge) => `${name}=${value}; Path=${path}; Max-Age=${maxAge}; HttpOnly; Secure; SameSite=Lax`;
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
@@ -91,7 +105,7 @@ function page({ path, error, unconfigured, ref, admin }) {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/styles.css?v=ea9e5571">
+<link rel="stylesheet" href="/styles.css?v=63f1442f">
 </head>
 <body>
 <main class="gate-wrap"><div class="gate">
@@ -123,7 +137,7 @@ function store() {
 }
 
 // Runs a pipeline of commands; resolves to their results, or null when no store is connected.
-async function redis(commands) {
+export async function redis(commands) {
   const s = store();
   if (!s) return null;
   const res = await fetch(`${s.url}/pipeline`, {
@@ -190,7 +204,7 @@ async function blocklist() {
 }
 
 // Coarse device/browser read of the user agent; the raw string is logged alongside.
-function describeUA(ua) {
+export function describeUA(ua) {
   const os = /iPhone|iPad/.test(ua) ? 'iOS' : /Android/.test(ua) ? 'Android' : /Mac OS X/.test(ua) ? 'macOS'
     : /Windows/.test(ua) ? 'Windows' : /CrOS/.test(ua) ? 'ChromeOS' : /Linux/.test(ua) ? 'Linux' : 'unknown OS';
   const browser = /Edg\//.test(ua) ? 'Edge' : /OPR\//.test(ua) ? 'Opera' : /Firefox\//.test(ua) ? 'Firefox'
@@ -222,12 +236,12 @@ const BOT_RE = new RegExp([
   'safelinks|proofpoint|mimecast|barracuda|forcepoint|symantec|trendmicro|sophos|ironport|messagelabs|zscaler|netskope|bitdefender|microsoft office|ms-office|msoffice|microsoft-cryptoapi',
   'lighthouse|pingdom|uptime|statuscake|monitoring|site24x7|newrelic|datadog|checkly|w3c_validator',
 ].join('|'), 'i');
-export const isBot = (ua) => !ua || BOT_RE.test(ua);   // exported for bot-check.mjs; the edge runtime reads only `default` and `config`
+export const isBot = (ua) => !ua || BOT_RE.test(ua);   // exported for bot-check.mjs and the chat; the edge runtime reads only `default` and `config`
 // Speculative loads (link prefetch, prerender) that nobody has looked at.
 const isPrefetch = (h) => /prefetch|prerender/i.test(h.get('purpose') || h.get('sec-purpose') || h.get('x-purpose') || '');
 
 // Vercel's IP geolocation headers (city is percent-encoded).
-function whereFrom(h) {
+export function whereFrom(h) {
   const dec = (v) => { try { return v && decodeURIComponent(v); } catch (_) { return v; } };
   return [dec(h.get('x-vercel-ip-city')), h.get('x-vercel-ip-country-region'), h.get('x-vercel-ip-country')]
     .filter(Boolean).join(', ') || 'unknown';
@@ -240,7 +254,7 @@ function coordsOf(h) {
 
 // Short stable id per visitor so one person's sequence of views can be followed.
 // Hashed with the gate token so the raw IP is never stored or sent.
-async function visitorId(request, salt) {
+export async function visitorId(request, salt) {
   const ip = (request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || '').split(',')[0].trim();
   const ua = request.headers.get('user-agent') || '';
   return (await sha256(`${ip}|${ua}|${salt}`)).slice(0, 6);
@@ -268,8 +282,9 @@ async function sendEmail(subject, text) {
 // kind: 'viewed' | 'gated' | 'unlocked' | 'wrong password'. Never throws — the pages must not break.
 // Every event goes to the runtime log and the store; case-study events are emailed too,
 // except reaching the gate, which the dashboard shows and which would otherwise double
-// every unlock's mail.
-async function logAccess(kind, request, url, salt, ref) {
+// every unlock's mail. A password typed into the chat is logged at /api/chat and
+// mailed the same way.
+export async function logAccess(kind, request, url, salt, ref) {
   try {
     const ua = request.headers.get('user-agent') || '';
     const entry = {
@@ -292,8 +307,9 @@ async function logAccess(kind, request, url, salt, ref) {
         ['INCR', COUNT_KEY],
       ]).catch((err) => console.error('access-log: store failed', err)),
     ];
-    if (url.pathname.startsWith('/work/') && kind !== 'gated') {
-      const name = url.pathname.replace(/^\/work\//, '').replace(/\.html$/, '');
+    const inChat = url.pathname === '/api/chat';
+    if ((url.pathname.startsWith('/work/') || inChat) && kind !== 'gated') {
+      const name = inChat ? 'in the chat' : url.pathname.replace(/^\/work\//, '').replace(/\.html$/, '');
       jobs.push(sendEmail(
         `Case study ${kind}: ${name} · ${entry.where}`,
         [
@@ -338,11 +354,12 @@ async function ping(request, salt) {
 
 
 // ---- The feed ---------------------------------------------------------------
-// GET /api/activity?since=<ms>  →  { configured, now, total, events, blocked }
+// GET /api/activity?since=<ms>  →  { configured, now, total, events, blocked, chats }
 // `events` is newest first, only those after `since` when it is given. The
 // first load takes everything kept; a poll reads a short window and only goes
 // further back when every entry in it turned out to be new. `blocked` is the
-// referrer blocklist, so the dashboard can hide and unblock.
+// referrer blocklist, so the dashboard can hide and unblock. `chats` is the
+// chat's questions and answers the same way (newest first, after `since`).
 //
 // POST /api/activity {host, block}  →  { blocked, removed }
 // Adds a referrer host to the blocklist, or takes it off. Blocking also
@@ -365,16 +382,16 @@ function parseEvents(raw, since) {
 }
 
 async function feed(url) {
-  if (!store()) return json({ configured: false, now: Date.now(), total: 0, events: [], blocked: [] });
+  if (!store()) return json({ configured: false, now: Date.now(), total: 0, events: [], blocked: [], chats: [] });
   const since = Number(url.searchParams.get('since')) || 0;
   const span = since ? FEED_POLL : FEED_KEEP;
-  const [raw, total, blocked] = await redis([['LRANGE', FEED_KEY, 0, span - 1], ['GET', COUNT_KEY], ['SMEMBERS', BLOCK_KEY]]);
+  const [raw, total, blocked, chatRaw] = await redis([['LRANGE', FEED_KEY, 0, span - 1], ['GET', COUNT_KEY], ['SMEMBERS', BLOCK_KEY], ['LRANGE', CHAT_KEY, 0, (since ? CHAT_POLL : CHAT_KEEP) - 1]]);
   let events = parseEvents(raw, since);
   if (since && (raw || []).length === span && events.length === span) {
     const [more] = await redis([['LRANGE', FEED_KEY, span, FEED_KEEP - 1]]);
     events = events.concat(parseEvents(more, since));
   }
-  return json({ configured: true, now: Date.now(), total: Number(total) || 0, events, blocked: (blocked || []).sort() });
+  return json({ configured: true, now: Date.now(), total: Number(total) || 0, events, blocked: (blocked || []).sort(), chats: parseEvents(chatRaw, since) });
 }
 
 const HOST_RE = /^(?=.{1,253}$)[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/;
@@ -402,6 +419,70 @@ async function editBlocklist(request) {
 }
 
 
+// ---- Chat settings ----------------------------------------------------------
+// GET /api/settings  →  { store, key, settings, models, defaults }
+// POST /api/settings {settings}  →  { settings }, as saved
+// What the dashboard's Chat settings form edits: whether the chat shows at
+// all, the model, the two limits, the suggested questions and John's notes
+// for the assistant. Kept in the store as one JSON value; without a store the
+// defaults below apply and nothing can be saved. The chat reads them through
+// chatSettings(), each instance keeping its copy for SETTINGS_TTL, so a save
+// reaches every visitor within half a minute and no redeploy is needed.
+// The API key is not a setting: it stays in Vercel's environment variables.
+
+export const CHAT_MODELS = { 'claude-haiku-4-5': 'Claude Haiku 4.5', 'claude-sonnet-5': 'Claude Sonnet 5' };
+export const CHAT_DEFAULTS = {
+  on: true,
+  model: 'claude-haiku-4-5',
+  hourLimit: 30,                  // questions one visitor may ask in an hour
+  dayLimit: 200,                  // questions the whole site answers in a day: the cost ceiling
+  starters: ['What kind of role is John looking for?', 'How does John run a design team?', 'What has John done with AI agents?', 'Tell me about the Staking work'],
+  notes: '',                      // what the pages don't say, in John's words; the assistant may repeat it
+};
+const SETTINGS_KEY = 'chat:settings';
+const SETTINGS_TTL = 30000;       // ms an instance keeps its copy
+
+export function cleanSettings(raw) {
+  const s = { ...CHAT_DEFAULTS, starters: [...CHAT_DEFAULTS.starters] };
+  if (!raw || typeof raw !== 'object') return s;
+  const whole = (v, lo, hi, d) => { const n = Math.round(Number(v)); return v !== '' && v != null && Number.isFinite(n) ? Math.min(hi, Math.max(lo, n)) : d; };
+  if (typeof raw.on === 'boolean') s.on = raw.on;
+  if (typeof raw.model === 'string' && Object.hasOwn(CHAT_MODELS, raw.model)) s.model = raw.model;
+  s.hourLimit = whole(raw.hourLimit, 1, 200, s.hourLimit);
+  s.dayLimit = whole(raw.dayLimit, 0, 5000, s.dayLimit);
+  if (Array.isArray(raw.starters)) s.starters = raw.starters.map((q) => String(q ?? '').replace(/\s+/g, ' ').trim().slice(0, 90)).filter(Boolean).slice(0, 4);
+  if (typeof raw.notes === 'string') s.notes = raw.notes.replace(/\r\n?/g, '\n').trim().slice(0, 2000);
+  return s;
+}
+
+let settingsAt = 0, settingsCopy = null;
+export async function chatSettings() {
+  if (settingsCopy && Date.now() - settingsAt < SETTINGS_TTL) return settingsCopy;
+  try {
+    const [raw] = (await redis([['GET', SETTINGS_KEY]])) || [null];
+    settingsCopy = cleanSettings(raw ? JSON.parse(raw) : null);
+    settingsAt = Date.now();
+  } catch (err) {
+    console.error('settings: read failed', err);                // the last copy serves until the store answers
+    settingsCopy ||= cleanSettings(null);
+  }
+  return settingsCopy;
+}
+
+async function settingsRoute(request) {
+  const info = (settings) => json({ store: !!store(), key: !!process.env.ANTHROPIC_API_KEY, settings, models: CHAT_MODELS, defaults: CHAT_DEFAULTS });
+  if (request.method !== 'POST') { settingsAt = 0; return info(await chatSettings()); }
+  if (!store()) return json({ error: 'No store is connected, so settings cannot be saved.' }, 503);
+  let body = null;
+  try { body = JSON.parse(await request.text()); } catch (_) {}
+  if (!body || typeof body.settings !== 'object') return json({ error: 'No settings sent' }, 400);
+  const settings = cleanSettings(body.settings);
+  await redis([['SET', SETTINGS_KEY, JSON.stringify(settings)]]);
+  settingsCopy = settings; settingsAt = Date.now();
+  return info(settings);
+}
+
+
 // ---- Gates ------------------------------------------------------------------
 
 export default async function middleware(request, context) {
@@ -409,18 +490,20 @@ export default async function middleware(request, context) {
   const path = url.pathname + url.search;
   const isAdmin = url.pathname.startsWith('/admin');
   const isFeed = url.pathname === '/api/activity';
+  const isSettings = url.pathname === '/api/settings';
   const isPing = url.pathname === '/api/ping';
   const isWork = url.pathname.startsWith('/work/');
 
-  // ---- Dashboard and its feed: the owner's password ----
-  if (isAdmin || isFeed) {
+  // ---- Dashboard, its feed and the chat settings: the owner's password ----
+  if (isAdmin || isFeed || isSettings) {
     const password = process.env.ADMIN_PASSWORD;
-    if (!password) return isFeed ? json({ error: 'ADMIN_PASSWORD is not set' }, 503) : new Response(page({ path, unconfigured: true, admin: true }), { status: 503, headers });
+    if (!password) return isAdmin ? new Response(page({ path, unconfigured: true, admin: true }), { status: 503, headers }) : json({ error: 'ADMIN_PASSWORD is not set' }, 503);
     const expected = await adminTokenFor(password);
     const signedIn = readCookie(request, ADMIN_COOKIE) === expected;
 
-    if (isFeed) {
+    if (isFeed || isSettings) {
       if (!signedIn) return json({ error: 'Sign in at /admin/ first' }, 401);
+      if (isSettings) return settingsRoute(request);
       return request.method === 'POST' ? editBlocklist(request) : feed(url);
     }
 
@@ -485,16 +568,16 @@ export default async function middleware(request, context) {
       log('unlocked', ref);
       url.searchParams.delete('unlocked');            // never doubled when the gate itself was reached with it
       const rest = url.searchParams.toString();
-      return new Response(null, {                     // on to the case study with ?unlocked, which main.js answers with the opener once
-        status: 303,
-        headers: { Location: `${url.pathname}?${rest ? `${rest}&` : ''}unlocked`, 'Set-Cookie': setCookie(COOKIE, expected, '/work', MAX_AGE), 'Cache-Control': 'no-store' },
-      });
+      const h = new Headers({ Location: `${url.pathname}?${rest ? `${rest}&` : ''}unlocked`, 'Cache-Control': 'no-store' });   // on to the case study with ?unlocked, which main.js answers with the opener once
+      h.append('Set-Cookie', setCookie(COOKIE, expected, '/', MAX_AGE));   // site-wide, so the chat knows too
+      h.append('Set-Cookie', setCookie(COOKIE, '', '/work', 0));           // and the copy an older unlock left at /work goes
+      return new Response(null, { status: 303, headers: h });
     }
     log('wrong password', ref);
     return new Response(page({ path, error: true, ref }), { status: 401, headers });
   }
 
-  if (readCookie(request, COOKIE) === expected) {   // unlocked: serve the page
+  if (cookieValues(request, COOKIE).includes(expected)) {   // unlocked (at the gate or in the chat): serve the page
     log('viewed');
     return;
   }
