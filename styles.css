@@ -63,12 +63,14 @@
 
   --lh-display: 1.02; --lh-title: 1.08; --lh-heading: 1.15; --lh-subhead: 1.3;
   --lh-lede: 1.4;     --lh-body: 1.55;  --lh-small: 1.5;    --lh-micro: 1.4;
+  --lh-prose: 1.62;   /* running text in a post: looser than body, after craft.do */
   --lh-stat: 1;       --lh-quote: 1.3;
 
   --ls-display: -.02em; --ls-title: -.015em; --ls-heading: -.012em; --ls-subhead: -.005em;
   --ls-lede: -.005em;   --ls-micro: .08em;   --ls-stat: -.015em;    --ls-quote: -.01em;
 
   /* measure */
+  --prose: 40rem;          /* the reading column in a post: ~73 characters */
   --m-display: 16ch; --m-title: 24ch; --m-heading: 26ch; --m-quote: 44ch; --m-lede: 58ch; --m-body: 60ch;
 
   /* spacing scale: 4 · 8 · 12 · 16 · 24 · 32 · 48 · 64 · 96 · 128 */
@@ -125,13 +127,13 @@
 /* The serif speaks: display, title, heading, stat, quote. It is never bold. */
 .t-display, .t-title, .t-heading, .t-stat, .t-quote,
 .brand, .facts dd, .avatar.glyph,
-.prose h2, .prose h3, .prose blockquote p, .pillar-nav a, .byline-mark
+.prose h2, .prose blockquote p, .pillar-nav a, .byline-mark
   { font-family: var(--font-display); font-weight: 400; color: var(--ink); margin: 0; }
 .t-display
   { font-size: var(--t-display); line-height: var(--lh-display); letter-spacing: var(--ls-display); max-width: var(--m-display); text-wrap: balance; }
-.t-title, .prose h2, .pillar-nav a
+.t-title, .pillar-nav a
   { font-size: var(--t-title); line-height: var(--lh-title); letter-spacing: var(--ls-title); max-width: var(--m-title); text-wrap: balance; }
-.t-heading, .brand, .facts dd, .avatar.glyph, .prose h3
+.t-heading, .brand, .facts dd, .avatar.glyph, .prose h2
   { font-size: var(--t-heading); line-height: var(--lh-heading); letter-spacing: var(--ls-heading); max-width: var(--m-heading); text-wrap: balance; }
 .t-stat
   { font-size: var(--t-stat); line-height: var(--lh-stat); letter-spacing: var(--ls-stat); }
@@ -142,7 +144,7 @@
 /* The sans does the work: subhead, lede, body, small, micro */
 .t-subhead, .t-lede, .t-body, .t-small, .t-micro, .eyebrow,
 .testimonial-foot cite b,
-.prose p, .prose li, .prose figcaption, .prose blockquote cite,
+.prose p, .prose li, .prose h3, .prose figcaption, .prose blockquote cite,
 .post-meta, .post-cta, .sources li, .pillar-count,
 .byline, .card-desc, .ticker-item, .post-search input, .view-toggle button,
 .layer-tab, .work-cta, .gate-form input,
@@ -152,11 +154,11 @@
 .dash-live, .dash-list li, .leaflet-container, .leaflet-popup-content,
 thead th, .gauge .lbl, .table-wrap td[data-label]::before, .dash-kind, .dash-now
   { font-family: var(--font-body); margin: 0; }
-.t-subhead, .testimonial-foot cite b
+.t-subhead, .testimonial-foot cite b, .prose h3
   { font-size: var(--t-subhead); line-height: var(--lh-subhead); letter-spacing: var(--ls-subhead); font-weight: 500; color: var(--ink); }
 .t-lede
   { font-size: var(--t-lede); line-height: var(--lh-lede); letter-spacing: var(--ls-lede); font-weight: 400; color: var(--ink-2); max-width: var(--m-lede); }
-.t-body, .layer-tab, .work-cta, .gate-form input, .prose p, .prose li
+.t-body, .layer-tab, .work-cta, .gate-form input
   { font-size: var(--t-body); line-height: var(--lh-body); font-weight: 400; color: var(--ink-2); max-width: var(--m-body); }
 .t-small, .btn, .chip, .nav-links ul a, .back, .crumbs, .tools span, footer,
 .facts dt, table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
@@ -165,6 +167,8 @@ thead th, .gauge .lbl, .table-wrap td[data-label]::before, .dash-kind, .dash-now
 .prose figcaption, .prose blockquote cite, .post-meta, .post-cta, .sources li, .pillar-count,
 .byline, .byline-mark, .card-desc, .ticker-item, .post-search input, .view-toggle button
   { font-size: var(--t-small); line-height: var(--lh-small); font-weight: 400; color: var(--ink-2); }
+.prose p, .prose li
+  { font-size: var(--t-body); line-height: var(--lh-prose); font-weight: 400; color: var(--ink-2); max-width: none; }
 .t-micro, .eyebrow, thead th, .gauge .lbl, .table-wrap td[data-label]::before, .dash-kind, .dash-now
   { font-size: var(--t-micro); line-height: var(--lh-micro); letter-spacing: var(--ls-micro); text-transform: uppercase; font-weight: 500; color: var(--ink-2); }
 .eyebrow { display: block; }
@@ -1712,7 +1716,7 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 
 /* ---- Post: one column, centred on the measure ---- */
 .post-hero { padding-top: calc(var(--nav-h) + clamp(32px, 6vw, 72px)); padding-bottom: clamp(32px, 4vw, 52px); }
-.post-hero .wrap > * { max-width: 34rem; margin-inline: auto; }
+.post-hero .wrap > * { max-width: var(--prose); margin-inline: auto; }
 .post-hero .crumbs { margin-bottom: clamp(24px, 3vw, 36px); }
 .post-hero .t-display, .post-hero .t-lede, .post-hero .post-meta { text-align: center; }
 .post-hero h1 { max-width: 26ch; }
@@ -1721,19 +1725,28 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 .byline { display: flex; align-items: center; justify-content: center; gap: 9px; margin-top: clamp(24px, 3vw, 32px); }
 .byline-mark { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--paper-2); border: 1px solid var(--hair); color: var(--ink); }
 /* The cover, full content width above the body */
-.post-art { margin: 0 0 clamp(32px, 4vw, 52px); border-radius: var(--radius); overflow: hidden; border: 1px solid var(--hair); }
+/* The cover steps out past the reading column without going full width:
+   craft.do runs its text at about 79% of the image, and a 640px column
+   under a 1130px band reads as two unrelated things. */
+.post-art { max-width: 52rem; margin: 0 auto clamp(32px, 4vw, 52px); border-radius: var(--radius); overflow: hidden; border: 1px solid var(--hair); }
 .post-art img { width: 100%; aspect-ratio: 5 / 2; object-fit: cover; }
 .post-hero .post-meta { margin-top: var(--sp-4); }
 
 /* The claim: the one sentence the post defends, standing above the body */
-.claim { max-width: 34rem; margin: clamp(32px, 4vw, 48px) auto 0; padding-left: clamp(20px, 3vw, 32px); border-left: 2px solid var(--accent); }
+.claim { max-width: var(--prose); margin: clamp(32px, 4vw, 48px) auto 0; padding-left: clamp(20px, 3vw, 32px); border-left: 2px solid var(--accent); }
 
-.prose { max-width: 34rem; margin-inline: auto; }
+.prose { max-width: var(--prose); margin-inline: auto; }
 .claim + .prose { margin-top: clamp(32px, 4vw, 48px); }
-.prose > * + * { margin-top: var(--sp-4); }
-.prose h2 { margin-top: clamp(40px, 4.5vw, 64px); }
-.prose h3 { margin-top: clamp(28px, 3vw, 40px); }
-.prose h2 + *, .prose h3 + * { margin-top: var(--sp-4); }
+/* Every gap inside a post, mapped to craft.do's rhythm: 16 between paragraphs,
+   32 above a heading, 16 back down to the text under it. These selectors name
+   the tag rather than leaning on `* + *`, because the roles in section 2 set
+   `margin: 0` at the same specificity and a universal selector loses to them. */
+.prose p + p,
+.prose p + ul, .prose p + ol, .prose ul + p, .prose ol + p,
+.prose p + figure, .prose figure + p,
+.prose h2 + *, .prose h3 + *, .prose blockquote + *, .prose hr + * { margin-top: var(--sp-4); }
+.prose h2 { margin-top: clamp(32px, 3.4vw, 44px); }
+.prose h3 { margin-top: clamp(26px, 2.6vw, 34px); }
 .prose ul, .prose ol { padding-left: 1.35em; }
 .prose li + li { margin-top: var(--sp-2); }
 .prose li::marker { color: var(--ink-3); }
@@ -1746,7 +1759,7 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 .prose figcaption { margin-top: var(--sp-3); }
 
 /* Sources: the post's receipts, a hairline list under the body */
-.sources { max-width: 34rem; margin: clamp(48px, 6vw, 80px) auto 0; padding-top: var(--sp-5); border-top: 1px solid var(--hair); }
+.sources { max-width: var(--prose); margin: clamp(48px, 6vw, 80px) auto 0; padding-top: var(--sp-5); border-top: 1px solid var(--hair); }
 .sources ol { margin-top: var(--sp-4); padding-left: 1.35em; }
 .sources li + li { margin-top: var(--sp-3); }
 .sources a { text-decoration: underline; text-decoration-color: var(--hair-2); text-underline-offset: 3px; transition: text-decoration-color var(--dur-hover); }
