@@ -236,7 +236,8 @@ Function, answers with Claude Haiku 4.5 by default.
   questions the site answers a day (200, the cost ceiling), questions in one
   chat (8; after the last one the chat ends on John's email and LinkedIn, and
   a walkthrough offer comes after the third), the suggested
-  questions and the notes. They are kept in the Redis store as one value and
+  questions for the home page, a case study (`{project}` stands for its name),
+  a blog post and the work index, and the notes. They are kept in the Redis store as one value and
   reach visitors within half a minute, no redeploy. Without a store the
   defaults apply and nothing can be saved.
 - **What it records.** Every question and answer goes to the Redis list

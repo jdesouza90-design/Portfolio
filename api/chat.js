@@ -273,7 +273,7 @@ let client = null;
 
 export async function GET(request) {
   const settings = await chatSettings();
-  const body = { ready: !!process.env.ANTHROPIC_API_KEY && settings.on, unlocked: await isUnlocked(request), starters: settings.starters, limit: settings.chatLimit };
+  const body = { ready: !!process.env.ANTHROPIC_API_KEY && settings.on, unlocked: await isUnlocked(request), starters: settings.starters, caseStarters: settings.caseStarters, postStarters: settings.postStarters, workStarters: settings.workStarters, limit: settings.chatLimit };
   if (await isOwner(request)) {                  // the dashboard's check that the pages came with the function
     const count = (t) => (t.match(/<page url=/g) || []).length;
     try { const p = await sitePages(); body.pages = { open: count(p.open), gated: count(p.gated) }; } catch (_) { body.pages = { open: 0, gated: 0 }; }

@@ -1978,19 +1978,13 @@ const CONFIG = {
       const path = location.pathname;
       const h1 = ($(".cs-hero h1, main h1") || {}).textContent || "";
       const name = h1.split(":")[0].trim();
+      const list = (a) => (Array.isArray(a) ? a : []);       // each kind's questions come from Chat settings
       if (/^\/work\/[\w-]+\.html$/.test(path) && name) {
         const short = name.length <= 26 ? name : "this project";
-        return { label: `Ask about ${short}`, starters: [
-          `What was John's role on ${short}?`, "What were the results?", "What was the hardest part?", "Who was on the team?"] };
+        return { label: `Ask about ${short}`, starters: list(state.caseStarters).map((q) => q.replace(/\{project\}/g, short)) };
       }
-      if (/^\/blog\/[\w-]+\.html$/.test(path)) {
-        return { label: "Ask about this post", starters: [
-          "What's the main argument here?", "How does this show up in John's own work?", "What else has he written?"] };
-      }
-      if (/^\/work(\.html)?$/.test(path)) {
-        return { label: "Ask about the work", starters: [
-          "Which project best shows how John leads?", "Which work involved AI agents?", "What were his biggest results?"] };
-      }
+      if (/^\/blog\/[\w-]+\.html$/.test(path)) return { label: "Ask about this post", starters: list(state.postStarters) };
+      if (/^\/work(\.html)?$/.test(path)) return { label: "Ask about the work", starters: list(state.workStarters) };
       return { label: "Ask about my work", starters: state.starters };
     })();
 
