@@ -1,0 +1,10 @@
+# john-desouza.com
+User-agent: *
+Allow: /
+
+# The case studies sit behind a password gate at the edge, so there is nothing
+# for a crawler to index under /work/ beyond the gate page itself.
+Disallow: /work/
+Disallow: /admin/
+
+Sitemap: https://john-desouza.com/sitemap.xml

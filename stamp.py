@@ -2,7 +2,8 @@
 """Re-stamp styles.css / main.js / asset / icon / social-image / resume URLs with
 their content hash. Run after editing any of them so browsers and the CDN fetch the
 new file. The pages are stamped, and so is the password gate in middleware.js,
-which links the same stylesheet and favicon."""
+which links the same stylesheet and favicon. Blog pages are stamped here too;
+blog.py stamps them the same way when it renders, so the two always agree."""
 import re, glob, hashlib, os
 
 def h(p):
@@ -16,7 +17,8 @@ s = re.sub(r'(resume: "/(assets/[^"?]+))(?:\?v=[a-f0-9]+)?"',
 open('main.js', 'w').write(s)
 
 css_h, js_h = h('styles.css'), h('main.js')
-pages = ['index.html', 'work.html', 'admin/index.html'] + sorted(glob.glob('work/*.html'))
+pages = (['index.html', 'work.html', 'blog.html', 'admin/index.html']
+         + sorted(glob.glob('work/*.html')) + sorted(glob.glob('blog/*.html')))
 for f in pages + ['middleware.js']:
     s = open(f).read()
     here = os.path.dirname(f)

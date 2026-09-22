@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>John DeSouza — Blog</title>
+    <link>https://john-desouza.com/blog.html</link>
+    <atom:link href="https://john-desouza.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <description>Design leadership, where product design is heading, and trust in fintech and web3.</description>
+    <language>en</language>
+    <lastBuildDate>Tue, 22 Sep 2026 09:00:00 -0400</lastBuildDate>
+    <item>
+      <title>Your team stopped taking your advice</title>
+      <link>https://john-desouza.com/blog/your-team-stopped-taking-your-advice.html</link>
+      <guid isPermaLink="true">https://john-desouza.com/blog/your-team-stopped-taking-your-advice.html</guid>
+      <pubDate>Tue, 22 Sep 2026 09:00:00 -0400</pubDate>
+      <category>Design leadership</category>
+      <description>Peer learning among designers went from 24% to 80% in a year. The share taking direction from leadership halved. That is structural, and most leaders are answering it wrong.</description>
+    </item>
+    <item>
+      <title>Stop hiring for AI fluency</title>
+      <link>https://john-desouza.com/blog/stop-hiring-for-ai-fluency.html</link>
+      <guid isPermaLink="true">https://john-desouza.com/blog/stop-hiring-for-ai-fluency.html</guid>
+      <pubDate>Tue, 22 Sep 2026 08:00:00 -0400</pubDate>
+      <category>Where product design is going</category>
+      <description>Half of design leaders now screen for AI fluency, against a toolstack that turned over from three tools to seven in a year. They are screening for recency.</description>
+    </item>
+    <item>
+      <title>An agent with a wallet is a consent problem</title>
+      <link>https://john-desouza.com/blog/an-agent-with-a-wallet.html</link>
+      <guid isPermaLink="true">https://john-desouza.com/blog/an-agent-with-a-wallet.html</guid>
+      <pubDate>Tue, 22 Sep 2026 07:00:00 -0400</pubDate>
+      <category>Fintech, web3 and trust</category>
+      <description>Mastercard and Visa both shipped agent payment credentials in 2026. Liability follows authorization, which makes delegation an interface problem before it is a protocol one.</description>
+    </item>
+  </channel>
+</rss>

@@ -7,7 +7,7 @@
 
    Order: tokens → type roles → base → primitives → nav → home → case study
           → gate → unlock opener → motion → per-project grounds → phone
-          → dashboard
+          → dashboard → blog
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -63,12 +63,14 @@
 
   --lh-display: 1.02; --lh-title: 1.08; --lh-heading: 1.15; --lh-subhead: 1.3;
   --lh-lede: 1.4;     --lh-body: 1.55;  --lh-small: 1.5;    --lh-micro: 1.4;
+  --lh-prose: 1.62;   /* running text in a post: looser than body, after craft.do */
   --lh-stat: 1;       --lh-quote: 1.3;
 
   --ls-display: -.02em; --ls-title: -.015em; --ls-heading: -.012em; --ls-subhead: -.005em;
   --ls-lede: -.005em;   --ls-micro: .08em;   --ls-stat: -.015em;    --ls-quote: -.01em;
 
   /* measure */
+  --prose: 40rem;          /* the reading column in a post: ~73 characters */
   --m-display: 16ch; --m-title: 24ch; --m-heading: 26ch; --m-quote: 44ch; --m-lede: 58ch; --m-body: 60ch;
 
   /* spacing scale: 4 · 8 · 12 · 16 · 24 · 32 · 48 · 64 · 96 · 128 */
@@ -113,8 +115,10 @@
    color, measure and a zero margin. Headings and paragraphs carry their
    role as a class in the markup (.t-title, .t-body, .eyebrow); the inline
    and structural text of a component (a cell, a cite, a button) is listed
-   under its role here. Nothing after this section sets a face, size, weight,
-   line-height or letter-spacing, with three exceptions: .btn and .chip set
+   under its role here, and so is a blog post's body: the copy is drafted as
+   prose, so .prose h2/h3/p/li/blockquote/figcaption are listed here rather
+   than classed in the markup. Nothing after this section sets a face, size,
+   weight, line-height or letter-spacing, with three exceptions: .btn and .chip set
    the line-height of their own box; the dashboard's visitor hashes and the
    map's credit line take the micro size without the role's caps; and the
    phone rules at the end move a few things a role up or down.
@@ -122,23 +126,27 @@
 
 /* The serif speaks: display, title, heading, stat, quote. It is never bold. */
 .t-display, .t-title, .t-heading, .t-stat, .t-quote,
-.brand, .facts dd, .avatar.glyph
+.brand, .facts dd, .avatar.glyph,
+.prose h2, .prose blockquote p, .pillar-nav a, .byline-mark
   { font-family: var(--font-display); font-weight: 400; color: var(--ink); margin: 0; }
 .t-display
   { font-size: var(--t-display); line-height: var(--lh-display); letter-spacing: var(--ls-display); max-width: var(--m-display); text-wrap: balance; }
-.t-title
+.t-title, .pillar-nav a
   { font-size: var(--t-title); line-height: var(--lh-title); letter-spacing: var(--ls-title); max-width: var(--m-title); text-wrap: balance; }
-.t-heading, .brand, .facts dd, .avatar.glyph
+.t-heading, .brand, .facts dd, .avatar.glyph, .prose h2
   { font-size: var(--t-heading); line-height: var(--lh-heading); letter-spacing: var(--ls-heading); max-width: var(--m-heading); text-wrap: balance; }
 .t-stat
   { font-size: var(--t-stat); line-height: var(--lh-stat); letter-spacing: var(--ls-stat); }
-.t-quote
+.t-quote, .prose blockquote p
   { font-size: var(--t-quote); line-height: var(--lh-quote); letter-spacing: var(--ls-quote); max-width: var(--m-quote); text-wrap: pretty; }
 .t-stat, .facts dd { font-variant-numeric: lining-nums tabular-nums; }
 
 /* The sans does the work: subhead, lede, body, small, micro */
 .t-subhead, .t-lede, .t-body, .t-small, .t-micro, .eyebrow,
 .testimonial-foot cite b,
+.prose p, .prose li, .prose h3, .prose figcaption, .prose blockquote cite,
+.post-meta, .post-cta, .sources li, .pillar-count,
+.byline, .card-desc, .ticker-item, .post-search input, .view-toggle button,
 .layer-tab, .work-cta, .gate-form input, .arcade-post input,
 .btn, .chip, .nav-links ul a, .back, .crumbs, .tools span, footer,
 .facts dt, table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
@@ -146,7 +154,7 @@
 .dash-live, .dash-list li, .leaflet-container, .leaflet-popup-content,
 thead th, .gauge .lbl, .table-wrap td[data-label]::before, .dash-kind, .dash-now
   { font-family: var(--font-body); margin: 0; }
-.t-subhead, .testimonial-foot cite b
+.t-subhead, .testimonial-foot cite b, .prose h3
   { font-size: var(--t-subhead); line-height: var(--lh-subhead); letter-spacing: var(--ls-subhead); font-weight: 500; color: var(--ink); }
 .t-lede
   { font-size: var(--t-lede); line-height: var(--lh-lede); letter-spacing: var(--ls-lede); font-weight: 400; color: var(--ink-2); max-width: var(--m-lede); }
@@ -155,14 +163,18 @@ thead th, .gauge .lbl, .table-wrap td[data-label]::before, .dash-kind, .dash-now
 .t-small, .btn, .chip, .nav-links ul a, .back, .crumbs, .tools span, footer,
 .facts dt, table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
 .gallery figcaption, .proof-head small, .tooltip, .chart-pill, details.data,
-.dash-live, .dash-list li, .leaflet-container, .leaflet-popup-content
+.dash-live, .dash-list li, .leaflet-container, .leaflet-popup-content,
+.prose figcaption, .prose blockquote cite, .post-meta, .post-cta, .sources li, .pillar-count,
+.byline, .byline-mark, .card-desc, .ticker-item, .post-search input, .view-toggle button
   { font-size: var(--t-small); line-height: var(--lh-small); font-weight: 400; color: var(--ink-2); }
+.prose p, .prose li
+  { font-size: var(--t-body); line-height: var(--lh-prose); font-weight: 400; color: var(--ink-2); max-width: none; }
 .t-micro, .eyebrow, thead th, .gauge .lbl, .table-wrap td[data-label]::before, .dash-kind, .dash-now
   { font-size: var(--t-micro); line-height: var(--lh-micro); letter-spacing: var(--ls-micro); text-transform: uppercase; font-weight: 500; color: var(--ink-2); }
 .eyebrow { display: block; }
 
 /* Weight: 500 is the one emphasis, for whatever names or acts. */
-strong, b, tbody th, .t-body a, .t-lede a,
+strong, b, tbody th, .t-body a, .t-lede a, .prose p a, .prose li a, .post-cta,
 .btn, .chip, .chart-pill, .tooltip b, .tip-val, .nav-links ul a, .back, .crumbs, .tools span, .layer-tab, .layer-mark, .work-cta, .avatar, .testimonial-mark
   { font-weight: 500; }
 
@@ -173,8 +185,10 @@ strong, b, tbody th, .t-body a, .t-lede a,
    or number in a block. */
 strong, b, tbody th, .chip, .tools span, .avatar, .testimonial-mark, .tooltip b, .tip-val, .crumbs [aria-current], .dash-label { color: var(--ink); }
 .chart-pill { color: var(--surface); }
-footer, .walk-note, .testimonial-foot cite, .kudos cite, .exp-dates, .crumb-sep, .gate-form input::placeholder, .arcade-post input::placeholder { color: var(--ink-3); }
+footer, .walk-note, .testimonial-foot cite, .kudos cite, .exp-dates, .crumb-sep, .gate-form input::placeholder, .arcade-post input::placeholder,
+.prose figcaption, .prose blockquote cite, .pillar-count { color: var(--ink-3); }
 .work-cta, .t-body a, .t-lede a, .outcome-stat .t-stat, .proof-head .t-stat, thead .hl { color: var(--accent-ink); }
+.prose p a, .prose li a, .sources a { color: var(--accent-ink); }
 
 /* Number flow: a headline stat that main.js rolls in digit by digit. Each
    digit is a column of 0 to 9 behind a soft mask, and the whole stat is lit
@@ -909,6 +923,11 @@ footer a:hover { color: var(--ink); }
 .row .panel img { max-height: 100%; }
 .row .panel.crop { padding: var(--panel-pad) 0 0 var(--panel-pad); align-items: flex-start; justify-content: flex-start; }
 .row .panel.crop img { width: 100%; height: 100%; max-width: none; object-fit: cover; object-position: var(--crop-pos, 0 0); border-radius: 10px 0 0 0; }
+/* .panel.dock: a tall phone screen whose top sits inside the ground and whose
+   rest runs off the bottom edge, so it reads as the phone continuing past the
+   panel. The screen carries its own keyed corners, so it takes the cutout shadow. */
+.row .panel.dock { align-items: flex-start; padding-bottom: 0; }
+.row .panel.dock img { width: var(--dock-w, 78%); max-width: none; max-height: none; height: auto; border-radius: 0; box-shadow: none; filter: var(--shadow-cutout); }
 /* .panel.cutout holds one UI card cut out with transparent corners, floating on the ground */
 .row .panel.cutout img { border-radius: 0; box-shadow: none; filter: var(--shadow-cutout); }
 
@@ -1193,11 +1212,21 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
     transform var(--dur-reveal) var(--ease-soft) calc(var(--reveal-i, 0) * 60ms);
 }
 .anim [data-reveal].in { opacity: 1; transform: none; }
+/* Columns in a revealed block enter one after another, left to right, while
+   the block is still settling (a column row reads as a sequence, not a slab). */
+.anim [data-reveal] .cols > .col {
+  opacity: 0; transform: translateX(-32px);
+  transition: opacity .6s linear, transform .6s var(--ease-soft);
+}
+.anim [data-reveal] .cols > .col:nth-child(2) { --col-i: 1; }
+.anim [data-reveal] .cols > .col:nth-child(3) { --col-i: 2; }
+.anim [data-reveal] .cols > .col:nth-child(4) { --col-i: 3; }
+.anim [data-reveal].in .cols > .col { opacity: 1; transform: none; transition-delay: calc(200ms + var(--col-i, 0) * 160ms); }   /* the wait only on the way in, so hiding at load is instant */
 [data-rise] { animation: rise .6s var(--ease) both; animation-delay: calc(var(--i, 0) * 70ms); }
 @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .anim [data-reveal], [data-rise] { opacity: 1; transform: none; transition: none; animation: none; }
+  .anim [data-reveal], [data-rise], .anim [data-reveal] .cols > .col { opacity: 1; transform: none; transition: none; animation: none; }
   .opener-body > * { opacity: 1; }                          /* the opener shows still, then goes */
   .opener-seam { transform: none; }
   .gauge .fill, .gauge .needle { animation: none !important; }
@@ -1396,6 +1425,8 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
   .row .panel { height: auto; aspect-ratio: auto; padding: 24px 20px; }
   .row .panel img { max-height: min(520px, 68vh); }
   .row .panel.crop { aspect-ratio: 4 / 3; padding: 20px 0 0 20px; }
+  .row .panel.dock { aspect-ratio: 1; padding: 24px 0 0; justify-content: center; }
+  .row .panel.dock img { --dock-w: 82%; }
   .row.full .panel { padding: 20px; }
   .tensions { margin-top: 24px; }
 
@@ -1650,4 +1681,187 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 @media (prefers-reduced-motion: reduce) {
   .dash-live[data-state="on"] .dash-live-dot, .dash-table tr.is-new, .visit-dot.is-new { animation: none; }
   .dash-bar, .visit-dot, .dash-hist .col { transition: none; }
+}
+
+/* --------------------------------------------------------------------------
+   13. Blog
+   Two documents: the index (a hairline list of posts, newest first) and the
+   post itself (one column of running text on a 34rem measure). A post is the
+   only place on the site with long-form prose, so it is the only place a
+   heading, a list or a link sits inside a paragraph stream; those bare tags
+   take their roles back in section 2, so nothing here sets type. Self
+   contained like the dashboard above, phone rules included.
+   -------------------------------------------------------------------------- */
+
+/* ---- Index: the three arguments, a recent strip, the latest, then all ---- */
+/* The way into the blog is the argument, not the date. Two columns of serif
+   lines, each one jumping to its own group below. */
+.pillar-nav ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-3) var(--sp-8); }
+.pillar-nav a { display: block; text-decoration: none; max-width: none; text-wrap: balance; transition: color var(--dur-hover), opacity var(--dur-hover); }
+.pillar-nav svg { width: .5em; height: .5em; margin-left: .3em; display: inline-block; transition: transform var(--dur-hover) var(--ease); }
+.pillar-count { display: inline-block; margin-left: .6em; white-space: nowrap; vertical-align: .18em; }
+@media (hover: hover) and (pointer: fine) {
+  .pillar-nav a:hover { color: var(--accent-ink); }
+  .pillar-nav a:hover svg { transform: translateX(.22em); }
+  /* Pointing at one line quiets the others (after craft.do's blog) */
+  .pillar-nav ul:has(a:hover) a:not(:hover),
+  .ticker:has(.ticker-item:hover) .ticker-item:not(:hover) { opacity: .3; }
+}
+.pillar-head { scroll-margin-top: calc(var(--nav-h) + var(--sp-5)); margin-bottom: var(--sp-5); }
+.pillar-group + .pillar-group { margin-top: var(--row); }
+.pillar-empty { padding-block: var(--sp-5); }
+/* The feed, beside the eyebrow that names the section */
+.feed-link { display: inline-flex; margin-left: 8px; vertical-align: -2px; color: var(--ink-3); transition: color var(--dur-hover); }
+.feed-link svg { width: 13px; height: 13px; }
+.feed-link:hover { color: var(--accent-ink); }
+
+/* The read-on cue: a label and an arrow that steps forward on hover */
+.post-cta { display: inline-flex; align-items: center; gap: 7px; color: var(--ink); text-decoration: none; transition: color var(--dur-hover); }
+.post-cta svg { width: 15px; height: 15px; flex: none; transition: transform var(--dur-hover) var(--ease); }
+@media (hover: hover) and (pointer: fine) {
+  .post-cta:hover { color: var(--accent-ink); }
+  .post-cta:hover svg { transform: translateX(5px); }
+}
+
+/* The recent run: titles and dates on one line, swiped sideways on a phone */
+.ticker { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(210px, 1fr); gap: var(--sp-6); overflow-x: auto; padding-block: var(--sp-5); border-block: 1px solid var(--hair); scrollbar-width: thin; }
+.ticker-item { display: block; text-decoration: none; transition: color var(--dur-hover), opacity var(--dur-hover); }
+.ticker-item time { display: block; margin-top: var(--sp-2); color: var(--ink-3); }
+.ticker-item:hover { color: var(--accent-ink); }
+/* With motion allowed, main.js turns the strip into a slow loop: the run is
+   repeated until it is wider than the strip, doubled, and moved one run's
+   width at a time. Hovering or tabbing into it holds it; so does the button. */
+.ticker-frame { position: relative; }
+.ticker.marquee { display: block; overflow: hidden; padding-right: 0; -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 88%, transparent); }
+.ticker-track { display: flex; width: max-content; animation: ticker var(--ticker-dur, 40s) linear infinite; }
+.ticker.marquee .ticker-item { flex: none; width: clamp(210px, 24vw, 300px); padding-right: var(--sp-6); }
+.ticker.marquee:is(:hover, :focus-within) .ticker-track,
+.ticker-frame.held .ticker-track { animation-play-state: paused; }
+.ticker-frame .art-ctl { top: 50%; right: 0; bottom: auto; transform: translateY(-50%); background: var(--surface); }
+@keyframes ticker { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .ticker-track { animation: none; } }
+
+/* The latest three, on their own ground */
+.featured { background: var(--paper-2); border: 1px solid var(--hair); border-radius: var(--radius); padding: clamp(24px, 3.4vw, 48px); }
+.featured-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--sp-5); flex-wrap: wrap; margin-bottom: clamp(24px, 3vw, 36px); }
+.featured-title { font-style: italic; max-width: none; }
+
+/* A post as a card: its cover, the month, the title, the blurb.
+   Named .post-card, not .card: .card is the site-wide primitive
+   (section 4), used bare by the home page's three lead-solo blocks and by
+   admin/index.html's dashboard cards. A same-specificity .card rule here,
+   later in the cascade, would silently win the fight for `display` and
+   `border-radius` on all of them. */
+.cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2vw, 24px); }
+.post-card { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--hair); border-radius: var(--radius-sm); overflow: hidden; text-decoration: none; transition: transform var(--dur-hover) var(--ease), box-shadow var(--dur-hover), border-color var(--dur-hover); }
+.card-art { display: block; background: var(--paper-2); overflow: hidden; }
+.card-art img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; transition: transform 500ms var(--ease); }
+.card-body { flex: 1; display: flex; flex-direction: column; gap: var(--sp-3); padding: clamp(16px, 1.8vw, 22px); }
+.card-title { display: block; max-width: none; transition: opacity var(--dur-hover); }
+.card-desc { display: block; transition: opacity var(--dur-hover); }
+/* The foot sits on the card's floor, the chip and the read time a gap apart */
+.post-card .post-meta { display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; margin-top: auto; padding-top: var(--sp-2); }
+@media (hover: hover) and (pointer: fine) {
+  .post-card:hover { transform: translateY(-3px); border-color: var(--hair-2); box-shadow: var(--shadow-lift); }
+  .post-card:hover :is(.card-title, .card-desc) { opacity: .7; }
+  .post-card:hover .card-art img { transform: scale(1.05); }
+}
+@media (prefers-reduced-motion: reduce) { .card-art img { transition: none; } }
+
+/* All posts: a search and a layout choice above the groups */
+.posts-head { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-5); flex-wrap: wrap; margin-bottom: clamp(28px, 3vw, 44px); }
+.posts-controls { display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; }
+.post-search { display: flex; align-items: center; gap: 8px; padding: 9px 14px; border: 1px solid var(--hair-2); border-radius: 999px; background: var(--surface); }
+.post-search svg { width: 15px; height: 15px; color: var(--ink-3); flex: none; }
+.post-search input { border: 0; background: none; outline: none; min-width: 170px; color: var(--ink); }
+.post-search:focus-within { border-color: var(--accent); }
+.view-toggle { display: flex; padding: 3px; gap: 2px; border: 1px solid var(--hair-2); border-radius: 999px; background: var(--surface); }
+.view-toggle button { display: inline-flex; align-items: center; gap: 6px; padding: 7px 13px; border: 0; border-radius: 999px; background: none; color: var(--ink-2); cursor: pointer; transition: background var(--dur-hover), color var(--dur-hover); }
+.view-toggle svg { width: 14px; height: 14px; }
+.view-toggle button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.posts-empty { padding-block: var(--sp-6); }
+.post-card[hidden] { display: none; }
+
+/* The list layout: the cover shrinks to a stripe beside the copy */
+.cards[data-view="list"] { grid-template-columns: minmax(0, 1fr); gap: 0; }
+.cards[data-view="list"] .post-card { flex-direction: row; align-items: stretch; border-radius: 0; border-width: 0 0 1px; background: none; }
+.cards[data-view="list"] .post-card:first-child { border-top: 1px solid var(--hair); }
+.cards[data-view="list"] .card-art { flex: none; width: clamp(96px, 14vw, 168px); align-self: center; border-radius: var(--radius-sm); overflow: hidden; margin: var(--sp-4) 0 var(--sp-4) var(--sp-4); }
+.cards[data-view="list"] .card-desc { display: none; }
+@media (hover: hover) and (pointer: fine) {
+  .cards[data-view="list"] .post-card:hover { transform: none; box-shadow: none; background: var(--surface); }
+}
+
+/* ---- Post: one column, centred on the measure ---- */
+.post-hero { padding-top: calc(var(--nav-h) + clamp(32px, 6vw, 72px)); padding-bottom: clamp(32px, 4vw, 52px); }
+.post-hero .wrap > * { max-width: var(--prose); margin-inline: auto; }
+.post-hero .crumbs { margin-bottom: clamp(24px, 3vw, 36px); }
+.post-hero .t-display, .post-hero .t-lede, .post-hero .post-meta { text-align: center; }
+.post-hero h1 { max-width: 26ch; }
+.post-hero .post-meta { justify-content: center; }
+.post-hero .t-lede { margin-top: var(--sp-5); }
+.byline { display: flex; align-items: center; justify-content: center; gap: 9px; margin-top: clamp(24px, 3vw, 32px); }
+.byline-mark { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--paper-2); border: 1px solid var(--hair); color: var(--ink); }
+/* The cover, full content width above the body */
+/* The cover steps out past the reading column without going full width:
+   craft.do runs its text at about 79% of the image, and a 640px column
+   under a 1130px band reads as two unrelated things. */
+.post-art { max-width: 52rem; margin: 0 auto clamp(32px, 4vw, 52px); border-radius: var(--radius); overflow: hidden; border: 1px solid var(--hair); }
+.post-art img { width: 100%; aspect-ratio: 5 / 2; object-fit: cover; }
+.post-hero .post-meta { margin-top: var(--sp-4); }
+
+/* The claim: the one sentence the post defends, standing above the body */
+.claim { max-width: var(--prose); margin: clamp(32px, 4vw, 48px) auto 0; padding-left: clamp(20px, 3vw, 32px); border-left: 2px solid var(--accent); }
+
+.prose { max-width: var(--prose); margin-inline: auto; }
+.claim + .prose { margin-top: clamp(32px, 4vw, 48px); }
+/* Every gap inside a post, mapped to craft.do's rhythm: 16 between paragraphs,
+   32 above a heading, 16 back down to the text under it. These selectors name
+   the tag rather than leaning on `* + *`, because the roles in section 2 set
+   `margin: 0` at the same specificity and a universal selector loses to them. */
+.prose p + p,
+.prose p + ul, .prose p + ol, .prose ul + p, .prose ol + p,
+.prose p + figure, .prose figure + p,
+.prose h2 + *, .prose h3 + *, .prose blockquote + *, .prose hr + * { margin-top: var(--sp-4); }
+.prose h2 { margin-top: clamp(32px, 3.4vw, 44px); }
+.prose h3 { margin-top: clamp(26px, 2.6vw, 34px); }
+.prose ul, .prose ol { padding-left: 1.35em; }
+.prose li + li { margin-top: var(--sp-2); }
+.prose li::marker { color: var(--ink-3); }
+.prose a { text-decoration: underline; text-decoration-color: var(--hair-2); text-underline-offset: 3px; transition: text-decoration-color var(--dur-hover); }
+.prose a:hover { text-decoration-color: var(--accent); }
+.prose blockquote { margin: clamp(32px, 4vw, 48px) 0; padding-left: clamp(20px, 3vw, 32px); border-left: 1px solid var(--hair-2); }
+.prose blockquote cite { display: block; margin-top: var(--sp-3); font-style: normal; }
+.prose hr { margin-block: clamp(40px, 5vw, 64px); border: 0; border-top: 1px solid var(--hair); }
+.prose figure { margin: clamp(32px, 4vw, 48px) 0; }
+.prose figcaption { margin-top: var(--sp-3); }
+
+/* Sources: the post's receipts, a hairline list under the body */
+.sources { max-width: var(--prose); margin: clamp(48px, 6vw, 80px) auto 0; padding-top: var(--sp-5); border-top: 1px solid var(--hair); }
+.sources ol { margin-top: var(--sp-4); padding-left: 1.35em; }
+.sources li + li { margin-top: var(--sp-3); }
+.sources a { text-decoration: underline; text-decoration-color: var(--hair-2); text-underline-offset: 3px; transition: text-decoration-color var(--dur-hover); }
+.sources a:hover { text-decoration-color: var(--accent); }
+
+/* Next post, the closing band of a post. Mirrors .cs-next. */
+.post-next { text-align: center; }
+.post-next .t-title { margin-top: var(--sp-3); margin-inline: auto; }
+.post-next .actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: clamp(28px, 3vw, 40px); }
+
+@media (max-width: 560px) {
+  /* The index row's date and cue drop under the copy and turn left with it;
+     the post column is already one column, so only its rails come in. */
+  .post-hero .t-display, .post-hero .t-lede, .post-hero .post-meta { text-align: left; }
+  .post-hero .post-meta { justify-content: flex-start; }
+  .pillar-nav ul { grid-template-columns: minmax(0, 1fr); }
+  .cards { grid-template-columns: minmax(0, 1fr); }
+  .posts-controls { width: 100%; }
+  .post-search { flex: 1; }
+  .post-hero .wrap > * { margin-inline: 0; }
+  .byline { justify-content: flex-start; }
+  .post-hero h1 { max-width: none; }
+  .claim, .prose blockquote { padding-left: var(--sp-4); }
+  .post-next { text-align: left; }
+  .post-next .t-title { margin-inline: 0; }
+  .post-next .actions { justify-content: flex-start; }
 }
