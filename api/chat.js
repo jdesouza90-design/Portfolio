@@ -5,7 +5,8 @@
 //   GET  /api/chat                    { ready, unlocked, starters }: whether it
 //                                     is set up and switched on, whether this
 //                                     visitor has unlocked the case studies, and
-//                                     the suggested questions to offer; for the
+//                                     the suggested questions to offer and the
+//                                     questions a chat may ask (`limit`); for the
 //                                     owner, `pages` too: how many it can read
 //   POST /api/chat {messages, page}   the answer as a stream, one JSON event a line:
 //                                       {t: 'text', v}      a piece of the answer
@@ -47,7 +48,6 @@ const KEEP_MESSAGES = 16;         // the tail of a conversation sent with each q
 const MAX_QUESTION = 600;         // characters; the composer stops at the same
 const MAX_ANSWER = 4000;          // characters of an earlier answer sent back
 const TRY_LIMIT = 10;             // passwords a visitor may try in an hour
-const MAX_TURNS = 8;              // questions one conversation may ask; the panel stops at the same (main.js)
 
 const CONTACT = {
   email: 'jdesouza90@gmail.com',
@@ -273,7 +273,7 @@ let client = null;
 
 export async function GET(request) {
   const settings = await chatSettings();
-  const body = { ready: !!process.env.ANTHROPIC_API_KEY && settings.on, unlocked: await isUnlocked(request), starters: settings.starters };
+  const body = { ready: !!process.env.ANTHROPIC_API_KEY && settings.on, unlocked: await isUnlocked(request), starters: settings.starters, limit: settings.chatLimit };
   if (await isOwner(request)) {                  // the dashboard's check that the pages came with the function
     const count = (t) => (t.match(/<page url=/g) || []).length;
     try { const p = await sitePages(); body.pages = { open: count(p.open), gated: count(p.gated) }; } catch (_) { body.pages = { open: 0, gated: 0 }; }
@@ -307,7 +307,7 @@ export async function POST(request) {
   const messages = conversation(body.messages);
   if (!messages.length) return json({ error: 'Ask a question first.' }, 400);
   const turns = Array.isArray(body.messages) ? body.messages.filter((m) => m && m.role !== 'assistant').length : 0;
-  if (turns > MAX_TURNS) return json({ error: `That's the limit for one chat. Email John at ${CONTACT.email} and he'll take it from here.` }, 429);
+  if (turns > settings.chatLimit) return json({ error: `That's the limit for one chat. Email John at ${CONTACT.email} and he'll take it from here.` }, 429);
   const question = messages[messages.length - 1].content;
   const page = cleanPage(body.page);
   const unlocked = await isUnlocked(request);
