@@ -33,6 +33,9 @@ const cmd = ([op, key, ...args]) => {
     case 'GET': return values.get(key) ?? null;
     case 'SET': { if (args.includes('NX') && values.has(key)) return null; values.set(key, args[0]); const ex = args.indexOf('EX'); if (ex >= 0) setTimeout(() => values.delete(key), Number(args[ex + 1]) * 1000).unref(); return 'OK'; }
     case 'ZADD': { const z = zsorted(key).filter((e) => e[1] !== args[1]); z.push([Number(args[0]), args[1]]); zsets.set(key, z); return 1; }
+    case 'ZREM': { const z = zsorted(key); const keep = z.filter((e) => !args.includes(e[1])); zsets.set(key, keep); return z.length - keep.length; }
+    case 'ZCARD': return (zsets.get(key) || []).length;
+    case 'DEL': { const had = [lists, values, sets, zsets].some((m) => m.delete(key)); return had ? 1 : 0; }
     case 'ZRANK': { const i = zsorted(key).findIndex((e) => e[1] === args[0]); return i < 0 ? null : i; }
     case 'ZRANGE': { const z = zsorted(key), end = Number(args[1]); const part = z.slice(Number(args[0]), end < 0 ? z.length + end + 1 : end + 1); return args.includes('WITHSCORES') ? part.flatMap(([sc, m]) => [m, String(sc)]) : part.map((e) => e[1]); }
     case 'ZREMRANGEBYRANK': { const z = zsorted(key), start = Number(args[0]); const n = z.length > start ? z.length - start : 0; zsets.set(key, z.slice(0, start)); return n; }

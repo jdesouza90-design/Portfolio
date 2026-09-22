@@ -1570,6 +1570,35 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 .dash-blocked ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 20px; }
 .dash-blocked li { display: inline-flex; align-items: baseline; gap: 10px; font-size: var(--t-small); line-height: var(--lh-small); color: var(--ink-2); }
 .dash-blocked li span { text-decoration: line-through; text-decoration-color: var(--ink-3); }
+
+/* Nine holes: the leaderboard (a dash-list with a place and a date), and the
+   side column's two small forms, their inputs in the gate input's clothes at
+   the small size. */
+.dash-golf-side { display: grid; gap: var(--sp-5); align-content: start; }
+.dash-board li { align-items: baseline; }
+.dash-board .dash-rank { flex: none; width: 3ch; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.dash-board .dash-when { flex: none; color: var(--ink-3); }
+.dash-board .dash-act { flex: none; min-width: 6ch; text-align: right; color: var(--ink-3); }
+.dash-board .dash-act:hover { color: var(--accent-ink); }
+.dash-card-head .dash-act { margin-bottom: var(--sp-4); }
+.dash-form { display: grid; gap: 12px; }
+.dash-fields { display: grid; gap: 10px; }
+.dash-field { display: flex; align-items: center; justify-content: space-between; gap: 16px; font-size: var(--t-small); line-height: var(--lh-small); color: var(--ink-2); }
+.dash-field small { display: block; font-size: var(--t-micro); line-height: var(--lh-micro); color: var(--ink-3); }
+.dash-form input:is([type="number"], [type="text"]) { font-family: var(--font-body); font-size: var(--t-small); line-height: var(--lh-small); padding: 7px 10px; border-radius: 10px; border: 1px solid var(--hair-2); background: var(--surface-2); color: var(--ink); }
+.dash-form input[type="number"] { flex: none; width: 9ch; font-variant-numeric: tabular-nums; }
+.dash-form input[type="text"] { flex: 1 1 auto; min-width: 0; text-transform: uppercase; }
+.dash-form input[type="text"]::placeholder { text-transform: none; color: var(--ink-3); }
+.dash-form input[type="checkbox"] { flex: none; width: 18px; height: 18px; accent-color: var(--accent); }
+.dash-form input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
+.dash-form input[aria-invalid="true"] { border-color: var(--danger); }
+.dash-form-row { display: flex; gap: 10px; }
+.dash-form-foot { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+.dash-form .dash-status:empty, #board-status:empty { display: none; }
+.dash-form .dash-status, #board-status { margin: 0; color: var(--ink-2); }
+.dash-bans { list-style: none; margin: var(--sp-4) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 20px; }
+.dash-bans:empty { display: none; }
+.dash-bans li { display: inline-flex; align-items: baseline; gap: 10px; font-size: var(--t-small); line-height: var(--lh-small); color: var(--ink-2); }
 .dash-menu-empty { padding: 8px 16px; color: var(--ink-3); }
 .dash-filter-state { margin-left: auto; display: flex; align-items: center; gap: 14px; }
 .dash-filter-state .t-small { margin: 0; color: var(--ink-3); font-variant-numeric: tabular-nums; }

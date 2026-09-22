@@ -29,7 +29,9 @@ main.js                         CONFIG links, then one function per feature: nav
                                 swipe strips, table frames, About portrait height, the Nine holes arcade
 admin/index.html                Activity dashboard: who is on the site, live (its own password)
 admin/dash.js                   The dashboard's script: polls the feed, builds sessions, draws the charts and the map
-middleware.js                   Vercel Edge Middleware: the two password gates, the activity log, its feed and the time-on-page beacon
+admin/golf.js                   The dashboard's Nine holes section: the leaderboard (delete, clear), banned words, the game's settings
+middleware.js                   Vercel Edge Middleware: the two password gates, the activity log, its feed and the time-on-page beacon,
+                                and the Nine holes leaderboard (/api/scores; its name filter, and /api/board for the dashboard)
 vercel.json                     Cache and security headers
 .vercelignore                   Keeps the repo's tooling (this file, VOICE.md, stamp.py, dev.mjs, .claude/) off the deployment
 stamp.py                        Re-stamps every ?v= cache hash; run it before committing

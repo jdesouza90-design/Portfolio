@@ -1490,8 +1490,11 @@ const CONFIG = {
     const tok = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
     const INK = tok("--ink") || "#14100C", INK3 = tok("--ink-3") || "#6F675D", HAIR = tok("--hair-2") || "#CFC9BF";
     const ACCENT = tok("--accent") || "#3B6B44", GREEN = tok("--accent-2") || "#6E9A5A", FLAG = tok("--danger") || "#C0392B", SAND = tok("--surface") || "#FFFFFF";
-    const H = 64, GROUND = 52, TEE = 12, HOLES = 9, PAR = 3;   // logical pixels; the ground line is GROUND
-    const CUP = 5;                                 // the cup's width, odd so it centers on `cup`
+    const H = 64, GROUND = 52, TEE = 12;           // logical pixels; the ground line is GROUND
+    /* The tunable part, which the dashboard sets (GAME in middleware.js has
+       the same defaults and the limits). /api/scores hands the saved values
+       over with the board; a change arriving mid-round waits for the next. */
+    let HOLES = 9, PAR = 3, CUP = 5, PUTT = 28, WIND = 25, AIM = 1.4, POWER = 1.0, HAZARDS = 0.65, pending = null;
     let W = 192, scale = 4;
 
     /* Sprites: the golfer at address, at the top of the backswing, and after the hit */
@@ -1529,15 +1532,14 @@ const CONFIG = {
 
     /* State */
     const G = 220, FRICTION = 70, BOUNCE = 0.45;   // px/s²; px/s²; how much of a landing comes back up
-    const AIM = 1.4, POWER = 1.0;                  // seconds for a full swing of the arrow and of the meter
-    const PUTT = 28, PUTT_V = 92, PUTT_DROP = 55;  // within PUTT px of the cup it's a putt: rolled, at most ~60px, and too firm lips out
+    const PUTT_V = 92, PUTT_DROP = 55;             // within PUTT px of the cup it's a putt: rolled, at most ~60px, and too firm lips out
     let state = "idle";                            // idle | aim | power | fly | holed | over
     let paused = false, raf = 0, last = 0, clock = 0;
     let hole = 0, strokes = 0, total = 0, cup = 0, wind = 0, hazard = null, holeStroke = 0;
     let ball = { x: TEE, y: GROUND - 2, vx: 0, vy: 0 }, from = TEE, angle = 45, power = 0, pose = 0, putting = false;
     let clouds = [], tufts = [];
     let hi = 0;
-    let leaders = [], boardOn = false, mine = -1, attract = false, posted = false;   // the shared board, and this round's place on it
+    let leaders = [], boardOn = false, taking = true, mine = -1, attract = false, posted = false;   // the shared board, and this round's place on it
     const BW = 64;                                 // the board's width: place, a ten-letter name, strokes
     const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     try { hi = Number(localStorage.getItem("golf-best")) || 0; } catch (e) { /* private mode */ }
@@ -1549,20 +1551,35 @@ const CONFIG = {
       tufts = Array.from({ length: Math.round(W / 7) }, () => Math.floor(rand(0, W)));
     };
     const say = (m) => { if (status) status.textContent = m; };
-    const NAMES = { 1: "ACE", 2: "BIRDIE", 3: "PAR", 4: "BOGEY", 5: "DOUBLE", 6: "TRIPLE" };
-    const named = (n) => NAMES[n] || "OUCH";
+    const NAMES = { "-3": "ALBATROSS", "-2": "EAGLE", "-1": "BIRDIE", 0: "PAR", 1: "BOGEY", 2: "DOUBLE", 3: "TRIPLE" };
+    const named = (n) => (n === 1 ? "ACE" : NAMES[n - PAR] || "OUCH");
+    const COUNT = ["", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE", "TEN", "ELEVEN", "TWELVE", "THIRTEEN", "FOURTEEN", "FIFTEEN", "SIXTEEN", "SEVENTEEN", "EIGHTEEN"];
+    const title = () => `${COUNT[HOLES] || HOLES} HOLE${HOLES === 1 ? "" : "S"}`;
+    const bestKey = () => (HOLES === 9 && PAR === 3 ? "golf-best" : `golf-best-${HOLES}x${PAR}`);   // a best only stands against rounds of the same length
+    const apply = (st) => {
+      if (!st) return;
+      if (state !== "idle" && state !== "over") { pending = st; return; }
+      pending = null;
+      HOLES = st.holes; PAR = st.par; CUP = st.cup; PUTT = st.putt; WIND = st.wind; AIM = st.aim; POWER = st.power; HAZARDS = st.hazards / 100;
+      const words = title().charAt(0) + title().slice(1).toLowerCase();
+      $$("[data-holes]", root).forEach((el) => (el.textContent = words));
+      $$("[data-par]", root).forEach((el) => (el.textContent = String(HOLES * PAR)));
+      btn.setAttribute("aria-label", `${words}, a golf game. Press to aim, press again to swing. Near the cup, one press putts.`);
+      try { hi = Number(localStorage.getItem(bestKey())) || 0; } catch (e) { hi = 0; }
+      bestWrap.hidden = !hi; showBest();
+    };
     const vmax = () => Math.sqrt((W - TEE) * 1.15 * G);   // full power carries a little past the far edge
     const dir = () => (ball.x + 1 > cup ? -1 : 1);         // past the cup, the golfer turns and hits back
 
     const layHole = () => {
       strokes = 0;
       cup = Math.round(rand(W * 0.55, W * 0.92));
-      wind = Math.round(rand(-25, 25));
+      wind = Math.round(rand(-WIND, WIND));
       const kind = Math.random();
-      if (kind < 0.35 || W < 120) hazard = null;
+      if (kind >= HAZARDS || W < 120) hazard = null;
       else {
         const w = Math.round(rand(12, 22)), x = Math.round(rand(TEE + 24, cup - w - 12));
-        hazard = { kind: kind < 0.7 ? "sand" : "water", x, w };
+        hazard = { kind: kind < HAZARDS * 0.55 ? "sand" : "water", x, w };
       }
       ball = { x: TEE, y: GROUND - 2, vx: 0, vy: 0 };
       from = TEE; pose = 0; clock = 0; putting = false;
@@ -1580,7 +1597,7 @@ const CONFIG = {
     const inHazard = (x) => hazard && x >= hazard.x && x <= hazard.x + hazard.w;
     const settle = () => {                         // the ball has stopped: back to aiming, or straight to the putter when it's close
       ball.vx = 0; ball.vy = 0; ball.y = GROUND - 2; pose = 0; clock = 0;
-      putting = Math.abs(ball.x + 1 - cup) <= PUTT && !inHazard(ball.x + 1);
+      putting = PUTT > 0 && Math.abs(ball.x + 1 - cup) <= PUTT && !inHazard(ball.x + 1);
       if (putting) { state = "power"; power = 0; say("On the green. Press to putt."); }
       else state = "aim";
     };
@@ -1591,9 +1608,9 @@ const CONFIG = {
     };
     const finish = () => {
       state = "over";
-      if (!hi || total < hi) { hi = total; showBest(); try { localStorage.setItem("golf-best", String(hi)); } catch (e) { /* fine */ } }
-      say(`Round over. ${total} strokes, par ${HOLES * PAR}. Best ${hi}.${boardOn ? " Add your name below to post it to the leaderboard." : ""}`);
-      if (boardOn && post) {
+      if (!hi || total < hi) { hi = total; showBest(); try { localStorage.setItem(bestKey(), String(hi)); } catch (e) { /* fine */ } }
+      say(`Round over. ${total} strokes, par ${HOLES * PAR}. Best ${hi}.${boardOn && taking ? " Add your name below to post it to the leaderboard." : ""}`);
+      if (boardOn && taking && post) {
         posted = false; post.hidden = false; nameIn.parentElement.hidden = false; nameIn.labels[0].hidden = false; note.textContent = "";
         nameIn.removeAttribute("aria-invalid"); postBtn.disabled = false;
         if (!nameIn.value) try { nameIn.value = localStorage.getItem("golf-name") || ""; } catch (e) { /* private mode */ }
@@ -1610,7 +1627,7 @@ const CONFIG = {
     };
     fetch("/api/scores", { headers: { Accept: "application/json" } })
       .then((r) => (r.ok ? r.json() : null))
-      .then((d) => { if (d && d.configured) { boardOn = true; setBoard(d.scores); frame(); } })
+      .then((d) => { if (!d) return; apply(d.settings); if (d.configured) { boardOn = true; taking = !d.settings || d.settings.open; setBoard(d.scores); } frame(); })
       .catch(() => { /* no board: the game plays on its own */ });
     const clean = (v) => v.toUpperCase().replace(/[^A-Z0-9 ]/g, "").replace(/\s+/g, " ");
     if (post) {
@@ -1693,12 +1710,12 @@ const CONFIG = {
       if (board && W >= 200) {                     // room for both: the title left, the board right, the flag between
         const bx = W - 8 - BW;
         cup = bx - 16; scene();
-        centre("NINE HOLES", 14, INK, 2, (bx - 14) / 2); centre("PRESS TO PLAY", 30, INK3, 1, (bx - 14) / 2);
+        centre(title(), 14, INK, 2, (bx - 14) / 2); centre("PRESS TO PLAY", 30, INK3, 1, (bx - 14) / 2);
         leaderRows(bx, 6);
       } else if (board && (attract || calm)) {     // narrow: the board on its own, the flag off screen
         cup = -20; scene();
         leaderRows(Math.floor((W - BW) / 2), 6);
-      } else { cup = Math.round(W * 0.8); scene(); centre("NINE HOLES", 14, INK, 2); centre("PRESS TO PLAY", 30, INK3); }
+      } else { cup = Math.round(W * 0.8); scene(); centre(title(), 14, INK, 2); centre("PRESS TO PLAY", 30, INK3); }
     };
     /* On a narrow screen the start screen shows the title and the board in
        turn, every five seconds; any press ends it by starting a round. */
@@ -1765,6 +1782,7 @@ const CONFIG = {
     const act = () => {
       if (paused) { paused = false; run(); return; }
       if (state === "idle" || state === "over") {
+        if (pending) { const st = pending; state = "idle"; apply(st); }
         hole = 1; total = 0; mine = -1; attract = false; layHole(); say("Hole 1. Press to aim, press to swing.");
         if (post) post.hidden = true;
       }

@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" crossorigin>
-<link rel="stylesheet" href="../styles.css?v=4b9e1d40">
+<link rel="stylesheet" href="../styles.css?v=07e034f6">
 </head>
 <body class="dash-body">
 <a class="skip" href="#main">Skip to content</a>
@@ -146,6 +146,52 @@
       </section>
     </div>
 
+    <!-- Nine holes, the game above the home page's footer: its leaderboard, the
+         words kept off it, and the settings it plays by (admin/golf.js, /api/board). -->
+    <section class="dash-feed dash-golf" aria-labelledby="h-golf">
+      <div class="dash-feed-head">
+        <h2 class="t-heading" id="h-golf">Nine holes</h2>
+        <p class="t-small">The golf game above the home page's footer. Every name is checked against a built-in list of slurs and vulgarity before it's posted; add your own words under Banned words, and delete anything that slips through.</p>
+      </div>
+      <p class="dash-notice card" id="golf-notice" hidden></p>
+      <div class="dash-grid dash-grid-wide">
+        <section class="card dash-card" aria-labelledby="h-board">
+          <div class="dash-card-head">
+            <h3 class="eyebrow" id="h-board">Leaderboard · <span id="board-count">0</span></h3>
+            <button class="dash-act" type="button" id="board-clear" hidden>Clear all</button>
+          </div>
+          <p class="t-small dash-status" id="board-status" role="status" tabindex="-1"></p>
+          <ol class="dash-list dash-board" id="board" aria-label="Leaderboard, fewest strokes first"></ol>
+          <p class="t-small dash-empty" id="board-empty" hidden>No rounds posted yet.</p>
+        </section>
+        <div class="dash-golf-side">
+          <section class="card dash-card" aria-labelledby="h-settings">
+            <h3 class="eyebrow" id="h-settings">Settings</h3>
+            <form class="dash-form" id="golf-settings" novalidate>
+              <div class="dash-fields" id="golf-fields"></div>
+              <div class="dash-form-foot">
+                <button class="btn btn-primary btn-sm" type="submit">Save settings</button>
+                <button class="btn btn-ghost btn-sm" type="button" id="golf-defaults">Back to defaults</button>
+              </div>
+              <p class="t-small dash-status" id="settings-status" role="status"></p>
+            </form>
+          </section>
+          <section class="card dash-card" aria-labelledby="h-banned">
+            <h3 class="eyebrow" id="h-banned">Banned words</h3>
+            <form class="dash-form" id="ban-form" novalidate>
+              <label class="t-small" for="ban-word">A name containing the word is refused, and any on the board now are removed.</label>
+              <div class="dash-form-row">
+                <input id="ban-word" type="text" maxlength="10" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Word">
+                <button class="btn btn-ghost btn-sm" type="submit">Ban</button>
+              </div>
+              <p class="t-small dash-status" id="ban-status" role="status"></p>
+            </form>
+            <ul class="dash-bans" id="ban-list" aria-label="Banned words"></ul>
+          </section>
+        </div>
+      </div>
+    </section>
+
     <section class="dash-feed" aria-labelledby="h-feed">
       <div class="dash-feed-head">
         <h2 class="t-heading" id="h-feed">Live feed</h2>
@@ -219,6 +265,7 @@
 </main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" crossorigin></script>
+<script src="golf.js?v=bc2949c5"></script>
 <script src="dash.js?v=e3413b21"></script>
 </body>
 </html>
