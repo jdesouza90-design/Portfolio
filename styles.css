@@ -875,8 +875,8 @@ footer a:hover { color: var(--ink); }
 .row-copy { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
 .row-copy .t-heading { margin-top: var(--sp-3); }
 .row-copy .t-title { margin-top: var(--stack-label); }
-.row-copy > :first-child { margin-top: 0; }   /* that margin is the gap under an eyebrow; a title that opens the block owns no gap */
 .row-copy .t-body { margin-top: var(--sp-4); }
+.row-copy > :first-child { margin-top: 0; }   /* those margins are the gap under an eyebrow or heading; whatever opens the block owns no gap. Last so it wins on equal specificity: the problem row opens on its body. */
 .row .panel { height: var(--panel-h); }
 .row .panel img { max-height: 100%; }
 .row .panel.crop { padding: var(--panel-pad) 0 0 var(--panel-pad); align-items: flex-start; justify-content: flex-start; }
