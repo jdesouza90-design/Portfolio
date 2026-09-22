@@ -1167,20 +1167,20 @@
   // models, the defaults, and whether the key and the store are there) and
   // saves the whole form back; the edge cleans what it is given and answers
   // with what it kept, which the form then shows.
-  const form = $('settings-form');
+  const form = $('chat-settings-form');
   const COST = { 'claude-haiku-4-5': 0.027, 'claude-sonnet-5': 0.055 };   // dollars a question at worst: every page read fresh into the cache, a long answer
   let defaults = null;
-  const f = { on: $('set-on'), hour: $('set-hour'), day: $('set-day'), starters: $('set-starters'), notes: $('set-notes') };
-  const modelPick = () => (form.querySelector('input[name="set-model"]:checked') || {}).value;
+  const f = { on: $('chat-set-on'), hour: $('chat-set-hour'), day: $('chat-set-day'), starters: $('chat-set-starters'), notes: $('chat-set-notes') };
+  const modelPick = () => (form.querySelector('input[name="chat-set-model"]:checked') || {}).value;
   const ceiling = () => {
     const day = Math.max(0, Math.round(Number(f.day.value) || 0)), per = COST[modelPick()] || COST['claude-haiku-4-5'];
-    $('set-day-help').textContent = day
+    $('chat-set-day-help').textContent = day
       ? `The cost ceiling. At ${n(day)} a day the chat can spend at most about $${(day * per).toFixed(2)} a day on this model. Most days it spends a small part of that.`
       : 'At 0 the chat answers nothing, the same as switching it off.';
   };
   function fill(st) {
     f.on.checked = !!st.on;
-    const pick = form.querySelector(`input[name="set-model"][value="${st.model}"]`);
+    const pick = form.querySelector(`input[name="chat-set-model"][value="${st.model}"]`);
     if (pick) pick.checked = true;
     f.hour.value = st.hourLimit; f.day.value = st.dayLimit;
     f.starters.value = (st.starters || []).join('\n');
@@ -1200,9 +1200,9 @@
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       defaults = data.defaults;
-      $('set-model').replaceChildren(...Object.entries(data.models).map(([id, label]) => {
+      $('chat-set-model').replaceChildren(...Object.entries(data.models).map(([id, label]) => {
         const l = document.createElement('label'); l.className = 'dash-choice';
-        const r = document.createElement('input'); r.type = 'radio'; r.name = 'set-model'; r.value = id;
+        const r = document.createElement('input'); r.type = 'radio'; r.name = 'chat-set-model'; r.value = id;
         r.addEventListener('change', ceiling);
         l.append(r, ` ${label}`);
         return l;
@@ -1211,36 +1211,36 @@
       const state = [];
       state.push(data.key ? 'The API key is set in Vercel.' : 'The API key isn\'t set, so the chat stays hidden whatever this says. Add ANTHROPIC_API_KEY in Vercel (Settings → Environment Variables) and redeploy.');
       if (!data.store) state.push('No store is connected, so these are the defaults and a save has nowhere to go.');
-      $('settings-state').textContent = state.join(' ');
-      $('settings-state').classList.toggle('is-warn', !data.key || !data.store);
-      $('settings-fields').disabled = false;
-      $('settings-save').disabled = !data.store;
-      $('settings-defaults').disabled = false;
+      $('chat-settings-state').textContent = state.join(' ');
+      $('chat-settings-state').classList.toggle('is-warn', !data.key || !data.store);
+      $('chat-settings-fields').disabled = false;
+      $('chat-settings-save').disabled = !data.store;
+      $('chat-settings-defaults').disabled = false;
     } catch (err) {
       console.error(err);
-      $('settings-state').textContent = 'The settings couldn\'t be loaded. Reload to try again.';
-      $('settings-state').classList.add('is-warn');
+      $('chat-settings-state').textContent = 'The settings couldn\'t be loaded. Reload to try again.';
+      $('chat-settings-state').classList.add('is-warn');
     }
   }
   f.day.addEventListener('input', ceiling);
-  $('settings-defaults').addEventListener('click', () => {
+  $('chat-settings-defaults').addEventListener('click', () => {
     if (!defaults) return;
     fill(defaults);
-    $('settings-status').textContent = 'Defaults filled in. Save to use them.';
+    $('chat-settings-status').textContent = 'Defaults filled in. Save to use them.';
   });
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const btn = $('settings-save');
+    const btn = $('chat-settings-save');
     btn.disabled = true;
-    $('settings-status').textContent = 'Saving…';
+    $('chat-settings-status').textContent = 'Saving…';
     try {
       const res = await fetch('/api/chat-settings', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ settings: read() }) });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
       fill(data.settings);
-      $('settings-status').textContent = `Saved at ${new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}. Visitors get it within half a minute.`;
+      $('chat-settings-status').textContent = `Saved at ${new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}. Visitors get it within half a minute.`;
     } catch (err) {
-      $('settings-status').textContent = `Not saved: ${err.message}`;
+      $('chat-settings-status').textContent = `Not saved: ${err.message}`;
     }
     btn.disabled = false;
   });
