@@ -76,18 +76,37 @@ def pretty_date(iso):
 
 
 # ------------------------------------------------------------ cover art ----
-# A seeded bundle of strands on the pillar's ground: one motif, three
-# behaviours, so the pillars read as a family and a card is still tellable
-# apart at a glance. Seeded from the slug, so a cover never changes once the
-# post is written. Same idea as ai-process-art.mjs, in this pipeline's language.
+# The site already speaks in hairlines, dot fields, rings and small repeating
+# marks: the AI strands, the hero dots, the contact rings, every per-project
+# ground. None of that survives being shrunk to a card. So a cover is the one
+# place the site uses solid form -- a few large shapes on the pillar's ground,
+# overlapping and multiplying into deeper tones, cropped by the frame.
+#
+# Seeded from the slug, so a post's cover never changes once it is written.
+# Two renders share that seed: the card's plate at 3:2 and the post hero's
+# band at 5:2, which is three times as wide on screen and so spends the room
+# on more, smaller forms instead of blowing the same five up into a slab.
+
+import math
 
 CW, CH = 1200, 800
 
-# Ground and accent per pillar. The accent matches the pillar dot on the index.
+# ground a, ground b, three shape tints, the accent.
 TONES = {
-    "leadership": ("#F1F0EA", "#E0E3D8", "#3B6B44"),
-    "craft":      ("#F6F1E6", "#EFE2CC", "#C98F3E"),
-    "fintech":    ("#F1F0EE", "#DEDBD4", "#5C564E"),
+    "leadership": ("#F0F1EB", "#E7E9E0", ["#DCE2D2", "#C8D2BC", "#B4C2A4"], "#3B6B44"),
+    "craft":      ("#F7F1E5", "#F1E8D6", ["#EFE0C2", "#E6CE9E", "#DBBB7E"], "#C98F3E"),
+    "fintech":    ("#F1F0ED", "#E7E4DE", ["#DAD6CD", "#C3BEB2", "#A9A396"], "#2B2621"),
+}
+
+# Where a composition puts its weight. Each pillar reads differently at a glance
+# without needing a different shape vocabulary.
+ANCHORS = {
+    # one point on the left, opening to the right
+    "leadership": [(.13, .50), (.38, .30), (.42, .70), (.68, .24), (.72, .64), (.94, .44)],
+    # a strict grid, and one that leaves it
+    "craft":      [(.22, .32), (.50, .30), (.78, .32), (.24, .68), (.52, .70), (.86, .76)],
+    # bands stacked across a division
+    "fintech":    [(.26, .28), (.70, .26), (.32, .52), (.66, .54), (.28, .76), (.74, .74)],
 }
 
 
@@ -102,88 +121,81 @@ def _rng(seed):
     return rnd
 
 
-def _smooth(u):
-    u = min(1.0, max(0.0, u))
-    return u * u * (3 - 2 * u)
+def _disc(cx, cy, r, fill, rot):
+    return '<circle cx="%.0f" cy="%.0f" r="%.0f" fill="%s"/>' % (cx, cy, r, fill)
 
 
-def _path(pts):
-    """Catmull-Rom through the points, as cubic beziers."""
-    d = "M%.0f %.0f" % (pts[0][0], pts[0][1])
-    for i in range(len(pts) - 1):
-        p0 = pts[i - 1] if i > 0 else pts[i]
-        p1, p2 = pts[i], pts[i + 1]
-        p3 = pts[i + 2] if i + 2 < len(pts) else p2
-        c1 = (p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6)
-        c2 = (p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6)
-        d += "C%.0f %.0f %.0f %.0f %.0f %.0f" % (c1[0], c1[1], c2[0], c2[1], p2[0], p2[1])
-    return d
+def _half(cx, cy, r, fill, rot):
+    return ('<path d="M%.0f %.0f a%.0f %.0f 0 0 1 %.0f 0z" fill="%s" '
+            'transform="rotate(%.0f %.0f %.0f)"/>') % (cx - r, cy, r, r, 2 * r, fill, rot, cx, cy)
 
 
-def _strand(pillar, t, rnd):
-    """One curve across the canvas. t is 0..1, its place in the bundle."""
-    amp = 10 + rnd() * 34
-    lam = 150 + rnd() * 200
-    phi = rnd() * math.tau
-    jitter = (rnd() - .5) * 26
-    pts = []
-    x = -20
-    while x <= CW + 20:
-        u = (x + 20) / (CW + 40)
-        s = _smooth(u)
-        if pillar == "leadership":
-            # One voice at the left, spreading into many across the canvas.
-            y = CH / 2 + (t - .5) * (CH - 90) * s + jitter * s
-        elif pillar == "craft":
-            # The mirror of leadership: many at the left, consolidating right.
-            y = CH / 2 + (t - .5) * (CH - 90) * (1 - s) + jitter * (1 - s)
-        else:
-            # Two bundles meeting at a line, leaving as fewer, steadier runs.
-            m = _smooth(abs(u - .5) * 2)
-            y = CH / 2 + (t - .5) * (CH - 90) * m + jitter * (1 - m)
-        wob = amp * math.sin(x / lam + phi) * ((1 - s) ** .6 + .25)
-        pts.append((x, y + wob))
-        x += 34
-    return pts
+def _rect(cx, cy, r, fill, rot):
+    w, h = r * 1.9, r * 1.25
+    return ('<rect x="%.0f" y="%.0f" width="%.0f" height="%.0f" fill="%s" '
+            'transform="rotate(%.0f %.0f %.0f)"/>') % (cx - w / 2, cy - h / 2, w, h, fill, rot, cx, cy)
 
 
-def cover(slug, pillar):
+def _ring(cx, cy, r, fill, rot):
+    return ('<circle cx="%.0f" cy="%.0f" r="%.0f" fill="none" stroke="%s" '
+            'stroke-width="%.0f"/>') % (cx, cy, r * .82, fill, max(10, r * .3))
+
+
+SHAPES = [_disc, _half, _rect, _ring, _disc, _half]
+
+
+def cover(slug, pillar, wide=False):
+    """The card's plate at 3:2, or the post hero's band at 5:2.
+
+    The hero is three times the card's width on screen, so the same five shapes
+    blown up read as a slab rather than a composition. The wide版 keeps the seed
+    and the palette and spends the extra room on more, smaller forms."""
     seed = 0
     for ch in slug:
         seed = (seed * 131 + ord(ch)) & 0xFFFFFFFF
     rnd = _rng(seed or 1)
-    g0, g1, accent = TONES[pillar]
+    g0, g1, tints, accent = TONES[pillar]
+    w, h = (1500, 600) if wide else (CW, CH)
+    anchors = ANCHORS[pillar][:]
+    if wide:
+        # The same anchor family, shifted along and doubled, so the band reads
+        # as the card's composition continuing rather than a different picture.
+        anchors = [(x * .54 + dx, y) for dx in (.02, .48) for (x, y) in anchors]
 
-    n = 46
-    ink = []
-    for i in range(n):
-        t = i / (n - 1)
-        pts = _strand(pillar, t, rnd)
-        ink.append('<path d="%s" stroke-width="%.2f"/>' % (_path(pts), .7 + rnd() * .7))
+    # Take four or five of the pillar's anchors, in a seeded order.
+    for i in range(len(anchors) - 1, 0, -1):
+        j = int(rnd() * (i + 1))
+        anchors[i], anchors[j] = anchors[j], anchors[i]
+    n = (10 + int(rnd() * 3)) if wide else (5 + int(rnd() * 2))
+    picked = anchors[:n]
 
-    # The one strand that carries the accent, picked off-centre so it reads.
-    at = .28 + rnd() * .44
-    lead = _path(_strand(pillar, at, rnd))
+    # The accent goes on whichever of them sits furthest from the frame's edge,
+    # so the one saturated shape is never half cropped away.
+    def inset(a):
+        return min(a[0], 1 - a[0], a[1], 1 - a[1])
+    accent_at = max(picked, key=inset)
+    accents = {accent_at} if not wide else set(sorted(picked, key=inset, reverse=True)[:2])
 
-    gate = ''
-    if pillar == "fintech":
-        gate = '<path d="M%d 60V%d" stroke="%s" stroke-width="1.5" stroke-opacity=".5"/>' % (CW // 2, CH - 60, accent)
+    body = []
+    for k, (ax, ay) in enumerate(picked):
+        cx, cy = ax * w + (rnd() - .5) * 80, ay * h + (rnd() - .5) * 46
+        r = ((.13 + rnd() * .14) if wide else (.19 + rnd() * .20)) * h
+        is_accent = (ax, ay) in accents
+        fill = accent if is_accent else tints[int(rnd() * len(tints))]
+        if is_accent:
+            r *= .58            # the accent is the smallest thing on the canvas
+        draw = _disc if is_accent else SHAPES[int(rnd() * len(SHAPES))]
+        rot = int(rnd() * 360)
+        body.append('<g style="mix-blend-mode:multiply">%s</g>' % draw(cx, cy, r, fill, rot))
 
     return (
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 %d %d" width="%d" height="%d" role="img" aria-hidden="true">'
-        '<defs>'
-        '<linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="%s"/><stop offset="1" stop-color="%s"/></linearGradient>'
-        '<linearGradient id="f" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="%d" y2="0">'
-        '<stop offset="0" stop-color="#14100C" stop-opacity=".07"/>'
-        '<stop offset=".55" stop-color="#14100C" stop-opacity=".22"/>'
-        '<stop offset="1" stop-color="#14100C" stop-opacity=".07"/></linearGradient>'
-        '</defs>'
+        '<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">'
+        '<stop offset="0" stop-color="%s"/><stop offset="1" stop-color="%s"/></linearGradient></defs>'
         '<rect width="%d" height="%d" fill="url(#g)"/>'
-        '<g fill="none" stroke="url(#f)" stroke-linecap="round">%s</g>'
         '%s'
-        '<path d="%s" fill="none" stroke="%s" stroke-width="3" stroke-linecap="round"/>'
         '</svg>\n'
-    ) % (CW, CH, CW, CH, g0, g1, CW, CW, CH, "".join(ink), gate, lead, accent)
+    ) % (w, h, w, h, g0, g1, w, h, "".join(body))
 
 
 # ---------------------------------------------------------------- chrome ----
@@ -394,7 +406,7 @@ def render_post(p, nxt):
 <section class="section tight">
   <div class="wrap">
     <figure class="post-art" data-reveal>
-      <img src="../assets/blog/{p["slug"]}.svg?v={stamp('assets/blog/%s.svg' % p["slug"])}" width="{CW}" height="{CH}" alt="" decoding="async">
+      <img src="../assets/blog/{p["slug"]}-wide.svg?v={stamp('assets/blog/%s-wide.svg' % p["slug"])}" width="1500" height="600" alt="" decoding="async">
     </figure>
     <div class="claim" data-reveal>
       <p class="t-quote">{p["claim"]}</p>
@@ -636,11 +648,12 @@ def main():
     os.makedirs("assets/blog", exist_ok=True)
     drawn = []
     for p in posts:
-        path = "assets/blog/%s.svg" % p["slug"]
-        if not os.path.exists(path):
-            if not check:
-                open(path, "w").write(cover(p["slug"], p["pillar"]))
-            drawn.append(path)
+        for path, wide in (("assets/blog/%s.svg" % p["slug"], False),
+                           ("assets/blog/%s-wide.svg" % p["slug"], True)):
+            if not os.path.exists(path):
+                if not check:
+                    open(path, "w").write(cover(p["slug"], p["pillar"], wide=wide))
+                drawn.append(path)
 
     wanted = {}
     for i, p in enumerate(posts):
