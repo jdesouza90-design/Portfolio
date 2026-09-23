@@ -112,7 +112,7 @@
 
   /* ---- 5. Draw: the outline is drawn on, holds, lifts off; the small sparkle pops in ---- */
   .cta-draw .outline { position: absolute; inset: -4px; width: calc(100% + 8px); height: calc(100% + 8px); overflow: visible; pointer-events: none; }
-  .cta-draw .outline rect { x: .75px; y: .75px; width: calc(100% - 1.5px); height: calc(100% - 1.5px); rx: 25.25px; fill: none; stroke: var(--accent-2); stroke-width: 1.5; stroke-dasharray: 100 100; stroke-dashoffset: 100; animation: draw 6s var(--ease-in-out) 1s infinite; }
+  .cta-draw .outline rect { fill: none; stroke: var(--accent-2); stroke-width: 1.5; stroke-dasharray: 100 100; stroke-dashoffset: 100; animation: draw 6s var(--ease-in-out) 1s infinite; }
   @keyframes draw {
     0%   { stroke-dashoffset: 100; opacity: 1; }
     30%  { stroke-dashoffset: 0; opacity: 1; }
@@ -149,7 +149,7 @@
     .corner .btn > span:not(.dot) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
     .corner .btn svg.icon { width: 22px; height: 22px; }
     .corner .btn .dot { position: absolute; top: 6px; right: 6px; margin: 0; }
-    .corner .cta-draw .outline rect { rx: 28.25px; }
+    .corner .cta-draw .outline rect { rx: 29px; }
   }
 </style>
 </head>
@@ -177,7 +177,7 @@
       <div class="meta"><h2><b>04</b>Ping</h2><p>A small online dot, and a ring in the accent green that leaves the pill twice, then goes quiet. It reads as someone is here.</p><p class="spec"><code>.cta-ping</code> · Two rings in 1.7s every 4.5s · box-shadow spread</p></div>
     </article>
     <article class="card">
-      <div class="stage"><div class="on-paper"><button type="button" class="btn btn-primary chat-launch cta-draw"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg><span>Ask about my work</span><svg class="outline" aria-hidden="true"><rect pathLength="100"/></svg></button></div><div class="on-panel"><button type="button" class="btn btn-primary chat-launch cta-draw"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg><span>Ask about my work</span><svg class="outline" aria-hidden="true"><rect pathLength="100"/></svg></button></div></div>
+      <div class="stage"><div class="on-paper"><button type="button" class="btn btn-primary chat-launch cta-draw"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg><span>Ask about my work</span><svg class="outline" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="26" pathLength="100"/></svg></button></div><div class="on-panel"><button type="button" class="btn btn-primary chat-launch cta-draw"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg><span>Ask about my work</span><svg class="outline" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="26" pathLength="100"/></svg></button></div></div>
       <div class="meta"><h2><b>05</b>Draw</h2><p>A green outline draws itself round the pill, holds, then fades, while the small sparkle in the icon pops in. Uses the same draw-on move as a signature.</p><p class="spec"><code>.cta-draw</code> · 1.8s draw, 1.5s hold, every 6s · SVG stroke-dashoffset</p></div>
     </article>
   </div>
@@ -196,7 +196,7 @@
   <button type="button" class="btn btn-primary chat-launch cta-trace"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg><span>Ask about my work</span></button>
   <button type="button" class="btn btn-primary chat-launch cta-drift"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg><span>Ask about my work</span></button>
   <button type="button" class="btn btn-primary chat-launch cta-ping"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg><span>Ask about my work</span><span class="dot" aria-hidden="true"></span></button>
-  <button type="button" class="btn btn-primary chat-launch cta-draw"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg><span>Ask about my work</span><svg class="outline" aria-hidden="true"><rect pathLength="100"/></svg></button>
+  <button type="button" class="btn btn-primary chat-launch cta-draw"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg><span>Ask about my work</span><svg class="outline" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="26" pathLength="100"/></svg></button>
 </div>
 </body>
 </html>
