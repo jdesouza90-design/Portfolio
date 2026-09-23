@@ -1947,25 +1947,22 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 .chat-launch svg { width: 18px; height: 18px; }
 /* The opener's ring: a thin green stroke just outside the pill, with a glint
    (green into deep green into a pale highlight, so it reads on the light
-   ground) and a fainter one behind it running round it, and the stroke itself
-   breathing brighter and back, so it shimmers rather than blinks. The angle and
-   the brightness are registered properties so they can animate; a browser
-   without @property shows the ring standing still. */
+   ground) and a fainter one behind it running round it once every 3.1s. The angle
+   is a registered property so it can animate; a browser without @property
+   shows the ring standing still. */
 @property --trace { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
-@property --sheen { syntax: "<number>"; inherits: false; initial-value: .4; }
 .chat-launch::before {
   content: ""; position: absolute; inset: -3px; z-index: -1; pointer-events: none;
   border-radius: inherit; padding: 1.5px;
   background:
     conic-gradient(from var(--trace), transparent 0 72%, rgba(110, 154, 90, 0) 72%, #6E9A5A 84%, #3B6B44 90%, #DDEBD3 94.5%, rgba(221, 235, 211, 0) 99%, transparent 100%),
     conic-gradient(from calc(var(--trace) + 170deg), transparent 0 88%, rgba(59, 107, 68, .5) 93%, rgba(221, 235, 211, .8) 96%, transparent 100%),
-    linear-gradient(rgb(110 154 90 / var(--sheen)) 0 0);
+    linear-gradient(rgb(110 154 90 / .55) 0 0);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
           mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
-  animation: chat-trace 3.6s linear infinite, chat-sheen 1.8s ease-in-out infinite alternate;
+  animation: chat-trace 3.1s linear infinite;
 }
 @keyframes chat-trace { to { --trace: 360deg; } }
-@keyframes chat-sheen { to { --sheen: .75; } }
 
 .chat {
   position: fixed; z-index: 46; margin: 0; padding: 0;
