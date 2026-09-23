@@ -1945,22 +1945,16 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
   .chat-launch.is-in:hover:active { transform: translateY(-2px) scale(.97); }
 }
 .chat-launch svg { width: 18px; height: 18px; }
-/* The opener's ring: a faint green stroke just outside the pill, with one soft
-   glint of the accent green, fading in behind its head, running round it once
-   every 3.1s. The angle is a registered property so it can animate; a browser
-   without @property shows the ring standing still. */
-@property --trace { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
-.chat-launch::before {
-  content: ""; position: absolute; inset: -3px; z-index: -1; pointer-events: none;
-  border-radius: inherit; padding: 1.5px;
-  background:
-    conic-gradient(from var(--trace), transparent 0 78%, rgba(59, 107, 68, 0) 78%, rgba(59, 107, 68, .85) 97%, transparent 100%),
-    linear-gradient(rgb(110 154 90 / .3) 0 0);
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
-          mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
-  animation: chat-trace 3.1s linear infinite;
+/* The opener's drift: the ink fill leans toward the deep green and back, a
+   slow sweep across the pill, so it reads as alive without moving anything.
+   The darkest green is accent-ink, never the accent, so the label keeps its
+   contrast; hover's solid accent (.btn-primary) replaces the gradient. */
+.chat-launch {
+  background-image: linear-gradient(115deg, var(--ink) 0%, #1C271E 38%, var(--accent-ink) 50%, #1C271E 62%, var(--ink) 100%);
+  background-size: 300% 100%; background-position: 0% 50%;
+  animation: chat-drift 12s ease-in-out infinite alternate;
 }
-@keyframes chat-trace { to { --trace: 360deg; } }
+@keyframes chat-drift { to { background-position: 100% 50%; } }
 
 .chat {
   position: fixed; z-index: 46; margin: 0; padding: 0;
@@ -2072,6 +2066,6 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
   .chat, .chat.is-open, .chat:modal, .chat-launch, .chat-launch.is-in { transform: none; }
   .chat, .chat-launch { transition-property: opacity, visibility, background, color; transition-duration: 0s; }
   .chat-wait i { animation: none; opacity: .6; }
-  .chat-launch::before { animation: none; }
+  .chat-launch { animation: none; }
 }
 @media print { .chat-launch, .chat { display: none !important; } }
