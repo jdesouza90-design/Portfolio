@@ -1953,7 +1953,7 @@ const CONFIG = {
     const root = document.documentElement;
     const icon = (d) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${d}</svg>`;
     const ICON = {
-      bubble: icon('<path d="M4.5 6.5A2.5 2.5 0 0 1 7 4h10a2.5 2.5 0 0 1 2.5 2.5v7A2.5 2.5 0 0 1 17 16h-6.5L6 19.5V16h0a1.5 1.5 0 0 1-1.5-1.5z"/><path d="M8.5 8.5h7M8.5 11.5h4.5"/>'),
+      spark: icon('<path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/>'),
       close: icon('<path d="M6 6l12 12M18 6 6 18"/>'),
       send: icon('<path d="M12 18.5V5.5M6.5 11 12 5.5l5.5 5.5"/>'),
       stop: icon('<rect x="7.5" y="7.5" width="9" height="9" rx="1.5"/>'),
@@ -1993,7 +1993,7 @@ const CONFIG = {
     launch.setAttribute("aria-haspopup", "dialog");
     launch.setAttribute("aria-controls", "chat");
     launch.setAttribute("aria-expanded", "false");
-    launch.innerHTML = `${ICON.bubble}<span>${topic.label}</span>`;
+    launch.innerHTML = `${ICON.spark}<span>${topic.label}</span>`;
 
     const dlg = make("dialog", "chat");
     dlg.id = "chat";
