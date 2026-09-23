@@ -85,20 +85,20 @@
     content: ""; position: absolute; inset: -3px; z-index: -1; pointer-events: none;
     border-radius: inherit; padding: 1.5px;
     background:
-      conic-gradient(from var(--trace), transparent 0 72%, rgba(110, 154, 90, 0) 72%, #6E9A5A 84%, #3B6B44 90%, #DDEBD3 94.5%, rgba(221, 235, 211, 0) 99%, transparent 100%),
-      conic-gradient(from calc(var(--trace) + 170deg), transparent 0 88%, rgba(59, 107, 68, .5) 93%, rgba(221, 235, 211, .8) 96%, transparent 100%),
-      linear-gradient(rgb(110 154 90 / .55) 0 0);
+      conic-gradient(from var(--trace), transparent 0 78%, rgba(59, 107, 68, 0) 78%, rgba(59, 107, 68, .85) 97%, transparent 100%),
+      linear-gradient(rgb(110 154 90 / .3) 0 0);
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
             mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
     animation: trace 3.1s linear infinite;
   }
   @keyframes trace { to { --trace: 360deg; } }
 
-  /* ---- 3. Drift: the fill moves slowly through the greens and back ---- */
+  /* ---- 3. Drift: the fill leans toward the deep green and back ----
+     The same rule styles.css gives .chat-launch. */
   .cta-drift {
-    background: linear-gradient(115deg, var(--ink) 0%, var(--accent-ink) 30%, var(--accent) 50%, var(--accent-ink) 70%, var(--ink) 100%);
+    background: linear-gradient(115deg, var(--ink) 0%, #1C271E 38%, var(--accent-ink) 50%, #1C271E 62%, var(--ink) 100%);
     background-size: 300% 100%; background-position: 0% 50%;
-    animation: drift 9s ease-in-out infinite alternate;
+    animation: drift 12s ease-in-out infinite alternate;
   }
   @keyframes drift { to { background-position: 100% 50%; } }
   @media (hover: hover) and (pointer: fine) { .cta-drift:hover { background: var(--accent); } }
@@ -171,11 +171,11 @@
     </article>
     <article class="card">
       <div class="stage"><div class="on-paper"><button type="button" class="btn btn-primary chat-launch cta-trace"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg><span>Ask about my work</span></button></div><div class="on-panel"><button type="button" class="btn btn-primary chat-launch cta-trace"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg><span>Ask about my work</span></button></div></div>
-      <div class="meta"><h2><b>02</b>Trace</h2><p>Chosen. A thin green stroke sits just outside the pill, and a glint and a fainter one run round it. Now on the live opener.</p><p class="spec"><code>.cta-trace</code> · 3.1s per lap, continuous · conic-gradient ring · @property angle</p></div>
+      <div class="meta"><h2><b>02</b>Trace</h2><p>A faint green stroke sits just outside the pill, and one soft green glint runs round it without stopping.</p><p class="spec"><code>.cta-trace</code> · 3.1s per lap, continuous · conic-gradient ring · @property angle</p></div>
     </article>
     <article class="card">
       <div class="stage"><div class="on-paper"><button type="button" class="btn btn-primary chat-launch cta-drift"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg><span>Ask about my work</span></button></div><div class="on-panel"><button type="button" class="btn btn-primary chat-launch cta-drift"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg><span>Ask about my work</span></button></div></div>
-      <div class="meta"><h2><b>03</b>Drift</h2><p>The fill moves slowly from ink through the greens and back. The lightest point is the site's accent, which is also the hover color, so text contrast stays at 5.9:1 or better.</p><p class="spec"><code>.cta-drift</code> · 9s, alternating · 300% background-size · background-position</p></div>
+      <div class="meta"><h2><b>03</b>Drift</h2><p>Chosen. The fill leans from ink toward the deep green and back in a slow sweep. It stops at accent-ink, never the brighter accent, so the change stays quiet and the label keeps its contrast. Now on the live opener.</p><p class="spec"><code>.cta-drift</code> · 12s, alternating · 300% background-size · background-position</p></div>
     </article>
     <article class="card">
       <div class="stage"><div class="on-paper"><button type="button" class="btn btn-primary chat-launch cta-ping"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg><span>Ask about my work</span><span class="dot" aria-hidden="true"></span></button></div><div class="on-panel"><button type="button" class="btn btn-primary chat-launch cta-ping"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg><span>Ask about my work</span><span class="dot" aria-hidden="true"></span></button></div></div>
