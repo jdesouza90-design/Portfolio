@@ -13,7 +13,8 @@
      the site's own primary button: the ink pill, DM Sans 500, the lift shadow.
      Every one rests most of its cycle and moves for a second or two, so it
      catches the eye without asking for it. The corner switch at the bottom
-     puts a variant where the real opener sits. Tokens are copied from
+     puts a variant where the real opener sits. No script: the page renders
+     wherever HTML and CSS do, including previews that block JavaScript. Tokens are copied from
      styles.css so this page stands alone, like perf.html. */
   :root {
     --paper: #F6F4F0; --paper-2: #EFECE6; --surface: #FFFFFF;
@@ -111,7 +112,7 @@
 
   /* ---- 5. Draw: the outline is drawn on, holds, lifts off; the small sparkle pops in ---- */
   .cta-draw .outline { position: absolute; inset: -4px; width: calc(100% + 8px); height: calc(100% + 8px); overflow: visible; pointer-events: none; }
-  .cta-draw .outline rect { fill: none; stroke: var(--accent-2); stroke-width: 1.5; stroke-dasharray: 100 100; stroke-dashoffset: 100; animation: draw 6s var(--ease-in-out) 1s infinite; }
+  .cta-draw .outline rect { x: .75px; y: .75px; width: calc(100% - 1.5px); height: calc(100% - 1.5px); rx: 25.25px; fill: none; stroke: var(--accent-2); stroke-width: 1.5; stroke-dasharray: 100 100; stroke-dashoffset: 100; animation: draw 6s var(--ease-in-out) 1s infinite; }
   @keyframes draw {
     0%   { stroke-dashoffset: 100; opacity: 1; }
     30%  { stroke-dashoffset: 0; opacity: 1; }
@@ -131,16 +132,24 @@
 
   /* ---- corner preview ---- */
   .corner { position: fixed; right: calc(clamp(16px, 2.4vw, 28px) + env(safe-area-inset-right, 0px)); bottom: calc(clamp(16px, 2.4vw, 28px) + env(safe-area-inset-bottom, 0px)); z-index: 45; }
-  .switch { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 40;
+  .corner .btn { display: none; }
+  body:has(#c-shimmer:checked) .corner .cta-shimmer, body:has(#c-trace:checked) .corner .cta-trace,
+  body:has(#c-drift:checked) .corner .cta-drift, body:has(#c-ping:checked) .corner .cta-ping,
+  body:has(#c-draw:checked) .corner .cta-draw { display: inline-flex; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .switch { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 40; margin: 0; min-width: 0;
     display: flex; gap: 4px; padding: 4px; background: var(--surface); border: 1px solid var(--hair); border-radius: 999px; box-shadow: var(--shadow-lift); max-width: calc(100vw - 32px - 170px); overflow-x: auto; }
-  .switch button { font: 500 .8125rem/1 var(--font-body); border: 0; background: none; color: var(--ink-2); padding: 9px 12px; border-radius: 999px; cursor: pointer; white-space: nowrap; }
-  .switch button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+  .switch input { position: absolute; opacity: 0; pointer-events: none; }
+  .switch label { font: 500 .8125rem/1 var(--font-body); color: var(--ink-2); padding: 9px 12px; border-radius: 999px; cursor: pointer; white-space: nowrap; }
+  .switch input:checked + label { background: var(--ink); color: var(--paper); }
+  .switch input:focus-visible + label { outline: 2px solid var(--accent); outline-offset: 2px; }
   @media (max-width: 640px) {
     .switch { left: 16px; transform: none; max-width: calc(100vw - 32px - 68px); }
     .corner .btn { width: 52px; height: 52px; padding: 0; justify-content: center; }
     .corner .btn > span:not(.dot) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
     .corner .btn svg.icon { width: 22px; height: 22px; }
     .corner .btn .dot { position: absolute; top: 6px; right: 6px; margin: 0; }
+    .corner .cta-draw .outline rect { rx: 28.25px; }
   }
 </style>
 </head>
@@ -150,79 +159,44 @@
   <h1>Motion for the chat button</h1>
   <p class="lede">Each one is the live primary button with a single animation added. They move for one to two seconds and then sit still, so they never pull hard. Each is shown on paper and on the sand panel. The switch at the bottom puts one in the real corner position.</p>
 
-  <div class="grid" id="grid"></div>
+  <div class="grid">
+    <article class="card">
+      <div class="stage"><div class="on-paper"><button type="button" class="btn btn-primary chat-launch cta-shimmer"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg><span>Ask about my work</span></button></div><div class="on-panel"><button type="button" class="btn btn-primary chat-launch cta-shimmer"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg><span>Ask about my work</span></button></div></div>
+      <div class="meta"><h2><b>01</b>Shimmer</h2><p>A soft band of light crosses the ink pill from left to right, then the button sits still. Closest to a shimmering gradient without changing the button's color.</p><p class="spec"><code>.cta-shimmer</code> · 1.4s sweep every 5s · ::after gradient · background-position</p></div>
+    </article>
+    <article class="card">
+      <div class="stage"><div class="on-paper"><button type="button" class="btn btn-primary chat-launch cta-trace"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg><span>Ask about my work</span></button></div><div class="on-panel"><button type="button" class="btn btn-primary chat-launch cta-trace"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg><span>Ask about my work</span></button></div></div>
+      <div class="meta"><h2><b>02</b>Trace</h2><p>A short green comet runs round the outline without stopping. It is the most noticeable of the five because it never rests. Slowing it past 4s makes it calmer.</p><p class="spec"><code>.cta-trace</code> · 3.6s per lap, continuous · conic-gradient ring · @property angle</p></div>
+    </article>
+    <article class="card">
+      <div class="stage"><div class="on-paper"><button type="button" class="btn btn-primary chat-launch cta-drift"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg><span>Ask about my work</span></button></div><div class="on-panel"><button type="button" class="btn btn-primary chat-launch cta-drift"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg><span>Ask about my work</span></button></div></div>
+      <div class="meta"><h2><b>03</b>Drift</h2><p>The fill moves slowly from ink through the greens and back. The lightest point is the site's accent, which is also the hover color, so text contrast stays at 5.9:1 or better.</p><p class="spec"><code>.cta-drift</code> · 9s, alternating · 300% background-size · background-position</p></div>
+    </article>
+    <article class="card">
+      <div class="stage"><div class="on-paper"><button type="button" class="btn btn-primary chat-launch cta-ping"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg><span>Ask about my work</span><span class="dot" aria-hidden="true"></span></button></div><div class="on-panel"><button type="button" class="btn btn-primary chat-launch cta-ping"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg><span>Ask about my work</span><span class="dot" aria-hidden="true"></span></button></div></div>
+      <div class="meta"><h2><b>04</b>Ping</h2><p>A small online dot, and a ring in the accent green that leaves the pill twice, then goes quiet. It reads as someone is here.</p><p class="spec"><code>.cta-ping</code> · Two rings in 1.7s every 4.5s · box-shadow spread</p></div>
+    </article>
+    <article class="card">
+      <div class="stage"><div class="on-paper"><button type="button" class="btn btn-primary chat-launch cta-draw"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg><span>Ask about my work</span><svg class="outline" aria-hidden="true"><rect pathLength="100"/></svg></button></div><div class="on-panel"><button type="button" class="btn btn-primary chat-launch cta-draw"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg><span>Ask about my work</span><svg class="outline" aria-hidden="true"><rect pathLength="100"/></svg></button></div></div>
+      <div class="meta"><h2><b>05</b>Draw</h2><p>A green outline draws itself round the pill, holds, then fades, while the small sparkle in the icon pops in. Uses the same draw-on move as a signature.</p><p class="spec"><code>.cta-draw</code> · 1.8s draw, 1.5s hold, every 6s · SVG stroke-dashoffset</p></div>
+    </article>
+  </div>
 </main>
 
-<div class="switch" role="group" aria-label="Variant in the corner" id="switch"></div>
-<div class="corner" id="corner"></div>
-
-<script>
-  // The sparkle: the mark most AI products use. A large four-point star, and a small one that the Draw variant pops in.
-  const ICON = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg>';
-  const LABEL = "Ask about my work";
-
-  const VARIANTS = [
-    { cls: "cta-shimmer", name: "Shimmer",
-      note: "A soft band of light crosses the ink pill from left to right, then the button sits still. Closest to a shimmering gradient without changing the button's color.",
-      spec: "1.4s sweep every 5s · ::after gradient · background-position" },
-    { cls: "cta-trace", name: "Trace",
-      note: "A short green comet runs round the outline without stopping. It is the most noticeable of the five because it never rests. Slowing it past 4s makes it calmer.",
-      spec: "3.6s per lap, continuous · conic-gradient ring · @property angle" },
-    { cls: "cta-drift", name: "Drift",
-      note: "The fill moves slowly from ink through the greens and back. The lightest point is the site's accent, which is also the hover color, so text contrast stays at 5.9:1 or better.",
-      spec: "9s, alternating · 300% background-size · background-position" },
-    { cls: "cta-ping", name: "Ping", dot: true,
-      note: "A small online dot, and a ring in the accent green that leaves the pill twice, then goes quiet. It reads as someone is here.",
-      spec: "Two rings in 1.7s every 4.5s · box-shadow spread" },
-    { cls: "cta-draw", name: "Draw", outline: true,
-      note: "A green outline draws itself round the pill, holds, then fades, while the small sparkle in the icon pops in. Uses the same draw-on move as a signature.",
-      spec: "1.8s draw, 1.5s hold, every 6s · SVG stroke-dashoffset" },
-  ];
-
-  const build = (v) => {
-    const b = document.createElement("button");
-    b.type = "button"; b.className = `btn btn-primary chat-launch ${v.cls}`;
-    b.innerHTML = `${ICON}<span>${LABEL}</span>${v.dot ? '<span class="dot" aria-hidden="true"></span>' : ""}` +
-      (v.outline ? '<svg class="outline" aria-hidden="true"><rect x="0" y="0" pathLength="100"/></svg>' : "");
-    return b;
-  };
-
-  // The drawn outline needs a pill-shaped rect sized to its button: SVG clamps
-  // rx and ry separately, so rx="999" gives an ellipse, not a pill.
-  const fit = new ResizeObserver((entries) => entries.forEach(({ target: svg }) => {
-    const { width: w, height: h } = svg.getBoundingClientRect();
-    const r = svg.firstElementChild;
-    r.setAttribute("x", .75); r.setAttribute("y", .75);
-    r.setAttribute("width", Math.max(0, w - 1.5)); r.setAttribute("height", Math.max(0, h - 1.5));
-    r.setAttribute("rx", Math.max(0, (h - 1.5) / 2));
-  }));
-  const track = (root) => root.querySelectorAll(".outline").forEach((s) => fit.observe(s));
-
-  const grid = document.getElementById("grid");
-  VARIANTS.forEach((v, i) => {
-    const card = document.createElement("article");
-    card.className = "card";
-    card.innerHTML = `<div class="stage"><div class="on-paper"></div><div class="on-panel"></div></div>
-      <div class="meta"><h2><b>0${i + 1}</b>${v.name}</h2><p>${v.note}</p><p class="spec"><code>.${v.cls}</code> · ${v.spec}</p></div>`;
-    card.querySelector(".on-paper").append(build(v));
-    card.querySelector(".on-panel").append(build(v));
-    grid.append(card);
-  });
-  track(grid);
-
-  const corner = document.getElementById("corner"), sw = document.getElementById("switch");
-  const pick = (i) => {
-    corner.replaceChildren(build(VARIANTS[i]));
-    track(corner);
-    [...sw.children].forEach((b, j) => b.setAttribute("aria-pressed", String(i === j)));
-  };
-  VARIANTS.forEach((v, i) => {
-    const b = document.createElement("button");
-    b.type = "button"; b.textContent = v.name;
-    b.addEventListener("click", () => pick(i));
-    sw.append(b);
-  });
-  pick(0);
-</script>
+<fieldset class="switch">
+  <legend class="sr-only">Variant in the corner</legend>
+  <input type="radio" name="corner" id="c-shimmer" value="shimmer" checked><label for="c-shimmer">Shimmer</label>
+  <input type="radio" name="corner" id="c-trace" value="trace"><label for="c-trace">Trace</label>
+  <input type="radio" name="corner" id="c-drift" value="drift"><label for="c-drift">Drift</label>
+  <input type="radio" name="corner" id="c-ping" value="ping"><label for="c-ping">Ping</label>
+  <input type="radio" name="corner" id="c-draw" value="draw"><label for="c-draw">Draw</label>
+</fieldset>
+<div class="corner">
+  <button type="button" class="btn btn-primary chat-launch cta-shimmer"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg><span>Ask about my work</span></button>
+  <button type="button" class="btn btn-primary chat-launch cta-trace"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg><span>Ask about my work</span></button>
+  <button type="button" class="btn btn-primary chat-launch cta-drift"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg><span>Ask about my work</span></button>
+  <button type="button" class="btn btn-primary chat-launch cta-ping"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg><span>Ask about my work</span><span class="dot" aria-hidden="true"></span></button>
+  <button type="button" class="btn btn-primary chat-launch cta-draw"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg><span>Ask about my work</span><svg class="outline" aria-hidden="true"><rect pathLength="100"/></svg></button>
+</div>
 </body>
 </html>
