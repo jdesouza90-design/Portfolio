@@ -109,7 +109,7 @@
     box-shadow: 0 0 0 0 rgba(143, 208, 143, .6); animation: dot 4.5s var(--ease) 1s infinite; }
   @keyframes dot { 0% { box-shadow: 0 0 0 0 rgba(143, 208, 143, .6); } 20%, 100% { box-shadow: 0 0 0 6px rgba(143, 208, 143, 0); } }
 
-  /* ---- 5. Draw: the outline is drawn on, holds, lifts off; the icon writes its lines ---- */
+  /* ---- 5. Draw: the outline is drawn on, holds, lifts off; the small sparkle pops in ---- */
   .cta-draw .outline { position: absolute; inset: -4px; width: calc(100% + 8px); height: calc(100% + 8px); overflow: visible; pointer-events: none; }
   .cta-draw .outline rect { fill: none; stroke: var(--accent-2); stroke-width: 1.5; stroke-dasharray: 100 100; stroke-dashoffset: 100; animation: draw 6s var(--ease-in-out) 1s infinite; }
   @keyframes draw {
@@ -118,15 +118,15 @@
     55%  { stroke-dashoffset: 0; opacity: 1; }
     70%, 100% { stroke-dashoffset: 0; opacity: 0; }
   }
-  .cta-draw svg.icon path + path { stroke-dasharray: 8 8; stroke-dashoffset: 8; animation: write 6s var(--ease) 1s infinite; }
-  @keyframes write { 0%, 10% { stroke-dashoffset: 8; } 26%, 100% { stroke-dashoffset: 0; } }
+  .cta-draw svg.icon path + path { transform-box: fill-box; transform-origin: center; animation: pop 6s var(--ease) 1s infinite; }
+  @keyframes pop { 0%, 12% { transform: scale(0) rotate(-45deg); } 26%, 100% { transform: none; } }
 
   /* Motion off: every variant shows its resting state, the button still reads. */
   @media (prefers-reduced-motion: reduce) {
     .btn, .btn::before, .btn::after, .btn *, .btn .outline rect { animation: none !important; }
     .cta-shimmer::after { display: none; }
     .cta-draw .outline rect { stroke-dashoffset: 0; opacity: 0; }
-    .cta-draw svg.icon path + path { stroke-dashoffset: 0; }
+    .cta-draw svg.icon path + path { transform: none; }
   }
 
   /* ---- corner preview ---- */
@@ -157,7 +157,8 @@
 <div class="corner" id="corner"></div>
 
 <script>
-  const ICON = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 6.5A2.5 2.5 0 0 1 7 4h10a2.5 2.5 0 0 1 2.5 2.5v7A2.5 2.5 0 0 1 17 16h-6.5L6 19.5V16h0a1.5 1.5 0 0 1-1.5-1.5z"/><path d="M8.5 8.5h7M8.5 11.5h4.5"/></svg>';
+  // The sparkle: the mark most AI products use. A large four-point star, and a small one that the Draw variant pops in.
+  const ICON = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg>';
   const LABEL = "Ask about my work";
 
   const VARIANTS = [
@@ -174,7 +175,7 @@
       note: "A small online dot, and a ring in the accent green that leaves the pill twice, then goes quiet. It reads as someone is here.",
       spec: "Two rings in 1.7s every 4.5s · box-shadow spread" },
     { cls: "cta-draw", name: "Draw", outline: true,
-      note: "A green outline draws itself round the pill, holds, then fades, while the icon writes its two lines. Uses the same draw-on move as a signature.",
+      note: "A green outline draws itself round the pill, holds, then fades, while the small sparkle in the icon pops in. Uses the same draw-on move as a signature.",
       spec: "1.8s draw, 1.5s hold, every 6s · SVG stroke-dashoffset" },
   ];
 
