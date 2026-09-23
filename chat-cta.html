@@ -78,16 +78,23 @@
   }
   @keyframes shimmer { 0% { background-position: 160% 0; } 28%, 100% { background-position: -60% 0; } }
 
-  /* ---- 2. Trace: a short green comet runs round the outline ---- */
+  /* ---- 2. Trace: a thin green stroke that shimmers, a bright glint running round it ----
+     The same rule styles.css gives .chat-launch::before. */
   @property --trace { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+  @property --sheen { syntax: "<number>"; inherits: false; initial-value: .4; }
   .cta-trace::before {
-    content: ""; position: absolute; inset: -3px; border-radius: inherit; padding: 2px; pointer-events: none; z-index: -1;
-    background: conic-gradient(from var(--trace), transparent 0 68%, rgba(110, 154, 90, 0) 70%, var(--accent-2) 90%, #CFE3C4 96%, transparent 97%);
+    content: ""; position: absolute; inset: -3px; z-index: -1; pointer-events: none;
+    border-radius: inherit; padding: 1.5px;
+    background:
+      conic-gradient(from var(--trace), transparent 0 72%, rgba(110, 154, 90, 0) 72%, #6E9A5A 84%, #3B6B44 90%, #DDEBD3 94.5%, rgba(221, 235, 211, 0) 99%, transparent 100%),
+      conic-gradient(from calc(var(--trace) + 170deg), transparent 0 88%, rgba(59, 107, 68, .5) 93%, rgba(221, 235, 211, .8) 96%, transparent 100%),
+      linear-gradient(rgb(110 154 90 / var(--sheen)) 0 0);
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
             mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
-    animation: trace 3.6s linear infinite;
+    animation: trace 3.6s linear infinite, sheen 1.8s ease-in-out infinite alternate;
   }
   @keyframes trace { to { --trace: 360deg; } }
+  @keyframes sheen { to { --sheen: .75; } }
 
   /* ---- 3. Drift: the fill moves slowly through the greens and back ---- */
   .cta-drift {
@@ -166,7 +173,7 @@
     </article>
     <article class="card">
       <div class="stage"><div class="on-paper"><button type="button" class="btn btn-primary chat-launch cta-trace"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg><span>Ask about my work</span></button></div><div class="on-panel"><button type="button" class="btn btn-primary chat-launch cta-trace"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg><span>Ask about my work</span></button></div></div>
-      <div class="meta"><h2><b>02</b>Trace</h2><p>A short green comet runs round the outline without stopping. It is the most noticeable of the five because it never rests. Slowing it past 4s makes it calmer.</p><p class="spec"><code>.cta-trace</code> · 3.6s per lap, continuous · conic-gradient ring · @property angle</p></div>
+      <div class="meta"><h2><b>02</b>Trace</h2><p>Chosen. A thin green stroke sits just outside the pill and breathes brighter and back, while a bright glint and a fainter one run round it. Now on the live opener.</p><p class="spec"><code>.cta-trace</code> · 3.6s per lap, 1.8s shimmer · conic-gradient ring · @property angle and alpha</p></div>
     </article>
     <article class="card">
       <div class="stage"><div class="on-paper"><button type="button" class="btn btn-primary chat-launch cta-drift"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg><span>Ask about my work</span></button></div><div class="on-panel"><button type="button" class="btn btn-primary chat-launch cta-drift"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4.5Q10.9 11.1 17.5 12Q10.9 12.9 10 19.5Q9.1 12.9 2.5 12Q9.1 11.1 10 4.5Z"/><path d="M18.5 2.5Q18.8 4.7 21 5Q18.8 5.3 18.5 7.5Q18.2 5.3 16 5Q18.2 4.7 18.5 2.5Z"/></svg><span>Ask about my work</span></button></div></div>
