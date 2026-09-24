@@ -32,7 +32,7 @@ thinks and how he operates. If a draft starts narrating a project, it has failed
 1. **Git.** Never work on `main`, which deploys on push. Check for another session first
    (`git status` for edits you didn't make, `lsof -nP -iTCP:4173,4176 -sTCP:LISTEN` for a
    dev server that isn't yours). If anything shows, work in a worktree; otherwise
-   `git switch -c blog/<slug> main`. Commit on the branch only.
+   `git switch -c claude/blog-<slug> main`. Commit on the branch only.
 2. **Pick the pillar by rotation.** `grep -h '"pillar"' blog/posts/*.html | sort | uniq -c`
    and take the one with the fewest recent posts. The pillars are `leadership`, `craft`
    and `fintech`; POSITION.md defines what each one argues. Three positions kept in
@@ -132,12 +132,17 @@ renamed or deleted and the old page is still there; delete it yourself.
 
 ## Hand off
 
-Commit on the branch with a message naming the post. Then open a pull request:
+Commit on the branch with a message naming the post. Then push it and open a pull request:
 
 ```
-git push -u origin blog/<slug>
-gh pr create --title "<post title>" --body "..."
+git push -u origin claude/blog-<slug>
 ```
+
+The `gh` CLI is not installed in cloud sessions, so open the pull request with the GitHub
+MCP tool `mcp__github__create_pull_request` (owner `jdesouza90-design`, repo `Portfolio`,
+head `claude/blog-<slug>`, base `main`). If the `mcp__github__*` tools are not listed, load
+them with ToolSearch. If GitHub access is refused, stop and report which step failed; do
+not fall back to pushing anywhere else.
 
 The pull request body is for John reading on a phone between meetings. Give him: the claim
 in one line, the pillar, the sources with links, what you left out and why, and anything
