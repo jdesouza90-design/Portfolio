@@ -32,7 +32,7 @@ thinks and how he operates. If a draft starts narrating a project, it has failed
 1. **Git.** Never work on `main`, which deploys on push. Check for another session first
    (`git status` for edits you didn't make, `lsof -nP -iTCP:4173,4176 -sTCP:LISTEN` for a
    dev server that isn't yours). If anything shows, work in a worktree; otherwise
-   `git switch -c blog/<slug> main`. Commit on the branch only.
+   `git switch -c claude/blog-<slug> main`. Commit on the branch only.
 2. **Pick the pillar by rotation.** `grep -h '"pillar"' blog/posts/*.html | sort | uniq -c`
    and take the one with the fewest recent posts. The pillars are `leadership`, `craft`
    and `fintech`; POSITION.md defines what each one argues. Three positions kept in
@@ -66,6 +66,18 @@ work backwards into an opinion.
 Write the whole post as copy in one message before touching a file: title, description,
 lede, claim, every heading, the body, and the sources with their links. John replies with
 changes; you do not build until he approves.
+
+**Unattended runs** (the scheduled daily draft, or any run where John is not in the
+conversation): do not stop and wait for approval. Nobody will answer. Draft the copy,
+run the voice pass below, then build, verify and open the pull request. The pull request
+is the approval gate.
+
+**Voice pass, every time.** After the draft and before building, read
+`.claude/skills/human-writing/SKILL.md` and apply it to every line of copy: title,
+description, lede, headings and body. Strip the AI tell-signs it lists, vary the rhythm,
+and run its five naturalness checks. Where it and `VOICE.md` disagree, `VOICE.md` wins
+for this site: fragments may not open with a verb, and there are no dashes, semicolons
+or exclamation marks in prose. The pass changes wording, never facts, numbers or sources.
 
 Hold it to `VOICE.md` and to POSITION.md's seven rules. The ones most often missed:
 
@@ -129,15 +141,22 @@ renamed or deleted and the old page is still there; delete it yourself.
   other page on the site meets.
 - Check it at 375 and 320 wide for anything that scrolls sideways.
 - Read the post out loud. This catches the voice slips that no script will.
+- Re-run the human-writing naturalness checks on the built page's text. Name the most
+  AI-sounding sentence left and rewrite it.
 
 ## Hand off
 
-Commit on the branch with a message naming the post. Then open a pull request:
+Commit on the branch with a message naming the post. Then push it and open a pull request:
 
 ```
-git push -u origin blog/<slug>
-gh pr create --title "<post title>" --body "..."
+git push -u origin claude/blog-<slug>
 ```
+
+The `gh` CLI is not installed in cloud sessions, so open the pull request with the GitHub
+MCP tool `mcp__github__create_pull_request` (owner `jdesouza90-design`, repo `Portfolio`,
+head `claude/blog-<slug>`, base `main`). If the `mcp__github__*` tools are not listed, load
+them with ToolSearch. If GitHub access is refused, stop and report which step failed; do
+not fall back to pushing anywhere else.
 
 The pull request body is for John reading on a phone between meetings. Give him: the claim
 in one line, the pillar, the sources with links, what you left out and why, and anything
