@@ -283,7 +283,7 @@ between them at all.
 The **index** (`blog.html`) is organised by argument, not by date: the three
 pillars as serif links, a strip of the recent run, the latest three on their own
 ground, then everything grouped under its pillar with a search and a grid/list
-toggle. The **post** is a centred head (title, standfirst, byline, published
+toggle. A pillar with no posts is left off the index until it has one. The **post** is a centred head (title, standfirst, byline, published
 line), its cover full width, the claim, then one column of running text on a
 34rem measure. Both follow craft.do/blog, rebuilt on the site's own tokens.
 
@@ -298,7 +298,7 @@ comment, then the body as an HTML fragment.
 <!-- {
   "title":       "Under eight words, carries the claim",
   "description": "One line, under 155 characters. It is the search snippet and the index row.",
-  "pillar":      "leadership",              // leadership | craft | fintech
+  "pillar":      "leadership",              // leadership | craft | product
   "date":        "2026-09-23T09:00:00-04:00",
   "lede":        "Two or three sentences under the title.",
   "claim":       "The one sentence the post defends.",
@@ -354,7 +354,7 @@ cover is the one place the site uses **solid form**: a few large shapes on the
 pillar's ground, overlapping and multiplying into deeper tones, cropped by the
 frame. Each pillar has its own palette and its own way of placing weight
 (leadership opens from one point on the left, the craft holds a grid and lets
-one shape leave it, fintech stacks bands across a division), so three cards in a
+one shape leave it, product stacks bands across a division), so three cards in a
 row are tellable apart before you read a word.
 
 `blog.py` draws both renders the first time it builds a post, from one seed:

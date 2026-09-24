@@ -5,8 +5,8 @@ description: >
   this repo. Researches the day's argument against current sources, drafts it in John's
   voice against POSITION.md, writes blog/posts/<slug>.html, runs the generator, validates,
   and opens a pull request for John to approve. Use this whenever John wants a new blog
-  post, a piece on AI and design, web3 and design or fintech and trust, or when the daily
-  draft job runs. Also use it to rewrite an existing post. Not for case studies (that is
+  post, a piece on design leadership, AI and design, where product design is heading or
+  product management, or when the daily draft job runs. Also use it to rewrite an existing post. Not for case studies (that is
   add-case-study) and not for editing copy on a post that is already up.
 ---
 
@@ -35,7 +35,9 @@ thinks and how he operates. If a draft starts narrating a project, it has failed
    `git switch -c claude/blog-<slug> main`. Commit on the branch only.
 2. **Pick the pillar by rotation.** `grep -h '"pillar"' blog/posts/*.html | sort | uniq -c`
    and take the one with the fewest recent posts. The pillars are `leadership`, `craft`
-   and `fintech`; POSITION.md defines what each one argues. Three positions kept in
+   and `product`; POSITION.md defines what each one argues. Fintech, payments, banking,
+   stablecoins, crypto and web3 are out of scope for the blog: do not pick a topic from
+   them, even when the design angle looks strong. Three positions kept in
    balance beats whichever one was easiest to research today.
 3. **Read what is already up in that pillar.** A new post has to say something the
    existing ones did not. Restating yesterday's argument with today's statistic is how a
@@ -56,8 +58,8 @@ work backwards into an opinion.
   - LinkedIn posts and articles (`site:linkedin.com/posts`, `site:linkedin.com/pulse`)
   - X (`site:x.com`)
   - Trade press and newsletters: Figma, Nielsen Norman Group, Smashing Magazine, Lenny's
-    Newsletter, The Verge, and the pillar's own outlets (fintech: American Banker,
-    Finextra, the CFPB; web3: The Block, CoinDesk)
+    Newsletter, The Verge, and the pillar's own outlets (product: Mind the Product,
+    Lenny's Newsletter, Reforge, SVPG)
 
   Use `WebSearch` with those filters, then `WebFetch` the posts that look like a live
   argument. LinkedIn and X often refuse fetches without a login. When a fetch fails, you
@@ -78,7 +80,7 @@ work backwards into an opinion.
 - **Name the common position fairly**, in one sentence, before arguing against it. A straw
   man is worse than no opponent.
 - **Check it is still live.** An argument the industry settled two years ago reads as a
-  man shouting at a closed door. Account abstraction is done; agentic payments are open.
+  man shouting at a closed door.
 
 ## Draft the copy, then stop
 
@@ -123,7 +125,7 @@ The file is a JSON front-matter comment, then the body as an HTML fragment:
 <!-- {
   "title": "Under eight words, carries the claim",
   "description": "One line for the search snippet and the index row. Under 155 characters. The point and the number.",
-  "pillar": "leadership",               // leadership | craft | fintech
+  "pillar": "leadership",               // leadership | craft | product
   "date": "2026-09-23T09:00:00-04:00",  // ISO 8601 with the offset
   "lede": "Two or three sentences under the title. The specifics.",
   "claim": "The one sentence the post defends.",

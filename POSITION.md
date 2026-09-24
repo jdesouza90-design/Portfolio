@@ -54,25 +54,29 @@ was always the job. It is only now that not having it is visible.
 **What he does not argue.** That AI replaces designers. That prompting is a craft. That
 every designer must ship code.
 
-## Pillar 3 — Fintech, web3 and trust (`fintech`)
+## Pillar 3 — Product management (`product`)
 
-Where John has thirteen years and most commentators have none: consumer lending,
-blockchain infrastructure and enterprise identity. The live conversation: agents are
-getting wallets, stablecoins are entering regulated consumer finance, and the rails are
-being built faster than anyone is designing the consent.
+Where product management and product design meet: how the two roles divide the work,
+decide together, and change as AI moves more of the build into both. Product strategy,
+discovery, prioritization and the PM and design partnership, argued from the design
+leader's side of the table.
 
-**The evidence.** Mastercard launched Agent Pay for Machines in June 2026 with more than
-30 partners, credentialing agents through "Verifiable Intent" across cards and
-stablecoins. Visa's Trusted Agent Protocol lets people delegate Visa credentials to vetted
-shopping agents. The working legal principle is that liability follows authorization.
+**The evidence.** 65% of designers report taking on more product or engineering work,
+and 40% say product managers and engineers now contribute more to design (AI in Design
+2026, 900 designers across 60 countries).
 
-**John's position.** Delegation is an interface problem before it is a protocol problem,
-and the industry is repeating the mistake it just finished fixing: exposing the mechanism
-and calling it transparency. Trust gets decided in the failure states, which is the part
-nobody is funding.
+**John's position.** Not yet written. Until John adds it here, a post in this pillar
+argues from the positions in pillars 1 and 2 as they apply to the product and design
+boundary, and states nothing as John's view that this file, VOICE.md or an existing
+post does not already say.
 
-**What he does not argue.** Token prices, market calls, which chain wins. Compliance as an
-obstacle.
+**What he does not argue.** That designers should become PMs, or PMs designers.
+
+## Out of scope
+
+Fintech, payments, banking, open banking, lending, stablecoins, crypto and web3 are not
+blog topics, even with a design angle. John's work in those industries can appear as
+evidence in a sentence or two, per rule 3, never as the subject of a post.
 
 ## Rules for every post
 

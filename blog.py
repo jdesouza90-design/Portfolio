@@ -24,7 +24,7 @@ WPM = 225
 PILLARS = {
     "leadership": ("Design leadership",             "pillar",              "Leadership"),
     "craft":      ("Where product design is going", "pillar pillar-craft", "The craft"),
-    "fintech":    ("Fintech, web3 and trust",       "pillar pillar-fintech", "Fintech"),
+    "product":    ("Product management",            "pillar pillar-product", "Product"),
 }
 
 # Pages outside the blog that belong in the sitemap, with their change weight.
@@ -95,7 +95,7 @@ CW, CH = 1200, 800
 TONES = {
     "leadership": ("#F0F1EB", "#E7E9E0", ["#DCE2D2", "#C8D2BC", "#B4C2A4"], "#3B6B44"),
     "craft":      ("#F7F1E5", "#F1E8D6", ["#EFE0C2", "#E6CE9E", "#DBBB7E"], "#C98F3E"),
-    "fintech":    ("#F1F0ED", "#E7E4DE", ["#DAD6CD", "#C3BEB2", "#A9A396"], "#2B2621"),
+    "product":    ("#F1F0ED", "#E7E4DE", ["#DAD6CD", "#C3BEB2", "#A9A396"], "#2B2621"),
 }
 
 # Where a composition puts its weight. Each pillar reads differently at a glance
@@ -106,7 +106,7 @@ ANCHORS = {
     # a strict grid, and one that leaves it
     "craft":      [(.22, .32), (.50, .30), (.78, .32), (.24, .68), (.52, .70), (.86, .76)],
     # bands stacked across a division
-    "fintech":    [(.26, .28), (.70, .26), (.32, .52), (.66, .54), (.28, .76), (.74, .74)],
+    "product":    [(.26, .28), (.70, .26), (.32, .52), (.66, .54), (.28, .76), (.74, .74)],
 }
 
 
@@ -443,7 +443,7 @@ def render_post(p, nxt):
 def render_index(posts):
     url = SITE + "/blog.html"
     desc = ("John DeSouza, Director of Product Design, on design leadership, where the "
-            "job is heading, and trust in fintech and web3. One position per post, every "
+            "job is heading, and product management. One position per post, every "
             "number sourced.")
     ld = {
         "@context": "https://schema.org",
@@ -471,6 +471,8 @@ def render_index(posts):
     links = ""
     for key, (label, _, _short) in PILLARS.items():
         n = sum(1 for p in posts if p["pillar"] == key)
+        if not n:
+            continue
         links += f"""        <li><a href="#{key}"><span class="pillar-label">{label}{PILLAR_ARROW}</span><span class="pillar-count t-small">{n} post{"" if n == 1 else "s"}</span></a></li>\n"""
 
     out += f"""
@@ -550,7 +552,9 @@ def render_index(posts):
 """
     for key, (label, _, _short) in PILLARS.items():
         group = [p for p in posts if p["pillar"] == key]
-        body = "".join(card(p) for p in group) or '\n        <p class="t-body pillar-empty">Nothing here yet.</p>'
+        if not group:
+            continue
+        body = "".join(card(p) for p in group)
         out += f"""
     <section class="pillar-group" data-pillar="{key}" data-reveal>
       <h3 class="t-heading pillar-head" id="{key}">{label}</h3>
@@ -629,7 +633,7 @@ def render_feed(posts):
     <title>{AUTHOR} — Blog</title>
     <link>{SITE}/blog.html</link>
     <atom:link href="{SITE}/feed.xml" rel="self" type="application/rss+xml"/>
-    <description>Design leadership, where product design is heading, and trust in fintech and web3.</description>
+    <description>Design leadership, where product design is heading, and product management.</description>
     <language>en</language>
     <lastBuildDate>{built}</lastBuildDate>
 {chr(10).join(items)}
