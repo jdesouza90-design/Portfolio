@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your design system checks spelling, not judgment — John DeSouza</title>
+<meta name="description" content="Eighteen of 21 major design systems now ship an MCP server for agents. What they enforce is the vocabulary. The usage guidance is the part getting cut.">
+<link rel="canonical" href="https://john-desouza.com/blog/design-systems-check-spelling-not-judgment.html">
+<meta property="og:title" content="Your design system checks spelling, not judgment — John DeSouza">
+<meta property="og:description" content="Eighteen of 21 major design systems now ship an MCP server for agents. What they enforce is the vocabulary. The usage guidance is the part getting cut.">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://john-desouza.com/og-image.png?v=cbd7c531">
+<meta property="og:url" content="https://john-desouza.com/blog/design-systems-check-spelling-not-judgment.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="article:published_time" content="2026-09-24T09:00:00-04:00">
+<meta property="article:author" content="John DeSouza">
+<meta property="article:tag" content="design systems">
+<meta property="article:tag" content="AI agents">
+<meta property="article:tag" content="design system MCP">
+<meta property="article:tag" content="DESIGN.md">
+<meta property="article:tag" content="future of design">
+<link rel="icon" href="/favicon.ico?v=a803d66e" sizes="32x32">
+<link rel="icon" href="/favicon.svg?v=fb53733d" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=94379a7d">
+<link rel="alternate" type="application/rss+xml" title="John DeSouza — Blog" href="https://john-desouza.com/feed.xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css?v=ef83db83">
+<script defer src="/_vercel/insights/script.js"></script>
+<script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
+<script defer src="/_vercel/speed-insights/script.js"></script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Your design system checks spelling, not judgment","description":"Eighteen of 21 major design systems now ship an MCP server for agents. What they enforce is the vocabulary. The usage guidance is the part getting cut.","datePublished":"2026-09-24T09:00:00-04:00","dateModified":"2026-09-24T09:00:00-04:00","author":{"@type":"Person","@id":"https://john-desouza.com/#john","name":"John DeSouza","url":"https://john-desouza.com/","jobTitle":"Director of Product Design","sameAs":["https://www.linkedin.com/in/johndesouza-/"]},"publisher":{"@type":"Person","@id":"https://john-desouza.com/#john","name":"John DeSouza","url":"https://john-desouza.com/","jobTitle":"Director of Product Design","sameAs":["https://www.linkedin.com/in/johndesouza-/"]},"mainEntityOfPage":{"@type":"WebPage","@id":"https://john-desouza.com/blog/design-systems-check-spelling-not-judgment.html"},"url":"https://john-desouza.com/blog/design-systems-check-spelling-not-judgment.html","inLanguage":"en","isPartOf":{"@type":"Blog","@id":"https://john-desouza.com/blog.html","name":"Blog"},"articleSection":"Where product design is going","wordCount":932,"image":"https://john-desouza.com/og-image.png","keywords":"design systems, AI agents, design system MCP, DESIGN.md, future of design"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://john-desouza.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://john-desouza.com/blog.html"},{"@type":"ListItem","position":3,"name":"Your design system checks spelling, not judgment","item":"https://john-desouza.com/blog/design-systems-check-spelling-not-judgment.html"}]}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="/" aria-label="John DeSouza, home"><span>John DeSouza</span></a>
+    <button class="icon-btn nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <nav class="nav-links" id="site-nav" aria-label="Primary">
+      <ul>
+        <li><a href="/work.html">Work</a></li>
+        <li><a href="/#leadership">Leadership</a></li>
+        <li><a href="/#about">About</a></li>
+        <li><a href="/blog.html">Blog</a></li>
+        <li><a class="nav-icon" data-link="linkedin" href="#" aria-label="LinkedIn profile" title="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.125 2.062 2.062 0 0 1 0 4.125zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/></svg><span>LinkedIn</span></a></li>
+        <li class="nav-resume"><a class="nav-download" data-link="resume" href="#"><span>Resume</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11"/><path d="m7 11 5 5 5-5"/><path d="M4 20h16"/></svg></a></li>
+      </ul>
+      <div class="nav-foot">
+        <a class="btn btn-primary" data-link="email" href="#"><span class="icon-swap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>Contact me</a>
+        <a class="btn btn-ghost" data-link="resume" href="#"><span class="icon-swap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11"/><path d="m7 11 5 5 5-5"/><path d="M4 20h16"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="20 6 9 17 4 12"/></svg></span>Resume</a>
+      </div>
+    </nav>
+    <div class="nav-actions">
+      <a class="btn btn-primary btn-sm" data-link="email" href="#"><span class="icon-swap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>Contact me</a>
+    </div>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+
+<section class="post-hero">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><span class="crumb-sep" aria-hidden="true">/</span><a href="/blog.html">Blog</a></li>
+        <li aria-current="page"><span class="crumb-sep" aria-hidden="true">/</span>Your design system checks spelling, not judgment</li>
+      </ol>
+    </nav>
+    <p class="eyebrow" data-rise style="--i:0">Where product design is going</p>
+    <h1 class="t-display" data-rise style="--i:1">Your design system checks spelling, not judgment</h1>
+    <p class="t-lede" data-rise style="--i:2">This year the design system became the thing the model reads. Almost all of the work went into making sure an agent uses a real button. Almost none went into whether it should have used a button at all.</p>
+    <p class="byline t-small"><span class="byline-mark" aria-hidden="true">JD</span>Written by John DeSouza</p>
+    <p class="post-meta t-small">
+      <span>Published on <time datetime="2026-09-24T09:00:00-04:00">24 September 2026</time></span>
+      <span class="dot" aria-hidden="true">·</span>
+      <span>in Where product design is going</span>
+      <span class="dot" aria-hidden="true">·</span>
+      <span>4 min read</span>
+    </p>
+  </div>
+</section>
+
+<section class="section tight">
+  <div class="wrap">
+    <figure class="post-art" data-reveal>
+      <img src="../assets/blog/design-systems-check-spelling-not-judgment-wide.svg?v=e649954c" width="1500" height="600" alt="" decoding="async">
+    </figure>
+    <div class="claim" data-reveal>
+      <p class="t-quote">Machine-readable design systems enforce the vocabulary and drop the judgment, and the judgment only gets written down if every rejected answer leaves a reason behind.</p>
+    </div>
+    <div class="prose" data-reveal>
+<p>The design system is now the thing the model reads. In a <a href="https://state-of-ai-in-design-systems.netlify.app/">July survey of 21 open-source design systems</a>, Kaelig Deloumeau-Prigent found that 18 ship an official MCP server so coding agents can query them directly. Figma describes its new agent as having <a href="https://www.figma.com/blog/the-figma-agent-is-here/">"deep context on your components, tokens, standards, and best practices"</a>.</p>
+
+      <p>The position behind all of this is reasonable. Give the agent your system and it builds on your system. The components and tokens become the guardrail, and on-brand output follows.</p>
+
+      <p>I think that gets the guardrail half right and quietly drops the half that matters.</p>
+
+      <h2>What the machine-readable half enforces</h2>
+
+      <p>The same survey catalogs 165 techniques teams use to keep models on their real components and tokens. The biggest groups are validation loops (31), prohibitions like "never invent components" (28), tool-gating that makes a fake component impossible to produce (22) and token enforcement that fails the build on a raw hex value (15).</p>
+
+      <p>That is serious engineering, and it works. It also has a clear shape. Most of them answer one question: is this a real part of the system, used the way its API allows?</p>
+
+      <p>That is spelling. An agent can pass all of it and still put a primary button in every row of a table, because every one of those buttons is a real button with a real token.</p>
+
+      <h2>The part that got cut first</h2>
+
+      <p>Atlassian tested Google's DESIGN.md format against its own MCP server and skills and wrote up what happened. To fit the design system into one portable file, the team says it <a href="https://www.atlassian.com/blog/how-we-build/atlassians-design-md-is-here-what-we-learned-testing-portable-design-context-in-practice">"had to remove much of the usage guidance from our 50+ components"</a>. Agents given the file then went digging through component code to find the guidance that was missing.</p>
+
+      <p>Usage guidance is where the judgment lives. It is the paragraph that says when not to use the thing. Nord, one of the systems in the survey, ships it to agents in exactly that form: <a href="https://nordhealth.design/.well-known/skills/nord/references/components/button.md">"Don't use a primary button in every row of a table."</a> No linter catches that sentence being ignored. It is also what went first when Atlassian needed the file smaller.</p>
+
+      <p>Tokens are cheap to write down. They are values with names. The reasons behind the choices are expensive, and the reasons are the part a designer was actually hired to supply.</p>
+
+      <h2>Frequency is not a standard</h2>
+
+      <p>When an agent has no reason to go on, it falls back on what is common. Figma says its agent <a href="https://www.figma.com/blog/the-figma-agent-is-here/">"uses your most frequently and recently used components as a starting point"</a>. That is a sensible default for a tool and a poor definition of good.</p>
+
+      <p>I have seen why. When I ran an agent audit across a whole design library, I wrote the crawler's rules, and it counted every value we had. It could not tell me which of two established values was right. Somebody had to decide, and the decision was nowhere in the data.</p>
+
+      <p>Nurkhon Akhmedov puts the failure mode well in <a href="https://nurxmedov.substack.com/p/your-design-systems-real-job-in-2026">a July post on this</a>: five screens in a hundred ship off-system, and "the next agent reads those five as if they were the library." A system that learns from its own output drifts toward whatever it did most, right or wrong.</p>
+
+      <h2>Gated on spelling, trusted on judgment</h2>
+
+      <p>The survey also looked for whether teams measure any of this. <a href="https://state-of-ai-in-design-systems.netlify.app/questions/evals.md">Eight of the 21 records mention evaluation work at all</a>. The report calls its validation loops the closest thing the field has, and describes them as "checks that fail a build, rather than evals that score a model."</p>
+
+      <p>So the mechanical half is gated and the judgment half is trusted. Akhmedov's version is blunter: whether the agent picked the right component for what the user is trying to do is a question "you can't grep for."</p>
+
+      <h2>Where the missing half comes from</h2>
+
+      <p>Akhmedov argues the rubric is now the deliverable. I agree, and I would go one step further on where it comes from.</p>
+
+      <p>Nobody writes good usage guidance in the abstract. Try to list every wrong way to use a button in advance and you get a style guide nobody reads. The useful rules show up one at a time, when someone looks at a screen an agent built and says no.</p>
+
+      <p>That moment is the raw material, and it is easy to lose. The rejection happens in a review, the agent gets a new prompt, the screen gets fixed and the reason lives in one person's head until they leave.</p>
+
+      <p>The rule I hold is simple. A rejection without a written reason is wasted. The reason goes into the system the agent reads, in the form Nord already uses: the choice that was wrong, the one that was right and why. Written that way, the next agent can be held to it and so can the next designer.</p>
+
+      <h2>What the design system team is for now</h2>
+
+      <p>For years the visible output of a design system team was the library. This year the industry made that library readable and enforceable for agents. That work was worth doing.</p>
+
+      <p>It was also the easy half. A system that only knows its own vocabulary will produce fluent, valid, wrong screens at whatever speed you let it. The half that decides whether a screen is right is still mostly sitting in people's heads, and in at least one case it was trimmed out on purpose to make a file fit.</p>
+
+      <p>An agent can read every token you have. It cannot read a reason nobody wrote down.</p>
+    </div>
+
+    <div class="sources" data-reveal>
+      <p class="eyebrow">Sources</p>
+      <ol>
+        <li><a href="https://state-of-ai-in-design-systems.netlify.app/">State of AI in Design Systems, July 2026</a>, Kaelig Deloumeau-Prigent. 21 open-source design systems studied 26 to 28 July 2026: 18 ship an official MCP server, 165 techniques for keeping models on real components and tokens.</li>
+        <li><a href="https://state-of-ai-in-design-systems.netlify.app/questions/evals.md">Does anyone measure whether their AI affordances work?</a>, the same report: 8 of 21 records mention evaluation work of any kind.</li>
+        <li><a href="https://www.atlassian.com/blog/how-we-build/atlassians-design-md-is-here-what-we-learned-testing-portable-design-context-in-practice">Atlassian's DESIGN.md is here</a>, Kylor Hall and Andrew Campbell, June 2026, on removing usage guidance from 50+ components to fit a portable spec.</li>
+        <li><a href="https://www.figma.com/blog/the-figma-agent-is-here/">The Figma agent is here</a>, Figma, May 2026, on starting from your most frequently and recently used components.</li>
+        <li><a href="https://nordhealth.design/.well-known/skills/nord/references/components/button.md">Nord button reference</a>, the Do and Don't guidance Nord ships to agents.</li>
+        <li><a href="https://nurxmedov.substack.com/p/your-design-systems-real-job-in-2026">Your design system's real job in 2026 is catching the AI</a>, Nurkhon Akhmedov, July 2026.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="section tight">
+  <div class="wrap">
+    <div class="post-next" data-reveal>
+      <p class="eyebrow">Next</p>
+      <h2 class="t-title"><a href="/blog/stablecoin-trust-is-decided-at-redemption.html">Stablecoin trust is decided at redemption</a></h2>
+      <div class="actions">
+        <a class="btn btn-ghost" href="/blog.html">All posts<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="contact" data-reveal data-field="rings">
+      <canvas class="field" aria-hidden="true"></canvas>
+      <div>
+        <p class="eyebrow">Get in touch</p>
+        <h2 class="t-title">Disagree with any of this?</h2>
+        <p class="t-lede">I'd rather hear it than not. The arguments get better when somebody pushes back.</p>
+      </div>
+      <div class="contact-actions">
+        <a class="btn btn-primary" data-link="linkedin" href="#"><span class="icon-swap"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.125 2.062 2.062 0 0 1 0 4.125zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></span>Message me on LinkedIn</a>
+        <a class="btn btn-ghost" data-link="email" href="#"><span class="icon-swap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>Email me</a>
+        <a class="btn btn-ghost" data-link="resume" href="#"><span class="icon-swap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11"/><path d="m7 11 5 5 5-5"/><path d="M4 20h16"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="20 6 9 17 4 12"/></svg></span>Download resume</a>
+      </div>
+    </div>
+    <footer>
+      <span>© <span data-year></span> John DeSouza</span>
+      <span>Posts are my own views. Case studies reflect my role and my teams' work at each company.</span>
+    </footer>
+  </div>
+</section>
+
+</main>
+<script src="../main.js?v=b09d674b"></script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Metered pulls make frequency a consent question — John DeSouza</title>
+<meta name="description" content="Banks now charge aggregators for each data pull. How often an app checks your account is about to be decided somewhere. It belongs on the consent screen.">
+<link rel="canonical" href="https://john-desouza.com/blog/frequency-is-a-consent-question.html">
+<meta property="og:title" content="Metered pulls make frequency a consent question — John DeSouza">
+<meta property="og:description" content="Banks now charge aggregators for each data pull. How often an app checks your account is about to be decided somewhere. It belongs on the consent screen.">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://john-desouza.com/og-image.png?v=cbd7c531">
+<meta property="og:url" content="https://john-desouza.com/blog/frequency-is-a-consent-question.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="article:published_time" content="2026-09-24T07:00:00-04:00">
+<meta property="article:author" content="John DeSouza">
+<meta property="article:tag" content="open banking">
+<meta property="article:tag" content="Section 1033">
+<meta property="article:tag" content="data access fees">
+<meta property="article:tag" content="consent design">
+<meta property="article:tag" content="fintech design">
+<meta property="article:tag" content="data minimization">
+<link rel="icon" href="/favicon.ico?v=a803d66e" sizes="32x32">
+<link rel="icon" href="/favicon.svg?v=fb53733d" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=94379a7d">
+<link rel="alternate" type="application/rss+xml" title="John DeSouza — Blog" href="https://john-desouza.com/feed.xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css?v=ef83db83">
+<script defer src="/_vercel/insights/script.js"></script>
+<script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
+<script defer src="/_vercel/speed-insights/script.js"></script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Metered pulls make frequency a consent question","description":"Banks now charge aggregators for each data pull. How often an app checks your account is about to be decided somewhere. It belongs on the consent screen.","datePublished":"2026-09-24T07:00:00-04:00","dateModified":"2026-09-24T07:00:00-04:00","author":{"@type":"Person","@id":"https://john-desouza.com/#john","name":"John DeSouza","url":"https://john-desouza.com/","jobTitle":"Director of Product Design","sameAs":["https://www.linkedin.com/in/johndesouza-/"]},"publisher":{"@type":"Person","@id":"https://john-desouza.com/#john","name":"John DeSouza","url":"https://john-desouza.com/","jobTitle":"Director of Product Design","sameAs":["https://www.linkedin.com/in/johndesouza-/"]},"mainEntityOfPage":{"@type":"WebPage","@id":"https://john-desouza.com/blog/frequency-is-a-consent-question.html"},"url":"https://john-desouza.com/blog/frequency-is-a-consent-question.html","inLanguage":"en","isPartOf":{"@type":"Blog","@id":"https://john-desouza.com/blog.html","name":"Blog"},"articleSection":"Fintech, web3 and trust","wordCount":1120,"image":"https://john-desouza.com/og-image.png","keywords":"open banking, Section 1033, data access fees, consent design, fintech design, data minimization"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://john-desouza.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://john-desouza.com/blog.html"},{"@type":"ListItem","position":3,"name":"Metered pulls make frequency a consent question","item":"https://john-desouza.com/blog/frequency-is-a-consent-question.html"}]}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="/" aria-label="John DeSouza, home"><span>John DeSouza</span></a>
+    <button class="icon-btn nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <nav class="nav-links" id="site-nav" aria-label="Primary">
+      <ul>
+        <li><a href="/work.html">Work</a></li>
+        <li><a href="/#leadership">Leadership</a></li>
+        <li><a href="/#about">About</a></li>
+        <li><a href="/blog.html">Blog</a></li>
+        <li><a class="nav-icon" data-link="linkedin" href="#" aria-label="LinkedIn profile" title="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.125 2.062 2.062 0 0 1 0 4.125zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/></svg><span>LinkedIn</span></a></li>
+        <li class="nav-resume"><a class="nav-download" data-link="resume" href="#"><span>Resume</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11"/><path d="m7 11 5 5 5-5"/><path d="M4 20h16"/></svg></a></li>
+      </ul>
+      <div class="nav-foot">
+        <a class="btn btn-primary" data-link="email" href="#"><span class="icon-swap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>Contact me</a>
+        <a class="btn btn-ghost" data-link="resume" href="#"><span class="icon-swap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11"/><path d="m7 11 5 5 5-5"/><path d="M4 20h16"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="20 6 9 17 4 12"/></svg></span>Resume</a>
+      </div>
+    </nav>
+    <div class="nav-actions">
+      <a class="btn btn-primary btn-sm" data-link="email" href="#"><span class="icon-swap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>Contact me</a>
+    </div>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+
+<section class="post-hero">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><span class="crumb-sep" aria-hidden="true">/</span><a href="/blog.html">Blog</a></li>
+        <li aria-current="page"><span class="crumb-sep" aria-hidden="true">/</span>Metered pulls make frequency a consent question</li>
+      </ol>
+    </nav>
+    <p class="eyebrow" data-rise style="--i:0">Fintech, web3 and trust</p>
+    <h1 class="t-display" data-rise style="--i:1">Metered pulls make frequency a consent question</h1>
+    <p class="t-lede" data-rise style="--i:2">JPMorgan Chase already bills aggregators for every data request, and the rewrite of the open banking rule is expected to let other banks follow. The argument is about who pays. Almost nobody is designing where a person finds out how often an app looks at their account.</p>
+    <p class="byline t-small"><span class="byline-mark" aria-hidden="true">JD</span>Written by John DeSouza</p>
+    <p class="post-meta t-small">
+      <span>Published on <time datetime="2026-09-24T07:00:00-04:00">24 September 2026</time></span>
+      <span class="dot" aria-hidden="true">·</span>
+      <span>in Fintech, web3 and trust</span>
+      <span class="dot" aria-hidden="true">·</span>
+      <span>5 min read</span>
+    </p>
+  </div>
+</section>
+
+<section class="section tight">
+  <div class="wrap">
+    <figure class="post-art" data-reveal>
+      <img src="../assets/blog/frequency-is-a-consent-question-wide.svg?v=20999f1c" width="1500" height="600" alt="" decoding="async">
+    </figure>
+    <div class="claim" data-reveal>
+      <p class="t-quote">Once every data pull has a price, how often an app checks a bank account stops being a back-end setting. It is a consent decision, and it belongs on the consent screen instead of an invoice.</p>
+    </div>
+    <div class="prose" data-reveal>
+<p>JPMorgan Chase now charges data aggregators like Plaid for the requests its systems answer. The fee applies to each call rather than a monthly total, a JPMorgan managing director <a href="https://www.paymentsdive.com/news/open-banking-fees-fintechs-fuel-debate-cfpb-apps/808114/">told a panel in December</a>. The Consumer Financial Protection Bureau's rewrite of the Section 1033 open banking rule <a href="https://www.consumerfinancemonitor.com/2026/08/06/cfpb-sends-new-section-1033-open-banking-proposal-to-oira-for-review/">went to the White House for review in August</a>, and it is <a href="https://www.americanbanker.com/news/what-we-know-about-the-cfpbs-forthcoming-open-banking-rule">expected to let banks charge</a> for access the 2024 version made free.</p>
+
+      <p>The fight is being argued as a question of who pays. The Financial Technology Association <a href="https://www.ftassociation.org/looking-ahead-to-the-open-banking-rule-protecting-americans-right-to-securely-access-and-share-their-financial-data-without-fees/">says</a> the costs "will be passed directly on to American consumers and small businesses," and that data access is a legal entitlement, "not a conditional right contingent upon paying access fees." That is a serious argument about competition. This post doesn't argue the price.</p>
+
+      <p>It argues about the screen, because a price changes what the screen is for.</p>
+
+      <h2>Both sides agree the product sets the volume</h2>
+
+      <p>Listen to what each side says about volume and they land in the same place. On that December panel, JPMorgan's Kate Prochaska said: "Once people actually have to pay for things, they start thinking about, 'Well, do I need to ping this often?'" The association's Angelena Bradfield answered that how much data an app pulls is a function of the user's experience. People check their apps, and the app checks the bank.</p>
+
+      <p>PNC put the bank case more bluntly in its comment letter to the bureau, <a href="https://www.paymentsdive.com/news/open-banking-fees-fintechs-fuel-debate-cfpb-apps/808114/">as quoted by Payments Dive</a>: "When third party access to consumer data is free and unlimited, third parties have little incentive to minimize cadence, scope, or retention of data they do not need and will not use."</p>
+
+      <p>One side calls the volume waste. The other calls it the product working. Both are saying that how often an app looks at a bank account is a product decision. Neither has said where the person whose account it is gets to see that decision.</p>
+
+      <h2>Frequency was never on the screen</h2>
+
+      <p>The 2024 rule came closer than anything before it. It told apps to limit collection to what is "reasonably necessary" for the product the person asked for, and it <a href="https://www.federalregister.gov/documents/2024/11/18/2024-25079/required-rulemaking-on-personal-financial-data-rights">defined collection</a> to include "the scope of covered data requested and the duration and frequency of collection." It capped every authorization at one year before the app had to ask again.</p>
+
+      <p>Now look at what the same rule required the person to be shown. The authorization disclosure lists the app, the bank, the product, the categories of data and the expected duration. Frequency isn't on the list. The one variable a bank can now put a price on is the one the strictest version of the rule never asked anyone to show.</p>
+
+      <p>That rule isn't in force either. A federal court in Kentucky <a href="https://www.cozen.com/news-resources/publications/2026/section-1033-compliance-date-open-banking-rule-enjoined-and-under-reconsideration">has blocked enforcement</a> while the bureau reconsiders it, and the <a href="https://www.federalregister.gov/documents/2025/08/22/2025-16139/personal-financial-data-rights-reconsideration">reconsideration notice</a> asks whether banks should be able to "recover a reasonable rate" for answering requests.</p>
+
+      <h2>The invoice decides if the screen doesn't</h2>
+
+      <p>Today the answer to "how often" lives on a signup screen nobody reads twice. CNBC reported an internal JPMorgan memo complaining that aggregators access data "multiple times daily, even when the customer is not actively using the app." Plaid's <a href="https://www.cnbc.com/2025/07/28/jpmorgan-fintech-middlemen-plaid-data-requests-taxing-systems.html">answer</a> was that all of that activity begins with the permission a customer grants at signup, and that background calls are how people get "critical alerts for overdraft fees or suspicious activity."</p>
+
+      <p>Plaid is right that those alerts matter. That is the problem. The pull that catches an overdraft is the same kind of pull a bank now bills for, and the person who wanted the alert agreed to it with one tap that never mentioned it.</p>
+
+      <p>So far the meter has stayed out of sight. When Plaid and JPMorgan renewed their agreement, Plaid told clients that <a href="https://finovate.com/jpmorgans-data-access-agreement-from-plaids-perspective/">current contracts and customer fees remain unchanged</a>. The cost sits in a contract between two companies, and JPMorgan says the trimming has started there: once it announced fees, Prochaska said, "people are more judicious and thoughtful about it."</p>
+
+      <p>If a balance that used to refresh in the background starts refreshing only when the app opens, the overdraft warning arrives after the overdraft. Nobody chose that on a screen. It got chosen in a contract. That is the failure state worth worrying about, and it isn't a breach. It's a downgrade the person never agreed to and has no way to see.</p>
+
+      <h2>Identity already has a word for this</h2>
+
+      <p>OpenID Connect, the identity layer under most modern login flows, treats access while you're away as its own grant. The spec defines an <a href="https://openid.net/specs/openid-connect-core-1_0.html">offline_access scope</a> and says the provider "MUST always obtain consent" before issuing the token that allows it. It adds that "a previously saved user consent is not always sufficient," because access when the user is not present poses greater privacy risk.</p>
+
+      <p>At Auth0 I worked inside that model, where consent is granted scope by scope and each scope has a name. Open banking consent still bundles "while I'm using the app" and "while I'm asleep" into a single tap. Identity split those two apart years ago, and a price per pull is a good reason for open banking to do the same.</p>
+
+      <h2>What the screen should say</h2>
+
+      <p>The lazy version of this screen is a number. "This app may request your data up to 12 times a day" is accurate, and it is a mechanism dressed as a disclosure. Nobody can make a decision with it.</p>
+
+      <p>The version a person can decide on names what the looking buys them and what stops if they say no. Check my balance in the background so you can warn me before an overdraft. Or only update when I open the app. Two choices, each with its consequence, and the app lives with whichever one the person picks.</p>
+
+      <p>That forces the product team to do what the price is already forcing on the business side: say which pulls are the product and which are habit. A pull that can't be explained on that screen in one plain sentence is a pull the app should stop making.</p>
+
+      <p>The question I would put to any background access in a design review is simple. What does the person get from us looking while they're not here? If the team can't answer in a sentence the person would recognize, the access goes, not the sentence.</p>
+
+      <p>Whatever the bureau publishes, the meter is already running at the largest bank in the country. Where the decision about how often gets made is still open. It can be made on the consent screen, where the person sees it, or in a contract they will never read.</p>
+    </div>
+
+    <div class="sources" data-reveal>
+      <p class="eyebrow">Sources</p>
+      <ol>
+        <li><a href="https://www.paymentsdive.com/news/open-banking-fees-fintechs-fuel-debate-cfpb-apps/808114/">Open banking fees fuel debate</a>, Payments Dive, December 17, 2025. JPMorgan's Kate Prochaska on per-call fees, the FTA's Angelena Bradfield on volume as a function of the user's experience, and PNC's comment letter on cadence, scope and retention.</li>
+        <li><a href="https://www.consumerfinancemonitor.com/2026/08/06/cfpb-sends-new-section-1033-open-banking-proposal-to-oira-for-review/">CFPB sends new Section 1033 open banking proposal to OIRA for review</a>, Consumer Finance Monitor, August 6, 2026.</li>
+        <li><a href="https://www.americanbanker.com/news/what-we-know-about-the-cfpbs-forthcoming-open-banking-rule">What we know about the CFPB's forthcoming open-banking rule</a>, American Banker, August 5, 2026, on the proposal expected to allow fees.</li>
+        <li><a href="https://www.ftassociation.org/looking-ahead-to-the-open-banking-rule-protecting-americans-right-to-securely-access-and-share-their-financial-data-without-fees/">Looking ahead to the open banking rule</a>, Financial Technology Association, the case against data access fees.</li>
+        <li><a href="https://www.federalregister.gov/documents/2024/11/18/2024-25079/required-rulemaking-on-personal-financial-data-rights">Required Rulemaking on Personal Financial Data Rights</a>, the 2024 final rule, 89 FR 90838. Sections 1033.411 (authorization disclosure) and 1033.421 (collection limits, one-year maximum duration).</li>
+        <li><a href="https://www.federalregister.gov/documents/2025/08/22/2025-16139/personal-financial-data-rights-reconsideration">Personal Financial Data Rights Reconsideration</a>, the CFPB's advance notice of proposed rulemaking, 90 FR 40986, including its questions on fees.</li>
+        <li><a href="https://www.cozen.com/news-resources/publications/2026/section-1033-compliance-date-open-banking-rule-enjoined-and-under-reconsideration">Section 1033 compliance date: open banking rule enjoined and under reconsideration</a>, Cozen O'Connor, April 9, 2026.</li>
+        <li><a href="https://www.cnbc.com/2025/07/28/jpmorgan-fintech-middlemen-plaid-data-requests-taxing-systems.html">JPMorgan says fintech middlemen like Plaid are 'massively taxing' its systems</a>, CNBC, July 28, 2025, on the internal JPMorgan memo and Plaid's response.</li>
+        <li><a href="https://finovate.com/jpmorgans-data-access-agreement-from-plaids-perspective/">JPMorgan's data access agreement: Plaid's perspective</a>, Finovate, on Plaid telling clients current contracts and fees remain unchanged.</li>
+        <li><a href="https://openid.net/specs/openid-connect-core-1_0.html">OpenID Connect Core 1.0</a>, section 11 (offline access) and the privacy considerations on offline access.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="section tight">
+  <div class="wrap">
+    <div class="post-next" data-reveal>
+      <p class="eyebrow">Next</p>
+      <h2 class="t-title"><a href="/blog/your-team-stopped-taking-your-advice.html">Your team stopped taking your advice</a></h2>
+      <div class="actions">
+        <a class="btn btn-ghost" href="/blog.html">All posts<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="contact" data-reveal data-field="rings">
+      <canvas class="field" aria-hidden="true"></canvas>
+      <div>
+        <p class="eyebrow">Get in touch</p>
+        <h2 class="t-title">Disagree with any of this?</h2>
+        <p class="t-lede">I'd rather hear it than not. The arguments get better when somebody pushes back.</p>
+      </div>
+      <div class="contact-actions">
+        <a class="btn btn-primary" data-link="linkedin" href="#"><span class="icon-swap"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.125 2.062 2.062 0 0 1 0 4.125zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></span>Message me on LinkedIn</a>
+        <a class="btn btn-ghost" data-link="email" href="#"><span class="icon-swap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>Email me</a>
+        <a class="btn btn-ghost" data-link="resume" href="#"><span class="icon-swap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11"/><path d="m7 11 5 5 5-5"/><path d="M4 20h16"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="20 6 9 17 4 12"/></svg></span>Download resume</a>
+      </div>
+    </div>
+    <footer>
+      <span>© <span data-year></span> John DeSouza</span>
+      <span>Posts are my own views. Case studies reflect my role and my teams' work at each company.</span>
+    </footer>
+  </div>
+</section>
+
+</main>
+<script src="../main.js?v=b09d674b"></script>
+</body>
+</html>

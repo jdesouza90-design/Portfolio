@@ -6,7 +6,39 @@
     <atom:link href="https://john-desouza.com/feed.xml" rel="self" type="application/rss+xml"/>
     <description>Design leadership, where product design is heading, and trust in fintech and web3.</description>
     <language>en</language>
-    <lastBuildDate>Tue, 22 Sep 2026 09:00:00 -0400</lastBuildDate>
+    <lastBuildDate>Thu, 24 Sep 2026 10:00:00 -0400</lastBuildDate>
+    <item>
+      <title>Train juniors on what they reject</title>
+      <link>https://john-desouza.com/blog/train-juniors-on-what-they-reject.html</link>
+      <guid isPermaLink="true">https://john-desouza.com/blog/train-juniors-on-what-they-reject.html</guid>
+      <pubDate>Thu, 24 Sep 2026 10:00:00 -0400</pubDate>
+      <category>Design leadership</category>
+      <description>AI closed the output gap between junior and senior designers and hid the judgment gap. Review what juniors throw away, not just what they ship.</description>
+    </item>
+    <item>
+      <title>Your design system checks spelling, not judgment</title>
+      <link>https://john-desouza.com/blog/design-systems-check-spelling-not-judgment.html</link>
+      <guid isPermaLink="true">https://john-desouza.com/blog/design-systems-check-spelling-not-judgment.html</guid>
+      <pubDate>Thu, 24 Sep 2026 09:00:00 -0400</pubDate>
+      <category>Where product design is going</category>
+      <description>Eighteen of 21 major design systems now ship an MCP server for agents. What they enforce is the vocabulary. The usage guidance is the part getting cut.</description>
+    </item>
+    <item>
+      <title>Stablecoin trust is decided at redemption</title>
+      <link>https://john-desouza.com/blog/stablecoin-trust-is-decided-at-redemption.html</link>
+      <guid isPermaLink="true">https://john-desouza.com/blog/stablecoin-trust-is-decided-at-redemption.html</guid>
+      <pubDate>Thu, 24 Sep 2026 08:00:00 -0400</pubDate>
+      <category>Fintech, web3 and trust</category>
+      <description>Congress spent the year fighting over stablecoin rewards. The OCC&#x27;s proposed rule already defines the bad day: a 10% run turns two days into seven.</description>
+    </item>
+    <item>
+      <title>Metered pulls make frequency a consent question</title>
+      <link>https://john-desouza.com/blog/frequency-is-a-consent-question.html</link>
+      <guid isPermaLink="true">https://john-desouza.com/blog/frequency-is-a-consent-question.html</guid>
+      <pubDate>Thu, 24 Sep 2026 07:00:00 -0400</pubDate>
+      <category>Fintech, web3 and trust</category>
+      <description>Banks now charge aggregators for each data pull. How often an app checks your account is about to be decided somewhere. It belongs on the consent screen.</description>
+    </item>
     <item>
       <title>Your team stopped taking your advice</title>
       <link>https://john-desouza.com/blog/your-team-stopped-taking-your-advice.html</link>
