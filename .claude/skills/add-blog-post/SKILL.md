@@ -67,6 +67,18 @@ Write the whole post as copy in one message before touching a file: title, descr
 lede, claim, every heading, the body, and the sources with their links. John replies with
 changes; you do not build until he approves.
 
+**Unattended runs** (the scheduled daily draft, or any run where John is not in the
+conversation): do not stop and wait for approval. Nobody will answer. Draft the copy,
+run the voice pass below, then build, verify and open the pull request. The pull request
+is the approval gate.
+
+**Voice pass, every time.** After the draft and before building, read
+`.claude/skills/human-writing/SKILL.md` and apply it to every line of copy: title,
+description, lede, headings and body. Strip the AI tell-signs it lists, vary the rhythm,
+and run its five naturalness checks. Where it and `VOICE.md` disagree, `VOICE.md` wins
+for this site: fragments may not open with a verb, and there are no dashes, semicolons
+or exclamation marks in prose. The pass changes wording, never facts, numbers or sources.
+
 Hold it to `VOICE.md` and to POSITION.md's seven rules. The ones most often missed:
 
 - **The title carries the claim** and runs under eight words.
@@ -129,6 +141,8 @@ renamed or deleted and the old page is still there; delete it yourself.
   other page on the site meets.
 - Check it at 375 and 320 wide for anything that scrolls sideways.
 - Read the post out loud. This catches the voice slips that no script will.
+- Re-run the human-writing naturalness checks on the built page's text. Name the most
+  AI-sounding sentence left and rewrite it.
 
 ## Hand off
 
