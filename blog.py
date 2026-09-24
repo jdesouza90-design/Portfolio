@@ -277,7 +277,7 @@ def nav(current):
 """
 
 
-def contact_band(heading, lede, note):
+def contact_band(heading, lede, note, css=""):
     return f"""
 <section class="section">
   <div class="wrap">
@@ -435,7 +435,8 @@ def render_post(p, nxt):
     out += contact_band(
         "Disagree with any of this?",
         "I'd rather hear it than not. The arguments get better when somebody pushes back.",
-        "Posts are my own views. Case studies reflect my role and my teams' work at each company.")
+        "Posts are my own views. Case studies reflect my role and my teams' work at each company.",
+        css="../")
     return out
 
 
