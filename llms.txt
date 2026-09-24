@@ -24,7 +24,7 @@ Posts are John's own views. Every number in a post links to the primary source t
 
 - [Stablecoin trust is decided at redemption](https://john-desouza.com/blog/stablecoin-trust-is-decided-at-redemption.html): Rewards decide whether people move money into a stablecoin. Redemption decides whether they trust it, and the draft rules have already written a bad day that the rewards fight ignores.
 - [Metered pulls make frequency a consent question](https://john-desouza.com/blog/frequency-is-a-consent-question.html): Once every data pull has a price, how often an app checks a bank account stops being a back-end setting. It is a consent decision, and it belongs on the consent screen instead of an invoice.
-- [An agent with a wallet is a consent problem](https://john-desouza.com/blog/an-agent-with-a-wallet.html): Liability follows authorization. That makes the consent screen the most consequential surface in agentic commerce, and it is currently the least designed.
+- [Agent payments are a consent problem](https://john-desouza.com/blog/an-agent-with-a-wallet.html): Liability follows authorization. That makes the consent screen the most consequential surface in agentic commerce, and it is currently the least designed.
 
 ## Optional
 

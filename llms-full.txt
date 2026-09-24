@@ -311,9 +311,9 @@ Sources:
 - Topic: Design leadership
 - Claim: You are no longer the fastest source of useful knowledge on your team, and trying to win that back is the most expensive mistake available to you right now.
 
-In one year, the number of designers learning from each other went from a quarter to four fifths. Over the same year, the number taking recommendations from their leadership fell by half. Both of those are the same event.
+In one year, the number of designers learning from each other went from a quarter to more than two thirds. Over the same year, the number taking recommendations from their leadership fell by half. Both of those are the same event.
 
-Here are two numbers from [the same survey](https://stateofaidesign.com/chapters/teams) of 900 designers. Peer learning went from 24% to 70% in a year. The share of designers taking recommendations from their leadership went from 32% to 16%.
+Here are two numbers from [a survey](https://stateofaidesign.com/chapters/teams) of more than 900 designers. Peer learning went from 24% to 70% in a year. The share of designers taking recommendations from their leadership went from 32% to 16%.
 
 The first number gets quoted constantly, usually as a feel-good line about community. The second one barely gets quoted at all, and it is the one that should be keeping design leaders up.
 
@@ -323,7 +323,7 @@ The comfortable reading is that this is a culture problem. Teams got scattered, 
 
 I do not think that is what happened. I think the method started turning over faster than any management chain can carry it.
 
-The average designer's toolstack went from three tools to seven in twelve months. When the useful knowledge has a shelf life measured in weeks, the person three levels up is structurally the last to hear it. Not because they are disengaged. Because that is what a hierarchy does to information that expires: it delays it.
+The average designer's toolstack went from three tools to seven in 12 months. When the useful knowledge has a shelf life measured in weeks, the person three levels up is structurally the last to hear it. Not because they are disengaged. Because that is what a hierarchy does to information that expires: it delays it.
 
 Your team did not lose respect for you. They found a faster path, and they were right to take it.
 
@@ -345,7 +345,7 @@ Owning the standard means I am accountable for writing down what good means here
 
 Owning the decision means the calls that need a name on them stay with me. Which of two entrenched options we standardize on. What we deprecate when the data is genuinely tied. Anything where somebody's work is on the other end of the answer.
 
-When I audited a design library last quarter, the analysis came back saying one spacing value appeared 1,834 times and the competing one 1,796. Nothing in the data was ever going to break that tie. Somebody had to pick, say so out loud, and then go make the other one wrong. That is not a job you can delegate downward or automate, and it is the job.
+When I audited our design library this year, the analysis came back saying one spacing value appeared 1,834 times and the competing one 1,796. Nothing in the data was ever going to break that tie. Somebody had to pick, say so out loud, and then go make the other one wrong. That is not a job you can delegate downward or automate, and it is the job.
 
 What I do not do any more is pretend I know the best way to get from a brief to a prototype this month. They know. I ask.
 
@@ -353,13 +353,13 @@ What I do not do any more is pretend I know the best way to get from a brief to 
 
 Three things I actually changed, in case the principle is too tidy to be useful.
 
-- **I ask what changed in your method, every one-to-one.** Not as a check-in, as intake. It is how I find out what the team knows before the quarter is over. Half of what I now believe about working with agents came off that question.
+- **I ask what changed in your method, every one-on-one.** Not as a check-in, as intake. It is how I find out what the team knows before the quarter is over. Half of what I now believe about working with agents came off that question.
 - **Whoever found the better way presents it, not me.** The moment a leader relays somebody else's discovery, two things break: the credit and the accuracy.
 - **I write the standard down before anyone touches a tool.** If the team cannot say in a paragraph what a correct component looks like, no amount of tooling discovers it. It averages whatever is already there and hands it back with confidence.
 
 ## The part almost nobody has done
 
-The same survey found that 28% of leaders made any formal change to how the work is evaluated. 8% changed performance metrics. 4% touched compensation.
+The [same survey](https://designerfund.com/blog/ai-in-design-2026) found that only 28% of leaders made any formal change to evaluation, pay or hiring. Just 8% changed performance metrics and 4% touched compensation.
 
 So the work changed, who people learn from changed, and what we reward stayed exactly where it was. That gap is where good designers quietly decide their leadership is not paying attention, and it is a gap leaders can close without permission from anyone.
 
@@ -383,11 +383,11 @@ Sources:
 - Topic: Where product design is going
 - Claim: AI fluency is a proxy with a shelf life. The durable skill is the ability to specify what good means and then say why the model's answer missed it.
 
-Half of design leaders now screen candidates for AI fluency. The tools those candidates are fluent in turned over twice while the role was open. We are testing for the most perishable thing in the room.
+Half of design leaders now put more weight on AI fluency when they hire. The tools those candidates are fluent in more than doubled in number in a single year. We are testing for the most perishable thing in the room.
 
-Fifty percent of design leaders now emphasize AI fluency when they hire. I understand the instinct completely and I think the practice is close to useless.
+Fifty percent of design leaders now emphasize AI fluency when they hire, according to [AI in Design 2026](https://stateofaidesign.com/chapters/teams), a survey of more than 900 designers. Systems thinking and strategic skills come right behind it. I understand the instinct completely and I think the practice is close to useless.
 
-In the same twelve months that fluency became a hiring criterion, the average designer's toolstack went from three tools to seven. Ninety-one percent of designers now use AI weekly. A skill that 91% of the field has, in tools that churn twice a year, is not a filter. It is a coin flip wearing a rubric.
+Over the same year, the average designer's toolstack [went from three tools to seven](https://stateofaidesign.com/chapters/tools). Ninety-one percent of designers now use AI weekly. A habit that 91% of the field already has, in tools that keep turning over, is not a filter. It is a coin flip wearing a rubric.
 
 ## What the screen actually selects for
 
@@ -407,7 +407,7 @@ Read those together and the shape is clear. The boundaries around the discipline
 
 The common read is that this is design losing ground. I think that is exactly backwards, and it misses what actually got scarce.
 
-When anyone can generate a competent screen, the constraint moves from production to specification. Somebody has to say which of the forty plausible things is the right one, and say it precisely enough that it holds when they leave the room. That job did not exist as a distinct skill when producing the option was itself the hard part. It was bundled inside the craft, invisible, and a lot of people were doing it without a name for it.
+When anyone can generate a competent screen, the constraint moves from production to specification. Somebody has to say which of the 40 plausible things is the right one, and say it precisely enough that it holds when they leave the room. That job did not exist as a distinct skill when producing the option was itself the hard part. It was bundled inside the craft, invisible, and a lot of people were doing it without a name for it.
 
 It has a name now, because the bundle came apart.
 
@@ -419,15 +419,15 @@ Three things, in this order.
 
 **Can they say why they rejected something.** Not what they chose. What they killed, and on what grounds. Katie Dill at Stripe frames the check as asking whether you would be happy with this if it had taken you a week to make. A designer who cannot articulate the rejection is a designer who will approve the model's first answer.
 
-**Can they be specific about what was theirs.** Forty percent of designers say they feel full ownership of AI-assisted work and 9% say they genuinely cannot separate their contribution from the model's. That is not a moral failing, it is a new and confusing condition. But a candidate who can walk me through which decisions were theirs is telling me they were paying attention to their own judgment while they worked. That is the whole signal.
+**Can they be specific about what was theirs.** Forty percent of designers say they feel full ownership of AI-assisted work and 9% say it is genuinely difficult to separate their contribution from the model's. That is not a moral failing, it is a new and confusing condition. But a candidate who can walk me through which decisions were theirs is telling me they were paying attention to their own judgment while they worked. That is the whole signal.
 
 ## The thing I would not do
 
 I would not test tool proficiency in an interview loop. Not because it is unmeasurable, but because it is the cheapest thing on the list to teach after someone starts.
 
-Hire someone with judgment and no Cursor experience and they are productive in a fortnight. Hire someone fluent in every tool on the market who cannot tell you why one option is better than another, and you have bought a very fast way to produce work nobody can defend in a review.
+Hire someone with judgment and no Cursor experience and they are productive in two weeks. Hire someone fluent in every tool on the market who cannot tell you why one option is better than another, and you have bought a very fast way to produce work nobody can defend in a review.
 
-Eighty percent of designers still trust their own quality judgment over the model's. That number is the profession telling you where its value sits. The hiring process should probably catch up to it.
+Eighty percent of designers still trust their own quality judgment over the model's, and [their most common complaint](https://designerfund.com/blog/ai-in-design-2026) about AI is unreliable output quality. Only 5% of leaders say they are placing less emphasis on execution craft. Those numbers are the profession telling you where its value sits. The hiring process should probably catch up to it.
 
 Sources:
 
@@ -436,7 +436,7 @@ Sources:
 
 ---
 
-## An agent with a wallet is a consent problem
+## Agent payments are a consent problem
 
 - URL: https://john-desouza.com/blog/an-agent-with-a-wallet.html
 - Author: John DeSouza
@@ -446,15 +446,15 @@ Sources:
 
 The rails for agents that spend money got built this year. The screen where a person decides what their agent is allowed to do, and finds out when it got that wrong, mostly did not.
 
-In June, Mastercard launched Agent Pay for Machines with more than 30 partners, credentialing agents through what it calls Verifiable Intent, across both cards and stablecoins. Visa's Trusted Agent Protocol lets a person delegate Visa credentials to vetted shopping agents. The IMF published a note on how this reshapes payments.
+In June, Mastercard [launched Agent Pay for Machines](https://www.biia.com/mastercard-launches-agent-pay-for-machines-to-unlock-super-fast-always-on-payments/) with more than 30 partners, credentialing agents through what it calls Verifiable Intent, across both cards and stablecoins. Visa's [Trusted Agent Protocol](https://usa.visa.com/about-visa/newsroom/press-releases.releaseId.21716.html) lets merchants recognize the AI agents shopping on a person's behalf. The IMF published [a note](https://www.elibrary.imf.org/view/journals/068/2026/004/article-A001-en.xml) on how this reshapes payments.
 
 The infrastructure question is being answered quickly and competently. The design question has barely been asked.
 
 ## Liability follows authorization
 
-That phrase is doing enormous work in every legal analysis of agentic payments I have read. If the agent stayed inside the scope its principal authorized, the loss flows one way. If it went outside, it flows the other.
+The [IMF note](https://www.elibrary.imf.org/view/journals/068/2026/004/article-A001-en.xml) says liability in a dispute depends on whether the agent acted within its authority, and admits the legal lines are still unclear. If the agent stayed inside the scope its principal authorized, the loss flows one way. If it went outside, it flows the other.
 
-Which means the moment a person grants that scope is the moment that decides who eats a bad outcome months later. In a card dispute, the question will not be whether the agent behaved reasonably. It will be what the person agreed to, and whether they can be said to have understood it.
+Which means the moment a person grants that scope is the moment that decides who eats a bad outcome months later. In a card dispute, the question will not be whether the agent behaved reasonably. It will be what the person agreed to, and whether they can be said to have understood it. [Fenwick](https://www.fenwick.com/insights/publications/is-2026-the-year-of-agentic-payments) notes it is still unresolved whether giving an agent your payment credentials even counts as authorization under Regulation E.
 
 That is a screen. Somebody is designing it right now, probably in a sprint, probably under an engineer's ticket, and it will determine the financial exposure of everyone who uses the product.
 
@@ -475,14 +475,14 @@ The honest version of that screen is closer to what it would say out loud: what 
 Delegation is not one moment, it is three, and the industry is building the first and ignoring the rest.
 
 - **The grant.** Where scope is set. Currently drifting toward a permissions matrix, which is how you get consent that is legally valid and practically uninformed.
-- **The notice.** What reaches a person while the agent is acting. If every action pings them, they turn notifications off and the audit trail is theatre. If nothing does, the first they hear of it is the statement.
-- **The dispute.** The one that matters. Something went wrong, and the person has to reconstruct what their agent did and on whose authority. Almost nothing I have seen treats this as a product surface at all.
+- **The notice.** What reaches a person while the agent is acting. If every action pings them, they turn notifications off and the audit trail is theater. If nothing does, the first they hear of it is the statement.
+- **The dispute.** The one that matters. Something went wrong, and the person has to reconstruct what their agent did and on whose authority. Almost nothing I have seen treats this as a product surface at all. [Fenwick](https://www.fenwick.com/insights/publications/is-2026-the-year-of-agentic-payments) warns that consumers could be left without standard dispute rights when contesting agentic purchases.
 
 That last one is where trust actually gets decided, and it is always designed last, by whoever has time, after the demo has already been approved.
 
 ## Why I keep coming back to this
 
-I have spent thirteen years in three fields that are now converging on exactly this problem. In consumer lending the lesson was paid for expensively: when a screen goes quiet after somebody has money on the line, they do not wait patiently, they call. At Chainlink Labs and Auth0 the lesson was that a credential is not a special category of thing that deserves its own frightening vocabulary. It is a credential, and it should behave like every other one.
+I have spent 13 years in three fields that are now converging on exactly this problem. In consumer lending the lesson was paid for expensively: when a screen goes quiet after somebody has money on the line, they do not wait patiently, they call. At Chainlink Labs and Auth0 the lesson was that a credential is not a special category of thing that deserves its own frightening vocabulary. It is a credential, and it should behave like every other one.
 
 Agentic payments need both lessons at once, and the people building the rails are mostly coming from neither tradition.
 
@@ -496,6 +496,8 @@ The rails are getting built either way. Whether the consent is real is still ope
 
 Sources:
 
+- [Mastercard launches Agent Pay for Machines](https://www.biia.com/mastercard-launches-agent-pay-for-machines-to-unlock-super-fast-always-on-payments/)
+- [Visa Introduces Trusted Agent Protocol](https://usa.visa.com/about-visa/newsroom/press-releases.releaseId.21716.html)
 - [Is 2026 the Year of Agentic Payments?](https://www.fenwick.com/insights/publications/is-2026-the-year-of-agentic-payments)
 - [How Agentic AI Will Reshape Payments](https://www.elibrary.imf.org/view/journals/068/2026/004/article-A001-en.xml)
 - [AI Agent Payments: US Regulation and Treasury Guide](https://www.airwallex.com/en-us/blog/ai-agent-payments)
