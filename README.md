@@ -379,8 +379,10 @@ the featured band's heading. No other page pays for it.
 
 The `add-blog-post` skill in `.claude/skills/` runs the whole thing: picks the
 pillar by rotation, researches the argument against primary sources, drafts the
-copy for approval, builds, validates and opens a pull request. It never merges.
-Nothing goes up in John's name that he has not read.
+copy, runs the voice pass, builds, validates and pushes to `main`, which deploys.
+There is no approval step: the checks are the gate, and a post that fails one does
+not go up. A cloud routine runs it daily at 10am ET (see claude.ai/code/routines).
+`blog.py` also writes `llms.txt` and `llms-full.txt` for language models.
 
 ### SEO
 
