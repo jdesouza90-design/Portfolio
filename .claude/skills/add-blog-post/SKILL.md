@@ -47,9 +47,28 @@ The claim comes first and the sources confirm or kill it. Do not start from a he
 work backwards into an opinion.
 
 - **Find the conversation first.** What are design leaders, product people and the trade
-  press actually arguing about this week? Substack, LinkedIn and X are where you find the
-  argument; they are not evidence for it. A post needs a position somebody could disagree
+  press actually arguing about this week? A post needs a position somebody could disagree
   with, and the position has to be about the industry, not about John.
+- **Sweep the platforms, every run.** Search each of these for the pillar's topic,
+  limited to the last 14 days, before choosing a claim:
+  - Medium (`site:medium.com`, plus `uxdesign.cc` and `uxplanet.org`)
+  - Substack (`site:substack.com`)
+  - LinkedIn posts and articles (`site:linkedin.com/posts`, `site:linkedin.com/pulse`)
+  - X (`site:x.com`)
+  - Trade press and newsletters: Figma, Nielsen Norman Group, Smashing Magazine, Lenny's
+    Newsletter, The Verge, and the pillar's own outlets (fintech: American Banker,
+    Finextra, the CFPB; web3: The Block, CoinDesk)
+
+  Use `WebSearch` with those filters, then `WebFetch` the posts that look like a live
+  argument. LinkedIn and X often refuse fetches without a login. When a fetch fails, you
+  may use the search snippet to know the argument exists, but never quote or paraphrase
+  text you did not read. Find the same argument somewhere you can open, or leave it out.
+- **Platform posts are the conversation, not the evidence.** Link the post that states
+  the position you are arguing with, and name its author. A number never comes from a
+  post. Follow it to the source that produced the number.
+- **Keep a sweep log** for the pull request: each platform, what you searched, the two
+  or three posts that mattered with links, and any platform that returned nothing or
+  refused the fetch.
 - **Then find the primary source.** The report itself, the specification, the filing, the
   company's own announcement. "AI in design 2026 survey findings" beats "AI design".
 - **Get the number from the source that produced it.** If a blog cites a survey, open the
@@ -161,6 +180,8 @@ not fall back to pushing anywhere else.
 The pull request body is for John reading on a phone between meetings. Give him: the claim
 in one line, the pillar, the sources with links, what you left out and why, and anything
 you are unsure of. If the research contradicted the claim and you changed it, say so.
+End with the sweep log: Medium, Substack, LinkedIn, X and the trade press, each with what
+it turned up or why it turned up nothing.
 
 **Never merge and never push to main.** John approves every post before it goes up. That
 gate is the point: the site's credibility rests on nothing appearing in his name that he
