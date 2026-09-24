@@ -4,7 +4,7 @@ description: >
   Write and publish one post to the blog on john-desouza.com, the static portfolio in
   this repo. Researches the day's argument against current sources, drafts it in John's
   voice against POSITION.md, writes blog/posts/<slug>.html, runs the generator, validates,
-  and opens a pull request for John to approve. Use this whenever John wants a new blog
+  and publishes it straight to the live site. Use this whenever John wants a new blog
   post, a piece on AI and design, web3 and design or fintech and trust, or when the daily
   draft job runs. Also use it to rewrite an existing post. Not for case studies (that is
   add-case-study) and not for editing copy on a post that is already up.
@@ -29,7 +29,7 @@ thinks and how he operates. If a draft starts narrating a project, it has failed
 
 ## Before you write
 
-1. **Git.** Never work on `main`, which deploys on push. Check for another session first
+1. **Git.** Never edit on `main` directly, which deploys on push; build on a branch and publish at the end. Check for another session first
    (`git status` for edits you didn't make, `lsof -nP -iTCP:4173,4176 -sTCP:LISTEN` for a
    dev server that isn't yours). If anything shows, work in a worktree; otherwise
    `git switch -c claude/blog-<slug> main`. Commit on the branch only.
@@ -66,7 +66,7 @@ work backwards into an opinion.
 - **Platform posts are the conversation, not the evidence.** Link the post that states
   the position you are arguing with, and name its author. A number never comes from a
   post. Follow it to the source that produced the number.
-- **Keep a sweep log** for the pull request: each platform, what you searched, the two
+- **Keep a sweep log** for the report: each platform, what you searched, the two
   or three posts that mattered with links, and any platform that returned nothing or
   refused the fetch.
 - **Then find the primary source.** The report itself, the specification, the filing, the
@@ -80,16 +80,14 @@ work backwards into an opinion.
 - **Check it is still live.** An argument the industry settled two years ago reads as a
   man shouting at a closed door. Account abstraction is done; agentic payments are open.
 
-## Draft the copy, then stop
+## Draft the copy, then keep going
 
-Write the whole post as copy in one message before touching a file: title, description,
-lede, claim, every heading, the body, and the sources with their links. John replies with
-changes; you do not build until he approves.
-
-**Unattended runs** (the scheduled daily draft, or any run where John is not in the
-conversation): do not stop and wait for approval. Nobody will answer. Draft the copy,
-run the voice pass below, then build, verify and open the pull request. The pull request
-is the approval gate.
+Write the whole post as copy before touching a file: title, description, lede, claim,
+every heading, the body, and the sources with their links. Do not stop for approval.
+John decided on Sep 24 2026 that posts publish automatically: draft, run the voice pass
+below, build, verify and publish. The checks in this skill are the gate, so none of them
+is optional. If John is in the conversation and asks to see the draft first, show it and
+wait; otherwise keep going.
 
 **Voice pass, every time.** After the draft and before building, read
 `.claude/skills/human-writing/SKILL.md` and apply it to every line of copy: title,
@@ -163,26 +161,36 @@ renamed or deleted and the old page is still there; delete it yourself.
 - Re-run the human-writing naturalness checks on the built page's text. Name the most
   AI-sounding sentence left and rewrite it.
 
-## Hand off
+## Publish
 
-Commit on the branch with a message naming the post. Then push it and open a pull request:
+Commit on the branch with a message naming the post. Then put it on `main`, which
+deploys to the live site on push:
 
 ```
-git push -u origin claude/blog-<slug>
+git fetch origin main && git rebase origin/main
+python3 blog.py && python3 stamp.py && python3 blog.py --check   # amend if anything changed
+git push origin HEAD:main
+git push -u origin claude/blog-<slug>                             # the branch, as a record
 ```
 
-The `gh` CLI is not installed in cloud sessions, so open the pull request with the GitHub
-MCP tool `mcp__github__create_pull_request` (owner `jdesouza90-design`, repo `Portfolio`,
-head `claude/blog-<slug>`, base `main`). If the `mcp__github__*` tools are not listed, load
-them with ToolSearch. If GitHub access is refused, stop and report which step failed; do
-not fall back to pushing anywhere else.
+Never force-push. If the push to `main` is refused, push the branch, then open and merge
+a pull request (head `claude/blog-<slug>`, base `main`) with whatever GitHub access the
+session has: the `mcp__github__*` tools (load them with ToolSearch), `gh`, or the REST API
+with curl (`POST /repos/jdesouza90-design/Portfolio/pulls`, then `PUT .../pulls/<n>/merge`).
+If all of those are refused, stop and report which step failed and the error text.
 
-The pull request body is for John reading on a phone between meetings. Give him: the claim
-in one line, the pillar, the sources with links, what you left out and why, and anything
-you are unsure of. If the research contradicted the claim and you changed it, say so.
-End with the sweep log: Medium, Substack, LinkedIn, X and the trade press, each with what
-it turned up or why it turned up nothing.
+Then confirm it is live: poll `https://john-desouza.com/blog/<slug>.html` with curl until
+it returns 200 (Vercel takes a minute or two).
 
-**Never merge and never push to main.** John approves every post before it goes up. That
-gate is the point: the site's credibility rests on nothing appearing in his name that he
-has not read.
+## Report
+
+Finish with a short report for John reading on a phone: the live URL, the claim in one
+line, the pillar, the sources with links, what you left out and why, and anything you are
+unsure of. If the research contradicted the claim and you changed it, say so. End with
+the sweep log: Medium, Substack, LinkedIn, X and the trade press, each with what it turned
+up or why it turned up nothing.
+
+**Nothing goes live that fails a check.** The site's credibility rests on every post in
+John's name being defensible: every number opened at its source, the voice pass done,
+`blog.py --check`, `html-validate` and axe clean. If any of that fails and you cannot fix
+it, publish nothing and say why. A day with no post costs far less than a bad one.
