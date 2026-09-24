@@ -27,8 +27,22 @@ PILLARS = {
     "fintech":    ("Fintech, web3 and trust",       "pillar pillar-fintech", "Fintech"),
 }
 
+# Who the author is, for search engines and language models. Kept in step with
+# the Person node in index.html, which shares the @id.
+PERSON_DESC = ("Director of Product Design with 13 years across consumer lending (Best Egg), "
+               "blockchain infrastructure (Chainlink Labs) and enterprise identity (Auth0).")
+KNOWS_ABOUT = ["Product design", "Design leadership", "Design systems", "Fintech",
+               "Consumer lending", "Web3", "Stablecoins", "Open banking",
+               "Digital identity", "AI in product design"]
+
 # Pages outside the blog that belong in the sitemap, with their change weight.
 STATIC_PAGES = [("/", "1.0"), ("/work.html", "0.9"), ("/blog.html", "0.9")]
+# The same pages described for llms.txt. /work/ stays out: it is gated.
+LLM_PAGES = [
+    ("/", "Home", "Who John is, the case studies at a glance, how he leads and how to reach him."),
+    ("/work.html", "Work", "The case studies from Best Egg, Chainlink Labs and Auth0, each with the business result. The pages themselves are password gated."),
+    ("/blog.html", "Blog", "Positions on design leadership, where product design is heading, and trust in fintech and web3."),
+]
 
 
 def stamp(path):
@@ -214,7 +228,14 @@ def head(*, title, desc, url, css, extra="", og_type="website", ld="", italic=Fa
 <meta property="og:type" content="{og_type}">
 <meta property="og:image" content="{SITE}/og-image.png?v={stamp('og-image.png')}">
 <meta property="og:url" content="{url}">
-<meta name="twitter:card" content="summary_large_image">{extra}
+<meta property="og:site_name" content="{AUTHOR}">
+<meta property="og:locale" content="en_US">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{html.escape(title)}">
+<meta name="twitter:description" content="{html.escape(desc)}">
+<link rel="alternate" type="text/plain" title="{AUTHOR} for language models" href="{SITE}/llms.txt">{extra}
 <link rel="icon" href="/favicon.ico?v={stamp('favicon.ico')}" sizes="32x32">
 <link rel="icon" href="/favicon.svg?v={stamp('favicon.svg')}" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png?v={stamp('apple-touch-icon.png')}">
@@ -317,6 +338,8 @@ def person_ld():
         "name": AUTHOR,
         "url": SITE + "/",
         "jobTitle": "Director of Product Design",
+        "description": PERSON_DESC,
+        "knowsAbout": KNOWS_ABOUT,
         "sameAs": ["https://www.linkedin.com/in/johndesouza-/"],
     }
 
@@ -341,8 +364,14 @@ def render_post(p, nxt):
         "isPartOf": {"@type": "Blog", "@id": SITE + "/blog.html", "name": "Blog"},
         "articleSection": pillar_label,
         "wordCount": p["words"],
-        "image": SITE + "/og-image.png",
+        "abstract": strip_tags(p["claim"]),
+        "about": {"@type": "Thing", "name": pillar_label},
+        "image": {"@type": "ImageObject", "url": SITE + "/og-image.png",
+                  "width": 1200, "height": 630},
     }
+    cites = source_links(p)
+    if cites:
+        ld["citation"] = [{"@type": "CreativeWork", "name": n, "url": u} for u, n in cites]
     if p.get("keywords"):
         ld["keywords"] = ", ".join(p["keywords"])
     crumbs_ld = {
@@ -592,8 +621,6 @@ def render_sitemap(posts):
     for loc, pri in STATIC_PAGES:
         lastmod = newest[:10] if loc == "/blog.html" else datetime.date.today().isoformat()
         rows.append((SITE + loc, lastmod, pri))
-    for path in sorted(glob.glob("work/*.html")):
-        rows.append((SITE + "/" + path, datetime.date.today().isoformat(), "0.8"))
     for p in posts:
         rows.append(("%s/blog/%s.html" % (SITE, p["slug"]),
                      p.get("updated", p["date"])[:10], "0.7"))
@@ -620,11 +647,14 @@ def render_feed(posts):
       <guid isPermaLink="true">{url}</guid>
       <pubDate>{rfc822(p["date"])}</pubDate>
       <category>{html.escape(PILLARS[p["pillar"]][0])}</category>
+      <dc:creator>{AUTHOR}</dc:creator>
       <description>{html.escape(p["description"])}</description>
+      <content:encoded><![CDATA[<p><strong>{p["claim"]}</strong></p>
+{p["body"]}]]></content:encoded>
     </item>""")
     built = rfc822(posts[0]["date"]) if posts else ""
     return f"""<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
     <title>{AUTHOR} — Blog</title>
     <link>{SITE}/blog.html</link>
@@ -636,6 +666,80 @@ def render_feed(posts):
   </channel>
 </rss>
 """
+
+
+def strip_tags(s):
+    return html.unescape(re.sub(r"<[^>]+>", "", s)).strip()
+
+
+def source_links(p):
+    """(url, name) for each front-matter source, first link in each."""
+    out = []
+    for s in p.get("sources", []):
+        m = re.search(r'<a href="([^"]+)">(.*?)</a>', s)
+        if m:
+            out.append((html.unescape(m.group(1)), strip_tags(m.group(2))))
+    return out
+
+
+def to_markdown(fragment):
+    """The post body as plain Markdown: enough structure for a model to read."""
+    t = fragment
+    t = re.sub(r'<a href="([^"]+)">(.*?)</a>',
+               lambda m: "[%s](%s)" % (m.group(2), m.group(1) if m.group(1).startswith("http") else SITE + m.group(1)), t, flags=re.S)
+    t = re.sub(r"<h2>(.*?)</h2>", r"\n## \1\n", t, flags=re.S)
+    t = re.sub(r"<h3>(.*?)</h3>", r"\n### \1\n", t, flags=re.S)
+    t = re.sub(r"<li>(.*?)</li>", r"- \1", t, flags=re.S)
+    t = re.sub(r"</?(strong|b)>", "**", t)
+    t = re.sub(r"</?(em|i)>", "*", t)
+    t = re.sub(r"</p>", "\n", t)
+    t = strip_tags(t)
+    t = "\n".join(line.strip() for line in t.splitlines())
+    return re.sub(r"\n{3,}", "\n\n", t).strip()
+
+
+def render_llms(posts):
+    lines = ["# %s" % AUTHOR, "",
+             "> %s This site holds his case "
+             "studies and a blog where each post defends one position with sourced numbers." % PERSON_DESC,
+             "",
+             "Posts are John's own views. Every number in a post links to the primary source "
+             "that produced it. Quote the claim, not the lede, when summarizing a post.",
+             "", "## Site", ""]
+    for loc, name, note in LLM_PAGES:
+        lines.append("- [%s](%s%s): %s" % (name, SITE, loc, note))
+    for key, (label, _c, _s) in PILLARS.items():
+        group = [p for p in posts if p["pillar"] == key]
+        if not group:
+            continue
+        lines += ["", "## Blog: %s" % label, ""]
+        for p in group:
+            lines.append("- [%s](%s/blog/%s.html): %s" % (
+                p["title"], SITE, p["slug"], strip_tags(p["claim"])))
+    lines += ["", "## Optional", "",
+              "- [Full text of every post](%s/llms-full.txt): each post as Markdown with its claim and sources." % SITE,
+              "- [RSS feed](%s/feed.xml): the same posts with full text." % SITE,
+              "- [LinkedIn](https://www.linkedin.com/in/johndesouza-/)", ""]
+    return "\n".join(lines)
+
+
+def render_llms_full(posts):
+    parts = ["# %s: blog, full text" % AUTHOR, "",
+             "> %s Every post below is one position, with the sources it rests on." % PERSON_DESC, ""]
+    for p in posts:
+        url = "%s/blog/%s.html" % (SITE, p["slug"])
+        parts += ["---", "", "## %s" % p["title"], "",
+                  "- URL: %s" % url,
+                  "- Author: %s" % AUTHOR,
+                  "- Published: %s" % p["date"][:10],
+                  "- Topic: %s" % PILLARS[p["pillar"]][0],
+                  "- Claim: %s" % strip_tags(p["claim"]), "",
+                  strip_tags(p["lede"]), "",
+                  to_markdown(p["body"]), ""]
+        cites = source_links(p)
+        if cites:
+            parts += ["Sources:", ""] + ["- [%s](%s)" % (n, u) for u, n in cites] + [""]
+    return "\n".join(parts)
 
 
 def main():
@@ -665,6 +769,8 @@ def main():
     wanted["blog.html"] = render_index(posts)
     wanted["sitemap.xml"] = render_sitemap(posts)
     wanted["feed.xml"] = render_feed(posts)
+    wanted["llms.txt"] = render_llms(posts)
+    wanted["llms-full.txt"] = render_llms_full(posts)
 
     stale = []
     for path, text in wanted.items():

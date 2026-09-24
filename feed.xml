@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
     <title>John DeSouza — Blog</title>
     <link>https://john-desouza.com/blog.html</link>
@@ -13,7 +13,63 @@
       <guid isPermaLink="true">https://john-desouza.com/blog/train-juniors-on-what-they-reject.html</guid>
       <pubDate>Thu, 24 Sep 2026 10:00:00 -0400</pubDate>
       <category>Design leadership</category>
+      <dc:creator>John DeSouza</dc:creator>
       <description>AI closed the output gap between junior and senior designers and hid the judgment gap. Review what juniors throw away, not just what they ship.</description>
+      <content:encoded><![CDATA[<p><strong>AI makes a junior's output look senior long before their judgment is, so the unit of training has to move from what they produce to what they reject and why.</strong></p>
+<p>The junior designer argument came around again this week, from both sides. On Tuesday <a href="https://aiforux.substack.com/p/the-ux-field-survives-on-leaders">Patrick Neeman made the case</a> that the field survives on leaders who keep hiring juniors, because every senior designer was once a bet somebody made. On Wednesday <a href="https://www.cnbc.com/2026/09/23/ai-workplace-graduate-entry-level-junior-hiring.html">CNBC quoted</a> Tobias Green, founder of the London ad agency Catalyst, making the opposite case: "If AI removes the grunt work, then the grunt work is no longer relevant."</p>
+
+      <p>I'm with Neeman on the hire. I think both of them have the training wrong.</p>
+
+      <h2>Hiring them is the easy half</h2>
+
+      <p>The hiring numbers are not subtle. In <a href="https://www.figma.com/blog/why-demand-for-designers-is-on-the-rise/">Figma's 2026 hiring study</a>, 56% of hiring managers reported rising demand for senior designers. Only 25% were hiring for junior roles. A <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5425555">working paper from two Harvard researchers</a> tracked 62 million workers at 285,000 American firms through their résumés. Junior employment fell sharply at companies that adopted generative AI, while senior employment barely moved. The drop came from slower hiring, not from people being let go.</p>
+
+      <p>Nobody announced the end of junior hiring. The requisitions just stopped getting opened. Neeman's answer is to open the requisition anyway, and he is right. Nobody gets to senior without first being junior somewhere.</p>
+
+      <p>The weak part of his argument is the reason he gives for why now is a good time. He cites the Brynjolfsson, Li and Raymond study of support agents, where novices with an AI assistant improved 34% and the most experienced barely changed. His conclusion is that the tools compress the time it takes a new person to become useful.</p>
+
+      <h2>Useful is not the same as trained</h2>
+
+      <p>Look at what <a href="https://www.nber.org/papers/w31161">that study</a> measured: issues resolved per hour. It is an output number. The authors' own explanation is that the model "disseminates the best practices of more able workers" to the new ones. The novices got faster because they were carrying someone else's practice, not because they had formed their own.</p>
+
+      <p>That is fine in a support queue. In a design team it switches off the oldest signal a lead has. A junior who needed help used to show it in the work: the muddled hierarchy, the empty state nobody drew, the flow that fell apart on the third screen. Weak output was the alarm.</p>
+
+      <p>Now a junior with a good model hands in a competent screen in their first week. It looks like progress. It might be. Or the model did the part that used to teach them, and they approved it.</p>
+
+      <p>Cheney Hamilton of the research firm Bloor named the gap in the same CNBC piece. AI raises what a junior can produce, she said, but it "doesn't give them the judgement to know when the output is wrong". That judgment came from repetition and consequence, and those are exactly the parts the tool now absorbs.</p>
+
+      <h2>The player-coach has no time for screens</h2>
+
+      <p>The standard answer is that seniors will teach the judgment on purpose. The org chart is moving the other way. In May <a href="https://www.coinbase.com/blog/building-a-leaner-and-faster-coinbase">Coinbase cut about 14% of its staff</a> and capped the company at five layers below the chief executive and chief operating officer. Leaders would carry as many as 15 or more direct reports. There are no pure managers left. Every leader is also meant to be an active individual contributor.</p>
+
+      <p>A player-coach with 15 reports and their own work to ship cannot sit beside a junior and critique every frame. A <a href="https://arxiv.org/abs/2607.17067">small interview study of software engineers in South Korea</a> gave the pattern a name: absorption. Entry-level work gets pulled into senior workflows running on AI, and juniors skip the struggle that used to build expertise. The seniors and juniors it interviewed did not even see the problem the same way.</p>
+
+      <p>So the training has to happen somewhere cheaper than a screen-by-screen review. And it has to leave a trace a busy lead can read.</p>
+
+      <h2>What I review instead</h2>
+
+      <p>The rule I hold is that a junior's work comes to review with what they threw away. The options the model gave them that they killed, and one line on why each one died, written against the team's standard.</p>
+
+      <p>I read the reasons before I look at the screen. The order matters, because it separates two juniors who hand in the same competent work.</p>
+
+      <ul>
+        <li><strong>Right reasons, rough screen.</strong> That is a craft gap. It closes with practice, and the tools help.</li>
+        <li><strong>Polished screen, thin reasons.</strong> The model got it right and the junior agreed. That is where my time goes, because nothing in the output would have told me.</li>
+      </ul>
+
+      <p>None of this works unless the standard is written down. A junior can't explain why an option fails a bar nobody has stated, and a lead can't check the explanation against a mood. Adam Elman made a related case about AI products at <a href="https://www.nngroup.com/articles/ai-era-critique/">Nielsen Norman Group in June</a>: the designer's job shifts toward defining what good does and doesn't look like.</p>
+
+      <p>The rejection notes also test the standard. Where it has gaps, they show up as reasons nobody on the team can give.</p>
+
+      <p>And it gives the review a unit a player-coach can afford. A paragraph of reasons can be read between meetings. A file full of frames can't.</p>
+
+      <h2>The grunt work was never the point</h2>
+
+      <p>Green is right that nobody should keep juniors on busywork for its own sake. He is wrong that the skill it built stopped mattering. Grunt work taught judgment because every piece of it came back with a verdict. Somebody said no, and said why.</p>
+
+      <p>A model rarely tells a junior no. It hands them another option. The only person left to say no is the junior, and the only way to know whether they can is to have them do it in writing, where someone will read it.</p>
+
+      <p>So hire the junior. Then review what they reject.</p>]]></content:encoded>
     </item>
     <item>
       <title>Your design system checks spelling, not judgment</title>
@@ -21,7 +77,62 @@
       <guid isPermaLink="true">https://john-desouza.com/blog/design-systems-check-spelling-not-judgment.html</guid>
       <pubDate>Thu, 24 Sep 2026 09:00:00 -0400</pubDate>
       <category>Where product design is going</category>
+      <dc:creator>John DeSouza</dc:creator>
       <description>Eighteen of 21 major design systems now ship an MCP server for agents. What they enforce is the vocabulary. The usage guidance is the part getting cut.</description>
+      <content:encoded><![CDATA[<p><strong>Machine-readable design systems enforce the vocabulary and drop the judgment, and the judgment only gets written down if every rejected answer leaves a reason behind.</strong></p>
+<p>The design system is now the thing the model reads. In a <a href="https://state-of-ai-in-design-systems.netlify.app/">July survey of 21 open-source design systems</a>, Kaelig Deloumeau-Prigent found that 18 ship an official MCP server so coding agents can query them directly. Figma describes its new agent as having <a href="https://www.figma.com/blog/the-figma-agent-is-here/">"deep context on your components, tokens, standards, and best practices"</a>.</p>
+
+      <p>The position behind all of this is reasonable. Give the agent your system and it builds on your system. The components and tokens become the guardrail, and on-brand output follows.</p>
+
+      <p>I think that gets the guardrail half right and quietly drops the half that matters.</p>
+
+      <h2>What the machine-readable half enforces</h2>
+
+      <p>The same survey catalogs 165 techniques teams use to keep models on their real components and tokens. The biggest groups are validation loops (31), prohibitions like "never invent components" (28), tool-gating that makes a fake component impossible to produce (22) and token enforcement that fails the build on a raw hex value (15).</p>
+
+      <p>That is serious engineering, and it works. It also has a clear shape. Most of them answer one question: is this a real part of the system, used the way its API allows?</p>
+
+      <p>That is spelling. An agent can pass all of it and still put a primary button in every row of a table, because every one of those buttons is a real button with a real token.</p>
+
+      <h2>The part that got cut first</h2>
+
+      <p>Atlassian tested Google's DESIGN.md format against its own MCP server and skills and wrote up what happened. To fit the design system into one portable file, the team says it <a href="https://www.atlassian.com/blog/how-we-build/atlassians-design-md-is-here-what-we-learned-testing-portable-design-context-in-practice">"had to remove much of the usage guidance from our 50+ components"</a>. Agents given the file then went digging through component code to find the guidance that was missing.</p>
+
+      <p>Usage guidance is where the judgment lives. It is the paragraph that says when not to use the thing. Nord, one of the systems in the survey, ships it to agents in exactly that form: <a href="https://nordhealth.design/.well-known/skills/nord/references/components/button.md">"Don't use a primary button in every row of a table."</a> No linter catches that sentence being ignored. It is also what went first when Atlassian needed the file smaller.</p>
+
+      <p>Tokens are cheap to write down. They are values with names. The reasons behind the choices are expensive, and the reasons are the part a designer was actually hired to supply.</p>
+
+      <h2>Frequency is not a standard</h2>
+
+      <p>When an agent has no reason to go on, it falls back on what is common. Figma says its agent <a href="https://www.figma.com/blog/the-figma-agent-is-here/">"uses your most frequently and recently used components as a starting point"</a>. That is a sensible default for a tool and a poor definition of good.</p>
+
+      <p>I have seen why. When I ran an agent audit across a whole design library, I wrote the crawler's rules, and it counted every value we had. It could not tell me which of two established values was right. Somebody had to decide, and the decision was nowhere in the data.</p>
+
+      <p>Nurkhon Akhmedov puts the failure mode well in <a href="https://nurxmedov.substack.com/p/your-design-systems-real-job-in-2026">a July post on this</a>: five screens in a hundred ship off-system, and "the next agent reads those five as if they were the library." A system that learns from its own output drifts toward whatever it did most, right or wrong.</p>
+
+      <h2>Gated on spelling, trusted on judgment</h2>
+
+      <p>The survey also looked for whether teams measure any of this. <a href="https://state-of-ai-in-design-systems.netlify.app/questions/evals.md">Eight of the 21 records mention evaluation work at all</a>. The report calls its validation loops the closest thing the field has, and describes them as "checks that fail a build, rather than evals that score a model."</p>
+
+      <p>So the mechanical half is gated and the judgment half is trusted. Akhmedov's version is blunter: whether the agent picked the right component for what the user is trying to do is a question "you can't grep for."</p>
+
+      <h2>Where the missing half comes from</h2>
+
+      <p>Akhmedov argues the rubric is now the deliverable. I agree, and I would go one step further on where it comes from.</p>
+
+      <p>Nobody writes good usage guidance in the abstract. Try to list every wrong way to use a button in advance and you get a style guide nobody reads. The useful rules show up one at a time, when someone looks at a screen an agent built and says no.</p>
+
+      <p>That moment is the raw material, and it is easy to lose. The rejection happens in a review, the agent gets a new prompt, the screen gets fixed and the reason lives in one person's head until they leave.</p>
+
+      <p>The rule I hold is simple. A rejection without a written reason is wasted. The reason goes into the system the agent reads, in the form Nord already uses: the choice that was wrong, the one that was right and why. Written that way, the next agent can be held to it and so can the next designer.</p>
+
+      <h2>What the design system team is for now</h2>
+
+      <p>For years the visible output of a design system team was the library. This year the industry made that library readable and enforceable for agents. That work was worth doing.</p>
+
+      <p>It was also the easy half. A system that only knows its own vocabulary will produce fluent, valid, wrong screens at whatever speed you let it. The half that decides whether a screen is right is still mostly sitting in people's heads, and in at least one case it was trimmed out on purpose to make a file fit.</p>
+
+      <p>An agent can read every token you have. It cannot read a reason nobody wrote down.</p>]]></content:encoded>
     </item>
     <item>
       <title>Stablecoin trust is decided at redemption</title>
@@ -29,7 +140,59 @@
       <guid isPermaLink="true">https://john-desouza.com/blog/stablecoin-trust-is-decided-at-redemption.html</guid>
       <pubDate>Thu, 24 Sep 2026 08:00:00 -0400</pubDate>
       <category>Fintech, web3 and trust</category>
+      <dc:creator>John DeSouza</dc:creator>
       <description>Congress spent the year fighting over stablecoin rewards. The OCC&#x27;s proposed rule already defines the bad day: a 10% run turns two days into seven.</description>
+      <content:encoded><![CDATA[<p><strong>Rewards decide whether people move money into a stablecoin. Redemption decides whether they trust it, and the draft rules have already written a bad day that the rewards fight ignores.</strong></p>
+<p>On September 15 the Senate failed to advance the Clarity Act, <a href="https://www.americanbanker.com/news/crypto-market-structure-bill-fails-in-senate-vote-49-50">49 to 50</a>. American Banker called the extent to which stablecoin companies could offer yield-like products the leading issue of the debate. The day before, <a href="https://www.coindesk.com/policy/2026/09/14/banks-escalate-stablecoin-rewards-fight-as-senate-prepares-for-a-clarity-act-vote">eight banking groups</a> were still pushing for tighter limits on rewards, arguing they work like deposit interest.</p>
+
+      <p>Within three days, two Substack writers read the same failure in opposite directions. <a href="https://anndy.substack.com/p/clarity-act-diesstablecoin-yields">Anndy Lian</a> headlined that stablecoin yields survive. <a href="https://paymentsinfull.substack.com/p/how-does-claritys-failure-impact">Andrew Dresner</a> argued the failure counts as a win for banks, because the tighter GENIUS Act restrictions now govern.</p>
+
+      <p>Both sides share one assumption, and it is a fair one: what a person earns for holding a stablecoin decides whether they move money into it. I agree with it. It is still the wrong screen to fight over.</p>
+
+      <h2>The bad day is already written down</h2>
+
+      <p>The GENIUS Act already bans issuers from paying holders <a href="https://www.govinfo.gov/content/pkg/PLAW-119publ27/html/PLAW-119publ27.htm">any form of interest or yield</a> in section 4(a)(11). Section 4 also requires a public redemption policy with procedures for "timely redemption". The statute never says how timely. The regulators do.</p>
+
+      <p>The Office of the Comptroller of the Currency (OCC) proposed its rule in March. <a href="https://www.federalregister.gov/documents/2026/03/02/2026-04089/implementing-the-guiding-and-establishing-national-innovation-for-us-stablecoins-act-for-the">Its section 15.12</a> puts timely at two business days. Then it defines the bad day. If redemption requests pass 10% of an issuer's outstanding issuance in a single 24-hour period, the window becomes seven calendar days. That applies to every request already in line and every one after it. Only the OCC can shorten it, and the OCC can also extend it further.</p>
+
+      <p>The rule is defensible. Regulators need some way to slow a run, and compliance is not the problem here.</p>
+
+      <p>The problem is what the person sees. Section 15.12 has the issuer notify the OCC within 24 hours. What it asks the issuer to tell holders is a statement in the redemption policy explaining when the period can stretch. So the one moment a stablecoin behaves least like a dollar is covered by a paragraph on a policy page.</p>
+
+      <h2>Mechanism, labeled as transparency</h2>
+
+      <p>The disclosures the law does require are real and useful. Once the law takes effect, an issuer publishes its outstanding supply every month, along with the composition of its reserves, down to the average tenor and where each category of reserve is held. The OCC's draft puts a link to that report in the same disclosure as the fees.</p>
+
+      <p>That report is for analysts. A person holding stablecoins in an app has one question on the bad day: when does my money land, and what would make it later? A reserve breakdown answers a different question, and putting it on the screen is how the industry keeps exposing its machinery and calling it transparency.</p>
+
+      <p>It gets harder, because a person holding a stablecoin in an exchange app may never deal with the issuer at all. As <a href="https://cryptoslate.com/proposed-stablecoin-rules-might-guarantee-your-dollar-while-making-you-wait-a-week-to-spend-it/">Liam Wright wrote in CryptoSlate</a> on the day of the vote, a faster exit depends on the service converting the coin, which has to pay out before the issuer pays it. So the wait a person feels is set by whoever sits between them and the issuer. That is the same kind of platform whose rewards the Senate just fought over.</p>
+
+      <h2>The states a balance can be in</h2>
+
+      <p>Read the statute as a product spec and a stablecoin balance can be in four states a rewards banner never mentions. Each one needs a screen.</p>
+
+      <ul>
+        <li><strong>Pending.</strong> Redemption requested, due within two business days under the draft rule.</li>
+        <li><strong>Extended.</strong> The 10% line was crossed by other people, and the person's own request now waits seven days.</li>
+        <li><strong>Frozen.</strong> Issuers must be able to seize, freeze, burn or block transfer of coins under a <a href="https://www.govinfo.gov/content/pkg/PLAW-119publ27/html/PLAW-119publ27.htm">lawful order</a>, section 4(a)(6)(B).</li>
+        <li><strong>In insolvency.</strong> Holders get priority on the required reserves, and section 11 asks the bankruptcy court to use best efforts to begin distributions within 14 days of the hearing.</li>
+      </ul>
+
+      <p>The extended state is the one that should worry product teams. Nothing the person did caused it, and nothing on a normal balance screen would explain it.</p>
+
+      <h2>Lending already paid for this lesson</h2>
+
+      <p>At Best Egg, loan applicants uploaded their documents and then the dashboard went quiet. Nothing said whether a file was pending, accepted or still needed, so they called to ask. We replaced it with a <a href="/work/verifications.html">status for every document</a>, sized at 7,000 fewer support calls a month.</p>
+
+      <p>Stablecoin redemption is that screen with the person's own money behind it. A silent "processing" on day four of a seven-day extension does not read as a rule working as designed. It reads as a freeze. <a href="https://crypto-compass-daily.beehiiv.com/p/the-redemption-cliff-how-the-occ-s-10-percent-trigger-turns-a-routine-withdrawal-wave-into-a-seven-d">Jayson Derrick</a> wrote about the trigger in May and pictured retail holders opening their apps on a Sunday night to find "a locked gate." That is the screen to draw first.</p>
+
+      <h2>The screen I ask for first</h2>
+
+      <p>Put a stablecoin product in front of me and the first screen I would ask for is the balance on day four of an extended redemption. What does it say happened, what does it say happens next and on what date?</p>
+
+      <p>If the team shows me the rewards rate instead, the product has been designed for the day money arrives and not for the day it tries to leave.</p>
+
+      <p>Comptroller Jonathan Gould said in August that the OCC wants <a href="https://www.theblock.co/news/regulation/2026-08-19-occ-races-to-finalize-genius-act-stablecoin-rules-by-november-412240">a final rule out by November</a>. Under section 20 the law takes effect no later than January 18, 2027. The rewards fight, American Banker reports, starts over in the next Congress. The redemption screen gets built before then either way, and almost nobody in this month's fight is talking about it.</p>]]></content:encoded>
     </item>
     <item>
       <title>Metered pulls make frequency a consent question</title>
@@ -37,7 +200,58 @@
       <guid isPermaLink="true">https://john-desouza.com/blog/frequency-is-a-consent-question.html</guid>
       <pubDate>Thu, 24 Sep 2026 07:00:00 -0400</pubDate>
       <category>Fintech, web3 and trust</category>
+      <dc:creator>John DeSouza</dc:creator>
       <description>Banks now charge aggregators for each data pull. How often an app checks your account is about to be decided somewhere. It belongs on the consent screen.</description>
+      <content:encoded><![CDATA[<p><strong>Once every data pull has a price, how often an app checks a bank account stops being a back-end setting. It is a consent decision, and it belongs on the consent screen instead of an invoice.</strong></p>
+<p>JPMorgan Chase now charges data aggregators like Plaid for the requests its systems answer. The fee applies to each call rather than a monthly total, a JPMorgan managing director <a href="https://www.paymentsdive.com/news/open-banking-fees-fintechs-fuel-debate-cfpb-apps/808114/">told a panel in December</a>. The Consumer Financial Protection Bureau's rewrite of the Section 1033 open banking rule <a href="https://www.consumerfinancemonitor.com/2026/08/06/cfpb-sends-new-section-1033-open-banking-proposal-to-oira-for-review/">went to the White House for review in August</a>, and it is <a href="https://www.americanbanker.com/news/what-we-know-about-the-cfpbs-forthcoming-open-banking-rule">expected to let banks charge</a> for access the 2024 version made free.</p>
+
+      <p>The fight is being argued as a question of who pays. The Financial Technology Association <a href="https://www.ftassociation.org/looking-ahead-to-the-open-banking-rule-protecting-americans-right-to-securely-access-and-share-their-financial-data-without-fees/">says</a> the costs "will be passed directly on to American consumers and small businesses," and that data access is a legal entitlement, "not a conditional right contingent upon paying access fees." That is a serious argument about competition. This post doesn't argue the price.</p>
+
+      <p>It argues about the screen, because a price changes what the screen is for.</p>
+
+      <h2>Both sides agree the product sets the volume</h2>
+
+      <p>Listen to what each side says about volume and they land in the same place. On that December panel, JPMorgan's Kate Prochaska said: "Once people actually have to pay for things, they start thinking about, 'Well, do I need to ping this often?'" The association's Angelena Bradfield answered that how much data an app pulls is a function of the user's experience. People check their apps, and the app checks the bank.</p>
+
+      <p>PNC put the bank case more bluntly in its comment letter to the bureau, <a href="https://www.paymentsdive.com/news/open-banking-fees-fintechs-fuel-debate-cfpb-apps/808114/">as quoted by Payments Dive</a>: "When third party access to consumer data is free and unlimited, third parties have little incentive to minimize cadence, scope, or retention of data they do not need and will not use."</p>
+
+      <p>One side calls the volume waste. The other calls it the product working. Both are saying that how often an app looks at a bank account is a product decision. Neither has said where the person whose account it is gets to see that decision.</p>
+
+      <h2>Frequency was never on the screen</h2>
+
+      <p>The 2024 rule came closer than anything before it. It told apps to limit collection to what is "reasonably necessary" for the product the person asked for, and it <a href="https://www.federalregister.gov/documents/2024/11/18/2024-25079/required-rulemaking-on-personal-financial-data-rights">defined collection</a> to include "the scope of covered data requested and the duration and frequency of collection." It capped every authorization at one year before the app had to ask again.</p>
+
+      <p>Now look at what the same rule required the person to be shown. The authorization disclosure lists the app, the bank, the product, the categories of data and the expected duration. Frequency isn't on the list. The one variable a bank can now put a price on is the one the strictest version of the rule never asked anyone to show.</p>
+
+      <p>That rule isn't in force either. A federal court in Kentucky <a href="https://www.cozen.com/news-resources/publications/2026/section-1033-compliance-date-open-banking-rule-enjoined-and-under-reconsideration">has blocked enforcement</a> while the bureau reconsiders it, and the <a href="https://www.federalregister.gov/documents/2025/08/22/2025-16139/personal-financial-data-rights-reconsideration">reconsideration notice</a> asks whether banks should be able to "recover a reasonable rate" for answering requests.</p>
+
+      <h2>The invoice decides if the screen doesn't</h2>
+
+      <p>Today the answer to "how often" lives on a signup screen nobody reads twice. CNBC reported an internal JPMorgan memo complaining that aggregators access data "multiple times daily, even when the customer is not actively using the app." Plaid's <a href="https://www.cnbc.com/2025/07/28/jpmorgan-fintech-middlemen-plaid-data-requests-taxing-systems.html">answer</a> was that all of that activity begins with the permission a customer grants at signup, and that background calls are how people get "critical alerts for overdraft fees or suspicious activity."</p>
+
+      <p>Plaid is right that those alerts matter. That is the problem. The pull that catches an overdraft is the same kind of pull a bank now bills for, and the person who wanted the alert agreed to it with one tap that never mentioned it.</p>
+
+      <p>So far the meter has stayed out of sight. When Plaid and JPMorgan renewed their agreement, Plaid told clients that <a href="https://finovate.com/jpmorgans-data-access-agreement-from-plaids-perspective/">current contracts and customer fees remain unchanged</a>. The cost sits in a contract between two companies, and JPMorgan says the trimming has started there: once it announced fees, Prochaska said, "people are more judicious and thoughtful about it."</p>
+
+      <p>If a balance that used to refresh in the background starts refreshing only when the app opens, the overdraft warning arrives after the overdraft. Nobody chose that on a screen. It got chosen in a contract. That is the failure state worth worrying about, and it isn't a breach. It's a downgrade the person never agreed to and has no way to see.</p>
+
+      <h2>Identity already has a word for this</h2>
+
+      <p>OpenID Connect, the identity layer under most modern login flows, treats access while you're away as its own grant. The spec defines an <a href="https://openid.net/specs/openid-connect-core-1_0.html">offline_access scope</a> and says the provider "MUST always obtain consent" before issuing the token that allows it. It adds that "a previously saved user consent is not always sufficient," because access when the user is not present poses greater privacy risk.</p>
+
+      <p>At Auth0 I worked inside that model, where consent is granted scope by scope and each scope has a name. Open banking consent still bundles "while I'm using the app" and "while I'm asleep" into a single tap. Identity split those two apart years ago, and a price per pull is a good reason for open banking to do the same.</p>
+
+      <h2>What the screen should say</h2>
+
+      <p>The lazy version of this screen is a number. "This app may request your data up to 12 times a day" is accurate, and it is a mechanism dressed as a disclosure. Nobody can make a decision with it.</p>
+
+      <p>The version a person can decide on names what the looking buys them and what stops if they say no. Check my balance in the background so you can warn me before an overdraft. Or only update when I open the app. Two choices, each with its consequence, and the app lives with whichever one the person picks.</p>
+
+      <p>That forces the product team to do what the price is already forcing on the business side: say which pulls are the product and which are habit. A pull that can't be explained on that screen in one plain sentence is a pull the app should stop making.</p>
+
+      <p>The question I would put to any background access in a design review is simple. What does the person get from us looking while they're not here? If the team can't answer in a sentence the person would recognize, the access goes, not the sentence.</p>
+
+      <p>Whatever the bureau publishes, the meter is already running at the largest bank in the country. Where the decision about how often gets made is still open. It can be made on the consent screen, where the person sees it, or in a contract they will never read.</p>]]></content:encoded>
     </item>
     <item>
       <title>Your team stopped taking your advice</title>
@@ -45,7 +259,64 @@
       <guid isPermaLink="true">https://john-desouza.com/blog/your-team-stopped-taking-your-advice.html</guid>
       <pubDate>Tue, 22 Sep 2026 09:00:00 -0400</pubDate>
       <category>Design leadership</category>
+      <dc:creator>John DeSouza</dc:creator>
       <description>Peer learning among designers went from 24% to 70% in a year. The share taking direction from leadership halved. That is structural, and most leaders are answering it wrong.</description>
+      <content:encoded><![CDATA[<p><strong>You are no longer the fastest source of useful knowledge on your team, and trying to win that back is the most expensive mistake available to you right now.</strong></p>
+<p>Here are two numbers from <a href="https://stateofaidesign.com/chapters/teams">the same survey</a> of 900 designers. Peer learning went from 24% to 70% in a year. The share of designers taking recommendations from their leadership went from 32% to 16%.</p>
+
+      <p>The first number gets quoted constantly, usually as a feel-good line about community. The second one barely gets quoted at all, and it is the one that should be keeping design leaders up.</p>
+
+      <h2>The comfortable reading is wrong</h2>
+
+      <p>The comfortable reading is that this is a culture problem. Teams got scattered, people stopped looking up, leaders need to communicate better and be more present.</p>
+
+      <p>I do not think that is what happened. I think the method started turning over faster than any management chain can carry it.</p>
+
+      <p>The average designer's toolstack went from three tools to seven in twelve months. When the useful knowledge has a shelf life measured in weeks, the person three levels up is structurally the last to hear it. Not because they are disengaged. Because that is what a hierarchy does to information that expires: it delays it.</p>
+
+      <p>Your team did not lose respect for you. They found a faster path, and they were right to take it.</p>
+
+      <h2>The expensive mistake</h2>
+
+      <p>The expensive mistake is trying to win method authority back.</p>
+
+      <p>It looks reasonable from the inside. You block time, you learn the tools, you show up to the design review with a working prototype you built yourself. And it does buy you something real, which is that you stop being illegible to your own team.</p>
+
+      <p>But you cannot win that race. There are eight of them and one of you, they are in the tools all day, and whatever you learn this quarter is half wrong by the next. Meanwhile the thing only you can do is sitting there not getting done.</p>
+
+      <p>I watch leaders spend their scarce hours becoming the fourth-best prototyper on a team of six. It is the most sympathetic failure mode I know and it is still a failure mode.</p>
+
+      <h2>Make the trade explicit</h2>
+
+      <p>The trade I have settled on is that the team owns the method and I own the standard and the decision.</p>
+
+      <p>Owning the standard means I am accountable for writing down what good means here, precisely enough that someone who was not in the room can hold work to it. Not a mood, not a principle poster. The actual bar, in words, that a person or a model can be measured against.</p>
+
+      <p>Owning the decision means the calls that need a name on them stay with me. Which of two entrenched options we standardize on. What we deprecate when the data is genuinely tied. Anything where somebody's work is on the other end of the answer.</p>
+
+      <p>When I audited a design library last quarter, the analysis came back saying one spacing value appeared 1,834 times and the competing one 1,796. Nothing in the data was ever going to break that tie. Somebody had to pick, say so out loud, and then go make the other one wrong. That is not a job you can delegate downward or automate, and it is the job.</p>
+
+      <p>What I do not do any more is pretend I know the best way to get from a brief to a prototype this month. They know. I ask.</p>
+
+      <h2>What this looks like on a calendar</h2>
+
+      <p>Three things I actually changed, in case the principle is too tidy to be useful.</p>
+
+      <ul>
+        <li><strong>I ask what changed in your method, every one-to-one.</strong> Not as a check-in, as intake. It is how I find out what the team knows before the quarter is over. Half of what I now believe about working with agents came off that question.</li>
+        <li><strong>Whoever found the better way presents it, not me.</strong> The moment a leader relays somebody else's discovery, two things break: the credit and the accuracy.</li>
+        <li><strong>I write the standard down before anyone touches a tool.</strong> If the team cannot say in a paragraph what a correct component looks like, no amount of tooling discovers it. It averages whatever is already there and hands it back with confidence.</li>
+      </ul>
+
+      <h2>The part almost nobody has done</h2>
+
+      <p>The same survey found that 28% of leaders made any formal change to how the work is evaluated. 8% changed performance metrics. 4% touched compensation.</p>
+
+      <p>So the work changed, who people learn from changed, and what we reward stayed exactly where it was. That gap is where good designers quietly decide their leadership is not paying attention, and it is a gap leaders can close without permission from anyone.</p>
+
+      <p>Start with the review template. If it still rewards volume of screens, it is measuring the part of the job that got cheap.</p>
+
+      <p>There is one number in that report I find genuinely reassuring: 80% of designers still trust their own quality judgment over the model's. Taste did not go anywhere. What went is the assumption that it flows downhill from the person with the biggest title.</p>]]></content:encoded>
     </item>
     <item>
       <title>Stop hiring for AI fluency</title>
@@ -53,7 +324,52 @@
       <guid isPermaLink="true">https://john-desouza.com/blog/stop-hiring-for-ai-fluency.html</guid>
       <pubDate>Tue, 22 Sep 2026 08:00:00 -0400</pubDate>
       <category>Where product design is going</category>
+      <dc:creator>John DeSouza</dc:creator>
       <description>Half of design leaders now screen for AI fluency, against a toolstack that turned over from three tools to seven in a year. They are screening for recency.</description>
+      <content:encoded><![CDATA[<p><strong>AI fluency is a proxy with a shelf life. The durable skill is the ability to specify what good means and then say why the model's answer missed it.</strong></p>
+<p>Fifty percent of design leaders now emphasize AI fluency when they hire. I understand the instinct completely and I think the practice is close to useless.</p>
+
+      <p>In the same twelve months that fluency became a hiring criterion, the average designer's toolstack went from three tools to seven. Ninety-one percent of designers now use AI weekly. A skill that 91% of the field has, in tools that churn twice a year, is not a filter. It is a coin flip wearing a rubric.</p>
+
+      <h2>What the screen actually selects for</h2>
+
+      <p>When you screen for AI fluency, the candidate who wins is the one who most recently had time to play.</p>
+
+      <p>That correlates with some things you do want, like curiosity. It correlates with some things you should be careful about, like having been between jobs, or having worked somewhere with slack in the schedule, or simply being young enough that nobody at home needed them on a Saturday.</p>
+
+      <p>It does not correlate with judgment, and judgment is the entire reason you are hiring a designer rather than buying a seat.</p>
+
+      <p>There is a version of the screen that works, and it is not "which tools do you use". It is "show me something the model gave you that you threw away, and tell me why". That question cannot be studied for. It has no right answer available on a podcast. And it goes directly at the thing you actually need to know.</p>
+
+      <h2>The job got wider, not deeper</h2>
+
+      <p>Sixty-five percent of designers report taking on more product or engineering responsibility. Forty percent say product managers and engineers now contribute more to design work. Seventy-three percent feel rising expectations for output, quality and speed, all at once.</p>
+
+      <p>Read those together and the shape is clear. The boundaries around the discipline dissolved in both directions. Designers are writing production code and specifying systems. Everybody else is making design decisions, because the tools let them and nobody stopped them.</p>
+
+      <p>The common read is that this is design losing ground. I think that is exactly backwards, and it misses what actually got scarce.</p>
+
+      <p>When anyone can generate a competent screen, the constraint moves from production to specification. Somebody has to say which of the forty plausible things is the right one, and say it precisely enough that it holds when they leave the room. That job did not exist as a distinct skill when producing the option was itself the hard part. It was bundled inside the craft, invisible, and a lot of people were doing it without a name for it.</p>
+
+      <p>It has a name now, because the bundle came apart.</p>
+
+      <h2>What I screen for instead</h2>
+
+      <p>Three things, in this order.</p>
+
+      <p><strong>Can they write a standard down.</strong> I ask for something they have written that another person had to work from: a component spec, a critique doc, a definition of done. Then I read it for whether a stranger could apply it without asking a follow-up question. Most portfolios contain no such artifact, which is itself information.</p>
+
+      <p><strong>Can they say why they rejected something.</strong> Not what they chose. What they killed, and on what grounds. Katie Dill at Stripe frames the check as asking whether you would be happy with this if it had taken you a week to make. A designer who cannot articulate the rejection is a designer who will approve the model's first answer.</p>
+
+      <p><strong>Can they be specific about what was theirs.</strong> Forty percent of designers say they feel full ownership of AI-assisted work and 9% say they genuinely cannot separate their contribution from the model's. That is not a moral failing, it is a new and confusing condition. But a candidate who can walk me through which decisions were theirs is telling me they were paying attention to their own judgment while they worked. That is the whole signal.</p>
+
+      <h2>The thing I would not do</h2>
+
+      <p>I would not test tool proficiency in an interview loop. Not because it is unmeasurable, but because it is the cheapest thing on the list to teach after someone starts.</p>
+
+      <p>Hire someone with judgment and no Cursor experience and they are productive in a fortnight. Hire someone fluent in every tool on the market who cannot tell you why one option is better than another, and you have bought a very fast way to produce work nobody can defend in a review.</p>
+
+      <p>Eighty percent of designers still trust their own quality judgment over the model's. That number is the profession telling you where its value sits. The hiring process should probably catch up to it.</p>]]></content:encoded>
     </item>
     <item>
       <title>An agent with a wallet is a consent problem</title>
@@ -61,7 +377,58 @@
       <guid isPermaLink="true">https://john-desouza.com/blog/an-agent-with-a-wallet.html</guid>
       <pubDate>Tue, 22 Sep 2026 07:00:00 -0400</pubDate>
       <category>Fintech, web3 and trust</category>
+      <dc:creator>John DeSouza</dc:creator>
       <description>Mastercard and Visa both shipped agent payment credentials in 2026. Liability follows authorization, which makes delegation an interface problem before it is a protocol one.</description>
+      <content:encoded><![CDATA[<p><strong>Liability follows authorization. That makes the consent screen the most consequential surface in agentic commerce, and it is currently the least designed.</strong></p>
+<p>In June, Mastercard launched Agent Pay for Machines with more than 30 partners, credentialing agents through what it calls Verifiable Intent, across both cards and stablecoins. Visa's Trusted Agent Protocol lets a person delegate Visa credentials to vetted shopping agents. The IMF published a note on how this reshapes payments.</p>
+
+      <p>The infrastructure question is being answered quickly and competently. The design question has barely been asked.</p>
+
+      <h2>Liability follows authorization</h2>
+
+      <p>That phrase is doing enormous work in every legal analysis of agentic payments I have read. If the agent stayed inside the scope its principal authorized, the loss flows one way. If it went outside, it flows the other.</p>
+
+      <p>Which means the moment a person grants that scope is the moment that decides who eats a bad outcome months later. In a card dispute, the question will not be whether the agent behaved reasonably. It will be what the person agreed to, and whether they can be said to have understood it.</p>
+
+      <p>That is a screen. Somebody is designing it right now, probably in a sprint, probably under an engineer's ticket, and it will determine the financial exposure of everyone who uses the product.</p>
+
+      <p>I have watched this exact thing get treated as paperwork before. It never is.</p>
+
+      <h2>The mistake the industry just finished making</h2>
+
+      <p>Crypto spent a decade answering "people cannot use this" with better documentation, and the answer turned out to be that the product was exposing its own machinery and calling it transparency. Seed phrases, gas, chain IDs. Account abstraction finally fixed it, and it fixed it by deciding what a person never needs to see rather than by explaining it better.</p>
+
+      <p>Agentic payments are set up to repeat that, and the early patterns already look familiar. Scoped spend limits, cryptographic identity checks, circuit breakers. Every one of those is the right control. Every one of them is also a mechanism, and mechanisms have a way of arriving on the first screen because that is where they are easiest to put.</p>
+
+      <p>"Grant this agent a $500 monthly limit with merchant category restrictions" is a control panel. It is not a decision a person can actually make, because it asks them to predict which categories a shopping agent will need before they have watched one work.</p>
+
+      <p>The honest version of that screen is closer to what it would say out loud: what is this thing allowed to do without asking me, what will it always ask about, and how do I find out fast when it does something I did not expect.</p>
+
+      <h2>Three states nobody is designing</h2>
+
+      <p>Delegation is not one moment, it is three, and the industry is building the first and ignoring the rest.</p>
+
+      <ul>
+        <li><strong>The grant.</strong> Where scope is set. Currently drifting toward a permissions matrix, which is how you get consent that is legally valid and practically uninformed.</li>
+        <li><strong>The notice.</strong> What reaches a person while the agent is acting. If every action pings them, they turn notifications off and the audit trail is theatre. If nothing does, the first they hear of it is the statement.</li>
+        <li><strong>The dispute.</strong> The one that matters. Something went wrong, and the person has to reconstruct what their agent did and on whose authority. Almost nothing I have seen treats this as a product surface at all.</li>
+      </ul>
+
+      <p>That last one is where trust actually gets decided, and it is always designed last, by whoever has time, after the demo has already been approved.</p>
+
+      <h2>Why I keep coming back to this</h2>
+
+      <p>I have spent thirteen years in three fields that are now converging on exactly this problem. In consumer lending the lesson was paid for expensively: when a screen goes quiet after somebody has money on the line, they do not wait patiently, they call. At Chainlink Labs and Auth0 the lesson was that a credential is not a special category of thing that deserves its own frightening vocabulary. It is a credential, and it should behave like every other one.</p>
+
+      <p>Agentic payments need both lessons at once, and the people building the rails are mostly coming from neither tradition.</p>
+
+      <h2>The question to ask</h2>
+
+      <p>For any agent that acts on someone's behalf: when this goes wrong, can the person tell what happened, prove what they authorized, and stop it happening again?</p>
+
+      <p>If the answer is no, adding a clearer consent dialog at the start does not fix it. The dialog is what gets written when the decision has been made not to design the rest.</p>
+
+      <p>The rails are getting built either way. Whether the consent is real is still open, and that part is ours.</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

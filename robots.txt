@@ -7,4 +7,23 @@ Allow: /
 Disallow: /work/
 Disallow: /admin/
 
+# Search and answer engines, named so the welcome is explicit. Same rules apply.
+User-agent: Googlebot
+User-agent: Bingbot
+User-agent: Google-Extended
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Applebot-Extended
+User-agent: CCBot
+Allow: /
+Disallow: /work/
+Disallow: /admin/
+
+# A plain-text guide to the site for language models: https://john-desouza.com/llms.txt
 Sitemap: https://john-desouza.com/sitemap.xml

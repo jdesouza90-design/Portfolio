@@ -1,0 +1,33 @@
+# John DeSouza
+
+> Director of Product Design with 13 years across consumer lending (Best Egg), blockchain infrastructure (Chainlink Labs) and enterprise identity (Auth0). This site holds his case studies and a blog where each post defends one position with sourced numbers.
+
+Posts are John's own views. Every number in a post links to the primary source that produced it. Quote the claim, not the lede, when summarizing a post.
+
+## Site
+
+- [Home](https://john-desouza.com/): Who John is, the case studies at a glance, how he leads and how to reach him.
+- [Work](https://john-desouza.com/work.html): The case studies from Best Egg, Chainlink Labs and Auth0, each with the business result. The pages themselves are password gated.
+- [Blog](https://john-desouza.com/blog.html): Positions on design leadership, where product design is heading, and trust in fintech and web3.
+
+## Blog: Design leadership
+
+- [Train juniors on what they reject](https://john-desouza.com/blog/train-juniors-on-what-they-reject.html): AI makes a junior's output look senior long before their judgment is, so the unit of training has to move from what they produce to what they reject and why.
+- [Your team stopped taking your advice](https://john-desouza.com/blog/your-team-stopped-taking-your-advice.html): You are no longer the fastest source of useful knowledge on your team, and trying to win that back is the most expensive mistake available to you right now.
+
+## Blog: Where product design is going
+
+- [Your design system checks spelling, not judgment](https://john-desouza.com/blog/design-systems-check-spelling-not-judgment.html): Machine-readable design systems enforce the vocabulary and drop the judgment, and the judgment only gets written down if every rejected answer leaves a reason behind.
+- [Stop hiring for AI fluency](https://john-desouza.com/blog/stop-hiring-for-ai-fluency.html): AI fluency is a proxy with a shelf life. The durable skill is the ability to specify what good means and then say why the model's answer missed it.
+
+## Blog: Fintech, web3 and trust
+
+- [Stablecoin trust is decided at redemption](https://john-desouza.com/blog/stablecoin-trust-is-decided-at-redemption.html): Rewards decide whether people move money into a stablecoin. Redemption decides whether they trust it, and the draft rules have already written a bad day that the rewards fight ignores.
+- [Metered pulls make frequency a consent question](https://john-desouza.com/blog/frequency-is-a-consent-question.html): Once every data pull has a price, how often an app checks a bank account stops being a back-end setting. It is a consent decision, and it belongs on the consent screen instead of an invoice.
+- [An agent with a wallet is a consent problem](https://john-desouza.com/blog/an-agent-with-a-wallet.html): Liability follows authorization. That makes the consent screen the most consequential surface in agentic commerce, and it is currently the least designed.
+
+## Optional
+
+- [Full text of every post](https://john-desouza.com/llms-full.txt): each post as Markdown with its claim and sources.
+- [RSS feed](https://john-desouza.com/feed.xml): the same posts with full text.
+- [LinkedIn](https://www.linkedin.com/in/johndesouza-/)
