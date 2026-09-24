@@ -22,7 +22,7 @@ How John runs a team, hires, evaluates and decides. The live conversation: leade
 lost their position as the fastest source of useful knowledge, and almost none of them
 have changed how they lead in response.
 
-**The evidence.** Peer learning among designers went from 24% to 80% in a year, while the
+**The evidence.** Peer learning among designers went from 24% to 70% in a year, while the
 share taking recommendations from leadership fell from 32% to 16%. Only 28% of leaders
 made any formal change to evaluation, 8% changed performance metrics, 4% touched
 compensation (AI in Design 2026, 900 designers across 60 countries).
