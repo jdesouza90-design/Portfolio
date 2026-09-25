@@ -1993,7 +1993,7 @@ const CONFIG = {
     launch.setAttribute("aria-haspopup", "dialog");
     launch.setAttribute("aria-controls", "chat");
     launch.setAttribute("aria-expanded", "false");
-    launch.innerHTML = `${ICON.spark}<span>${topic.label}</span>`;
+    launch.innerHTML = `<span class="chat-launch-sweep" aria-hidden="true"></span>${ICON.spark}<span class="chat-launch-label">${topic.label}</span>`;
 
     const dlg = make("dialog", "chat");
     dlg.id = "chat";

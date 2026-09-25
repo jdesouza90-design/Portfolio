@@ -1935,7 +1935,8 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
   right: calc(var(--chat-edge) + env(safe-area-inset-right, 0px)); bottom: calc(var(--chat-edge) + env(safe-area-inset-bottom, 0px));
   box-shadow: var(--shadow-lift);
   opacity: 0; transform: translateY(12px); visibility: hidden;
-  transition: opacity var(--dur-ui) var(--ease), transform var(--dur-ui) var(--ease), visibility 0s var(--dur-ui), background var(--dur-hover), box-shadow var(--dur-hover), color var(--dur-hover);
+  transition: opacity var(--dur-ui) var(--ease), transform var(--dur-ui) var(--ease), visibility 0s var(--dur-ui), background var(--dur-hover), box-shadow var(--dur-hover), color var(--dur-hover),
+    --sweep-burst 2s var(--ease), --sweep-span 2s var(--ease);
 }
 .chat-launch.is-in { opacity: 1; transform: none; visibility: visible; transition-delay: 0s; }
 .chat-launch.is-in[aria-expanded="true"] { opacity: 0; transform: translateY(8px); visibility: hidden; transition-delay: 0s, 0s, var(--dur-ui), 0s, 0s, 0s; }
@@ -1945,16 +1946,46 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
   .chat-launch.is-in:hover:active { transform: translateY(-2px) scale(.97); }
 }
 .chat-launch svg { width: 18px; height: 18px; }
-/* The opener's drift: the ink fill leans toward the deep green and back, a
-   slow sweep across the pill, so it reads as alive without moving anything.
-   The darkest green is accent-ink, never the accent, so the label keeps its
-   contrast; hover's solid accent (.btn-primary) replaces the gradient. */
+/* The opener's sweep (after thinkcompany.com's "Ask us anything"): a short
+   arc of light runs the pill's edge once every 7.5 s. The light is a hairline
+   ring with a soft glow (.chat-launch-sweep), shown through a conic mask
+   whose angle is a registered property, so the arc glides rather than jumps.
+   On hover the arc laps the pill once, fast, and opens to three times its
+   length, and a highlight passes through the label. The pill stays ink on
+   hover so the green arc has something to read against; the lift and the
+   lap are the hover. The ring is accent-2, the lightest green, so it reads on
+   ink and on paper alike. */
+@property --sweep-rest  { syntax: "<angle>"; inherits: true; initial-value: 110deg; }
+@property --sweep-burst { syntax: "<angle>"; inherits: true; initial-value: 0deg; }
+@property --sweep-span  { syntax: "<number>"; inherits: true; initial-value: 5; }
 .chat-launch {
-  background-image: linear-gradient(115deg, var(--ink) 0%, #1C271E 38%, var(--accent-ink) 50%, #1C271E 62%, var(--ink) 100%);
-  background-size: 300% 100%; background-position: 0% 50%;
-  animation: chat-drift 12s ease-in-out infinite alternate;
+  --sweep-pad: 40px;     /* room around the pill so the outer glow isn't cut by the mask's box */
+  --sweep-fade: 7.5;     /* % of the turn the arc takes to fade in, and again to fade out */
+  isolation: isolate;
+  animation: chat-sweep 7.5s linear infinite;
 }
-@keyframes chat-drift { to { background-position: 100% 50%; } }
+@keyframes chat-sweep { from { --sweep-rest: 110deg; } to { --sweep-rest: 470deg; } }
+.chat-launch-sweep {
+  position: absolute; z-index: -1; inset: calc(var(--sweep-pad) * -1);
+  border-radius: inherit; pointer-events: none;
+  -webkit-mask-image: var(--sweep-mask); mask-image: var(--sweep-mask);
+  --sweep-mask: conic-gradient(from calc(var(--sweep-rest) + var(--sweep-burst) - (var(--sweep-fade) + var(--sweep-span) / 2) * 3.6deg),
+    transparent 0%, #000 calc(var(--sweep-fade) * 1%), #000 calc((var(--sweep-fade) + var(--sweep-span)) * 1%),
+    transparent calc((var(--sweep-fade) * 2 + var(--sweep-span)) * 1%));
+}
+.chat-launch-sweep::before {
+  content: ""; position: absolute; inset: var(--sweep-pad); border-radius: inherit;
+  box-shadow: inset 0 0 0 1px var(--accent-2), inset 0 0 8px rgba(110, 154, 90, .6), inset 0 0 20px 2px rgba(110, 154, 90, .2),
+    0 0 8px rgba(110, 154, 90, .6), 0 0 20px 2px rgba(110, 154, 90, .2);
+}
+.chat-launch-label {
+  background: linear-gradient(90deg, transparent calc(50% - 1.4em), var(--surface), transparent calc(50% + 1.4em)) 100% 50% / 250% 100% no-repeat,
+    linear-gradient(var(--paper), var(--paper));
+  -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent;
+}
+@keyframes chat-shimmer { to { background-position: 0% 50%, 0 0; } }
+.chat-launch:hover, .chat-launch:focus-visible { background: var(--ink); color: var(--paper); --sweep-burst: 360deg; --sweep-span: 16; }
+.chat-launch:hover .chat-launch-label, .chat-launch:focus-visible .chat-launch-label { animation: chat-shimmer 1.5s linear infinite; }
 
 .chat {
   position: fixed; z-index: 46; margin: 0; padding: 0;
@@ -2049,7 +2080,7 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
   /* On a phone the button is the mark alone, a round one, so it covers as
      little of the page as it can; its name stays for screen readers. */
   .chat-launch { width: 52px; height: 52px; padding: 0; justify-content: center; border-radius: 50%; }
-  .chat-launch span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .chat-launch .chat-launch-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .chat-launch svg { width: 22px; height: 22px; }
   /* The sheet: the whole screen, flush, rising in. The close sits where the
      menu's toggle does; main.js keeps its height to the visible area while
@@ -2067,5 +2098,7 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
   .chat, .chat-launch { transition-property: opacity, visibility, background, color; transition-duration: 0s; }
   .chat-wait i { animation: none; opacity: .6; }
   .chat-launch { animation: none; }
+  .chat-launch:hover, .chat-launch:focus-visible { --sweep-burst: 0deg; --sweep-span: 5; }
+  .chat-launch .chat-launch-label { animation: none !important; }
 }
 @media print { .chat-launch, .chat { display: none !important; } }
