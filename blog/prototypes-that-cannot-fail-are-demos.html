@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototypes that cannot fail are demos — John DeSouza</title>
+<meta name="description" content="43% of companies expect a working prototype as the deliverable. A deliverable gets approved. A prototype is supposed to be able to come back wrong.">
+<link rel="canonical" href="https://john-desouza.com/blog/prototypes-that-cannot-fail-are-demos.html">
+<meta property="og:title" content="Prototypes that cannot fail are demos — John DeSouza">
+<meta property="og:description" content="43% of companies expect a working prototype as the deliverable. A deliverable gets approved. A prototype is supposed to be able to come back wrong.">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://john-desouza.com/og-image.png?v=cbd7c531">
+<meta property="og:url" content="https://john-desouza.com/blog/prototypes-that-cannot-fail-are-demos.html">
+<meta property="og:site_name" content="John DeSouza">
+<meta property="og:locale" content="en_US">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Prototypes that cannot fail are demos — John DeSouza">
+<meta name="twitter:description" content="43% of companies expect a working prototype as the deliverable. A deliverable gets approved. A prototype is supposed to be able to come back wrong.">
+<link rel="alternate" type="text/plain" title="John DeSouza for language models" href="https://john-desouza.com/llms.txt">
+<meta property="article:published_time" content="2026-09-25T10:00:00-04:00">
+<meta property="article:author" content="John DeSouza">
+<meta property="article:tag" content="prototyping">
+<meta property="article:tag" content="AI prototyping">
+<meta property="article:tag" content="vibe coding">
+<meta property="article:tag" content="design process">
+<meta property="article:tag" content="product design craft">
+<link rel="icon" href="/favicon.ico?v=a803d66e" sizes="32x32">
+<link rel="icon" href="/favicon.svg?v=fb53733d" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=94379a7d">
+<link rel="alternate" type="application/rss+xml" title="John DeSouza — Blog" href="https://john-desouza.com/feed.xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css?v=9b1ab6f8">
+<script defer src="/_vercel/insights/script.js"></script>
+<script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
+<script defer src="/_vercel/speed-insights/script.js"></script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Prototypes that cannot fail are demos","description":"43% of companies expect a working prototype as the deliverable. A deliverable gets approved. A prototype is supposed to be able to come back wrong.","datePublished":"2026-09-25T10:00:00-04:00","dateModified":"2026-09-25T10:00:00-04:00","author":{"@type":"Person","@id":"https://john-desouza.com/#john","name":"John DeSouza","url":"https://john-desouza.com/","jobTitle":"Director of Product Design","description":"Director of Product Design with 13 years across consumer lending (Best Egg), blockchain infrastructure (Chainlink Labs) and enterprise identity (Auth0).","knowsAbout":["Product design","Design leadership","Design systems","Fintech","Consumer lending","Web3","Stablecoins","Open banking","Digital identity","AI in product design"],"sameAs":["https://www.linkedin.com/in/johndesouza-/"]},"publisher":{"@type":"Person","@id":"https://john-desouza.com/#john","name":"John DeSouza","url":"https://john-desouza.com/","jobTitle":"Director of Product Design","description":"Director of Product Design with 13 years across consumer lending (Best Egg), blockchain infrastructure (Chainlink Labs) and enterprise identity (Auth0).","knowsAbout":["Product design","Design leadership","Design systems","Fintech","Consumer lending","Web3","Stablecoins","Open banking","Digital identity","AI in product design"],"sameAs":["https://www.linkedin.com/in/johndesouza-/"]},"mainEntityOfPage":{"@type":"WebPage","@id":"https://john-desouza.com/blog/prototypes-that-cannot-fail-are-demos.html"},"url":"https://john-desouza.com/blog/prototypes-that-cannot-fail-are-demos.html","inLanguage":"en","isPartOf":{"@type":"Blog","@id":"https://john-desouza.com/blog.html","name":"Blog"},"articleSection":"Where product design is going","wordCount":860,"abstract":"The cost of a high fidelity prototype used to force a team to name the question before the build. Now that the cost is gone, the question has to be written down on purpose, or the prototype is just a demo with a review on the calendar.","about":{"@type":"Thing","name":"Where product design is going"},"image":{"@type":"ImageObject","url":"https://john-desouza.com/og-image.png","width":1200,"height":630},"citation":[{"@type":"CreativeWork","name":"Craft, AI in Design 2026","url":"https://stateofaidesign.com/chapters/craft"},{"@type":"CreativeWork","name":"State of Prototyping: Spring 2026","url":"https://survey.uxtools.co/spring-2026"},{"@type":"CreativeWork","name":"Usable but Conventional","url":"https://arxiv.org/abs/2605.15124"},{"@type":"CreativeWork","name":"AI Prototyping in Real Design Contexts","url":"https://www.nngroup.com/articles/ai-prototyping/"},{"@type":"CreativeWork","name":"Vibe Coding and Vibe Design","url":"https://jakobnielsenphd.substack.com/p/vibe-coding-vibe-design"},{"@type":"CreativeWork","name":"State of the Designer 2026","url":"https://www.figma.com/blog/state-of-the-designer-2026/"}],"keywords":"prototyping, AI prototyping, vibe coding, design process, product design craft"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://john-desouza.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://john-desouza.com/blog.html"},{"@type":"ListItem","position":3,"name":"Prototypes that cannot fail are demos","item":"https://john-desouza.com/blog/prototypes-that-cannot-fail-are-demos.html"}]}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="/" aria-label="John DeSouza, home"><span>John DeSouza</span></a>
+    <button class="icon-btn nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <nav class="nav-links" id="site-nav" aria-label="Primary">
+      <ul>
+        <li><a href="/work.html">Work</a></li>
+        <li><a href="/#leadership">Leadership</a></li>
+        <li><a href="/#about">About</a></li>
+        <li><a href="/blog.html">Blog</a></li>
+        <li><a class="nav-icon" data-link="linkedin" href="#" aria-label="LinkedIn profile" title="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.125 2.062 2.062 0 0 1 0 4.125zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/></svg><span>LinkedIn</span></a></li>
+        <li class="nav-resume"><a class="nav-download" data-link="resume" href="#"><span>Resume</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11"/><path d="m7 11 5 5 5-5"/><path d="M4 20h16"/></svg></a></li>
+      </ul>
+      <div class="nav-foot">
+        <a class="btn btn-primary" data-link="email" href="#"><span class="icon-swap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>Contact me</a>
+        <a class="btn btn-ghost" data-link="resume" href="#"><span class="icon-swap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11"/><path d="m7 11 5 5 5-5"/><path d="M4 20h16"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="20 6 9 17 4 12"/></svg></span>Resume</a>
+      </div>
+    </nav>
+    <div class="nav-actions">
+      <a class="btn btn-primary btn-sm" data-link="email" href="#"><span class="icon-swap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>Contact me</a>
+    </div>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+
+<section class="post-hero">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><span class="crumb-sep" aria-hidden="true">/</span><a href="/blog.html">Blog</a></li>
+        <li aria-current="page"><span class="crumb-sep" aria-hidden="true">/</span>Prototypes that cannot fail are demos</li>
+      </ol>
+    </nav>
+    <p class="eyebrow" data-rise style="--i:0">Where product design is going</p>
+    <h1 class="t-display" data-rise style="--i:1">Prototypes that cannot fail are demos</h1>
+    <p class="t-lede" data-rise style="--i:2">Forty-three percent of designers say their company expects a working prototype as the deliverable. Cheap fidelity was supposed to buy earlier answers. For most teams it bought an artifact nobody can argue with.</p>
+    <p class="byline t-small"><span class="byline-mark" aria-hidden="true">JD</span>Written by John DeSouza</p>
+    <p class="post-meta t-small">
+      <span>Published on <time datetime="2026-09-25T10:00:00-04:00">25 September 2026</time></span>
+      <span class="dot" aria-hidden="true">·</span>
+      <span>in Where product design is going</span>
+      <span class="dot" aria-hidden="true">·</span>
+      <span>4 min read</span>
+    </p>
+  </div>
+</section>
+
+<section class="section tight">
+  <div class="wrap">
+    <figure class="post-art" data-reveal>
+      <img src="../assets/blog/prototypes-that-cannot-fail-are-demos-wide.svg?v=82919e8d" width="1500" height="600" alt="" decoding="async">
+    </figure>
+    <div class="claim" data-reveal>
+      <p class="t-quote">The cost of a high fidelity prototype used to force a team to name the question before the build. Now that the cost is gone, the question has to be written down on purpose, or the prototype is just a demo with a review on the calendar.</p>
+    </div>
+    <div class="prose" data-reveal>
+<p>Jakob Nielsen made the case in <a href="https://jakobnielsenphd.substack.com/p/vibe-coding-vibe-design">Vibe Coding and Vibe Design</a>, quoting a line from Kshitij Agrawal that the field has more or less adopted.</p>
+
+      <blockquote>
+        <p>mockups existed because coding was difficult; now that coding is easy, the future is prototypes</p>
+        <cite>Kshitij Agrawal, quoted by Jakob Nielsen, March 2025</cite>
+      </blockquote>
+
+      <p>Go straight to something that runs. Test the real interaction instead of a picture of it. I agree with all of that. The conclusion skips a step, and the step it skips is the one that made prototypes work.</p>
+
+      <p>A high fidelity prototype used to cost about a week of somebody's time. That price did a job nobody assigned to it. It forced a conversation before the build, because no team spends a week without asking what the week is for. The question came first because the budget made it come first.</p>
+
+      <h2>The deliverable ate the question</h2>
+
+      <p>Forty-three percent of designers say their company now expects a working prototype as the deliverable, according to <a href="https://stateofaidesign.com/chapters/craft">AI in Design 2026</a>, a survey of more than 900 designers in 60 countries. Half have pushed AI-generated code to production. In the <a href="https://survey.uxtools.co/spring-2026">State of Prototyping</a> survey run by Tommy Geoco and UX Tools, 1,478 responses collected this spring, 43.8% now spend more than half their building time on code a model wrote.</p>
+
+      <p>A deliverable and a prototype have different jobs. A deliverable gets accepted. A prototype gets built to be wrong in a particular way that somebody named in advance, and the whole point is that it might come back wrong.</p>
+
+      <p>When the artifact arrives before the question, the question gets written afterward, if anyone writes it at all. A question written after the build is a rationalization with a sample size attached.</p>
+
+      <h2>What gets approved is average</h2>
+
+      <p>Ninety-two people were shown AI-generated and human-made prototypes without being told which was which, and rated them on the short user experience questionnaire. The <a href="https://arxiv.org/abs/2605.15124">results</a> split cleanly. Positive on the pragmatic side: usable, efficient, clear. Neutral to negative on originality and innovation. The authors called it usable but conventional.</p>
+
+      <p>Nielsen Norman Group ran their own version, rebuilding one of their training pages with three kinds of prompt. The detailed prompts got close to the human original. The outputs still <a href="https://www.nngroup.com/articles/ai-prototyping/">missed visual hierarchy, color contrast and consistent margins</a>, which is why they land on these tools being better for ideation than for production.</p>
+
+      <p>So the thing showing up in your review is competent, conventional and finished-looking. All three at once is very hard to argue with. That is the problem, not the achievement. In Figma's <a href="https://www.figma.com/blog/state-of-the-designer-2026/">State of the Designer 2026</a>, 58% of designers define craft as visual polish, ahead of thoughtful problem solving at 47%. Polish is the part that just became free.</p>
+
+      <h2>The rule I hold</h2>
+
+      <p>Nothing goes into a design review without one line at the top of it: the belief this is built to kill, and what we would be looking at if that belief were wrong.</p>
+
+      <p>I want that line before the build, not in the deck afterward. If nobody on the team can write it, we are building a demo, and I would rather we call it a demo and put it on the calendar as one. Demos are useful. They are just not evidence.</p>
+
+      <p>The first question in the review is the same question. What would this look like if we were wrong? If the honest answer is "about the same", the prototype tested nothing and the next 40 minutes are a conversation about taste. Sometimes that is the meeting you needed. It should not be the meeting you thought you were having.</p>
+
+      <p>At Best Egg, applicants uploaded their documents and then the dashboard went quiet. What we were testing was whether telling them the status after the upload changed how many finished, not whether the screen looked better. That version of the question has a result. It went through an A/B test before rollout and came back with one.</p>
+
+      <h2>The forcing function has to come from a person now</h2>
+
+      <p>Eighty percent of designers say they still rely on their own quality meter over the model's. I believe them, and I do not think a quality meter is the thing under threat here. Judgment about whether a screen is good survives cheap production fine.</p>
+
+      <p>What does not survive is the part of the process that used to happen on its own because building was expensive. Somebody named the uncertainty. The team agreed ahead of time on what a bad result would look like. And before anyone opened a tool, everyone knew which of the plausible directions the build was there to rule out.</p>
+
+      <p>None of that was ever a method. It was a side effect of the price, and the price is gone. Which means it is now somebody's job, in writing, or it does not happen.</p>
+
+      <p>The teams that get this wrong are not going to look slow. They are going to look extremely fast, and they are going to ship a lot of usable, conventional, well-spaced work that nobody in the building ever had the standing to question.</p>
+    </div>
+
+    <div class="sources" data-reveal>
+      <p class="eyebrow">Sources</p>
+      <ol>
+        <li><a href="https://stateofaidesign.com/chapters/craft">Craft, AI in Design 2026</a>, Designer Fund and Foundation Capital. 900 designers across 60 countries. 43% say their companies expect working prototypes as deliverables, 50% have pushed AI-generated code to production, 80% rely on their own quality meter over the model's.</li>
+        <li><a href="https://survey.uxtools.co/spring-2026">State of Prototyping: Spring 2026</a>, Tommy Geoco and UX Tools. 1,478 responses across 18 regions, collected March 14 to April 6 2026. 43.8% spend more than half their building time on AI-generated code, 37.7% use none.</li>
+        <li><a href="https://arxiv.org/abs/2605.15124">Usable but Conventional</a>, Romero, Wiese, Balancieiri, Leal and Guerino, May 2026. 92 participants rated AI-generated and human-made prototypes without being told which was which, using the UEQ-S.</li>
+        <li><a href="https://www.nngroup.com/articles/ai-prototyping/">AI Prototyping in Real Design Contexts</a>, Huei-Hsin Wang and Megan Brown, Nielsen Norman Group. Rebuilt one of their own pages with three prompt types and reviewed what the outputs missed.</li>
+        <li><a href="https://jakobnielsenphd.substack.com/p/vibe-coding-vibe-design">Vibe Coding and Vibe Design</a>, Jakob Nielsen, March 2025. The case for skipping static mockups and going straight to something that runs.</li>
+        <li><a href="https://www.figma.com/blog/state-of-the-designer-2026/">State of the Designer 2026</a>, Figma with NewtonX. 906 designers across five regions on what they count as craft.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="section tight">
+  <div class="wrap">
+    <div class="post-next" data-reveal>
+      <p class="eyebrow">Next</p>
+      <h2 class="t-title"><a href="/blog/train-juniors-on-what-they-reject.html">Train juniors on what they reject</a></h2>
+      <div class="actions">
+        <a class="btn btn-ghost" href="/blog.html">All posts<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="contact" data-reveal data-field="rings">
+      <canvas class="field" aria-hidden="true"></canvas>
+      <div>
+        <p class="eyebrow">Get in touch</p>
+        <h2 class="t-title">Disagree with any of this?</h2>
+        <p class="t-lede">I'd rather hear it than not. The arguments get better when somebody pushes back.</p>
+      </div>
+      <div class="contact-actions">
+        <a class="btn btn-primary" data-link="linkedin" href="#"><span class="icon-swap"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.125 2.062 2.062 0 0 1 0 4.125zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></span>Message me on LinkedIn</a>
+        <a class="btn btn-ghost" data-link="email" href="#"><span class="icon-swap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>Email me</a>
+        <a class="btn btn-ghost" data-link="resume" href="#"><span class="icon-swap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11"/><path d="m7 11 5 5 5-5"/><path d="M4 20h16"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="20 6 9 17 4 12"/></svg></span>Download resume</a>
+      </div>
+    </div>
+    <footer>
+      <span>© <span data-year></span> John DeSouza</span>
+      <span>Posts are my own views. Case studies reflect my role and my teams' work at each company.</span>
+    </footer>
+  </div>
+</section>
+
+</main>
+<script src="../main.js?v=24b37281"></script>
+</body>
+</html>
