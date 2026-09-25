@@ -1975,8 +1975,8 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 }
 .chat-launch-sweep::before {
   content: ""; position: absolute; inset: var(--sweep-pad); border-radius: inherit;
-  box-shadow: inset 0 0 0 1px var(--accent-2), inset 0 0 8px rgba(110, 154, 90, .6), inset 0 0 20px 2px rgba(110, 154, 90, .2),
-    0 0 8px rgba(110, 154, 90, .6), 0 0 20px 2px rgba(110, 154, 90, .2);
+  box-shadow: inset 0 0 0 1px var(--accent-2), inset 0 0 8px color-mix(in srgb, var(--accent-2) 60%, transparent), inset 0 0 20px 2px color-mix(in srgb, var(--accent-2) 20%, transparent),
+    0 0 8px color-mix(in srgb, var(--accent-2) 60%, transparent), 0 0 20px 2px color-mix(in srgb, var(--accent-2) 20%, transparent);
 }
 .chat-launch-label {
   background: linear-gradient(90deg, transparent calc(50% - 1.4em), var(--surface), transparent calc(50% + 1.4em)) 100% 50% / 250% 100% no-repeat,
