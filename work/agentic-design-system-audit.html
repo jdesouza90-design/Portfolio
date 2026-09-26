@@ -22,7 +22,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!-- A fresh unlock from the gate: hold the page until its opener is up (initUnlock in main.js). -->
 <script>if (/[?&]unlocked(?=&|$)/.test(location.search)) document.documentElement.classList.add("unlock");</script>
-<link rel="stylesheet" href="../styles.css?v=20658463">
+<link rel="stylesheet" href="../styles.css?v=3badb68a">
 <script defer src="/_vercel/insights/script.js"></script>
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
@@ -87,8 +87,8 @@
         </div>
       </div>
       <button class="art-ctl" type="button" aria-pressed="false" aria-label="Pause the agent demo" hidden><svg class="i-pause" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="3.5" y="3" width="3" height="10" rx=".8"/><rect x="9.5" y="3" width="3" height="10" rx=".8"/></svg><svg class="i-play" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 3.2v9.6a.6.6 0 0 0 .9.5l7.4-4.8a.6.6 0 0 0 0-1L5.9 2.7a.6.6 0 0 0-.9.5Z"/></svg></button>
-      <figcaption class="t-small">A scripted re-enactment of the agent&#x27;s run over Best Egg&#x27;s Figma library, using the audit&#x27;s real figures.</figcaption>
-      <script type="application/json" data-demo-script>{"steps":[{"id":"brief","kind":"type","label":"Reading the brief","lines":["Audit every Best Egg Figma file against the library.","Count instances, flag what is unused or duplicated.","List the fixes. Leave the decisions to the team."],"hold_ms":1800},{"id":"connect","kind":"scan","label":"Connecting to Figma","lines":["Read-only Figma token accepted","8 teams registered","Archives and the library's own file excluded","Brand Studio set aside, reported separately"],"hold_ms":1500},{"id":"crawl","kind":"scan","label":"Crawling 296 files","lines":["Opening every page and every instance","296 of 296 files reached"],"hold_ms":1900,"figure":{"value":"0","unit":"files read","to":"296"}},{"id":"count","kind":"count","label":"Counting instances","lines":["1,316 assets in the library","1.15 million instances read","Name-match heuristic removed from the formula"],"hold_ms":1800,"figure":{"value":"90.7%","unit":"library adoption"}},{"id":"flag-button","kind":"flag","label":"Flagging .Button","lines":[".Button: 7 properties multiplied together","Icons alone multiply the matrix by 4","Most variants unused, many near-identical"],"hold_ms":1700,"figure":{"value":"2,304","unit":"button variants"}},{"id":"decide","kind":"fix","label":"Designer decided","lines":["Kept: 141 Button, 120 Icon Button, 60 Link","Icons became a boolean and a swap","Agent wrote the usage guideline"],"hold_ms":1900,"figure":{"value":"2,304","unit":"button variants","to":"321"}},{"id":"flag-library","kind":"flag","label":"Flagging the library","lines":["770 components with zero instances","59 standalones flagged for deprecation","844,333 hand-set values, 229 variables unbound","266 of 491 standalones are illustrations"],"hold_ms":1800},{"id":"report","kind":"result","label":"Report written","lines":["28 fixes, each with a deep link into Figma","Specs and lists: agent. Library edits: designer.","Picker: 491 standalone to 166, a 66% cut","Next run: the first of the month"],"hold_ms":2400,"figure":{"value":"28","unit":"fixes"}}],"final_state":{"step":"report","caption":"The end of one run: 296 files read, 28 fixes listed, the decisions left to the team."}}</script>
+      <script type="application/json" data-demo-script>{"steps":[{"id":"brief","kind":"type","label":"Reading the brief","lines":["Audit every Best Egg Figma file against the library.","Count instances, flag what is unused or duplicated.","List the fixes. Leave the decisions to the team."],"hold_ms":1800},{"id":"connect","kind":"scan","label":"Connecting to Figma","lines":["Read-only Figma token accepted","8 teams registered","Archives and the library’s own file excluded","Brand Studio set aside, reported separately"],"hold_ms":1500},{"id":"crawl","kind":"scan","label":"Crawling 296 files","lines":["Opening every page and every instance","296 of 296 files reached"],"hold_ms":1900,"figure":{"value":"0","unit":"files read","to":"296"}},{"id":"count","kind":"count","label":"Counting instances","lines":["1,316 assets in the library","1.15 million instances read","Name-match heuristic removed from the formula"],"hold_ms":1800,"figure":{"value":"90.7%","unit":"library adoption"}},{"id":"flag-button","kind":"flag","label":"Flagging .Button","lines":[".Button: 7 properties multiplied together","Icons alone multiply the matrix by 4","Most variants unused, many near-identical"],"hold_ms":1700,"figure":{"value":"2,304","unit":"button variants"}},{"id":"decide","kind":"fix","label":"Designer decided","lines":["Kept: 141 Button, 120 Icon Button, 60 Link","Icons became a boolean and a swap","Agent wrote the usage guideline"],"hold_ms":1900,"figure":{"value":"2,304","unit":"button variants","to":"321"}},{"id":"flag-library","kind":"flag","label":"Flagging the library","lines":["770 components with zero instances","59 standalones flagged for deprecation","844,333 hand-set values, 229 variables unbound","266 of 491 standalones are illustrations"],"hold_ms":1800},{"id":"report","kind":"result","label":"Report written","lines":["28 fixes, each with a deep link into Figma","Specs and lists: agent. Library edits: designer.","Picker: 491 standalone to 166, a 66% cut","Next run: the first of the month"],"hold_ms":2400,"figure":{"value":"28","unit":"fixes"}}],"final_state":{"step":"report","caption":"The end of one run: 296 files read, 28 fixes listed, the decisions left to the team."}}</script>
+      <figcaption class="t-small">A scripted re-enactment of the agent’s run over Best Egg’s Figma library, using the audit’s real figures.</figcaption>
     </figure>
     <dl class="facts">
       <div><dt>Role</dt><dd>Director of Product Design</dd></div>
@@ -98,7 +98,7 @@
     </dl>
     <div class="provenance" data-reveal>
       <p class="eyebrow">Audit run by an agent, decisions by the team</p>
-      <p class="t-small">A Claude Code agent with a read-only token read all 296 Figma files, counted every instance and wrote the remediation guide, and the rules it worked to, the direction and every edit to the library came from me and one senior product designer.</p>
+      <p class="t-small">A Claude Code agent with a read-only token read all 296 Figma files, counted every instance and wrote the remediation guide. The rules it worked to, the direction and every edit to the library came from me and one senior product designer.</p>
     </div>
     <div class="zoom" data-zoom data-reveal>
       <p class="eyebrow" id="zoom-label">Reading</p>
@@ -242,15 +242,15 @@
           <p class="eyebrow">The brief</p>
           <p class="brief-text">
           <span class="brief-seg"><span class="brief-label">What to crawl</span>Use the read-only Figma token to open every file at Best Egg across the 8 registered teams, and read every page and every instance in each one.</span>
-          <span class="brief-seg"><span class="brief-label">What to skip</span>Skip the archives and the design system library&#x27;s own file.</span>
-          <span class="brief-seg"><span class="brief-label">How to count</span>Count every instance against the design system, what is used and what is not, and give no adoption credit for a layer that only matches a component&#x27;s name.</span>
-          <span class="brief-seg"><span class="brief-label">What to report apart</span>Report Brand Studio&#x27;s files separately, because marketing collateral does not instance a dropdown.</span>
+          <span class="brief-seg"><span class="brief-label">What to skip</span>Skip the archives and the design system library’s own file.</span>
+          <span class="brief-seg"><span class="brief-label">How to count</span>Count every instance against the design system, what is used and what is not, and give no adoption credit for a layer that only matches a component’s name.</span>
+          <span class="brief-seg"><span class="brief-label">What to report apart</span>Report Brand Studio’s files separately, because marketing collateral does not instance a dropdown.</span>
           <span class="brief-seg"><span class="brief-label">What to flag</span>Flag every component with zero instances, every duplicate and every hand-set value that already has a published variable, and show the counts behind each flag.</span>
           <span class="brief-seg"><span class="brief-label">What to write</span>Write a remediation guide with one card per fix, a deep link into Figma and the exact change to paste or click through, marked by whether you can make it yourself or it needs write access.</span>
           <span class="brief-seg"><span class="brief-label">When to stop</span>Stop at the list: leave the decisions to the team, and run again on the first of every month.</span>
           </p>
         </div>
-        <figcaption class="t-small">The agent&#x27;s brief, reconstructed from what the case study says it did. It is a reconstruction until John replaces it with the brief as written.</figcaption>
+        <figcaption class="t-small">The agent’s brief, reconstructed from what the case study says it did. It is a reconstruction until John replaces it with the brief as written.</figcaption>
       </figure>
     </article>
   </div>
@@ -348,6 +348,6 @@
   </div>
 </section>
 </main>
-<script src="../main.js?v=386b3119"></script>
+<script src="../main.js?v=870c75f7"></script>
 </body>
 </html>

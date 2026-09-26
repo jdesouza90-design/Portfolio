@@ -950,6 +950,7 @@ const CONFIG = {
     if (reduced) {
       field.frame(0, 0, p, false);
       if ("ResizeObserver" in window) new ResizeObserver(() => { size(); field.frame(0, 0, p, false); }).observe(el);
+      onTheme(() => field.frame(0, 0, p, false));
       return;
     }
     field.frame(0, 0, p, true);
@@ -1579,6 +1580,7 @@ const CONFIG = {
     onTheme(() => {   // the course is drawn in the page's own inks every frame, so it follows the register
       INK = tok("--ink") || INK; INK3 = tok("--ink-3") || INK3; HAIR = tok("--hair-2") || HAIR;
       ACCENT = tok("--accent") || ACCENT; GREEN = tok("--accent-2") || GREEN; FLAG = tok("--danger") || FLAG; SAND = tok("--surface") || SAND;
+      frame();
     });
     const H = 64, GROUND = 52, TEE = 12;           // logical pixels; the ground line is GROUND
     /* The tunable part, which the dashboard sets (GAME in middleware.js has
@@ -1932,7 +1934,6 @@ const CONFIG = {
     const fine = window.matchMedia("(hover: hover) and (pointer: fine)");
     const stage = document.createElement("div");
     stage.className = "cases-stage";
-    stage.setAttribute("aria-hidden", "true");
     const media = new Map(rows.map((r) => [r, $(".case-media", r)]));
     const slot = new Map(rows.map((r) => {
       const s = document.createElement("div");
@@ -1942,7 +1943,7 @@ const CONFIG = {
     let on = null, hover = null, focus = null, staged = false;
     const show = (row) => {
       if (row === on) return;
-      rows.forEach((r) => { r.classList.toggle("is-on", r === row); slot.get(r).classList.toggle("is-on", r === row); });
+      rows.forEach((r) => { r.classList.toggle("is-on", r === row); slot.get(r).classList.toggle("is-on", r === row); slot.get(r).setAttribute("aria-hidden", String(r !== row)); });
       on = row;
     };
     const nearest = () => {
@@ -1964,7 +1965,7 @@ const CONFIG = {
     const unmount = () => {
       if (!staged) return;
       staged = false;
-      rows.forEach((r) => { r.append(media.get(r)); r.classList.remove("is-on"); slot.get(r).classList.remove("is-on"); });
+      rows.forEach((r) => { r.append(media.get(r)); r.classList.remove("is-on"); slot.get(r).classList.remove("is-on"); slot.get(r).removeAttribute("aria-hidden"); });
       stage.remove();
       list.classList.remove("staged");
       on = null;
@@ -1985,7 +1986,7 @@ const CONFIG = {
       requestAnimationFrame(() => { tick = false; pick(); });
     };
     window.addEventListener("scroll", onScroll, { passive: true });
-    list.addEventListener("lens", () => { if (staged) { stage.style.gridRow = `1 / span ${rows.length}`; list.append(stage); pick(); } });   // re-sorted: the stage stays last in the grid
+    list.addEventListener("lens", pick);   // re-sorted: show the row now nearest
   });
 
   /* ---- The lens ----
@@ -1998,9 +1999,9 @@ const CONFIG = {
      less motion; otherwise they simply re-sort. */
   const LENSES = {
     hiring: { note: "Outcome first: the business result each piece of work is measured by.", order: ["system", "cross-sell", "verifications", "refi", "staking", "no-code"] },
-    leader: { note: "How the work was run: who did what, at what size, and what was handed to an agent.", order: ["system", "no-code", "cross-sell", "verifications", "refi", "staking"] },
+    leader: { note: "How the work was run: who did what, at what size and what was handed to an agent.", order: ["system", "no-code", "cross-sell", "verifications", "refi", "staking"] },
     pm: { note: "The funnel and its numbers: declines, offers and verifications, with the revenue behind each.", order: ["cross-sell", "refi", "verifications", "system", "staking", "no-code"] },
-    eng: { note: "The systems underneath: the agent and its rules, the design system, and the on-chain product.", order: ["system", "staking", "no-code", "verifications", "refi", "cross-sell"] },
+    eng: { note: "The systems underneath: the agent and its rules, the design system and the on-chain product.", order: ["system", "staking", "no-code", "verifications", "refi", "cross-sell"] },
   };
   const initLens = () => $$("[data-lens]").forEach((lens) => {
     const list = $(".cases", lens.parentNode);
@@ -2014,7 +2015,8 @@ const CONFIG = {
         const ia = order.indexOf(slugOf(a)), ib = order.indexOf(slugOf(b));
         return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
       });
-      rows.forEach((r) => list.append(r));
+      const stage = $(".cases-stage", list);
+      rows.forEach((r) => list.insertBefore(r, stage));
       list.dispatchEvent(new CustomEvent("lens"));
     };
     const apply = (key, animate) => {
@@ -2044,7 +2046,6 @@ const CONFIG = {
     const wide = window.matchMedia("(min-width: 761px)");
     const stage = document.createElement("div");
     stage.className = "steps-stage";
-    stage.setAttribute("aria-hidden", "true");
     const shots = steps.map((c) => $(".shot", c));
     steps.forEach((c, i) => {
       const head = $(".col-head", c);
@@ -2058,7 +2059,7 @@ const CONFIG = {
     const show = (i) => {
       if (i === on) return;
       steps.forEach((c, k) => { if (k === i) c.setAttribute("aria-current", "step"); else c.removeAttribute("aria-current"); });
-      shots.forEach((s, k) => s.classList.toggle("is-on", k === i));
+      shots.forEach((s, k) => { s.classList.toggle("is-on", k === i); s.setAttribute("aria-hidden", String(k !== i)); });
       on = i;
     };
     const nearest = () => {
@@ -2079,7 +2080,7 @@ const CONFIG = {
     const unmount = () => {
       if (!mounted) return;
       mounted = false;
-      shots.forEach((s, i) => { steps[i].append(s); s.classList.remove("is-on"); });
+      shots.forEach((s, i) => { steps[i].append(s); s.classList.remove("is-on"); s.removeAttribute("aria-hidden"); });
       stage.remove();
       block.classList.remove("on");
       steps.forEach((c) => c.removeAttribute("aria-current"));
@@ -2243,7 +2244,10 @@ const CONFIG = {
       const q = input.value.trim().toLowerCase(), words = q.split(/\s+/).filter(Boolean);
       const hits = (index || []).map((e) => [score(e, words, q), e]).filter(([s]) => s > 0).sort((a, b) => b[0] - a[0]).slice(0, 8).map(([, e]) => e);
       rows = hits.map((e) => ({ kind: "go", url: e.u, html: `<span class="palette-title">${escapeHtml(e.t)}</span><span class="palette-kind">${escapeHtml(e.k)}</span>${e.d ? `<span class="palette-desc">${escapeHtml(e.d)}</span>` : ""}` }));
-      if (q && $(".chat-launch")) rows.push({ kind: "ask", q: input.value.trim(), html: `<span class="palette-title">Ask: “${escapeHtml(input.value.trim())}”</span><span class="palette-kind">Assistant</span><span class="palette-desc">Hand the question to the assistant, which answers from the site.</span>` });
+      if (q && $(".chat-launch")) {
+        const row = { kind: "ask", q: input.value.trim(), html: `<span class="palette-title">Ask: “${escapeHtml(input.value.trim())}”</span><span class="palette-kind">Assistant</span><span class="palette-desc">Hand the question to the assistant, which answers from the site.</span>` };
+        if (/\?$/.test(q) || words.length >= 4) rows.unshift(row); else rows.push(row);   // a question comes first; a word or two is a search
+      }
       if (!rows.length) rows.push({ kind: "none", html: `<span class="palette-title">Nothing matches</span><span class="palette-desc">Try a page name, a company or a topic.</span>` });
       cursor = 0;
       list.innerHTML = rows.map((r, i) => `<li class="palette-row ${r.kind}" role="option" id="palette-opt-${i}" aria-selected="${i === 0}">${r.html}</li>`).join("");
@@ -2262,14 +2266,7 @@ const CONFIG = {
       document.documentElement.classList.remove("palette-open");
       if (from && from.isConnected) from.focus({ preventScroll: true });
     };
-    const ask = (q) => {
-      const launch = $(".chat-launch"), form = $(".chat-form"), field = $("#chat-input");
-      if (!launch || !form || !field) return;
-      if (launch.getAttribute("aria-expanded") !== "true") launch.click();
-      field.value = q;
-      field.dispatchEvent(new Event("input", { bubbles: true }));
-      form.requestSubmit();
-    };
+    const ask = (q) => document.dispatchEvent(new CustomEvent("chat:ask", { detail: q }));   // the chat opens and asks, or holds the question if it is busy
     const go = (i) => {
       const r = rows[i];
       if (!r || r.kind === "none") return;
@@ -2279,7 +2276,7 @@ const CONFIG = {
       const [path, hash] = r.url.split("#");
       if (path === location.pathname && hash) {
         const el = document.getElementById(hash);
-        if (el) { history.pushState(null, "", `#${hash}`); el.scrollIntoView({ behavior: reduced ? "auto" : "smooth" }); el.focus({ preventScroll: true }); return; }
+        if (el) { history.pushState(null, "", `#${hash}`); el.scrollIntoView({ behavior: reduced ? "auto" : "smooth" }); el.tabIndex = -1; el.focus({ preventScroll: true }); return; }
       }
       if (r.url !== here) location.href = r.url;
     };
@@ -2383,7 +2380,7 @@ const CONFIG = {
 
   const buildChat = (state) => {
     const KEY = "chat.v1";
-    const INTRO = "I'm an AI assistant. I answer from the pages on this site, so ask about John's projects, how he leads or what he's looking for next.";
+    const INTRO = "I’m an AI assistant. I answer from the pages on this site, so ask about John’s projects, how he leads or what he’s looking for next.";
     const UNLOCKED = "Unlocked. The case studies are open now, so ask me about the results, the numbers or how the work was done.";
     const phone = window.matchMedia("(max-width: 640px)");
     const fine = window.matchMedia("(pointer: fine)");
@@ -2409,9 +2406,9 @@ const CONFIG = {
 
     /* Who is asking: each chip sends a fuller question than its label. */
     const AUDIENCE = [
-      ["Hiring manager", "I'm a hiring manager. What has John shipped, with the outcomes?"],
-      ["Design leader", "I'm a design leader. How does John run a design team, and what does he hold the bar on?"],
-      ["Engineer", "I'm an engineer. How does John work with engineering, and what has he built with AI agents?"],
+      ["Hiring manager", "I’m a hiring manager. What has John shipped, with the outcomes?"],
+      ["Design leader", "I’m a design leader. How does John run a design team, and what does he hold the bar on?"],
+      ["Engineer", "I’m an engineer. How does John work with engineering, and what has he built with AI agents?"],
     ];
 
     /* The button and the panel */
@@ -2603,7 +2600,7 @@ const CONFIG = {
           log.append(starters);
         }
         audience = make("div", "chat-audience");
-        audience.append(make("span", "t-small chat-audience-label", "I'm a"), chipRow(AUDIENCE, "Ask as", ask));
+        audience.append(make("span", "t-small chat-audience-label", "I’m a"), chipRow(AUDIENCE, "Ask as", ask));
         log.append(audience);
       }
       msgs.forEach((m) => bubble(m.role, m.content, m));
@@ -2744,7 +2741,7 @@ const CONFIG = {
     const offerWalkthrough = () => {
       offered = true;
       const card = make("div", "chat-offer");
-      card.append(make("p", "chat-offer-text", "Want the full story? I'm happy to walk you through any of this work myself."));
+      card.append(make("p", "chat-offer-text", "Want the full story? I’m happy to walk you through any of this work myself."));
       const row = make("div", "chat-offer-row");
       const mail = make("a", "btn btn-primary btn-sm", "Email John");
       mail.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent("Walkthrough of your work")}`;
@@ -2839,6 +2836,13 @@ const CONFIG = {
       closing = setTimeout(() => { dlg.close(); dlg.style.height = dlg.style.top = ""; }, reduced ? 0 : 200);
     };
     launch.addEventListener("click", () => open(true));
+    document.addEventListener("chat:ask", (e) => {   // the palette's Ask row: open and ask, or hold the question if an answer is still coming
+      const q = String(e.detail || "").trim();
+      if (!q) return;
+      if (!dlg.open) open(false);
+      if (busy || questions() >= LIMIT || !form.isConnected || form.hidden) { input.value = q; sync(); input.focus({ preventScroll: true }); return; }
+      ask(q);
+    });
     $(".chat-close", dlg).addEventListener("click", close);
     dlg.addEventListener("cancel", (e) => { e.preventDefault(); close(); });   // Escape on the modal sheet
     dlg.addEventListener("keydown", (e) => { if (e.key === "Escape" && !phone.matches) { e.preventDefault(); close(); } });

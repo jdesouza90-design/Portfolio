@@ -37,6 +37,8 @@
   --contact-ground: linear-gradient(155deg, #241D17 0%, #14100C 58%, #100D0A 100%);   /* the contact block's ground and rings, inverted in the dark register */
   --contact-rings: rgba(246, 244, 240, .07);
   --scrim: rgba(20, 16, 12, .55);
+  --plate-ink: #5C564E;    /* text on a panel ground, which stays paper in both registers */
+  --plate-ink-2: #6F675D;
 
   /* panel ground: the warm sand every screenshot sits on. Each case study
      overrides these from its own subject matter (section 10). */
@@ -135,7 +137,7 @@
   --surface-2: #1C1812;
   --ink: #F0EBE2;
   --ink-2: #BDB4A7;
-  --ink-3: #9C9387;   /* 6.6:1 on paper-2 */
+  --ink-3: #9C9387;   /* 5.8:1 on paper-2 */
   --hair: #2C261F;
   --hair-2: #3F382F;
   --accent: #7FB279;
@@ -159,7 +161,7 @@
   --surface-2: #1C1812;
   --ink: #F0EBE2;
   --ink-2: #BDB4A7;
-  --ink-3: #9C9387;   /* 6.6:1 on paper-2 */
+  --ink-3: #9C9387;   /* 5.8:1 on paper-2 */
   --hair: #2C261F;
   --hair-2: #3F382F;
   --accent: #7FB279;
@@ -249,6 +251,8 @@ table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
 /* Every captioned figure on a page is numbered in order, the way a report's
    plates are: "fig. 03" in mono before the caption's own words. */
 body { counter-reset: fig; }
+.panel figcaption { color: var(--plate-ink); }
+.panel figcaption::before { color: var(--plate-ink-2); }
 .gallery figcaption::before, .prose figcaption::before, .walk-note::before {
   counter-increment: fig; content: "fig. " counter(fig, decimal-leading-zero);
   font-family: var(--font-mono); font-size: var(--t-micro); letter-spacing: var(--ls-micro); font-weight: 500; color: var(--ink-3);
@@ -1141,7 +1145,7 @@ footer a:hover { color: var(--ink); }
 .walk img { width: 100%; height: auto; display: block; }
 /* A scrim marks the poster as a video still, so the control reads as "play" */
 .walk::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 1; background: linear-gradient(180deg, rgba(20, 16, 12, .12), rgba(20, 16, 12, .34)); transition: opacity var(--dur-ui) var(--ease); }
-.walk .play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 2; display: inline-flex; align-items: center; gap: 9px; padding: 12px 20px 12px 17px; border: 0; border-radius: 999px; white-space: nowrap; background: rgba(255, 255, 255, .97); color: var(--ink); box-shadow: 0 10px 34px rgba(20, 16, 12, .34); transition: transform var(--dur-press) var(--ease), background var(--dur-hover), box-shadow var(--dur-hover), opacity var(--dur-ui) var(--ease); }
+.walk .play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 2; display: inline-flex; align-items: center; gap: 9px; padding: 12px 20px 12px 17px; border: 0; border-radius: 999px; white-space: nowrap; background: var(--surface); color: var(--ink); box-shadow: 0 10px 34px rgba(20, 16, 12, .34); transition: transform var(--dur-press) var(--ease), background var(--dur-hover), box-shadow var(--dur-hover), opacity var(--dur-ui) var(--ease); }
 .walk .play:hover { background: var(--surface); box-shadow: 0 14px 40px rgba(20, 16, 12, .42); }
 .walk .play:focus-visible { outline-color: var(--surface); }
 .walk.loading .play { cursor: progress; }
@@ -1341,7 +1345,7 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 .agent-fig b { display: block; font-family: var(--font-display); font-weight: 400; font-size: var(--t-stat); line-height: var(--lh-stat); letter-spacing: var(--ls-stat); color: var(--accent-ink); font-variant-numeric: lining-nums tabular-nums; }
 .agent-fig span { display: block; margin-top: 6px; font-size: var(--t-micro); letter-spacing: var(--ls-micro); text-transform: uppercase; color: var(--ink-3); }
 .hero-panel.demo figcaption { margin-top: var(--sp-4); text-align: center; max-width: 60ch; margin-inline: auto; }
-@media (max-width: 600px) {
+@media (max-width: 640px) {
   .agent-body { grid-template-columns: minmax(0, 1fr); align-items: start; }
   .agent-fig { text-align: left; }
   .agent-title { display: none; }   /* the status alone fits the bar */
@@ -1533,6 +1537,7 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
     animation-range: entry 0% entry var(--reveal-run);
   }
   @keyframes reveal-view { from { opacity: 0; transform: translateY(var(--reveal-y)); } to { opacity: 1; transform: none; } }
+  .cs-next [data-reveal], footer[data-reveal] { --reveal-run: 48px; }   /* the foot of a page can never travel the full run */
   /* The hero hands off: over the first screen of scroll the field fades out
      and the copy drifts up ahead of the page, so the work arrives on plain paper. */
   .hero .field { animation: hero-field linear both; animation-timeline: scroll(root); animation-range: 0 80vh; }

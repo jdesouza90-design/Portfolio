@@ -111,16 +111,27 @@ SMARTEN_CLOSE = re.compile(r"^\s*</(%s)\b" % "|".join(SMARTEN_SKIP), re.I)
 
 
 def smarten_html(fragment):
+    """A quote against an inline tag reads across it: "<strong>Yes</strong>,"
+    opens before the tag and closes after it, so the text on either side is
+    smartened with a stand-in letter for what the tag holds."""
+    parts = SMARTEN_TOKEN.split(fragment)
     depth, out = 0, []
-    for part in SMARTEN_TOKEN.split(fragment):
+    for i, part in enumerate(parts):
         if part.startswith("<"):
             if SMARTEN_OPEN.match(part) and not part.endswith("/>"):
                 depth += 1
             elif SMARTEN_CLOSE.match(part):
                 depth = max(0, depth - 1)
             out.append(part)
+        elif depth == 0:
+            before = parts[i - 1] if i > 0 else ""
+            after = parts[i + 1] if i + 1 < len(parts) else ""
+            lead = "x" if before.startswith("</") else ""
+            tail = "x" if after.startswith("<") and not after.startswith(("</", "<!--")) else ""
+            text = smarten(lead + part + tail)
+            out.append(text[len(lead):len(text) - len(tail) if tail else None])
         else:
-            out.append(smarten(part) if depth == 0 else part)
+            out.append(part)
     return "".join(out)
 
 
