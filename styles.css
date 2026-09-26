@@ -2174,8 +2174,7 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
    `border-radius` on all of them. */
 .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2vw, 24px); }
 .post-card { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--hair); border-radius: var(--radius-sm); overflow: hidden; text-decoration: none; transition: transform var(--dur-hover) var(--ease), box-shadow var(--dur-hover), border-color var(--dur-hover); }
-.card-art { display: block; background: var(--paper-2); overflow: hidden; }
-.card-art img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; transition: transform var(--dur-ui) var(--ease); }
+.card-art { display: block; overflow: hidden; }
 .card-body { flex: 1; display: flex; flex-direction: column; gap: var(--sp-3); padding: clamp(16px, 1.8vw, 22px); }
 .card-title { display: block; max-width: none; transition: opacity var(--dur-hover); text-box: trim-start cap alphabetic; }   /* the cover's inset reaches the caps, not the line box */
 /* In the grid, a row of cards shares its tracks: art, title, description,
@@ -2190,9 +2189,9 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
 @media (hover: hover) and (pointer: fine) {
   .post-card:hover { transform: translateY(-3px); border-color: var(--hair-2); box-shadow: var(--shadow-lift); }
   .post-card:hover :is(.card-title, .card-desc) { opacity: .7; }
-  .post-card:hover .card-art img { transform: scale(1.05); }
+  .post-card:hover .card-art .cov-in { transform: scale(1.05); }
 }
-@media (prefers-reduced-motion: reduce) { .card-art img { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .card-art .cov-in { transition: none; } }
 
 /* All posts: a search and a layout choice above the groups */
 .posts-head { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-5); flex-wrap: wrap; margin-bottom: clamp(28px, 3vw, 44px); }
@@ -2224,6 +2223,81 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
   .cards[data-view="list"] .post-card:hover { transform: none; box-shadow: none; background: var(--surface); }
 }
 
+/* ---- The cover: a piece of interface and the post's figure ----
+   After Stripe's blog: the image shows the problem the post argues, drawn on
+   this site's primitives (a white surface, the screen shadow, hairline rows,
+   a status chip) with the figure from the post's sources beside it. blog.py
+   writes it from each post's `cover` spec, as spans, since on the index it
+   sits inside a link. Every size is in container units, so one set of markup
+   draws the 3:2 card, the list thumbnail and the 5:2 hero.
+   Like the case-study panels, a cover is a plate of paper: it keeps its light
+   palette in the dark theme, so its colors are its own, not the page's. */
+.cover {
+  --cv-ink: #14100C; --cv-ink-2: #5C564E; --cv-ink-3: #6F675D; --cv-hair: #E3DFD7;
+  --cv-well: #EFECE6; --cv-ok: #2B5233; --cv-ok-bg: #E3ECDF; --cv-ok-line: #C9D9C2;
+  --cv-warn: #8A2E22; --cv-warn-bg: #F4E4DE; --cv-warn-line: #E4C6BB;
+  container-type: inline-size; position: relative; display: block; overflow: hidden;
+  aspect-ratio: 3 / 2; color: var(--cv-ink); font-family: var(--font-body);
+  background: linear-gradient(155deg, var(--cv-g0), var(--cv-g1));
+}
+/* the pillar grounds the seeded covers used, and a tint for the bars */
+.cover.p-leadership { --cv-g0: #F0F1EB; --cv-g1: #E7E9E0; --cv-bar: #C8D2BC; --cv-acc: #3B6B44; }
+.cover.p-craft      { --cv-g0: #F7F1E5; --cv-g1: #F1E8D6; --cv-bar: #E6CE9E; --cv-acc: #B07A2E; }
+.cover.p-fintech    { --cv-g0: #F1F0ED; --cv-g1: #E7E4DE; --cv-bar: #C3BEB2; --cv-acc: #2B2621; }
+.cov-in { position: absolute; inset: 0; display: block; transition: transform var(--dur-ui) var(--ease); }
+.cov-stat { position: absolute; left: 6cqw; top: 5.4cqw; right: 6cqw; display: grid; gap: 1cqw; }
+.cov-n { font: 300 10.5cqw/.9 var(--font-display); letter-spacing: -.02em; font-variant-numeric: lining-nums; }
+.cov-to { color: var(--cv-acc); font-size: .7em; vertical-align: .12em; }
+.cov-l { font-size: 2.8cqw; line-height: 1.3; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--cv-ink-3); max-width: 30ch; }
+.cov-ui {
+  position: absolute; left: 11cqw; right: 11cqw; top: 31cqw; bottom: -4cqw;   /* runs off the floor, so it reads as a crop of a screen */
+  display: grid; align-content: start; gap: 2.2cqw; padding: 3.6cqw 4cqw; color: var(--cv-ink);
+  background: #FFFFFF; border-radius: 2.4cqw; box-shadow: 0 18px 40px -22px rgba(20, 16, 12, .45), 0 0 0 1px rgba(20, 16, 12, .06);
+  font-size: 2.9cqw; line-height: 1.35;
+}
+.cov-head { display: flex; justify-content: space-between; align-items: center; gap: 2cqw; }
+.cov-head b { min-width: 0; color: var(--cv-ink); font-weight: 600; font-size: 3.2cqw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cov-pill { flex: none; font-size: 2.3cqw; line-height: 1; font-weight: 500; border-radius: 99px; padding: 1.1cqw 2cqw; border: 1px solid rgba(20, 16, 12, .12); background: var(--cv-g0); white-space: nowrap; }
+.cov-pill.ok { background: var(--cv-ok-bg); border-color: var(--cv-ok-line); color: var(--cv-ok); }
+.cov-pill.warn { background: var(--cv-warn-bg); border-color: var(--cv-warn-line); color: var(--cv-warn); }
+.cov-row, .cov-check { display: flex; justify-content: space-between; align-items: center; gap: 2cqw; border-top: 1px solid var(--cv-hair); padding-top: 2cqw; color: var(--cv-ink-2); }
+.cov-row > span:last-child { color: var(--cv-ink); font-weight: 500; font-variant-numeric: tabular-nums; text-align: right; }
+.cov-row s { color: var(--cv-ink-3); font-weight: 400; margin-right: 1cqw; }
+.cov-check { justify-content: flex-start; }
+.cov-mark { flex: none; width: 3.4cqw; height: 3.4cqw; border-radius: 50%; display: grid; place-items: center; font-size: 2cqw; font-weight: 600; background: var(--cv-ok-bg); color: var(--cv-ok); }
+.cov-check.open .cov-mark { background: none; border: 1px dashed var(--cv-ink-3); color: var(--cv-ink-3); }
+.cov-q { color: var(--cv-ink); }
+.cov-check.open .cov-q { font-family: var(--font-display); font-style: italic; font-size: 1.12em; }
+.cov-tag { margin-left: auto; flex: none; color: var(--cv-ink-3); font-size: .85em; }
+.cov-bar { display: grid; grid-template-columns: 11cqw 1fr 6.5cqw; align-items: center; gap: 1.8cqw; color: var(--cv-ink-2); font-variant-numeric: tabular-nums; }
+.cov-track { position: relative; height: 3.6cqw; background: var(--cv-well); border-radius: .9cqw; overflow: hidden; }
+.cov-track > span { position: absolute; inset: 0 auto 0 0; width: var(--w); background: var(--cv-bar); border-radius: .9cqw; }
+.cov-bar.now .cov-track > span { background: var(--cv-acc); }
+.cov-bar b { font-weight: 600; color: var(--cv-ink); text-align: right; }
+.cov-note { font-size: .82em; color: var(--cv-ink-3); }
+.cov-row + .cov-note, .cov-bar + .cov-note { border-top: 1px solid var(--cv-hair); padding-top: 2cqw; }
+.cov-bar + .cov-note { border-top: 0; padding-top: 0; }
+
+/* The post hero at 5:2: the figure bottom left, the interface on the right,
+   cropped by the floor. Under 640px the band would be too short to read, so
+   the hero keeps the card's 3:2 layout there. */
+@media (min-width: 640px) {
+  .post-art.cover { aspect-ratio: 5 / 2; }
+  .post-art .cov-stat { top: 7cqw; left: 5cqw; right: auto; max-width: 40cqw; gap: .9cqw; }
+  .post-art .cov-n { font-size: 7.4cqw; }
+  .post-art .cov-l { font-size: 1.4cqw; }
+  .post-art .cov-ui { left: auto; right: 6cqw; width: 44cqw; top: auto; bottom: -2cqw; gap: 1.35cqw; padding: 2.2cqw 2.5cqw 4.2cqw; border-radius: 1.4cqw; font-size: 1.6cqw; }
+  .post-art .cov-head b { font-size: 1.8cqw; }
+  .post-art .cov-pill { font-size: 1.3cqw; padding: .65cqw 1.15cqw; }
+  .post-art :is(.cov-row, .cov-check) { padding-top: 1.2cqw; gap: 1.2cqw; }
+  .post-art .cov-mark { width: 2cqw; height: 2cqw; font-size: 1.15cqw; }
+  .post-art .cov-bar { grid-template-columns: 6.5cqw 1fr 4cqw; gap: 1.1cqw; }
+  .post-art .cov-track { height: 2.1cqw; border-radius: .5cqw; }
+  .post-art .cov-track > span { border-radius: .5cqw; }
+  .post-art :is(.cov-row, .cov-bar) + .cov-note { padding-top: 1.2cqw; }
+  .post-art .cov-row s { margin-right: .6cqw; }
+}
+
 /* ---- Post: one column, centred on the measure ---- */
 .post-hero { padding-top: calc(var(--nav-h) + clamp(32px, 6vw, 72px)); padding-bottom: clamp(32px, 4vw, 52px); }
 .post-hero .wrap > * { max-width: var(--prose); margin-inline: auto; }
@@ -2238,7 +2312,6 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
    craft.do runs its text at about 79% of the image, and a 640px column
    under a 1130px band reads as two unrelated things. */
 .post-art { max-width: 52rem; margin: 0 auto clamp(32px, 4vw, 52px); border-radius: var(--radius); overflow: hidden; border: 1px solid var(--hair); }
-.post-art img { width: 100%; aspect-ratio: 5 / 2; object-fit: cover; }
 .post-hero .post-meta { margin-top: var(--sp-4); }
 .post-meta > span { white-space: nowrap; }
 

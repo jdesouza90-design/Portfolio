@@ -126,12 +126,40 @@ The file is a JSON front-matter comment, then the body as an HTML fragment:
   "lede": "Two or three sentences under the title. The specifics.",
   "claim": "The one sentence the post defends.",
   "keywords": ["...", "..."],
-  "sources": ["<a href=\"https://...\">Name</a>, what it is and what it measured."]
+  "sources": ["<a href=\"https://...\">Name</a>, what it is and what it measured."],
+  "cover": {
+    "figure": "7 days", "label": "to redeem after a 10% run",
+    "title": "Redeem 1,000 USDX", "status": "Delayed", "tone": "warn",
+    "lines": [
+      {"row": ["You receive", "$1,000.00"]},
+      {"row": ["Arrives", "~~2 business days~~ 7 calendar days"]},
+      {"note": "Requests passed 10% of issuance in 24 hours."}
+    ]
+  }
 } -->
 
       <p>...</p>
       <h2>...</h2>
 ```
+
+**The cover is required.** It is a small piece of interface that shows the problem the
+post argues, with the post's one figure beside it (README, "Covers", has the full spec).
+Design it like a screen, not a slide:
+
+- **figure + label**: the strongest number from the sources, under 10 characters
+  (`43%`, `18 of 21`, `3 → 7`), and a label under about 45 characters saying what it
+  counts. It must be in the sources list.
+- **title + status + tone**: the screen's own heading, under about 28 characters, and a
+  chip (`ok`, `warn` or `neutral`) that states the screen's verdict. The verdict is usually
+  the irony the post is about: "Approved" on a prototype with no question written down.
+- **lines**, two to four: `row` (label, value; `~~old~~ new` strikes a replaced value),
+  `check` (`yes` or `open`, text under about 36 characters, a short tag), `bar` (label,
+  0 to 100, `"now"` on the one that matters), `note`. The last line is where the post's
+  gap shows: the open check, the dash, the struck value.
+- It is an illustration. No real product names or logos inside it; invent a ticker or a
+  product ("USDX", "Budget app").
+- Don't repeat another post's screen. Nine are already in `blog/posts/`; read their
+  `cover` specs first.
 
 The body uses bare tags only: `p`, `h2`, `h3`, `ul`/`ol`/`li`, `strong`, `a`,
 `blockquote` with a `cite`. No classes, no inline styles, no images unless John gave you
@@ -157,6 +185,8 @@ renamed or deleted and the old page is still there; delete it yourself.
   cdnjs and run the WCAG 2.x A/AA and best-practice tags. Zero violations is the bar every
   other page on the site meets.
 - Check it at 375 and 320 wide for anything that scrolls sideways.
+- Look at the cover on the index card and the post hero: nothing wraps in the fragment's
+  title or check lines, and the figure fits on one line. Shorten the copy if it does.
 - Read the post out loud. This catches the voice slips that no script will.
 - Re-run the human-writing naturalness checks on the built page's text. Name the most
   AI-sounding sentence left and rewrite it.
