@@ -106,15 +106,15 @@ function page({ path, error, unconfigured, ref, admin }) {
 <script>try{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t}catch(e){}</script>
 <title>${admin ? 'Sign in' : 'Password required'} — John DeSouza</title>
 <meta name="robots" content="noindex">
-<link rel="icon" href="/favicon.svg?v=59b8d8a0" type="image/svg+xml">
+<link rel="icon" href="/favicon.svg?v=fb53733d" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/styles.css?v=02ad7343">
+<link rel="stylesheet" href="/styles.css?v=37c6fb4b">
 </head>
 <body>
 <main class="gate-wrap"><div class="gate">
-  <a class="brand" href="/" aria-label="John DeSouza, home"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="15"/><path d="M10 8H22V12H20V22A2 2 0 0 1 18 24H12A4 4 0 0 1 8 20V18H12V20H16V12H10Z"/></svg><span>John DeSouza</span></a>
+  <a class="brand" href="/"><span>John DeSouza</span></a>
   ${eyebrow}
   <h1 class="t-title">${title}</h1>
   ${body}
