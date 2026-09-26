@@ -46,7 +46,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import {
-  COOKIE, MAX_AGE, ADMIN_COOKIE, OWNER_COOKIE, CHAT_KEY, CHAT_KEEP,
+  COOKIE, MAX_AGE, ADMIN_COOKIE, OWNER_COOKIE, CHAT_KEY, CHAT_KEEP, PREVIEW_OPEN,
   tokenFor, adminTokenFor, cookieValues, readCookie, setCookie,
   redis, logAccess, visitorId, whereFrom, describeUA, isBot, chatSettings,
 } from '../middleware.js';
@@ -337,6 +337,7 @@ async function isOwner(request) {                                              /
   return !!admin && cookieValues(request, ADMIN_COOKIE).includes(await adminTokenFor(admin));
 }
 async function isUnlocked(request) {
+  if (PREVIEW_OPEN) return true;   // this branch's previews serve the case studies without the password (see middleware.js)
   const pw = process.env.CASE_STUDY_PASSWORD;
   if (pw && cookieValues(request, COOKIE).includes(await tokenFor(pw))) return true;
   return isOwner(request);

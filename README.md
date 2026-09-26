@@ -82,6 +82,12 @@ before any file is served. The home page and the work index stay public.
   `/work` until the chat needed to read it), and an unlock clears any old
   `/work` copy. The password can also be entered in the chat, which sets the
   same cookie.
+- The preview deployments of one branch, `claude/ai-website-research-wh59qn`,
+  serve the case studies without the password and the chat reads them as
+  unlocked (`PREVIEW_OPEN` in `middleware.js`, exported to `api/chat.js`):
+  Vercel's own sign-in already stands in front of a preview, and the build
+  was under review. Production never matches, nor does any other branch;
+  take it out when the branch merges.
 - Changing the password invalidates every existing cookie, because the cookie
   value is derived from the password.
 - If the variable is missing the gate fails closed and says so.

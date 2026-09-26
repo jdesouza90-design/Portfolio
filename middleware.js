@@ -37,6 +37,9 @@ export const config = { matcher: ['/', '/index.html', '/work.html', '/work/:path
 
 export const COOKIE = 'cs_access';
 export const MAX_AGE = 60 * 60 * 24 * 30;   // 30 days
+// One branch's preview deployments open the case studies for review (John,
+// 26 Sep 2026); false in production and on every other branch. Remove when the branch merges.
+export const PREVIEW_OPEN = process.env.VERCEL_ENV === 'preview' && process.env.VERCEL_GIT_COMMIT_REF === 'claude/ai-website-research-wh59qn';
 export const ADMIN_COOKIE = 'admin_access';
 const ADMIN_MAX_AGE = 60 * 60 * 24 * 30;    // 30 days
 export const OWNER_COOKIE = 'cs_owner';
@@ -699,6 +702,11 @@ export default async function middleware(request, context) {
   }
 
   // ---- Everything else ----
+  // This branch's preview deployments serve the case studies without the
+  // password, so the build can be reviewed (John, 26 Sep 2026): Vercel's own
+  // sign-in already stands in front of a preview. Production never matches,
+  // nor does any other branch; take these lines out when the branch merges.
+  if (isWork && PREVIEW_OPEN) return;
   const password = process.env.CASE_STUDY_PASSWORD;
   if (isWork && !password) return new Response(page({ path, unconfigured: true }), { status: 503, headers });
   const expected = password ? await tokenFor(password) : 'unset';
