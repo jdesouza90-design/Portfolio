@@ -10,6 +10,11 @@
 //                                     owner, `pages` too: how many it can read
 //   POST /api/chat {messages, page}   the answer as a stream, one JSON event a line:
 //                                       {t: 'text', v}      a piece of the answer
+//                                       {t: 'source', v}    a page the answer drew on: {url, title, kind, label, thumb},
+//                                                           at most three an answer, one a page, as the model cites them
+//                                       {t: 'card', v}      a card to draw under the answer, from the model's tools:
+//                                                           {kind: 'case', slug, url, title, company, logo, summary, chips, stat, statNote, locked}
+//                                                           or {kind: 'contact'}
 //                                       {t: 'password'}     the model asked for the case-study password
 //                                       {t: 'unlocked'}     the question was the password, and it opened them
 //                                       {t: 'error', v}     what went wrong, in words fit for the panel
@@ -17,18 +22,21 @@
 //   POST /api/chat {password}         { unlocked } and the unlock cookie, as the gate does
 //
 // What it knows: the site's own HTML, read from disk (vercel.json bundles the
-// pages with the function) and cut down to text once per instance. Everyone
-// gets the public pages: home, the work index and the blog. The case studies
-// are added only for a visitor holding the unlock cookie (or the owner's), so
-// the model never has anything gated to give away to anyone else. A page
-// marked noindex is parked and never read.
+// pages with the function) and cut into sections once per instance, one
+// search_result block a section (its title, its URL with the section's anchor,
+// its text) with citations on, so an answer says which section it came from
+// and the panel can show that page as a card. Everyone gets the public pages:
+// home, the work index and the blog. The case studies are added only for a
+// visitor holding the unlock cookie (or the owner's), so the model never has
+// anything gated to give away to anyone else. A page marked noindex is parked
+// and never read.
 //
 // The settings live on the dashboard (Chat settings, kept in the store by the
 // middleware): on or off, the model (Claude Haiku 4.5 by default), questions
 // per visitor an hour, questions for the whole site a day (the cost ceiling),
 // the suggested questions and John's notes, which join the instructions. The
-// instructions and public pages are one cached block and the case studies a
-// second, so a conversation pays full price for the pages about once.
+// public pages end in one cache breakpoint and the case studies in a second,
+// so a conversation pays full price for the pages about once.
 //
 // What it records: each exchange in the Redis list chat:log, which the
 // dashboard shows under Questions (a password is never kept). An unlock in the
@@ -48,6 +56,7 @@ const KEEP_MESSAGES = 16;         // the tail of a conversation sent with each q
 const MAX_QUESTION = 600;         // characters; the composer stops at the same
 const MAX_ANSWER = 4000;          // characters of an earlier answer sent back
 const TRY_LIMIT = 10;             // passwords a visitor may try in an hour
+const MAX_SOURCES = 3;            // source cards under one answer
 
 const CONTACT = {
   email: 'jdesouza90@gmail.com',
@@ -67,19 +76,13 @@ function decode(s) {
   });
 }
 const flat = (html) => decode(html.replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim();
+const attr = (tag, name) => decode((new RegExp(`\\b${name}="([^"]*)"`, 'i').exec(tag) || [])[1] || '');
 
-// One page's <main> as plain text: headings as #, list items as -, table
+// A piece of a page as plain text: headings as #, list items as -, table
 // cells split by |, a definition as "term: value", images by their alt text
 // and links to the site's own pages as Markdown, so the model can link them.
-// Comments go first: a parked row on the work index lives in one.
-export function pageText(rel, html) {
-  if (!html || /<meta\s+name="robots"\s+content="[^"]*noindex/i.test(html)) return '';
-  const url = rel === 'index.html' ? '/' : `/${rel}`;
-  const title = flat((/<title>([\s\S]*?)<\/title>/i.exec(html) || [])[1] || '');
-  const description = decode((/<meta\s+name="description"\s+content="([^"]*)"/i.exec(html) || [])[1] || '').trim();
-  const main = (/<main\b[^>]*>([\s\S]*?)<\/main>/i.exec(html) || [])[1] || '';
-  const text = main
-    .replace(/<!--[\s\S]*?-->/g, '')
+function textOf(html, url) {
+  const text = html
     .replace(/<(script|style|svg|noscript|template|canvas|button|form|nav|select)\b[\s\S]*?<\/\1>/gi, ' ')
     .replace(/<img\b[^>]*?\balt="([^"]+)"[^>]*>/gi, (_, alt) => ` [Image: ${alt}] `)
     .replace(/<a\b[^>]*?\bhref="([^"]*)"[^>]*>([\s\S]*?)<\/a>/gi, (_, href, inner) => {
@@ -108,73 +111,214 @@ export function pageText(rel, html) {
     if (!line || line === '-') { if (lines.length && lines[lines.length - 1] !== '') lines.push(''); continue; }
     if (line !== lines[lines.length - 1]) lines.push(line);   // a duplicated strip or label says nothing twice
   }
-  return `<page url="${url}" title="${title}">\n${description ? `${description}\n\n` : ''}${lines.join('\n').trim()}\n</page>`;
+  return lines.join('\n').trim();
 }
 
-// Read once per instance: the pages only change with a deploy, which starts new instances.
-let pagesOnce = null;
-function sitePages() {
-  if (!pagesOnce) {
-    const root = process.cwd();
-    const read = (rel) => readFile(path.join(root, rel), 'utf8').catch(() => '');
-    const list = async (dir) => (await readdir(path.join(root, dir)).catch(() => []))
-      .filter((f) => f.endsWith('.html')).sort().map((f) => `${dir}/${f}`);
-    const texts = async (rels) => (await Promise.all(rels.map(async (rel) => pageText(rel, await read(rel))))).filter(Boolean).join('\n\n');
-    pagesOnce = (async () => ({
-      open: await texts(['index.html', 'work.html', 'blog.html', ...await list('blog')]),
-      gated: await texts(await list('work')),
-    }))()
-      .catch((err) => { pagesOnce = null; throw err; });
+// A page's <main> cut at its <section> and <h2> boundaries, each piece with
+// the anchor a link can reach it by: the innermost open section's id, or the
+// heading's own. A section that opens with only its eyebrow ("Results") joins
+// the heading that follows, so a section is one piece with one anchor.
+// Comments go first: a parked row on the work index lives in one.
+function cut(main) {
+  const re = /<section\b[^>]*>|<\/section\s*>|<h2\b[^>]*>/gi;
+  const stack = [], pieces = [];
+  let at = 0, anchor = '', m;
+  const inner = () => { for (let i = stack.length - 1; i >= 0; i--) if (stack[i]) return stack[i]; return ''; };
+  const close = (end) => { if (end > at) pieces.push({ html: main.slice(at, end), anchor }); at = end; };
+  while ((m = re.exec(main))) {
+    close(m.index);
+    const tag = m[0];
+    if (tag[1] === '/') { stack.pop(); anchor = inner(); continue; }
+    const id = attr(tag, 'id');
+    if (/^<section/i.test(tag)) { stack.push(id === 'top' || id === 'main' ? '' : id); anchor = inner(); }
+    else anchor = id || inner();
   }
-  return pagesOnce;
+  close(main.length);
+  return pieces;
+}
+
+// One page as its sections: {anchor, heading, eyebrow, text}, with what the
+// panel needs to draw it as a card.
+export function pageSections(rel, html) {
+  if (!html || /<meta\s+name="robots"\s+content="[^"]*noindex/i.test(html)) return null;
+  const url = rel === 'index.html' ? '/' : `/${rel}`;
+  const title = flat((/<title>([\s\S]*?)<\/title>/i.exec(html) || [])[1] || '');
+  const description = decode((/<meta\s+name="description"\s+content="([^"]*)"/i.exec(html) || [])[1] || '').trim();
+  const main = ((/<main\b[^>]*>([\s\S]*?)<\/main>/i.exec(html) || [])[1] || '').replace(/<!--[\s\S]*?-->/g, '');
+  const kind = url === '/' ? 'home' : url === '/work.html' ? 'work' : url === '/blog.html' ? 'blog' : url.startsWith('/work/') ? 'case' : 'post';
+  const name = kind === 'home' ? 'Home' : title.replace(/\s+—\s+John DeSouza$/, '');
+  const sections = [];
+  let carry = null;
+  for (const piece of cut(main)) {
+    const text = textOf(piece.html, url);
+    if (!text) continue;
+    const heading = /^\s*<h2\b/i.test(piece.html) ? flat((/<h2\b[^>]*>([\s\S]*?)<\/h2>/i.exec(piece.html) || [])[1] || '') : flat((/^[\s\S]{0,300}?<h3\b[^>]*>([\s\S]*?)<\/h3>/i.exec(piece.html) || [])[1] || '');
+    let anchor = piece.anchor || attr((/<h[2-4]\b[^>]*\bid="[^"]+"[^>]*>/i.exec(piece.html) || [''])[0], 'id');
+    let eyebrow = '', body = text;
+    if (carry) {                                     // the eyebrow is the carry's last line that isn't an image
+      anchor ||= carry.anchor;
+      eyebrow = carry.text.split('\n').filter((l) => l && !/^\[Image:/.test(l)).pop() || '';
+      body = `${carry.text}\n${text}`;
+      carry = null;
+    }
+    if (!heading && text.length < 80 && !text.includes('\n')) { carry = { anchor, text: body }; continue; }   // an eyebrow on its own, kept for the heading that follows
+    sections.push({ anchor, heading, eyebrow, text: body });
+  }
+  if (carry) sections.push({ anchor: carry.anchor, heading: '', eyebrow: '', text: carry.text });
+  if (sections.length && description) sections[0].text = `${description}\n\n${sections[0].text}`;
+  const h1 = flat((/<h1\b[^>]*>([\s\S]*?)<\/h1>/i.exec(main) || [])[1] || '');
+  const date = (/<time\b[^>]*\bdatetime="(\d{4}-\d{2}-\d{2})/i.exec(main) || [])[1] || '';
+  const stat = /<div class="outcome-stat">[\s\S]*?<div class="t-stat"[^>]*>([\s\S]*?)<\/div>\s*<p class="t-small">([\s\S]*?)<\/p>/i.exec(main);
+  return { url, kind, name, h1, date, stat: stat ? { value: flat(stat[1]), note: flat(stat[2]) } : null, sections: sections.filter((s) => s.text.length >= 40) };
+}
+
+// The work index's rows: each case study's logo, company, summary, chips and
+// the image the row shows, by slug. A parked row (in a comment) counts too.
+function caseRows(html) {
+  const rows = new Map();
+  for (const m of (html || '').matchAll(/<a class="case-row[^"]*" href="work\/([\w-]+)\.html"[\s\S]*?<\/a>/g)) {
+    const row = m[0];
+    const logo = /<img\b[^>]*class="case-logo"[^>]*>/i.exec(row);
+    const media = /<div class="case-media[^"]*">[\s\S]*?<img\b[^>]*>/i.exec(row);
+    rows.set(m[1], {
+      company: logo ? attr(logo[0], 'alt') : '',
+      logo: logo ? `/${attr(logo[0], 'src')}` : '',
+      summary: flat((/<p class="t-body">([\s\S]*?)<\/p>/i.exec(row) || [])[1] || ''),
+      chips: [...row.matchAll(/<span class="chip">([\s\S]*?)<\/span>/g)].map((c) => flat(c[1])),
+      thumb: media ? `/${attr(/<img\b[^>]*>/i.exec(media[0])[0], 'src')}` : '',
+    });
+  }
+  return rows;
+}
+
+// The blog index's covers, by slug: the stamped src the cards use.
+function postCovers(html) {
+  const covers = new Map();
+  for (const m of (html || '').matchAll(/<a class="post-card" href="\/blog\/([\w-]+)\.html"[\s\S]*?<img src="([^"]+)"/g)) covers.set(m[1], `/${decode(m[2])}`);
+  return covers;
+}
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const shortDate = (iso) => { const [y, m, d] = iso.split('-').map(Number); return `${d} ${MONTHS[m - 1]} ${y}`; };
+
+// Read once per instance: the pages only change with a deploy, which starts
+// new instances. `open` and `gated` are the search_result blocks, `sources`
+// the card for each block's source, `cases` the card for each case study.
+let siteOnce = null;
+function site() {
+  if (!siteOnce) siteOnce = buildSite().catch((err) => { siteOnce = null; throw err; });
+  return siteOnce;
+}
+async function buildSite() {
+  const root = process.cwd();
+  const read = (rel) => readFile(path.join(root, rel), 'utf8').catch(() => '');
+  const list = async (dir) => (await readdir(path.join(root, dir)).catch(() => []))
+    .filter((f) => f.endsWith('.html')).sort().map((f) => `${dir}/${f}`);
+  const pages = async (rels) => (await Promise.all(rels.map(async (rel) => pageSections(rel, await read(rel))))).filter(Boolean);
+  const rows = caseRows(await read('work.html'));
+  const covers = postCovers(await read('blog.html'));
+  const coverFiles = new Set(await readdir(path.join(root, 'assets/blog')).catch(() => []));
+  const sources = new Map(), cases = new Map();
+  const blocks = (page) => page.sections.map((s) => {
+    const source = `${page.url}${s.anchor ? `#${s.anchor}` : ''}`;
+    const slug = page.url.replace(/^\/(work|blog)\//, '').replace(/\.html$/, '');
+    const row = page.kind === 'case' ? rows.get(slug) : null;
+    const card = { url: source, title: page.name, kind: page.kind, label: '', thumb: '' };
+    if (page.kind === 'case') { card.label = `Case study${row && row.company ? ` · ${row.company}` : ''}`; card.thumb = (row && row.thumb) || ''; }
+    else if (page.kind === 'post') { card.label = `Blog${page.date ? ` · ${shortDate(page.date)}` : ''}`; card.thumb = covers.get(slug) || (coverFiles.has(`${slug}.svg`) ? `/assets/blog/${slug}.svg` : ''); }
+    else { card.title = s.heading || page.h1 || page.name; card.label = `${page.name}${s.eyebrow ? ` · ${s.eyebrow}` : ''}`; }
+    if (!sources.has(source)) sources.set(source, card);
+    return { type: 'search_result', source, title: `${page.name}${s.heading ? `: ${s.heading}` : ''}`, content: [{ type: 'text', text: s.text }], citations: { enabled: true } };
+  });
+  const open = (await pages(['index.html', 'work.html', 'blog.html', ...await list('blog')])).flatMap(blocks);
+  const gatedPages = await pages(await list('work'));
+  const gated = gatedPages.flatMap(blocks);
+  for (const page of gatedPages) {
+    const slug = page.url.replace(/^\/work\//, '').replace(/\.html$/, '');
+    const row = rows.get(slug) || {};
+    cases.set(slug, { slug, url: page.url, title: page.h1 || page.name, company: row.company || '', logo: row.logo || '', summary: row.summary || '', chips: row.chips || [], stat: page.stat });
+  }
+  return { open, gated, sources, cases, count: { open: open.length ? new Set(open.map((b) => b.source.split('#')[0])).size : 0, gated: gatedPages.length } };
 }
 
 
 // ---- The brief ---------------------------------------------------------------
-// The first block is the same for every visitor (instructions, then the
-// public pages) and is cached; the case studies follow as a second cached
-// block for a visitor who has unlocked them. Anything that changes with the
-// request (the page they are on) comes after both, so it never breaks the cache.
+// The instructions are the system prompt; the pages follow as search results
+// at the head of the first message, the public ones ending in one cache
+// breakpoint and the case studies in a second, so a conversation pays full
+// price for them about once. Anything that changes with the request (the
+// page they are on, the question) comes after both, so it never breaks the cache.
 
-const BRIEF = `You are the assistant on John DeSouza's portfolio site, john-desouza.com. The people asking are mostly hiring managers and recruiters in product and design, often reading on a phone between meetings. You answer their questions about John's work, how he leads teams and what he is looking for next, using only the site's pages below.
+const BRIEF = `You are the assistant on John DeSouza's portfolio site, john-desouza.com. The people asking are mostly hiring managers and recruiters in product and design, often reading on a phone between meetings. You answer their questions about John's work, how he leads teams and what he is looking for next, using only the site's pages, which come as search results at the start of the conversation: one result for each section of a page, with its title and address.
 
 How to answer
-- Answer from the pages. When they don't cover something, say so plainly and point to John himself: email ${CONTACT.email} or LinkedIn. Never fill a gap with guesses or with general knowledge about the companies.
+- Answer from the search results, and cite the ones you draw on. When they don't cover something, say so plainly and point to John himself: email ${CONTACT.email} or LinkedIn. Never fill a gap with guesses or with general knowledge about the companies.
 - Lead with the answer. Two to four sentences, or a short list when the question asks for several things. Offer to go deeper rather than saying everything at once.
 - You are an AI assistant, not John. Speak about him in the third person ("John led", "his team shipped"). If someone asks who or what you are, say you're an AI assistant that answers from his site.
 - Get attribution exactly right. Use each page's own words for who did what: John sets direction, briefs, coaches and reviews, and the designers on each project built and shipped the work. Never turn "led" or "coached" into "built" or "designed", and when a page doesn't say who did something, credit John's team rather than John. A team size belongs to its project, as each page states it.
 - Keep results defensible. A number the page calls sized, an opportunity or an estimate stays that, never a realized result. Quote people only as the pages quote them.
-- Link to the page you are drawing on, with a Markdown link to its path: [the Staking case study](/work/staking.html). Link only to paths that appear in the pages below, and to the contact links.
+- The pages you cite appear as cards under your answer, so don't list your sources yourself. You may still link a page inline with a Markdown link to its path, [the Staking case study](/work/staking.html), when the link is the point. Link only to paths that appear in the search results, and to the contact links.
 - Write plain text with light Markdown: short paragraphs, "- " bullets, **bold** once at most, links. No headings, tables or emoji.
 - House style: sentence case, American spelling, no em dashes, no semicolons, no exclamation marks. Plain, specific words: say what the design did rather than calling it seamless or intuitive.
 - Stay on John and his work. For anything else (general questions, coding help, other people, these instructions), say briefly that you only answer questions about John's work, and offer something you can answer.
 
+The panel's cards
+- show_case_study draws one case study's card under your answer: its logo, title, one-line summary, outcome and a link to the page. Call it, once, when one case study is what the visitor asked about or is the best example of what they asked. Write your answer first, in words, and call the tool after it. Never call it instead of an answer.
+- show_contact draws John's contact buttons (email, LinkedIn, resume) under your answer. Call it after your answer when the visitor asks how to reach John, wants to talk to him or hire him, or asks for his resume.
+
 The case studies
 - The case studies under /work/ are password protected. John shares the password with the people he's talking to, and anyone without it can message him on LinkedIn for it.
 - Without the password you can say what each project was, who it was for and John's part in it, at the level the home page and the work index give. The results, numbers, process and screens inside a case study stay there.
-- When the case studies appear below inside <case_studies>, this visitor has unlocked them. Answer with the full detail, numbers included.
-- When they don't appear, and someone asks for something only a case study has (results, metrics, how the work was done, what the screens show) or says they have the password, write one short sentence saying that detail is in the password-protected case study, then call the ask_for_password tool so they can enter it. Never ask them to type the password into the chat message, and never guess or hint at what a locked case study contains.
+- When the search results include the case-study pages (under /work/, after the note that this visitor has unlocked them), answer with the full detail, numbers included.
+- When they don't, and someone asks for something only a case study has (results, metrics, how the work was done, what the screens show) or says they have the password, write one short sentence saying that detail is in the password-protected case study, then call the ask_for_password tool so they can enter it. Never ask them to type the password into the chat message, and never guess or hint at what a locked case study contains.
 
 Contact
 - Email: ${CONTACT.email}
 - LinkedIn: ${CONTACT.linkedin}
 - Resume (PDF): ${CONTACT.resume}`;
 
-const TOOLS = [{
+// The tools, once the pages are read: show_case_study takes only a slug that
+// is a case study on disk, so the model can't ask for a page that isn't there
+// (and without any, the tool isn't offered).
+const tools = (slugs) => [{
   name: 'ask_for_password',
-  description: "Shows a password field in the chat so the visitor can unlock John's case studies. Call it when the case studies are not included in your instructions and the visitor asks for detail only a case study has (results, metrics, process, screens), or says they have the password. Say in one sentence why before calling it.",
+  description: "Shows a password field in the chat so the visitor can unlock John's case studies. Call it when the case studies are not included in the search results and the visitor asks for detail only a case study has (results, metrics, process, screens), or says they have the password. Say in one sentence why before calling it.",
+  input_schema: { type: 'object', properties: {}, additionalProperties: false },
+  eager_input_streaming: true,
+}, ...(slugs.length ? [{
+  name: 'show_case_study',
+  description: "Shows one case study's card in the chat under your answer: its logo, title, one-line summary, the outcome and a link to the page. Call it once, after your answer in words, when one case study is what the visitor asked about or the best example of what they asked.",
+  input_schema: { type: 'object', properties: { slug: { type: 'string', enum: slugs, description: 'The case study, by the last part of its path: /work/<slug>.html' } }, required: ['slug'], additionalProperties: false },
+  eager_input_streaming: true,
+}] : []), {
+  name: 'show_contact',
+  description: "Shows John's contact buttons (email, LinkedIn, resume) in the chat under your answer. Call it after your answer when the visitor asks how to reach John, wants to talk to him or hire him, or asks for his resume.",
   input_schema: { type: 'object', properties: {}, additionalProperties: false },
   eager_input_streaming: true,
 }];
 
-async function system(unlocked, page, notes) {
-  const pages = await sitePages();
+function system(notes) {
   const told = notes ? `\n\n<notes_from_john>\nJohn wrote these for you. Treat them as facts about him that the pages don't cover, and share them when they answer a question.\n${notes}\n</notes_from_john>` : '';
-  const blocks = [{ type: 'text', text: `${BRIEF}${told}\n\n<site_pages>\n${pages.open}\n</site_pages>`, cache_control: { type: 'ephemeral' } }];
-  if (unlocked) blocks.push({ type: 'text', text: `<case_studies>\nThis visitor has unlocked the case studies.\n\n${pages.gated}\n</case_studies>`, cache_control: { type: 'ephemeral' } });
+  return [{ type: 'text', text: `${BRIEF}${told}` }];
+}
+
+// The head of the first message: the public pages, then the case studies for
+// a visitor who has unlocked them, each ending in a cache breakpoint, then
+// the page they are on.
+function context(pages, unlocked, page) {
+  const cached = (blocks) => blocks.map((b, i) => (i === blocks.length - 1 ? { ...b, cache_control: { type: 'ephemeral' } } : b));
+  const blocks = cached(pages.open);
+  if (unlocked && pages.gated.length) blocks.push({ type: 'text', text: 'This visitor has unlocked the case studies. They follow, in full.' }, ...cached(pages.gated));
   if (page) blocks.push({ type: 'text', text: `The visitor is on ${page} as they ask.` });
   return blocks;
 }
+
+// A case study's card, as the panel draws it: the outcome number only for a
+// visitor who has unlocked the page it is on.
+const caseCard = (c, unlocked) => ({
+  kind: 'case', slug: c.slug, url: c.url, title: c.title, company: c.company, logo: c.logo, summary: c.summary, chips: c.chips,
+  stat: unlocked && c.stat ? c.stat.value : '', statNote: unlocked && c.stat ? c.stat.note : '', locked: !unlocked,
+});
 
 
 // ---- Requests ---------------------------------------------------------------
@@ -275,8 +419,7 @@ export async function GET(request) {
   const settings = await chatSettings();
   const body = { ready: !!process.env.ANTHROPIC_API_KEY && settings.on, unlocked: await isUnlocked(request), starters: settings.starters, caseStarters: settings.caseStarters, postStarters: settings.postStarters, workStarters: settings.workStarters, limit: settings.chatLimit };
   if (await isOwner(request)) {                  // the dashboard's check that the pages came with the function
-    const count = (t) => (t.match(/<page url=/g) || []).length;
-    try { const p = await sitePages(); body.pages = { open: count(p.open), gated: count(p.gated) }; } catch (_) { body.pages = { open: 0, gated: 0 }; }
+    try { body.pages = (await site()).count; } catch (_) { body.pages = { open: 0, gated: 0 }; }
   }
   return json(body);
 }
@@ -352,23 +495,40 @@ export async function POST(request) {
 
   return stream(async (send) => {
     client ||= new Anthropic();
+    const pages = await site();
+    const [first, ...rest] = messages;
     const params = {
       model: settings.model,
       max_tokens: MAX_TOKENS,
-      system: await system(unlocked, page, settings.notes),
-      tools: TOOLS,
-      messages,
+      system: system(settings.notes),
+      tools: tools([...pages.cases.keys()]),
+      messages: [{ role: 'user', content: [...context(pages, unlocked, page), { type: 'text', text: first.content }] }, ...rest],
     };
     // Sonnet 5 thinks by default; a short answer from fixed pages needs little of it.
     // (Haiku 4.5 doesn't think unless asked and takes no effort setting.)
     if (settings.model === 'claude-sonnet-5') params.output_config = { effort: 'low' };
     const model = client.messages.stream(params);
     onLeave = () => model.abort();                   // the reader left: stop paying for the rest
+
+    // A citation names the section it came from; the panel gets that page
+    // as a card, once a page, the first three.
+    const cited = new Set();
+    const cite = (c) => {
+      if (!c || c.type !== 'search_result_location' || cited.size >= MAX_SOURCES) return;
+      const card = pages.sources.get(c.source);
+      const key = card && card.url.split('#')[0];
+      if (!card || cited.has(key)) return;
+      cited.add(key);
+      send({ t: 'source', v: card });
+    };
+
     let answer = '', asked = false;
     for await (const ev of model) {
       if (ev.type === 'content_block_delta' && ev.delta.type === 'text_delta') {
         answer += ev.delta.text;
         send({ t: 'text', v: ev.delta.text });
+      } else if (ev.type === 'content_block_delta' && ev.delta.type === 'citations_delta') {
+        cite(ev.delta.citation);
       } else if (ev.type === 'content_block_start' && ev.content_block.type === 'tool_use' && ev.content_block.name === 'ask_for_password' && !unlocked && !asked) {
         asked = true;
         send({ t: 'password' });
@@ -380,6 +540,21 @@ export async function POST(request) {
       answer = v; send({ t: 'text', v });
     } else if (final.stop_reason === 'max_tokens') {
       send({ t: 'text', v: '…' });
+    } else {
+      // The cards the model asked for, with their input complete: a case study
+      // only from the allow-list of pages on disk, each card once.
+      const drawn = new Set();
+      for (const b of final.content) {
+        if (b.type !== 'tool_use') continue;
+        if (b.name === 'show_case_study') {
+          const slug = b.input && typeof b.input.slug === 'string' ? b.input.slug : '';
+          const c = pages.cases.get(slug);
+          if (c && !drawn.has(`case:${slug}`)) { drawn.add(`case:${slug}`); send({ t: 'card', v: caseCard(c, unlocked) }); }
+        } else if (b.name === 'show_contact' && !drawn.has('contact')) {
+          drawn.add('contact');
+          send({ t: 'card', v: { kind: 'contact' } });
+        }
+      }
     }
     send({ t: 'done' });
     const u = final.usage || {};

@@ -2365,7 +2365,14 @@ const CONFIG = {
      password with a tool, the panel answers with a password field, and a
      right password unlocks the case studies site-wide and asks the question
      again. A password typed as a question does the same, and the bubble that
-     carried it is masked. */
+     carried it is masked.
+     Under an answer: the pages it drew on as source cards ({t: 'source'},
+     from the model's citations), and the cards its tools ask for
+     ({t: 'card'}: a case study, or John's contact buttons), every one
+     cloned from a <template> in the panel and filled as text, never built
+     from the model's words as HTML. A source card for the page you are on
+     scrolls to the section and rings it. On the empty panel a second row of
+     suggestions asks who you are, and sends a longer question than its label. */
   const initChat = () => {
     if (!window.ReadableStream || !window.TextDecoder || !window.HTMLDialogElement) return;
     fetch("/api/chat", { cache: "no-store", credentials: "same-origin" })
@@ -2398,7 +2405,14 @@ const CONFIG = {
     let unlocked = !!state.unlocked;
     let busy = null;                                   // the AbortController of the answer being read
     let offered = !!saved.offered;                     // the walkthrough offer, made once a tab
-    const save = (open) => { try { sessionStorage.setItem(KEY, JSON.stringify({ open, msgs, offered })); } catch (_) { /* nothing to keep it in */ } };
+    const save = (open, cite) => { try { sessionStorage.setItem(KEY, JSON.stringify({ open, msgs, offered, cite })); } catch (_) { /* nothing to keep it in */ } };   // cite: a source card's link, to ring its section on the next page
+
+    /* Who is asking: each chip sends a fuller question than its label. */
+    const AUDIENCE = [
+      ["Hiring manager", "I'm a hiring manager. What has John shipped, with the outcomes?"],
+      ["Design leader", "I'm a design leader. How does John run a design team, and what does he hold the bar on?"],
+      ["Engineer", "I'm an engineer. How does John work with engineering, and what has he built with AI agents?"],
+    ];
 
     /* The button and the panel */
     /* What the button offers follows the page: a case study names its
@@ -2443,10 +2457,76 @@ const CONFIG = {
         <button class="chat-send" type="submit" aria-label="Send">${ICON.send}</button>
       </form>
       <p class="t-small chat-foot">The assistant answers from this site and can get things wrong. I read the questions people ask.</p>
-      <p class="sr-only" role="status" id="chat-status"></p>`;
+      <p class="sr-only" role="status" id="chat-status"></p>
+      <template class="chat-tpl-source"><li><a class="chat-source"><img class="chat-source-thumb" alt="" decoding="async" hidden><span class="chat-source-title"></span><span class="chat-source-label"></span></a></li></template>
+      <template class="chat-tpl-case"><div class="chat-card chat-card-case"><img class="case-logo" alt="" decoding="async"><div class="chat-card-title"></div><div class="t-small chat-card-summary"></div><div class="chat-card-stat"></div><div class="t-small chat-card-note"></div><div class="chips"></div><div class="chat-card-row"><a class="btn btn-primary btn-sm chat-card-link">Read the case study</a><span class="t-small chat-card-lock">Password protected</span></div></div></template>
+      <template class="chat-tpl-contact"><div class="chat-card chat-card-contact"><div class="t-small chat-card-summary">Email is the quickest way to reach me. LinkedIn works too.</div><div class="chat-card-row"><a class="btn btn-primary btn-sm" data-to="email">Email John</a><a class="btn btn-ghost btn-sm" data-to="linkedin" target="_blank" rel="noopener">Message on LinkedIn</a><a class="btn btn-ghost btn-sm" data-to="resume">Download resume</a></div></div></template>`;
     document.body.append(launch, dlg);
     const log = $(".chat-log", dlg), form = $(".chat-form", dlg), input = $("#chat-input", dlg);
     const send = $(".chat-send", dlg), title = $("#chat-title", dlg), status = $("#chat-status", dlg);
+    const tpl = (cls) => $(`template.${cls}`, dlg).content.firstElementChild.cloneNode(true);
+    const sitePath = (u) => (typeof u === "string" && /^\/(?![\/\\])/.test(u) ? u : "");   // a path on this site, never //host or /\host
+
+    /* The cards under an answer, from the templates above. Every value the
+       server sends lands as text or as a checked path. */
+    const sourceItem = (v) => {
+      const li = tpl("chat-tpl-source"), a = $(".chat-source", li), img = $(".chat-source-thumb", li);
+      a.href = sitePath(v.url) || "/";
+      const thumb = sitePath(v.thumb);
+      if (thumb) { img.src = thumb; img.hidden = false; } else img.remove();
+      $(".chat-source-title", li).textContent = String(v.title || "");
+      $(".chat-source-label", li).textContent = String(v.label || "");
+      return li;
+    };
+    const card = (v) => {
+      if (!v || typeof v !== "object") return null;
+      if (v.kind === "contact") {
+        const c = tpl("chat-tpl-contact");
+        const to = { email: CONFIG.email ? `mailto:${CONFIG.email}?subject=${encodeURIComponent("Following up on your work")}` : "", linkedin: CONFIG.linkedin, resume: CONFIG.resume };
+        $$("[data-to]", c).forEach((a) => { if (to[a.dataset.to]) a.href = to[a.dataset.to]; else a.remove(); });
+        return c;
+      }
+      if (v.kind !== "case") return null;
+      const c = tpl("chat-tpl-case"), logo = $(".case-logo", c), url = sitePath(v.url);
+      if (sitePath(v.logo)) { logo.src = v.logo; logo.alt = String(v.company || ""); } else logo.remove();
+      $(".chat-card-title", c).textContent = String(v.title || "");
+      $(".chat-card-summary", c).textContent = String(v.summary || "");
+      const stat = $(".chat-card-stat", c), note = $(".chat-card-note", c), chips = $(".chips", c), link = $(".chat-card-link", c), lock = $(".chat-card-lock", c);
+      if (v.stat) stat.textContent = String(v.stat); else stat.remove();
+      if (v.stat && v.statNote) note.textContent = String(v.statNote); else note.remove();
+      if (Array.isArray(v.chips) && v.chips.length) v.chips.slice(0, 4).forEach((t) => chips.append(make("span", "chip", String(t)))); else chips.remove();
+      if (url) link.href = url; else link.remove();
+      if (!v.locked) lock.remove();
+      return c;
+    };
+    const attach = (m, extras) => {
+      if (!extras) return;
+      const sources = (Array.isArray(extras.sources) ? extras.sources : []).filter((v) => v && typeof v === "object").slice(0, 3);
+      if (sources.length) {
+        const ul = make("ul", "chat-sources");
+        ul.setAttribute("aria-label", "Sources");
+        sources.forEach((v) => ul.append(sourceItem(v)));
+        m.append(ul);
+      }
+      (Array.isArray(extras.cards) ? extras.cards : []).slice(0, 4).forEach((v) => { const c = card(v); if (c) m.append(c); });
+    };
+
+    /* A source card for the page you are on: scroll to its section and ring
+       it for a moment, rather than reload. The ring goes on the section's
+       column (.wrap), so it hugs the text and not the full-bleed ground. */
+    const here = (href) => { try { const u = new URL(href, location.href); return { same: u.pathname === location.pathname, hash: u.hash }; } catch (_) { return { same: false, hash: "" }; } };
+    let ringing = 0;
+    const ring = (hash) => {
+      const target = hash && document.getElementById(decodeURIComponent(hash.slice(1)));
+      if (!target) return false;
+      const box = target.querySelector(":scope > .wrap") || target;
+      clearTimeout(ringing);
+      $$(".chat-cited").forEach((el) => el.classList.remove("chat-cited"));
+      box.classList.add("chat-cited");
+      box.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+      ringing = setTimeout(() => box.classList.remove("chat-cited"), 1700);
+      return true;
+    };
 
     /* Light Markdown, built as nodes. Links go to the site's own pages, to
        https or to mail; anything else stays text. */
@@ -2487,32 +2567,46 @@ const CONFIG = {
        the reader has scrolled up to read something. */
     let pinned = true;
     log.addEventListener("scroll", () => { pinned = log.scrollHeight - log.scrollTop - log.clientHeight < 48; }, { passive: true });
-    const stick = (force) => { if (force || pinned) log.scrollTop = log.scrollHeight; };
-    const bubble = (role, content) => {
+    const stick = (force) => { if (!msgs.length) return; if (force || pinned) log.scrollTop = log.scrollHeight; };   // the empty panel stays at the top: the greeting, then the suggestions
+    const bubble = (role, content, extras) => {
       const m = make("div", `chat-msg is-${role}`);
       if (role === "user") m.append(make("span", "sr-only", "You: "), content);
-      else render(content, m);
+      else {
+        const box = make("div", "chat-answer");
+        render(content, box);
+        m.append(box);
+        attach(m, extras);
+      }
       log.append(m);
       return m;
     };
-    let starters = null;
+    let starters = null, audience = null;
+    const chipRow = (list, label, onPick) => {
+      const ul = make("ul", "chat-starters");
+      ul.setAttribute("aria-label", label);
+      list.forEach(([text, q]) => {
+        const b = make("button", "btn btn-ghost btn-sm", text);
+        b.type = "button";
+        b.addEventListener("click", () => onPick(q));
+        const li = make("li");
+        li.append(b);
+        ul.append(li);
+      });
+      return ul;
+    };
     const drawLog = () => {
       log.replaceChildren();
       bubble("assistant", INTRO);
-      if (!msgs.length && Array.isArray(topic.starters) && topic.starters.length) {
-        starters = make("ul", "chat-starters");
-        starters.setAttribute("aria-label", "Suggested questions");
-        topic.starters.forEach((q) => {
-          const b = make("button", "btn btn-ghost btn-sm", q);
-          b.type = "button";
-          b.addEventListener("click", () => ask(q));
-          const li = make("li");
-          li.append(b);
-          starters.append(li);
-        });
-        log.append(starters);
+      if (!msgs.length) {
+        if (Array.isArray(topic.starters) && topic.starters.length) {
+          starters = chipRow(topic.starters.map((q) => [q, q]), "Suggested questions", ask);
+          log.append(starters);
+        }
+        audience = make("div", "chat-audience");
+        audience.append(make("span", "t-small chat-audience-label", "I'm a"), chipRow(AUDIENCE, "Ask as", ask));
+        log.append(audience);
       }
-      msgs.forEach((m) => bubble(m.role, m.content));
+      msgs.forEach((m) => bubble(m.role, m.content, m));
       if (questions() >= LIMIT) endConversation(false);
       stick(true);
     };
@@ -2534,6 +2628,7 @@ const CONFIG = {
       const q = (question ?? input.value).trim();
       if (!q) return;
       if (starters) { starters.remove(); starters = null; }
+      if (audience) { audience.remove(); audience = null; }
       input.value = "";
       msgs.push({ role: "user", content: q });
       const mine = bubble("user", q);
@@ -2553,7 +2648,9 @@ const CONFIG = {
       busy = new AbortController();
       setBusy(true);
       let text = "", asked = false, opened = false, failed = "", frame = 0;
-      const paint = () => { frame = 0; reply.classList.remove("is-waiting"); render(text, reply); stick(); };
+      const sources = [], cards = [];                  // the pages it cites and the cards it asks for, drawn once the words are in
+      const box = make("div", "chat-answer");
+      const paint = () => { frame = 0; reply.classList.remove("is-waiting"); if (!box.isConnected) reply.replaceChildren(box); render(text, box); stick(); };
       try {
         const res = await fetch("/api/chat", {
           method: "POST", credentials: "same-origin", signal: busy.signal,
@@ -2577,6 +2674,8 @@ const CONFIG = {
             let ev;
             try { ev = JSON.parse(line); } catch (_) { continue; }
             if (ev.t === "text") { text += ev.v; if (!frame) frame = requestAnimationFrame(paint); }
+            else if (ev.t === "source") { if (sources.length < 3 && ev.v && typeof ev.v === "object") sources.push(ev.v); }
+            else if (ev.t === "card") { if (cards.length < 4 && ev.v && typeof ev.v === "object") cards.push(ev.v); }
             else if (ev.t === "password") asked = true;
             else if (ev.t === "unlocked") opened = true;
             else if (ev.t === "error") failed = ev.v;
@@ -2598,14 +2697,21 @@ const CONFIG = {
         bubble("assistant", UNLOCKED);
         status.textContent = UNLOCKED;
       } else {
-        if (text) { render(text, reply); reply.classList.remove("is-waiting"); msgs.push({ role: "assistant", content: text }); }
+        const drew = !!text || cards.length > 0;
+        if (drew) {                                    // the words, then the sources and cards under them
+          reply.classList.remove("is-waiting");
+          if (!box.isConnected) reply.replaceChildren(box);
+          render(text, box);
+          attach(reply, { sources, cards });
+          msgs.push({ role: "assistant", content: text, sources, cards });
+        }
         if (failed) {
-          if (!text) reply.replaceChildren();
+          if (!drew) reply.replaceChildren();
           reply.classList.remove("is-waiting");
           reply.append(make("p", "chat-error", failed));
         }
-        if (!text && !failed) reply.remove();          // stopped before a word arrived
-        status.textContent = failed || (text ? `Assistant: ${plain(text)}` : "");
+        if (!drew && !failed) reply.remove();          // stopped before a word arrived
+        status.textContent = failed || (text ? `Assistant: ${plain(text)}${sources.length ? ` Sources: ${sources.map((v) => v.title).join(", ")}.` : ""}` : "");
         if (asked && !unlocked) passwordCard();
         else if (text && questions() >= LIMIT) endConversation(true);
         else if (text && !offered && questions() >= 3) offerWalkthrough();
@@ -2737,7 +2843,20 @@ const CONFIG = {
     dlg.addEventListener("cancel", (e) => { e.preventDefault(); close(); });   // Escape on the modal sheet
     dlg.addEventListener("keydown", (e) => { if (e.key === "Escape" && !phone.matches) { e.preventDefault(); close(); } });
     phone.addEventListener("change", () => { if (!dlg.open) return; dlg.close(); root.classList.remove("chat-locked"); open(false); });
-    log.addEventListener("click", (e) => { if (e.target.closest("a[href^='/']")) save(!phone.matches); });   // on to another page: reopen there, except on a phone
+    log.addEventListener("click", (e) => {
+      const a = e.target.closest("a[href^='/']");
+      if (!a) return;
+      const src = a.classList.contains("chat-source") ? a.getAttribute("href") : "";
+      const at = src ? here(src) : null;
+      if (at && at.same) {                             // a source on this page: go to its section, no reload
+        e.preventDefault();
+        if (phone.matches) close();
+        if (at.hash) { if (ring(at.hash)) history.replaceState(null, "", at.hash); else location.hash = at.hash; }
+        else window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
+        return;
+      }
+      save(!phone.matches, src || undefined);        // on to another page: reopen there, except on a phone; a source rings its section on arrival
+    });
 
     /* The composer: Enter sends, Shift+Enter breaks the line. */
     form.addEventListener("submit", (e) => { e.preventDefault(); if (busy) busy.abort(); else ask(); });
@@ -2750,6 +2869,11 @@ const CONFIG = {
     drawLog();
     requestAnimationFrame(() => launch.classList.add("is-in"));
     if (saved.open && !phone.matches) open(false);
+    if (saved.cite) {                                  // a source card brought them here: ring its section, once
+      const at = here(saved.cite);
+      if (at.same && at.hash) requestAnimationFrame(() => ring(at.hash));
+      save(dlg.open);
+    }
   };
 
   /* ---- Footer year ---- */
