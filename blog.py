@@ -250,23 +250,25 @@ def nav(current, section=None):
 """
 
 
-def contact_band(heading, lede, note, css=""):
-    return f"""
-<section class="section tight">
-  <div class="wrap">
+def foot(note, *, heading="", css=""):
+    """The end of a page: the contact band when it has a heading, then the
+    footer and the script. Posts pass no heading and just end."""
+    band = f"""
     <div class="contact" data-reveal data-field="rings">
       <canvas class="field" aria-hidden="true"></canvas>
       <div>
         <p class="eyebrow">Get in touch</p>
         <h2 class="t-title">{heading}</h2>
-        <p class="t-lede">{lede}</p>
       </div>
       <div class="contact-actions">
         <a class="btn btn-primary" data-link="linkedin" href="#"><span class="icon-swap">{LINKEDIN_SVG}{EXTLINK_SVG}</span>Message me on LinkedIn</a>
         <a class="btn btn-ghost" data-link="email" href="#"><span class="icon-swap">{MAIL_SVG}{SEND_SVG}</span>Email me</a>
         <a class="btn btn-ghost" data-link="resume" href="#"><span class="icon-swap">{DOWN_SVG}{CHECK_SVG}</span>Download resume</a>
       </div>
-    </div>
+    </div>""" if heading else ""
+    return f"""
+<section class="section tight">
+  <div class="wrap">{band}
     <footer>
       <span>© <span data-year></span> {AUTHOR}</span>
       <span>{note}</span>
@@ -407,11 +409,7 @@ def render_post(p, nxt):
   </div>
 </section>
 """
-    out += contact_band(
-        "Disagree with any of this?",
-        "I'd rather hear it than not. The arguments get better when somebody pushes back.",
-        "Posts are my own views.",
-        css="../")
+    out += foot("Posts are my own views.", css="../")
     return out
 
 
@@ -521,10 +519,7 @@ def render_index(posts):
   </div>
 </section>
 """
-    out += contact_band(
-        "Want to talk about one of these?",
-        "I'm looking for a Director of Product Design role. I'm also happy to just talk shop.",
-        "Posts are my own views.")
+    out += foot("Posts are my own views.", heading="Building or rebuilding a design org? Let’s talk.")
     return out
 
 
