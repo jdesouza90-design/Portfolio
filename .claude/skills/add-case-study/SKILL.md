@@ -108,6 +108,11 @@ page without it flashes before the sheet (`references/page-anatomy.md`, conventi
 `styles.css`, the README's structure list and page count, and `python3 stamp.py` last, after
 the final CSS or JS edit, because the hashes go stale otherwise.
 
+Then the deck. The interview deck gets a run for the new case study, built from the page's
+own copy (intro, hero, role, problem, design, quotes, results), added to `order` and
+`sections` in its `project/deck.json`, and the `work-index` slide gets the new row. "Deck
+sync" in CLAUDE.md has the deck's address and the steps.
+
 ## Verify
 
 Run `python3 .claude/skills/add-case-study/scripts/check.py` from the repo root. It checks the

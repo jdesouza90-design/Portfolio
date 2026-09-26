@@ -795,6 +795,10 @@ The rules that shape the code:
 ## Editing content
 
 - Copy follows [VOICE.md](VOICE.md). Read it before writing or rewriting any text on the site.
+- The interview deck mirrors the site and changes with it: any edit a reader would see on the
+  home page, the work index or a case study goes into the matching slides in the same pass.
+  How, and the deck's address, are in "Deck sync" in [CLAUDE.md](CLAUDE.md); a hook in
+  `.claude/hooks/deck-sync.py` reminds each session when it edits or commits a content page.
 - Case-study copy lives directly in each `work/*.html` file.
 - The originations chart on the Cross-Sell page reads its numbers from the
   `data-series` attribute on the `.chart` element and its milestones from
