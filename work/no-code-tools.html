@@ -22,7 +22,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!-- A fresh unlock from the gate: hold the page until its opener is up (initUnlock in main.js). -->
 <script>if (/[?&]unlocked(?=&|$)/.test(location.search)) document.documentElement.classList.add("unlock");</script>
-<link rel="stylesheet" href="../styles.css?v=a2873074">
+<link rel="stylesheet" href="../styles.css?v=9e79d666">
 <script defer src="/_vercel/insights/script.js"></script>
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
@@ -128,17 +128,11 @@
         <span class="ba-dot" aria-hidden="true"></span>
       </div>
     </figure>
-    <div class="proof">
-      <div class="proof-head">
-        <div><div class="t-stat">No code</div><small>to configure, test and publish a login flow</small></div>
-        <span class="eyebrow">What shipped · 2 phases</span>
-      </div>
-      <ul class="tensions">
-        <li><strong>Customization panel</strong><span>Styles, fonts and colors update a live preview of every login screen as you change them.</span></li>
-        <li><strong>Flow builder</strong><span>A login journey assembled from actions on a canvas, then tested and published from the same place.</span></li>
-        <li><strong>Code path</strong><span>Still there for developers who want it, with nothing taken away.</span></li>
-      </ul>
-    </div>
+    <ul class="chips ba-phases" aria-label="What shipped">
+      <li class="chip"><span class="eyebrow">Phase 1</span>Customization panel with live preview</li>
+      <li class="chip"><span class="eyebrow">Phase 2</span>Flow builder</li>
+      <li class="chip"><span class="eyebrow">Kept</span>Code path for developers</li>
+    </ul>
   </div>
 </section>
 
