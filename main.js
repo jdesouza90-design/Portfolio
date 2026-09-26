@@ -1998,8 +1998,8 @@ const CONFIG = {
      transition where the browser has one and the reader hasn't asked for
      less motion; otherwise they simply re-sort. */
   const LENSES = {
-    hiring: { note: "Outcome first: the business result each piece of work is measured by.", order: ["system", "cross-sell", "verifications", "refi", "staking", "no-code"] },
-    leader: { note: "How the work was run: who did what, at what size and what was handed to an agent.", order: ["system", "no-code", "cross-sell", "verifications", "refi", "staking"] },
+    recruiter: { note: "Outcome first: the business result each piece of work is measured by, and the size of the team behind it.", order: ["system", "cross-sell", "verifications", "refi", "staking", "no-code"] },
+    hiring: { note: "How the work was run: who did what, at what size and what was handed to an agent.", order: ["system", "no-code", "cross-sell", "verifications", "refi", "staking"] },
     pm: { note: "The funnel and its numbers: declines, offers and verifications, with the revenue behind each.", order: ["cross-sell", "refi", "verifications", "system", "staking", "no-code"] },
     eng: { note: "The systems underneath: the agent and its rules, the design system and the on-chain product.", order: ["system", "staking", "no-code", "verifications", "refi", "cross-sell"] },
   };
@@ -2020,7 +2020,8 @@ const CONFIG = {
       list.dispatchEvent(new CustomEvent("lens"));
     };
     const apply = (key, animate) => {
-      if (!LENSES[key]) key = "hiring";
+      if (key === "leader") key = "hiring";   // the name it had before the recruiter joined
+      if (!LENSES[key]) key = "recruiter";
       tabs.forEach((t) => t.setAttribute("aria-pressed", String(t.dataset.lensKey === key)));
       if (note) note.textContent = LENSES[key].note;
       try { localStorage.setItem("lens", key); } catch (e) { /* private mode */ }
@@ -2028,9 +2029,9 @@ const CONFIG = {
       else sort(key);
     };
     tabs.forEach((t) => t.addEventListener("click", () => apply(t.dataset.lensKey, true)));
-    let saved = "hiring";
-    try { saved = localStorage.getItem("lens") || "hiring"; } catch (e) { /* private mode */ }
-    if (saved !== "hiring") apply(saved, false);
+    let saved = "recruiter";
+    try { saved = localStorage.getItem("lens") || "recruiter"; } catch (e) { /* private mode */ }
+    if (saved !== "recruiter") apply(saved, false);
   });
 
   /* ---- Steps ----
@@ -2406,8 +2407,8 @@ const CONFIG = {
 
     /* Who is asking: each chip sends a fuller question than its label. */
     const AUDIENCE = [
-      ["Hiring manager", "I’m a hiring manager. What has John shipped, with the outcomes?"],
-      ["Design leader", "I’m a design leader. How does John run a design team, and what does he hold the bar on?"],
+      ["Recruiter", "I’m a recruiter. What has John shipped, with the outcomes, and what size of team has he led?"],
+      ["Hiring manager", "I’m a hiring manager. How does John run a design team, and what does he hold the bar on?"],
       ["Engineer", "I’m an engineer. How does John work with engineering, and what has he built with AI agents?"],
     ];
 
