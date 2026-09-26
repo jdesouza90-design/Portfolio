@@ -244,7 +244,7 @@ Function, answers with Claude Haiku 4.5 by default.
   draws the email, LinkedIn and resume buttons. The panel clones each from a
   `<template>` and fills it as text, never from model-written HTML.
 - **Who is asking.** Under the suggested questions, the empty panel asks who
-  you are: Recruiter, Hiring manager, Engineer. Each sends a fuller
+  you are: Recruiter, Design leader, Engineer. Each sends a fuller
   question than its label, and the row goes with the first question.
 - **The password.** Asked for something only a case study has, the model
   calls its `ask_for_password` tool and the panel shows a password field. A
@@ -289,7 +289,7 @@ Function, answers with Claude Haiku 4.5 by default.
   screen keeps a wrapper carrying its project's class, so the ground and the
   emerge settings still apply. Below 821px the screens go back to their rows.
 - **The lens** (`initLens`, `[data-lens]` above the list on the home page and
-  the work index). Recruiter, Hiring manager, Product manager, Engineer
+  the work index). Recruiter, Design leader, Product manager, Engineer
   re-sort the rows. The orders are fixed
   in `LENSES` in `main.js` (no model, nothing sent anywhere), and no two
   give the same order, on the work index or in the home page's three rows.
@@ -349,7 +349,7 @@ The dashboard is pinned to paper (`data-theme="light"` on its root).
 
 Thought leadership, not a case-study archive. A post takes a position on a
 conversation the industry is having now; John's own work appears as evidence in
-a sentence or two, never as the subject. A hiring manager reads `work.html` to
+a sentence or two, never as the subject. A design leader reads `work.html` to
 see what he shipped and `blog.html` to see how he thinks. `POSITION.md` holds
 the three pillars, what each one argues, what it refuses to argue, and the
 eight rules every post follows. Read it with `VOICE.md` before writing.
@@ -564,7 +564,7 @@ All six case studies are the same document, in this order:
    (role, team, timeline, launch) as a `.facts` stat strip: a small label
    above the value at heading size, cells divided by hairlines.
 2. **My role**: hairline ledger rows (`.ledger`), heading left and paragraph
-   right, directly under the facts, so a hiring manager reads the leadership
+   right, directly under the facts, so a design leader reads the leadership
    story before the work.
 3. **Results**: centred title and lede, then one `.proof` frame: the headline
    stat top-left, a label top-right, and under it the evidence (chart,

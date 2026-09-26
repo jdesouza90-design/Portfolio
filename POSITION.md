@@ -5,7 +5,7 @@ before drafting a post: VOICE.md is how the site writes, this is what it believe
 
 ## What this blog is for
 
-A hiring manager reads the case studies to see what John shipped. They read the blog to
+A design leader reads the case studies to see what John shipped. They read the blog to
 see **how he thinks and how he operates** before they ever get him on a call.
 
 So a post takes a position on a conversation the industry is actually having right now.
@@ -86,7 +86,7 @@ obstacle.
 4. **Every number names and links its source.** Never invent, round or extrapolate. If the
    number cannot be found, the sentence loses the number, not the source.
 5. **Show how John operates.** At least one concrete thing he actually does: the question
-   he asks in an interview, the rule he holds, the call he makes. A hiring manager should
+   he asks in an interview, the rule he holds, the call he makes. A design leader should
    finish the post knowing something about working with him.
 6. **Credit precisely.** "I" for what John decided, "we" for what the team shipped. Team
    sizes are the project's designers, not the org. Never claim a colleague's build.
