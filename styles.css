@@ -1318,7 +1318,10 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 .lens-note { flex: 1 1 24ch; min-width: 0; color: var(--ink-3); max-width: none; }
 @media (max-width: 640px) {
   .lens { align-items: flex-start; }
-  .lens .seg { flex-wrap: wrap; overflow: visible; border-radius: 22px; }   /* four names in two rows, none cut */
+  /* one row that runs off the right edge of the screen and scrolls sideways; the cut name says there is more */
+  .lens .seg { flex-wrap: nowrap; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; max-width: none; width: calc(100% + var(--gutter)); margin-right: calc(-1 * var(--gutter)); border-right: 0; border-radius: 999px 0 0 999px; }
+  .lens .seg-tab { flex: none; scroll-snap-align: start; }
+  .lens .seg::after { content: ""; flex: none; width: var(--gutter); }   /* room after the last name, so it can scroll clear of the edge */
   .lens-note { flex-basis: 100%; }
 }
 
