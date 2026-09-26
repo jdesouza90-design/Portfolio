@@ -23,15 +23,20 @@ accessibility fixes, the blog and the admin pages.
 1. Artifact `list` with `scope: "files"` on the deck's url. Then `read` `project/deck.json`
    and every slide you will change. The deck's own `SKILL.md` sets the slide format; read it
    before a first edit.
-2. Slide ids: `cover`, `for-company`, `lead-intro`, `lead-coaching`, `lead-layers`,
-   `lead-ai`, `about`, `experience`, `kudos`, `work-index`, then one run per case study,
-   prefixed `ads-` (agentic design system audit), `cs-` (Cross-Sell), `ver-`
+2. Slide ids: `cover`, `for-company`, `lead-intro`, `lead-coaching`, `lead-ai`,
+   `lead-layers`, `about`, `experience`, `kudos`, `work-index`, then one run per case
+   study, prefixed `ads-` (agentic design system audit), `cs-` (Cross-Sell), `ver-`
    (Verifications), `refi-` (Refinance offers), `stk-` (Staking), `nc-` (No-code tools)
-   and `siwe-` (Sign-in with Ethereum): intro, hero, role, problem, design, quotes and
-   results, plus a few extras.
-3. Copy the site's wording verbatim. Edit copies of the slides in one folder at their deck
-   paths and publish them to the same url in one call. Add or remove a slide through
-   `order` in `project/deck.json`. Images go up as assets first (`asset: true`).
+   and `siwe-` (Sign-in with Ethereum, hidden like its page). A run is the intro and the
+   hero, then one slide per section of the page, in the page's order.
+3. Match the site. Headings, eyebrows, numbers, quotes, names, who did what and section
+   order are exactly what the site says, and quotes are never shortened. A slide may
+   condense a long paragraph to fit, as long as it keeps every fact and adds none. Slides
+   use the site's faces: Crimson Pro for headings and quotes, DM Sans for text, DM Mono for
+   uppercase labels. Edit copies of the slides in one folder at their deck paths and
+   publish them to the same url in one call. Add or remove a slide through `order` in
+   `project/deck.json`, then renumber the footer page numbers and the start numbers on
+   `work-index`. Images go up as assets first (`asset: true`).
 4. Name the slides you changed in your final message, or say why none needed it.
 
 **The hook.** `.claude/hooks/deck-sync.py` reminds a session when it edits a content page
