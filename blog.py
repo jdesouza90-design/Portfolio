@@ -522,7 +522,7 @@ def render_index(posts):
 </section>
 """
     out += contact_band(
-        "Want to argue about one of these?",
+        "Want to talk about one of these?",
         "I'm looking for a Director of Product Design role. I'm also happy to just talk shop.",
         "Posts are my own views.")
     return out
