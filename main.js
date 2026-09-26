@@ -3005,7 +3005,9 @@ const CONFIG = {
       dot.classList.add("is-on");
       last = [lane, i, short];
     };
-    window.addEventListener("resize", debounce(() => { if (last) place(last[0], last[1], last[2], false); }, 120));
+    window.addEventListener("resize", debounce(() => {   // move the dot, but never bring back one that has gone out
+      if (last && $(".ba-dot", last[0]).classList.contains("is-on")) place(last[0], last[1], last[2], false);
+    }, 120));
 
     onceInView(fig, 0.35, (animate) => {
       if (!animate) { finish(); return; }

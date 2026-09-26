@@ -1271,11 +1271,16 @@ footer a:hover { color: var(--ink); }
 /* Staged: the before lane waits in the middle of the frame, the after lane below and out of sight */
 .flow-ba.is-staged .ba-before { transform: translateY(calc(50% + var(--sp-5) / 2)); }
 .flow-ba.is-staged .ba-after { opacity: 0; transform: translateY(var(--sp-5)); }
-/* Both on screen: the before lane rises and steps back. Its text goes to --ink so
-   it still clears 4.5:1 at 72% opacity. */
-.flow-ba.is-two .ba-before { transform: none; opacity: .72; }
-.flow-ba.is-two .ba-before .ba-steps li:not(.is-done), .flow-ba.is-two .ba-before .eyebrow { color: var(--ink); }
-.flow-ba.is-two .ba-before .ba-steps li.is-done { background: var(--ink); box-shadow: inset 0 0 0 2px var(--ink); }
+/* Both on screen: the before lane rises and fades back. The boxes, the rail and the
+   dark Deploy fill melt into the lane's ground; the words drop to --ink-3, which
+   still clears 4.5:1 on paper-2, so the fade is in the chrome, not the reading. */
+.flow-ba.is-two .ba-before { transform: none; }
+.flow-ba.is-two .ba-before .ba-steps::before { opacity: .45; transition: opacity .6s linear; }
+.flow-ba.is-two .ba-before .ba-steps li,
+.flow-ba.is-two .ba-before .ba-steps li.is-reached,
+.flow-ba.is-two .ba-before .ba-steps li.is-done { background: var(--paper-2); border-color: var(--hair-2); box-shadow: none; color: var(--ink-3);
+  transition: box-shadow .6s var(--ease), background-color .6s var(--ease), color .6s var(--ease), border-color .6s var(--ease); }
+.flow-ba.is-two .ba-before .ba-name, .flow-ba.is-two .ba-before .eyebrow { color: var(--ink-3); transition: color .6s var(--ease); }
 .flow-ba.is-two .ba-after { opacity: 1; transform: none; }
 @media (max-width: 640px) {
   .ba-lane { grid-template-columns: minmax(0, 1fr); }
