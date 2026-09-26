@@ -126,12 +126,25 @@ The file is a JSON front-matter comment, then the body as an HTML fragment:
   "lede": "Two or three sentences under the title. The specifics.",
   "claim": "The one sentence the post defends.",
   "keywords": ["...", "..."],
-  "sources": ["<a href=\"https://...\">Name</a>, what it is and what it measured."]
+  "sources": ["<a href=\"https://...\">Name</a>, what it is and what it measured."],
+  "cover_line": "The claim in six to ten words, the sentence someone would quote."
 } -->
 
       <p>...</p>
       <h2>...</h2>
 ```
+
+**The cover line is required.** The cover is the post's argument in one line, set in the
+serif's italic on the pillar's ground (README, "Covers"). Write `cover_line` last, once
+the claim is final:
+
+- Six to ten words. `blog.py` refuses anything outside four to eleven.
+- The claim with the reasoning cut off: the sentence someone would quote. Not the title
+  again, and not a question.
+- Two short sentences can beat one long one ("Rewards bring the money in. Redemption
+  decides the trust.").
+- Same voice rules as the body: no dashes, no semicolons, sentence case, a full stop.
+- Read the other posts' `cover_line`s first so no two covers say the same thing.
 
 The body uses bare tags only: `p`, `h2`, `h3`, `ul`/`ol`/`li`, `strong`, `a`,
 `blockquote` with a `cite`. No classes, no inline styles, no images unless John gave you
@@ -157,6 +170,8 @@ renamed or deleted and the old page is still there; delete it yourself.
   cdnjs and run the WCAG 2.x A/AA and best-practice tags. Zero violations is the bar every
   other page on the site meets.
 - Check it at 375 and 320 wide for anything that scrolls sideways.
+- Look at the cover on the index card: the line should set in three lines or fewer.
+  Shorten it if it runs to four.
 - Read the post out loud. This catches the voice slips that no script will.
 - Re-run the human-writing naturalness checks on the built page's text. Name the most
   AI-sounding sentence left and rewrite it.

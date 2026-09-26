@@ -25,8 +25,7 @@ work/sign-in-with-ethereum.html Auth0 · Sign-in with Ethereum (hidden for now: 
                                 ring, noindex; still opens by URL; its work.html row is parked in a comment)
 blog.html                       Blog index: the three pillars, then the posts under each (generated)
 blog/<slug>.html                A post (generated, never hand-edited)
-blog/posts/<slug>.html          A post's source: JSON front matter, then the body as an HTML fragment
-assets/blog/<slug>.svg          A post's cover, drawn by blog.py (plus -wide.svg for the post hero)
+blog/posts/<slug>.html          A post's source: JSON front matter (with its cover line), then the body as an HTML fragment
 blog.py                         Builds the blog: every post page, the index, sitemap.xml, feed.xml, llms.txt
                                 and search-index.json (the palette's index)
 POSITION.md                     What the blog argues, the three pillars, and what it won't say
@@ -437,31 +436,25 @@ the other pages for it.
 
 ### Covers
 
-The rest of the site is drawn in hairlines, dot fields, rings and small
-repeating marks: the AI strands, the hero dots, the contact rings, every
-per-project ground. None of that survives being shrunk to a card, and reusing
-the strands would have made a post look like the AI card on the home page. So a
-cover is the one place the site uses **solid form**: a few large shapes on the
-pillar's ground, overlapping and multiplying into deeper tones, cropped by the
-frame. Each pillar has its own palette and its own way of placing weight
-(leadership opens from one point on the left, the craft holds a grid and lets
-one shape leave it, fintech stacks bands across a division), so three cards in a
-row are tellable apart before you read a word.
+A cover is the post's argument in one line: the claim cut to six to ten words
+("Count what the system failed to prevent."), set in Crimson Pro's light italic,
+centred over the double rule in the pillar's accent, with the pillar named in
+the corner and one tinted disc bleeding off the bottom right so the three
+grounds still tell apart at a glance. The format is Harvey's title plates,
+without the black. It replaced seeded solid shapes on September 26, 2026,
+because those were handsome and interchangeable and said nothing about the post.
 
-`blog.py` draws both renders the first time it builds a post, from one seed:
-
-```
-assets/blog/<slug>.svg        the card's plate, 3:2
-assets/blog/<slug>-wide.svg   the post hero's band, 5:2
-```
-
-They are two renders rather than one because the hero is three times the card's
-width on screen, and the same five shapes blown up read as a slab. The wide one
-keeps the seed and the palette and spends the extra room on more, smaller forms.
-Each file is about 2KB. The seed is the slug, so a cover never changes once it
-is written; delete a file and re-run to redraw it. Same idea as
-`ai-process-art.mjs`, kept inside `blog.py` so one command still produces a
-complete post.
+Each post carries `cover_line` in its front matter, and `blog.py` draws it as
+markup (spans, since on the index it sits inside a link), not an image, so it
+sets in the site's faces and stays sharp at every size. It refuses a post
+without one, or with one outside four to eleven words. The line is not the
+title or the claim repeated: it is the claim with the reasoning cut off, the
+sentence someone would quote. One set of markup draws the 3:2 card, the list
+thumbnail and the 5:2 post hero, every size in container units; under 640px the
+hero keeps the card's 3:2 so the line has room. Like the case-study panels, a
+cover is a plate of paper: it keeps its light palette in the dark theme, so its
+colors are its own `--cv-*` properties, not the page's tokens. The card's hover
+zoom scales `.cov-in`.
 
 The index and the post pages load Crimson Pro's italic as well as its roman, for
 the featured band's heading. No other page pays for it.

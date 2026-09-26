@@ -14,7 +14,7 @@ The chrome (head, nav, closing band, footer) lives here, once. If the nav or the
 footer changes on the rest of the site, change it here and re-run, or the blog
 drifts away from the pages around it.
 """
-import json, re, sys, glob, os, html, datetime, hashlib, math
+import json, re, sys, glob, os, html, datetime, hashlib
 
 SITE = "https://john-desouza.com"
 AUTHOR = "John DeSouza"
@@ -74,6 +74,9 @@ def read_posts():
         except ValueError:
             sys.exit("%s: date must be ISO 8601 with an offset, e.g. "
                      "2026-09-22T09:00:00-04:00" % path)
+
+        check_cover(path, meta.get("cover_line"))
+        meta["cover_line"] = smarten(meta["cover_line"])
 
         words = len(re.findall(r"\w+", re.sub(r"<[^>]+>", " ", body)))
         for key in ("title", "description", "lede", "claim"):
@@ -136,129 +139,28 @@ def smarten_html(fragment):
 
 
 # ------------------------------------------------------------ cover art ----
-# The site already speaks in hairlines, dot fields, rings and small repeating
-# marks: the AI strands, the hero dots, the contact rings, every per-project
-# ground. None of that survives being shrunk to a card. So a cover is the one
-# place the site uses solid form -- a few large shapes on the pillar's ground,
-# overlapping and multiplying into deeper tones, cropped by the frame.
-#
-# Seeded from the slug, so a post's cover never changes once it is written.
-# Two renders share that seed: the card's plate at 3:2 and the post hero's
-# band at 5:2, which is three times as wide on screen and so spends the room
-# on more, smaller forms instead of blowing the same five up into a slab.
-
-import math
-
-CW, CH = 1200, 800
-
-# ground a, ground b, three shape tints, the accent.
-TONES = {
-    "leadership": ("#F0F1EB", "#E7E9E0", ["#DCE2D2", "#C8D2BC", "#B4C2A4"], "#3B6B44"),
-    "craft":      ("#F7F1E5", "#F1E8D6", ["#EFE0C2", "#E6CE9E", "#DBBB7E"], "#C98F3E"),
-    "fintech":    ("#F1F0ED", "#E7E4DE", ["#DAD6CD", "#C3BEB2", "#A9A396"], "#2B2621"),
-}
-
-# Where a composition puts its weight. Each pillar reads differently at a glance
-# without needing a different shape vocabulary.
-ANCHORS = {
-    # one point on the left, opening to the right
-    "leadership": [(.13, .50), (.38, .30), (.42, .70), (.68, .24), (.72, .64), (.94, .44)],
-    # a strict grid, and one that leaves it
-    "craft":      [(.22, .32), (.50, .30), (.78, .32), (.24, .68), (.52, .70), (.86, .76)],
-    # bands stacked across a division
-    "fintech":    [(.26, .28), (.70, .26), (.32, .52), (.66, .54), (.28, .76), (.74, .74)],
-}
+# A cover is the post's argument in one line: the claim cut to six to ten
+# words, set in the serif's italic over a double rule, on the pillar's ground
+# (after Harvey's title plates). It is written per post as `cover_line` in the
+# front matter and drawn here as markup, so it sets in the site's faces and
+# stays sharp at any size. The card draws it at 3:2 and the post hero at 5:2.
 
 
-def _rng(seed):
-    s = seed & 0xFFFFFFFF
-    def rnd():
-        nonlocal s
-        s = (s + 0x6D2B79F5) & 0xFFFFFFFF
-        t = (s ^ (s >> 15)) * (1 | s) & 0xFFFFFFFF
-        t = (t + ((t ^ (t >> 7)) * (61 | t) & 0xFFFFFFFF)) & 0xFFFFFFFF ^ t
-        return ((t ^ (t >> 14)) & 0xFFFFFFFF) / 4294967296
-    return rnd
+def check_cover(path, line):
+    if not isinstance(line, str) or not line.strip():
+        sys.exit("%s: front matter is missing cover_line (the claim in six to ten words)" % path)
+    n = len(line.split())
+    if not 4 <= n <= 11:
+        sys.exit("%s: cover_line runs %d words, keep it to six to ten" % (path, n))
 
 
-def _disc(cx, cy, r, fill, rot):
-    return '<circle cx="%.0f" cy="%.0f" r="%.0f" fill="%s"/>' % (cx, cy, r, fill)
+def cover(p):
+    """The cover's markup. Spans throughout: on the index it sits inside a link."""
+    _label, _chip, short = PILLARS[p["pillar"]]
+    return ('<span class="cov-in"><span class="cov-disc"></span><span class="cov-eye">%s</span>'
+            '<span class="cov-line">%s</span><span class="cov-rule"></span></span>'
+            % (html.escape(short), html.escape(p["cover_line"])))
 
-
-def _half(cx, cy, r, fill, rot):
-    return ('<path d="M%.0f %.0f a%.0f %.0f 0 0 1 %.0f 0z" fill="%s" '
-            'transform="rotate(%.0f %.0f %.0f)"/>') % (cx - r, cy, r, r, 2 * r, fill, rot, cx, cy)
-
-
-def _rect(cx, cy, r, fill, rot):
-    w, h = r * 1.9, r * 1.25
-    return ('<rect x="%.0f" y="%.0f" width="%.0f" height="%.0f" fill="%s" '
-            'transform="rotate(%.0f %.0f %.0f)"/>') % (cx - w / 2, cy - h / 2, w, h, fill, rot, cx, cy)
-
-
-def _ring(cx, cy, r, fill, rot):
-    return ('<circle cx="%.0f" cy="%.0f" r="%.0f" fill="none" stroke="%s" '
-            'stroke-width="%.0f"/>') % (cx, cy, r * .82, fill, max(10, r * .3))
-
-
-SHAPES = [_disc, _half, _rect, _ring, _disc, _half]
-
-
-def cover(slug, pillar, wide=False):
-    """The card's plate at 3:2, or the post hero's band at 5:2.
-
-    The hero is three times the card's width on screen, so the same five shapes
-    blown up read as a slab rather than a composition. The wide版 keeps the seed
-    and the palette and spends the extra room on more, smaller forms."""
-    seed = 0
-    for ch in slug:
-        seed = (seed * 131 + ord(ch)) & 0xFFFFFFFF
-    rnd = _rng(seed or 1)
-    g0, g1, tints, accent = TONES[pillar]
-    w, h = (1500, 600) if wide else (CW, CH)
-    anchors = ANCHORS[pillar][:]
-    if wide:
-        # The same anchor family, shifted along and doubled, so the band reads
-        # as the card's composition continuing rather than a different picture.
-        anchors = [(x * .54 + dx, y) for dx in (.02, .48) for (x, y) in anchors]
-
-    # Take four or five of the pillar's anchors, in a seeded order.
-    for i in range(len(anchors) - 1, 0, -1):
-        j = int(rnd() * (i + 1))
-        anchors[i], anchors[j] = anchors[j], anchors[i]
-    n = (10 + int(rnd() * 3)) if wide else (5 + int(rnd() * 2))
-    picked = anchors[:n]
-
-    # The accent goes on whichever of them sits furthest from the frame's edge,
-    # so the one saturated shape is never half cropped away.
-    def inset(a):
-        return min(a[0], 1 - a[0], a[1], 1 - a[1])
-    accent_at = max(picked, key=inset)
-    accents = {accent_at} if not wide else set(sorted(picked, key=inset, reverse=True)[:2])
-
-    body = []
-    for k, (ax, ay) in enumerate(picked):
-        cx, cy = ax * w + (rnd() - .5) * 80, ay * h + (rnd() - .5) * 46
-        r = ((.13 + rnd() * .14) if wide else (.19 + rnd() * .20)) * h
-        is_accent = (ax, ay) in accents
-        fill = accent if is_accent else tints[int(rnd() * len(tints))]
-        if is_accent:
-            r *= .58            # the accent is the smallest thing on the canvas
-        draw = _disc if is_accent else SHAPES[int(rnd() * len(SHAPES))]
-        rot = int(rnd() * 360)
-        body.append('<g style="mix-blend-mode:multiply">%s</g>' % draw(cx, cy, r, fill, rot))
-
-    return (
-        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 %d %d" width="%d" height="%d" role="img" aria-hidden="true">'
-        '<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">'
-        '<stop offset="0" stop-color="%s"/><stop offset="1" stop-color="%s"/></linearGradient></defs>'
-        '<rect width="%d" height="%d" fill="url(#g)"/>'
-        '%s'
-        '</svg>\n'
-    ) % (w, h, w, h, g0, g1, w, h, "".join(body))
-
-
-# ---------------------------------------------------------------- chrome ----
 
 def head(*, title, desc, url, css, extra="", og_type="website", ld="", italic=False):
     return f"""<!doctype html>
@@ -480,9 +382,7 @@ def render_post(p, nxt):
 
 <section class="section tight">
   <div class="wrap">
-    <figure class="post-art" data-reveal style="--vt: post-{p["slug"]}">
-      <img src="../assets/blog/{p["slug"]}-wide.svg?v={stamp('assets/blog/%s-wide.svg' % p["slug"])}" width="1500" height="600" alt="" decoding="async">
-    </figure>
+    <figure class="post-art cover p-{p["pillar"]}" aria-hidden="true" data-reveal style="--vt: post-{p["slug"]}">{cover(p)}</figure>
     <div class="claim" data-reveal>
       <p class="t-quote">{p["claim"]}</p>
     </div>
@@ -634,7 +534,7 @@ def card(p):
     label, chip_class, short = PILLARS[p["pillar"]]
     return f"""
         <a class="post-card" href="/blog/{p["slug"]}.html" data-title="{html.escape(p["title"].lower())}" data-desc="{html.escape(p["description"].lower())}" data-pillar="{p["pillar"]}">
-          <span class="card-art" style="--vt: post-{p["slug"]}"><img src="assets/blog/{p["slug"]}.svg?v={stamp('assets/blog/%s.svg' % p["slug"])}" width="{CW}" height="{CH}" alt="" loading="lazy" decoding="async"></span>
+          <span class="card-art cover p-{p["pillar"]}" aria-hidden="true" style="--vt: post-{p["slug"]}">{cover(p)}</span>
           <span class="card-body">
             <span class="t-heading card-title">{html.escape(p["title"])}</span>
             <span class="t-small card-desc">{p["description"]}</span>
@@ -809,18 +709,6 @@ def main():
         sys.exit("run this from the repo root")
     posts = read_posts()
 
-    # Draw any cover that is missing. A cover is seeded from the slug, so it is
-    # stable once written; delete the file to redraw one.
-    os.makedirs("assets/blog", exist_ok=True)
-    drawn = []
-    for p in posts:
-        for path, wide in (("assets/blog/%s.svg" % p["slug"], False),
-                           ("assets/blog/%s-wide.svg" % p["slug"], True)):
-            if not os.path.exists(path):
-                if not check:
-                    open(path, "w").write(cover(p["slug"], p["pillar"], wide=wide))
-                drawn.append(path)
-
     wanted = {}
     for i, p in enumerate(posts):
         # Next is the post below this one, and the oldest wraps to the newest,
@@ -848,10 +736,7 @@ def main():
                if os.path.splitext(os.path.basename(f))[0] not in slugs]
 
     if check:
-        if drawn:
-            for f in drawn:
-                print("missing cover: %s" % f)
-        if stale or orphans or drawn:
+        if stale or orphans:
             for f in stale:
                 print("out of date: %s" % f)
             for f in orphans:
@@ -862,8 +747,6 @@ def main():
 
     for f in orphans:
         print("orphan, delete it yourself if that is right: %s" % f)
-    if drawn:
-        print("drew %d cover%s" % (len(drawn), "" if len(drawn) == 1 else "s"))
     print("%d posts · wrote %d file%s%s" % (
         len(posts), len(stale), "" if len(stale) == 1 else "s",
         (": " + ", ".join(sorted(stale))) if stale else " (all current)"))
