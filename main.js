@@ -1934,9 +1934,13 @@ const CONFIG = {
     const fine = window.matchMedia("(hover: hover) and (pointer: fine)");
     const stage = document.createElement("div");
     stage.className = "cases-stage";
+    stage.addEventListener("pointerenter", () => { onStage = true; });
+    stage.addEventListener("pointerleave", (e) => { onStage = false; const back = rows.find((r) => r.contains(e.relatedTarget)); hover = back || null; pick(); });
     const media = new Map(rows.map((r) => [r, $(".case-media", r)]));
     const slot = new Map(rows.map((r) => {
-      const s = document.createElement("div");
+      const s = document.createElement("a");   // the screen is a link to its case study too, out of the tab order (the row is the stop)
+      s.href = r.getAttribute("href");
+      s.tabIndex = -1;
       s.className = "cases-slot " + Array.from(r.classList).filter((c) => c.startsWith("case-") && c !== "case-row").join(" ");
       return [r, s];
     }));
@@ -1952,7 +1956,8 @@ const CONFIG = {
       rows.forEach((r) => { const b = r.getBoundingClientRect(); const gap = Math.abs((b.top + b.bottom) / 2 - mid); if (gap < d) { d = gap; best = r; } });
       return best;
     };
-    const pick = () => { if (staged) show(hover || focus || nearest()); };
+    let onStage = false;
+    const pick = () => { if (staged && !onStage) show(hover || focus || nearest()); };   // over the screen, it holds the row it shows
     const mount = () => {
       if (staged) return;
       staged = true;
@@ -1975,7 +1980,7 @@ const CONFIG = {
     sync();
     rows.forEach((r) => {
       r.addEventListener("pointerenter", () => { if (fine.matches) { hover = r; pick(); } });
-      r.addEventListener("pointerleave", () => { hover = null; pick(); });
+      r.addEventListener("pointerleave", (e) => { if (staged && stage.contains(e.relatedTarget)) { onStage = true; return; } hover = null; pick(); });   // across to the screen: keep showing this row
       r.addEventListener("focusin", () => { focus = r; pick(); });
       r.addEventListener("focusout", () => { focus = null; pick(); });
     });
