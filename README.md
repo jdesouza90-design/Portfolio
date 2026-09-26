@@ -322,8 +322,6 @@ Function, answers with Claude Haiku 4.5 by default.
   it with the brief as written.
 - **Cut and kept** (`.pair`): the two ways a button could carry its icon,
   built as tiny live components with the verdict as a label.
-- **Provenance** (`.provenance`): one line under the facts saying what the
-  agent did and what people did.
 
 ## The palette
 
