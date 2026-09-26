@@ -33,7 +33,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../styles.css?v=0ae9ab8c">
+<link rel="stylesheet" href="../styles.css?v=3f879b5f">
 <script defer src="/_vercel/insights/script.js"></script>
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
@@ -103,7 +103,7 @@
       <p class="t-quote">Machine-readable design systems enforce the vocabulary and drop the judgment, and the judgment only gets written down if every rejected answer leaves a reason behind.</p>
     </div>
     <div class="prose" data-reveal>
-<p>The design system is now the thing the model reads. In a <a href="https://state-of-ai-in-design-systems.netlify.app/">July survey of 21 open-source design systems</a>, Kaelig Deloumeau-Prigent found that 18 ship an official MCP server so coding agents can query them directly. Figma describes its new agent as having <a href="https://www.figma.com/blog/the-figma-agent-is-here/">"deep context on your components, tokens, standards, and best practices"</a>.</p>
+<p>The design system is now the thing the model reads. In a <a href="https://state-of-ai-in-design-systems.netlify.app/">July survey of 21 open-source design systems</a>, Kaelig Deloumeau-Prigent found that 18 ship an official MCP server so coding agents can query them directly. Figma describes its new agent as having <a href="https://www.figma.com/blog/the-figma-agent-is-here/">“deep context on your components, tokens, standards, and best practices”</a>.</p>
 
       <p>The position behind all of this is reasonable. Give the agent your system and it builds on your system. The components and tokens become the guardrail, and on-brand output follows.</p>
 
@@ -111,7 +111,7 @@
 
       <h2>What the machine-readable half enforces</h2>
 
-      <p>The same survey catalogs 165 techniques teams use to keep models on their real components and tokens. The biggest groups are validation loops (31), prohibitions like "never invent components" (28), tool-gating that makes a fake component impossible to produce (22) and token enforcement that fails the build on a raw hex value (15).</p>
+      <p>The same survey catalogs 165 techniques teams use to keep models on their real components and tokens. The biggest groups are validation loops (31), prohibitions like “never invent components” (28), tool-gating that makes a fake component impossible to produce (22) and token enforcement that fails the build on a raw hex value (15).</p>
 
       <p>That is serious engineering, and it works. It also has a clear shape. Most of them answer one question: is this a real part of the system, used the way its API allows?</p>
 
@@ -119,25 +119,25 @@
 
       <h2>The part that got cut first</h2>
 
-      <p>Atlassian tested Google's DESIGN.md format against its own MCP server and skills and wrote up what happened. To fit the design system into one portable file, the team says it <a href="https://www.atlassian.com/blog/how-we-build/atlassians-design-md-is-here-what-we-learned-testing-portable-design-context-in-practice">"had to remove much of the usage guidance from our 50+ components"</a>. Agents given the file then went digging through component code to find the guidance that was missing.</p>
+      <p>Atlassian tested Google’s DESIGN.md format against its own MCP server and skills and wrote up what happened. To fit the design system into one portable file, the team says it <a href="https://www.atlassian.com/blog/how-we-build/atlassians-design-md-is-here-what-we-learned-testing-portable-design-context-in-practice">“had to remove much of the usage guidance from our 50+ components”</a>. Agents given the file then went digging through component code to find the guidance that was missing.</p>
 
-      <p>Usage guidance is where the judgment lives. It is the paragraph that says when not to use the thing. Nord, one of the systems in the survey, ships it to agents in exactly that form: <a href="https://nordhealth.design/.well-known/skills/nord/references/components/button.md">"Don't use a primary button in every row of a table."</a> No linter catches that sentence being ignored. It is also what went first when Atlassian needed the file smaller.</p>
+      <p>Usage guidance is where the judgment lives. It is the paragraph that says when not to use the thing. Nord, one of the systems in the survey, ships it to agents in exactly that form: <a href="https://nordhealth.design/.well-known/skills/nord/references/components/button.md">“Don’t use a primary button in every row of a table.”</a> No linter catches that sentence being ignored. It is also what went first when Atlassian needed the file smaller.</p>
 
       <p>Tokens are cheap to write down. They are values with names. The reasons behind the choices are expensive, and the reasons are the part a designer was actually hired to supply.</p>
 
       <h2>Frequency is not a standard</h2>
 
-      <p>When an agent has no reason to go on, it falls back on what is common. Figma says its agent <a href="https://www.figma.com/blog/the-figma-agent-is-here/">"uses your most frequently and recently used components as a starting point"</a>. That is a sensible default for a tool and a poor definition of good.</p>
+      <p>When an agent has no reason to go on, it falls back on what is common. Figma says its agent <a href="https://www.figma.com/blog/the-figma-agent-is-here/">“uses your most frequently and recently used components as a starting point”</a>. That is a sensible default for a tool and a poor definition of good.</p>
 
-      <p>I have seen why. When I ran an agent audit across a whole design library, I wrote the crawler's rules, and it counted every value we had. It could not tell me which of two established values was right. Somebody had to decide, and the decision was nowhere in the data.</p>
+      <p>I have seen why. When I ran an agent audit across a whole design library, I wrote the crawler’s rules, and it counted every value we had. It could not tell me which of two established values was right. Somebody had to decide, and the decision was nowhere in the data.</p>
 
-      <p>Nurkhon Akhmedov puts the failure mode well in <a href="https://nurxmedov.substack.com/p/your-design-systems-real-job-in-2026">a July post on this</a>: five screens in a hundred ship off-system, and "the next agent reads those five as if they were the library." A system that learns from its own output drifts toward whatever it did most, right or wrong.</p>
+      <p>Nurkhon Akhmedov puts the failure mode well in <a href="https://nurxmedov.substack.com/p/your-design-systems-real-job-in-2026">a July post on this</a>: five screens in a hundred ship off-system, and “the next agent reads those five as if they were the library.” A system that learns from its own output drifts toward whatever it did most, right or wrong.</p>
 
       <h2>Gated on spelling, trusted on judgment</h2>
 
-      <p>The survey also looked for whether teams measure any of this. <a href="https://state-of-ai-in-design-systems.netlify.app/questions/evals.md">Eight of the 21 records mention evaluation work at all</a>. The report calls its validation loops the closest thing the field has, and describes them as "checks that fail a build, rather than evals that score a model."</p>
+      <p>The survey also looked for whether teams measure any of this. <a href="https://state-of-ai-in-design-systems.netlify.app/questions/evals.md">Eight of the 21 records mention evaluation work at all</a>. The report calls its validation loops the closest thing the field has, and describes them as “checks that fail a build, rather than evals that score a model.”</p>
 
-      <p>So the mechanical half is gated and the judgment half is trusted. Akhmedov's version is blunter: whether the agent picked the right component for what the user is trying to do is a question "you can't grep for."</p>
+      <p>So the mechanical half is gated and the judgment half is trusted. Akhmedov’s version is blunter: whether the agent picked the right component for what the user is trying to do is a question “you can’t grep for.”</p>
 
       <h2>Where the missing half comes from</h2>
 
@@ -145,7 +145,7 @@
 
       <p>Nobody writes good usage guidance in the abstract. Try to list every wrong way to use a button in advance and you get a style guide nobody reads. The useful rules show up one at a time, when someone looks at a screen an agent built and says no.</p>
 
-      <p>That moment is the raw material, and it is easy to lose. The rejection happens in a review, the agent gets a new prompt, the screen gets fixed and the reason lives in one person's head until they leave.</p>
+      <p>That moment is the raw material, and it is easy to lose. The rejection happens in a review, the agent gets a new prompt, the screen gets fixed and the reason lives in one person’s head until they leave.</p>
 
       <p>The rule I hold is simple. A rejection without a written reason is wasted. The reason goes into the system the agent reads, in the form Nord already uses: the choice that was wrong, the one that was right and why. Written that way, the next agent can be held to it and so can the next designer.</p>
 
@@ -153,7 +153,7 @@
 
       <p>For years the visible output of a design system team was the library. This year the industry made that library readable and enforceable for agents. That work was worth doing.</p>
 
-      <p>It was also the easy half. A system that only knows its own vocabulary will produce fluent, valid, wrong screens at whatever speed you let it. The half that decides whether a screen is right is still mostly sitting in people's heads, and in at least one case it was trimmed out on purpose to make a file fit.</p>
+      <p>It was also the easy half. A system that only knows its own vocabulary will produce fluent, valid, wrong screens at whatever speed you let it. The half that decides whether a screen is right is still mostly sitting in people’s heads, and in at least one case it was trimmed out on purpose to make a file fit.</p>
 
       <p>An agent can read every token you have. It cannot read a reason nobody wrote down.</p>
     </div>
@@ -207,6 +207,6 @@
 </section>
 
 </main>
-<script src="../main.js?v=24b37281"></script>
+<script src="../main.js?v=adb92ab1"></script>
 </body>
 </html>

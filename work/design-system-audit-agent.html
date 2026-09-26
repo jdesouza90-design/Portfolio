@@ -24,7 +24,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <!-- A fresh unlock from the gate: hold the page until its opener is up (initUnlock in main.js). -->
 <script>if (/[?&]unlocked(?=&|$)/.test(location.search)) document.documentElement.classList.add("unlock");</script>
-<link rel="stylesheet" href="../styles.css?v=0ae9ab8c">
+<link rel="stylesheet" href="../styles.css?v=3f879b5f">
 <script defer src="/_vercel/insights/script.js"></script>
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
@@ -71,7 +71,7 @@
     <div class="hero-lead">
       <div class="cs-hero-copy">
       <h1 class="t-display" data-rise style="--i:0">Design system audit agent</h1>
-      <p class="t-lede" data-rise style="--i:1">I coached a senior product designer and a product designer to build an agent that reads every Figma file at Best Egg, counts each button variant, maps where it's used and flags what to cut. It turned one overloaded button component into three, and an internal design system site now rebuilds itself from Figma every week.</p>
+      <p class="t-lede" data-rise style="--i:1">I coached a senior product designer and a product designer to build an agent that reads every Figma file at Best Egg, counts each button variant, maps where it’s used and flags what to cut. It turned one overloaded button component into three, and an internal design system site now rebuilds itself from Figma every week.</p>
     </div>
       <div class="outcome-stat"><p class="eyebrow">Outcome</p><div class="t-stat" data-flow>86%</div><p class="t-small">Fewer button variants: from 2,304 in one component to 321 across three</p></div>
     </div>
@@ -92,7 +92,7 @@
     <header class="section-intro">
       <p class="eyebrow">Results</p>
       <h2 class="t-title">Three components where one did everything</h2>
-      <p class="t-lede">The old .Button carried seven properties multiplied together, and most of the results were never used. I set the direction and the senior product designer and product designer shipped Button, Icon Button and Link, with icons and fixed widths handled inside the component instead of as variants. The counts are the Figma library's own, before and after.</p>
+      <p class="t-lede">The old .Button carried seven properties multiplied together, and most of the results were never used. I set the direction and the senior product designer and product designer shipped Button, Icon Button and Link, with icons and fixed widths handled inside the component instead of as variants. The counts are the Figma library’s own, before and after.</p>
     </header>
     <div class="proof matrix" data-matrix data-total="2304" data-groups='[{"label":"Button","n":141},{"label":"Icon Button","n":120},{"label":"Link","n":60}]'>
       <div class="proof-head">
@@ -110,7 +110,7 @@
             <tr><th scope="row">Properties that multiply</th><td>7</td><td class="hl">4</td></tr>
             <tr><th scope="row">Icons</th><td>A variant, 4× the matrix</td><td class="hl">A boolean and a swap, no multiplier</td></tr>
             <tr><th scope="row">Fixed width</th><td>A variant, 2× the matrix</td><td class="hl">Handled inside the component</td></tr>
-            <tr><th scope="row">Disabled state</th><td>One per color</td><td class="hl">Danger, Brand and Action reuse Primary's</td></tr>
+            <tr><th scope="row">Disabled state</th><td>One per color</td><td class="hl">Danger, Brand and Action reuse Primary’s</td></tr>
           </tbody>
         </table>
       </details>
@@ -130,7 +130,7 @@
         <p class="t-body">One component, .Button, held seven properties: style, color, size, icon, fixed width, state and theme. Multiplied out, that was 2,304 variants, most of them unused and many near-identical. It was confusing, it was frustrating, and it was hard to tell which button was the correct one.</p>
         <ul class="tensions">
           <li><strong>Coverage</strong><span>Three components still had to cover every real use in the product.</span></li>
-          <li><strong>Trust</strong><span>The team had to believe an agent's count over its own sense of what was in the file.</span></li>
+          <li><strong>Trust</strong><span>The team had to believe an agent’s count over its own sense of what was in the file.</span></li>
           <li><strong>Adoption</strong><span>A new structure only counts once product designers use it.</span></li>
         </ul>
       </div>
@@ -154,7 +154,7 @@
         </div>
         <div class="col">
           <div class="col-head"><svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="3.5" width="7" height="4" rx="1.5"/><rect x="2.5" y="10" width="7" height="4" rx="1.5"/><rect x="2.5" y="16.5" width="7" height="4" rx="1.5"/><path d="M9.5 5.5h2c1.5 0 2 1.5 2.5 3M9.5 12h5M9.5 18.5h2c1.5 0 2-1.5 2.5-3"/><rect class="ac" x="15" y="9" width="6.5" height="6" rx="1.5"/></svg><h4 class="t-subhead">One disabled state</h4></div>
-          <p class="t-body">Danger, Brand and Action reuse Primary's disabled variant instead of defining their own.</p>
+          <p class="t-body">Danger, Brand and Action reuse Primary’s disabled variant instead of defining their own.</p>
         </div>
       </div>
       <figure class="panel wide"><img decoding="async" width="1800" height="866" src="../assets/btn-sheet-after.webp?v=63fac1b2" alt="The three new components side by side: the Button sheet, the Icon Button sheet and the Link sheet, every style, state and size on one page" loading="lazy"></figure>
@@ -242,6 +242,6 @@
   </div>
 </section>
 </main>
-<script src="../main.js?v=24b37281"></script>
+<script src="../main.js?v=adb92ab1"></script>
 </body>
 </html>

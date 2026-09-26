@@ -76,7 +76,9 @@ def read_posts():
                      "2026-09-22T09:00:00-04:00" % path)
 
         words = len(re.findall(r"\w+", re.sub(r"<[^>]+>", " ", body)))
-        meta.update(slug=slug, body=body, src=path, words=words,
+        for key in ("title", "description", "lede", "claim"):
+            meta[key] = smarten(meta[key])
+        meta.update(slug=slug, body=smarten_html(body), src=path, words=words,
                     minutes=max(1, round(words / WPM)))
         posts.append(meta)
 
@@ -87,6 +89,39 @@ def read_posts():
 def pretty_date(iso):
     d = datetime.datetime.fromisoformat(iso)
     return "%d %s %d" % (d.day, d.strftime("%B"), d.year)
+
+
+# The serif shows the difference between a straight quote and a typographic
+# one, so a post is set in the latter whatever the source file typed. smarten
+# works on plain text; smarten_html leaves tags, attributes and anything
+# inside code, pre, kbd, script, style and svg alone.
+def smarten(text):
+    text = re.sub(r"(?<=\w)'(?=\w)", "’", text)                # don't
+    text = re.sub(r"'(?=\d\d(?:s|\b))", "’", text)             # '90s
+    text = re.sub(r"(?<![\w’])'(?=\S)", "‘", text)        # opening single
+    text = text.replace("'", "’")                              # every other single closes
+    text = re.sub(r'(?<![\w”,.!?;:)])"(?=\S)', "“", text)  # opening double
+    return text.replace('"', "”")
+
+
+SMARTEN_SKIP = ("script", "style", "code", "pre", "kbd", "textarea", "svg")
+SMARTEN_TOKEN = re.compile(r"(<!--.*?-->|<[^>]+>)", re.S)
+SMARTEN_OPEN = re.compile(r"^\s*<(%s)\b" % "|".join(SMARTEN_SKIP), re.I)
+SMARTEN_CLOSE = re.compile(r"^\s*</(%s)\b" % "|".join(SMARTEN_SKIP), re.I)
+
+
+def smarten_html(fragment):
+    depth, out = 0, []
+    for part in SMARTEN_TOKEN.split(fragment):
+        if part.startswith("<"):
+            if SMARTEN_OPEN.match(part) and not part.endswith("/>"):
+                depth += 1
+            elif SMARTEN_CLOSE.match(part):
+                depth = max(0, depth - 1)
+            out.append(part)
+        else:
+            out.append(smarten(part) if depth == 0 else part)
+    return "".join(out)
 
 
 # ------------------------------------------------------------ cover art ----

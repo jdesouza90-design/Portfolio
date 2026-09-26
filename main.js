@@ -229,7 +229,23 @@ const CONFIG = {
   const initNav = () => {
     const nav = $(".nav");
     if (!nav) return;
-    const onScroll = () => nav.classList.toggle("scrolled", window.scrollY > 8);
+    // On the home page the bar also says where the reader is: the link for
+    // the section under the top third of the viewport is marked current
+    // (a location, not a page). Nothing is marked while the hero is up.
+    const spots = [["work", 'a[href="/work.html"]'], ["leadership", 'a[href="/#leadership"]'], ["about", 'a[href="/#about"]']]
+      .map(([id, sel]) => [document.getElementById(id), $(`.nav-links ${sel}`, nav)]);
+    const spy = spots.every(([s, a]) => s && a) && !$(".nav-links a[aria-current='page']", nav) ? spots : [];
+    let here = null;
+    const locate = () => {
+      const line = window.scrollY + window.innerHeight * 0.34;
+      let now = null;
+      for (const [s, a] of spy) { if (s.offsetTop <= line) now = a; }
+      if (now === here) return;
+      if (here) here.removeAttribute("aria-current");
+      if (now) now.setAttribute("aria-current", "location");
+      here = now;
+    };
+    const onScroll = () => { nav.classList.toggle("scrolled", window.scrollY > 8); if (spy.length) locate(); };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     const toggle = $(".nav-toggle");
@@ -268,11 +284,13 @@ const CONFIG = {
 
      Every major block is tagged so sections rise in: anything already marked
      keeps its tag, otherwise each direct child of a section gets one. A block
-     reveals once its top crosses a line 70% down the viewport, so the move
-     happens where the reader is looking rather than at the bottom edge; the
-     line drops to the bottom edge as the page runs out of scroll, so the last
-     blocks never wait for room that isn't there. Blocks that cross together
-     follow each other 60ms apart, in document order. */
+     reveals once its top crosses a line 80% down the viewport, so the move
+     starts as it appears rather than a screen later; the line drops to the
+     bottom edge as the page runs out of scroll, so the last blocks never wait
+     for room that isn't there. Blocks that cross together follow each other
+     60ms apart, in document order. Where the browser drives animations from
+     scroll, styles.css (section 9) scrubs the rise itself and the class here
+     only tells the figures and columns their block has arrived. */
   const initReveal = () => {
     $$("main > section").forEach((section) => {
       const host = section.querySelector(":scope > .wrap") || section;
@@ -286,7 +304,7 @@ const CONFIG = {
     });
 
     const revealEls = $$("[data-reveal]");
-    const LINE = 0.7;
+    const LINE = 0.8;
     if (reduced || !("IntersectionObserver" in window) || !revealEls.length) return;
     document.documentElement.classList.add("anim");
     afterOpener(() => revealOnScroll(revealEls, LINE));  // after a fresh unlock, the first screen rises as the doors part
@@ -321,10 +339,9 @@ const CONFIG = {
     // Backstop for the observer. It measures only the elements still hidden and
     // detaches itself once they have all been revealed, so a long page is not
     // paying for a full measure pass on every scroll tick for the rest of the visit.
-    // On first paint the hero counts wherever it sits on screen (a hero never
-    // waits for a scroll); every later section waits at the line, so an intro
-    // peeking at the bottom of the first screen rises when the reader gets there.
-    const hero = $("main > section");
+    // On first paint anything on screen counts wherever it sits (the first
+    // screen is never left with a blank band at its foot); after that a
+    // section waits at the line.
     let pending = revealEls.slice();
     const sweep = (firstPaint) => {
       if (!pending.length) return;
@@ -335,7 +352,7 @@ const CONFIG = {
       for (const el of pending) {
         if (el.classList.contains("in")) continue;
         const r = el.getBoundingClientRect();
-        const edge = firstPaint && hero && hero.contains(el) ? vh : line;
+        const edge = firstPaint ? vh : line;
         if (r.top < edge && r.bottom > 0) { show(el); io.unobserve(el); }
         else still.push(el);
       }

@@ -106,6 +106,7 @@
   --dur-ui: 240ms;
   --dur-reveal: 700ms;
   --reveal-y: 48px;
+  --reveal-run: 200px;   /* scroll-driven reveals: the travel over which a block rises into place (section 9) */
 }
 
 /* --------------------------------------------------------------------------
@@ -395,7 +396,13 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .nav-links a.nav-icon span { display: none; }   /* the icon alone in the bar; the word alone in the phone menu */
 .nav-links a.nav-download { display: inline-flex; align-items: center; gap: 6px; padding-block: 2px; }   /* the word plus a download arrow, so it reads as a file, not a page */
 .nav-links a.nav-download svg { width: 15px; height: 15px; display: block; }
-.nav-links ul a:hover, .nav-links ul a[aria-current="page"] { color: var(--ink); }
+.nav-links ul a:hover, .nav-links ul a[aria-current] { color: var(--ink); }
+/* The current page, or on the home page the section under the reader
+   (main.js marks it location), carries a hairline in the accent. */
+@media (min-width: 761px) {
+  .nav-links ul a[aria-current] { text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 7px; }
+}
+.nav-links a.nav-icon svg { position: relative; top: 2px; }   /* the mark's optical centre sits on the words' x-height, not the line box's */
 .nav-actions { display: flex; gap: 10px; align-items: center; }
 .nav-toggle { display: none; }
 .nav-foot { display: none; }
@@ -531,7 +538,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .case-no-code .case-media.emerge { --x: 14%; --y: 12%; --w: 150%; }
 .case-staking .case-media.emerge { --x: 14%; --y: 12%; --w: 140%; }
 .case-audit .case-media.emerge { --x: 10%; --y: 12%; --w: 124%; }
-.case-system .case-media.emerge { --x: 10%; --y: 12%; --w: 124%; }
+.case-system .case-media.emerge { --x: 6%; --y: 8%; --w: 230%; }   /* the sheet's top-left corner at reading size, still running off the ground */
 /* Fade: where a screen runs off the ground (.emerge, .bleed) the ground reasserts
    itself over the last stretch before each edge, so the screen dissolves into it
    instead of stopping at a hard line. The overlay is the ground itself (base, art
@@ -751,7 +758,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 /* official vector lockups, sized so the wordmark text matches across the row;
    the Charm lockup is the widest, so it gives way to its column before the
    others do rather than run under the next one */
-.exp-label img[alt="Best Egg"] { height: 23px; }
+.exp-label img[alt="Best Egg"] { height: 25px; margin-bottom: -3px; }   /* its g descends, so the baseline lands with the others' */
 .exp-label img[alt="Chainlink Labs"] { height: 29px; }
 .exp-label img[alt="Auth0"] { height: 29px; }
 .exp-label img[alt="Charm Solutions"] { width: min(226px, 100%); height: auto; }
@@ -1228,8 +1235,31 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 .anim [data-reveal].in .cols > .col { opacity: 1; transform: none; transition-delay: calc(200ms + var(--col-i, 0) * 160ms); }   /* the wait only on the way in, so hiding at load is instant */
 [data-rise] { animation: rise .6s var(--ease) both; animation-delay: calc(var(--i, 0) * 70ms); }
 @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+/* Where the browser can drive an animation from scroll (after granola.ai), a
+   block's rise is scrubbed by the reader's own scrolling instead of fired at
+   a line: it fades and lifts over its first --reveal-run of travel into the
+   viewport, so whatever is on screen at load is already in place and the
+   first screen never ends in a blank band. The .in class still arrives from
+   main.js for everything keyed to it (the column stagger, the experience
+   track, the figures). Hero copy keeps its own cascade ([data-rise]). */
+@supports (animation-timeline: view()) {
+  .anim [data-reveal]:not([data-rise]) {
+    transition: none;
+    animation: reveal-view linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry var(--reveal-run);
+  }
+  @keyframes reveal-view { from { opacity: 0; transform: translateY(var(--reveal-y)); } to { opacity: 1; transform: none; } }
+  /* The hero hands off: over the first screen of scroll the field fades out
+     and the copy drifts up ahead of the page, so the work arrives on plain paper. */
+  .hero .field { animation: hero-field linear both; animation-timeline: scroll(root); animation-range: 0 80vh; }
+  .hero > .wrap { animation: hero-drift linear both; animation-timeline: scroll(root); animation-range: 0 100vh; }
+  @keyframes hero-field { to { opacity: 0; } }
+  @keyframes hero-drift { to { transform: translateY(-40px); opacity: .35; } }
+}
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
+  .hero .field, .hero > .wrap { animation: none; }
   .anim [data-reveal], [data-rise], .anim [data-reveal] .cols > .col { opacity: 1; transform: none; transition: none; animation: none; }
   .opener-body > * { opacity: 1; }                          /* the opener shows still, then goes */
   .opener-seam { transform: none; }
@@ -1747,10 +1777,11 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 /* ---- Index: the three arguments, a recent strip, the latest, then all ---- */
 /* The way into the blog is the argument, not the date. Two columns of serif
    lines, each one jumping to its own group below. */
-.pillar-nav ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-3) var(--sp-8); }
-.pillar-nav a { display: block; text-decoration: none; max-width: none; text-wrap: balance; transition: color var(--dur-hover), opacity var(--dur-hover); }
+.pillar-nav ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-3) var(--sp-7); }   /* one column a pillar */
+.pillar-nav a { display: flex; flex-direction: column; align-items: flex-start; height: 100%; text-decoration: none; max-width: none; text-wrap: balance; transition: color var(--dur-hover), opacity var(--dur-hover); }
+.pillar-nav .pillar-count { margin-top: auto; padding-top: var(--sp-2); }   /* the counts share a baseline whatever the titles wrap to */
 .pillar-nav svg { width: .5em; height: .5em; margin-left: .3em; display: inline-block; transition: transform var(--dur-hover) var(--ease); }
-.pillar-count { display: inline-block; margin-left: .6em; white-space: nowrap; vertical-align: .18em; }
+.pillar-count { display: inline-block; white-space: nowrap; }
 @media (hover: hover) and (pointer: fine) {
   .pillar-nav a:hover { color: var(--accent-ink); }
   .pillar-nav a:hover svg { transform: translateX(.22em); }
@@ -1789,6 +1820,11 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 .ticker.marquee:is(:hover, :focus-within) .ticker-track,
 .ticker-frame.held .ticker-track { animation-play-state: paused; }
 .ticker-frame .art-ctl { top: 50%; right: 0; bottom: auto; transform: translateY(-50%); background: var(--surface); }
+.anim .ticker-frame .art-ctl { opacity: 0; transition: opacity var(--dur-ui) var(--ease) var(--dur-reveal); }   /* the button waits for the strip it pauses */
+.anim .ticker-frame:has(.ticker.in) .art-ctl { opacity: 1; }
+@media (max-width: 640px) {
+  .ticker.marquee { -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 74%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 74%, transparent); }   /* the titles have faded out before they reach the button */
+}
 @keyframes ticker { to { transform: translateX(-50%); } }
 @media (prefers-reduced-motion: reduce) { .ticker-track { animation: none; } }
 
@@ -1847,7 +1883,8 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 .post-hero { padding-top: calc(var(--nav-h) + clamp(32px, 6vw, 72px)); padding-bottom: clamp(32px, 4vw, 52px); }
 .post-hero .wrap > * { max-width: var(--prose); margin-inline: auto; }
 .post-hero .crumbs { margin-bottom: clamp(24px, 3vw, 36px); }
-.post-hero .t-display, .post-hero .t-lede, .post-hero .post-meta { text-align: center; }
+.post-hero .crumbs ol { justify-content: center; }   /* the whole head sits on one axis */
+.post-hero .eyebrow, .post-hero .t-display, .post-hero .t-lede, .post-hero .post-meta { text-align: center; }
 .post-hero h1 { max-width: 26ch; }
 .post-hero .post-meta { justify-content: center; }
 .post-hero .t-lede { margin-top: var(--sp-5); }
@@ -1897,6 +1934,8 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 /* Next post, the closing band of a post. Mirrors .cs-next. */
 .post-next { text-align: center; }
 .post-next .t-title { margin-top: var(--sp-3); margin-inline: auto; }
+.post-next .t-title a { text-decoration: none; transition: color var(--dur-hover); }
+@media (hover: hover) and (pointer: fine) { .post-next .t-title a:hover { color: var(--accent-ink); } }
 .post-next .actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: clamp(28px, 3vw, 40px); }
 
 @media (max-width: 560px) {
@@ -2078,11 +2117,17 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 .chat-foot { flex: none; padding: var(--sp-3) var(--sp-5) var(--sp-4); color: var(--ink-3); text-align: center; text-wrap: balance; max-width: none; }
 
 @media (max-width: 640px) {
-  /* On a phone the button is the mark alone, a round one, so it covers as
-     little of the page as it can; its name stays for screen readers. */
-  .chat-launch { width: 52px; height: 52px; padding: 0; justify-content: center; border-radius: 50%; }
+  /* On a phone the button is the mark alone, a round one, and it sits in the
+     bar beside the menu toggle rather than floating over the page, so it never
+     covers a line of text; its name stays for screen readers. It goes with the
+     bar while the menu sheet is open. */
+  .chat-launch {
+    top: calc((var(--nav-h) - 40px) / 2); bottom: auto; right: calc(var(--gutter) + 38px + 10px); z-index: 51;
+    width: 40px; height: 40px; padding: 0; justify-content: center; border-radius: 50%; box-shadow: none;
+  }
+  html.nav-locked .chat-launch.is-in { opacity: 0; visibility: hidden; transition-delay: 0s, 0s, var(--dur-ui), 0s, 0s, 0s; }
   .chat-launch .chat-launch-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-  .chat-launch svg { width: 22px; height: 22px; }
+  .chat-launch svg { width: 18px; height: 18px; }
   /* The sheet: the whole screen, flush, rising in. The close sits where the
      menu's toggle does; main.js keeps its height to the visible area while
      the keyboard is up. */
