@@ -508,7 +508,7 @@ def render_post(p, nxt):
     out += contact_band(
         "Disagree with any of this?",
         "I'd rather hear it than not. The arguments get better when somebody pushes back.",
-        "Posts are my own views. Case studies reflect my role and my teams' work at each company.",
+        "Posts are my own views.",
         css="../")
     return out
 
@@ -563,23 +563,6 @@ def render_index(posts):
       <ul>
 {links}      </ul>
     </nav>
-  </div>
-</section>
-"""
-
-    # 2. The recent run, as a strip of titles and dates.
-    if len(posts) > 1:
-        strip = ""
-        for p in posts[:6]:
-            strip += f"""        <a class="ticker-item" href="/blog/{p["slug"]}.html">
-          <span class="t-small">{html.escape(p["title"])}</span>
-          <time class="t-small" datetime="{p["date"]}">{pretty_date(p["date"])}</time>
-        </a>\n"""
-        out += f"""
-<section class="section tight">
-  <div class="wrap">
-    <div class="ticker" data-strip-label="Recent posts, scroll sideways">
-{strip}    </div>
   </div>
 </section>
 """
@@ -639,7 +622,7 @@ def render_index(posts):
     out += contact_band(
         "Want to argue about one of these?",
         "I'm looking for a Director of Product Design role. I'm also happy to just talk shop.",
-        "Posts are my own views. Case studies reflect my role and my teams' work at each company.")
+        "Posts are my own views.")
     return out
 
 
@@ -651,7 +634,6 @@ def card(p):
         <a class="post-card" href="/blog/{p["slug"]}.html" data-title="{html.escape(p["title"].lower())}" data-desc="{html.escape(p["description"].lower())}" data-pillar="{p["pillar"]}">
           <span class="card-art" style="--vt: post-{p["slug"]}"><img src="assets/blog/{p["slug"]}.svg?v={stamp('assets/blog/%s.svg' % p["slug"])}" width="{CW}" height="{CH}" alt="" loading="lazy" decoding="async"></span>
           <span class="card-body">
-            <span class="eyebrow">{d.strftime("%B %Y")}</span>
             <span class="t-heading card-title">{html.escape(p["title"])}</span>
             <span class="t-small card-desc">{p["description"]}</span>
             <span class="post-meta t-small"><span class="chip {chip_class}">{short}</span><span>{p["minutes"]} min</span></span>
