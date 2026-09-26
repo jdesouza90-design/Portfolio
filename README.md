@@ -25,7 +25,7 @@ work/sign-in-with-ethereum.html Auth0 · Sign-in with Ethereum (hidden for now: 
                                 ring, noindex; still opens by URL; its work.html row is parked in a comment)
 blog.html                       Blog index: the three pillars, then the posts under each (generated)
 blog/<slug>.html                A post (generated, never hand-edited)
-blog/posts/<slug>.html          A post's source: JSON front matter (with its cover spec), then the body as an HTML fragment
+blog/posts/<slug>.html          A post's source: JSON front matter (with its cover line), then the body as an HTML fragment
 blog.py                         Builds the blog: every post page, the index, sitemap.xml, feed.xml, llms.txt
                                 and search-index.json (the palette's index)
 POSITION.md                     What the blog argues, the three pillars, and what it won't say
@@ -436,42 +436,25 @@ the other pages for it.
 
 ### Covers
 
-A cover is a small piece of interface that shows the problem the post argues,
-with the post's one figure beside it: a redemption sheet whose "2 business days"
-is struck through for "7 calendar days", a consent screen with no line for how
-often the app checks, an agent check that passes the component and has no rule
-for whether it should be a button at all. The format is Stripe's blog (a
-boarding-pass card beside "3x+"), built on this site's primitives: a white
-surface with the screen shadow, hairline rows, a status chip, the pillar's
-ground. It replaced seeded solid shapes on September 26, 2026, because those
-were handsome and interchangeable and said nothing about the post.
+A cover is the post's argument in one line: the claim cut to six to ten words
+("Count what the system failed to prevent."), set in Crimson Pro's light italic,
+centred over the double rule in the pillar's accent, with the pillar named in
+the corner and one tinted disc bleeding off the bottom right so the three
+grounds still tell apart at a glance. The format is Harvey's title plates,
+without the black. It replaced seeded solid shapes on September 26, 2026,
+because those were handsome and interchangeable and said nothing about the post.
 
-Each post carries a `cover` spec in its front matter, and `blog.py` draws it as
+Each post carries `cover_line` in its front matter, and `blog.py` draws it as
 markup (spans, since on the index it sits inside a link), not an image, so it
-sets in the site's faces and stays sharp at every size:
-
-```
-"cover": {
-  "figure": "7 days", "label": "to redeem after a 10% run",
-  "title": "Redeem 1,000 USDX", "status": "Delayed", "tone": "warn",   // ok | warn | neutral
-  "lines": [                                   // two to four of:
-    {"row":   ["Arrives", "~~2 business days~~ 7 calendar days"]},     // ~~x~~ is struck
-    {"check": ["open", "Should this be a button at all?", "no rule"]}, // yes | open
-    {"bar":   ["2026", 32, "now"]},                                    // 0-100, "now" takes the accent
-    {"note":  "Requests passed 10% of issuance in 24 hours."}
-  ]
-}
-```
-
-The figure and label come from the post's sources. Everything in the fragment is
-an illustration, never a real product's screen, so invented tickers (USDX) and
-no brand names inside it. `blog.py` refuses a post without a cover or with a
-malformed one. One set of markup draws the 3:2 card, the list thumbnail and the
-5:2 post hero (the fragment rises from the floor on the right, the figure top
-left); every size is in container units. Under 640px the hero keeps the card's
-3:2 layout. Like the case-study panels, a cover is a plate of paper: it keeps
-its light palette in the dark theme, so its colors are its own `--cv-*`
-properties, not the page's tokens. The card's hover zoom scales `.cov-in`.
+sets in the site's faces and stays sharp at every size. It refuses a post
+without one, or with one outside four to eleven words. The line is not the
+title or the claim repeated: it is the claim with the reasoning cut off, the
+sentence someone would quote. One set of markup draws the 3:2 card, the list
+thumbnail and the 5:2 post hero, every size in container units; under 640px the
+hero keeps the card's 3:2 so the line has room. Like the case-study panels, a
+cover is a plate of paper: it keeps its light palette in the dark theme, so its
+colors are its own `--cv-*` properties, not the page's tokens. The card's hover
+zoom scales `.cov-in`.
 
 The index and the post pages load Crimson Pro's italic as well as its roman, for
 the featured band's heading. No other page pays for it.

@@ -75,7 +75,8 @@ def read_posts():
             sys.exit("%s: date must be ISO 8601 with an offset, e.g. "
                      "2026-09-22T09:00:00-04:00" % path)
 
-        check_cover(path, meta.get("cover"))
+        check_cover(path, meta.get("cover_line"))
+        meta["cover_line"] = smarten(meta["cover_line"])
 
         words = len(re.findall(r"\w+", re.sub(r"<[^>]+>", " ", body)))
         for key in ("title", "description", "lede", "claim"):
@@ -138,96 +139,27 @@ def smarten_html(fragment):
 
 
 # ------------------------------------------------------------ cover art ----
-# A cover is a small piece of interface that shows the problem the post is
-# about, with the post's one figure beside it (after Stripe's blog). It is
-# written per post as a `cover` spec in the front matter and drawn here as
-# markup on the site's own primitives: a white surface, the screen shadow,
-# hairline rows, a status chip. Being markup rather than an image, it sets in
-# the site's faces and stays sharp at any size. The card draws it at 3:2 and
-# the post hero at 5:2 from the same spec.
-#
-#   "cover": {
-#     "figure": "7 days", "label": "to redeem after a 10% run",
-#     "title": "Redeem 1,000 USDX", "status": "Delayed", "tone": "warn",
-#     "lines": [
-#       {"row":   ["Arrives", "~~2 business days~~ 7 calendar days"]},
-#       {"check": ["yes", "Uses a real component", "tokens"]},
-#       {"check": ["open", "Should this be a button at all?", "no rule"]},
-#       {"bar":   ["2026", 32, "now"]},
-#       {"note":  "Requests passed 10% of issuance today."}
-#     ]
-#   }
-#
-# figure and label come from the post's sources. Everything inside the
-# fragment is an illustration, never a real product's screen.
-
-COVER_TONES = ("ok", "warn", "neutral")
-COVER_LINES = ("row", "check", "bar", "note")
+# A cover is the post's argument in one line: the claim cut to six to ten
+# words, set in the serif's italic over a double rule, on the pillar's ground
+# (after Harvey's title plates). It is written per post as `cover_line` in the
+# front matter and drawn here as markup, so it sets in the site's faces and
+# stays sharp at any size. The card draws it at 3:2 and the post hero at 5:2.
 
 
-def check_cover(path, c):
-    if not isinstance(c, dict):
-        sys.exit("%s: front matter is missing cover (see the cover art notes in blog.py)" % path)
-    for key in ("figure", "label", "title", "lines"):
-        if not c.get(key):
-            sys.exit("%s: cover is missing %s" % (path, key))
-    if c.get("tone", "neutral") not in COVER_TONES:
-        sys.exit("%s: cover tone must be one of %s" % (path, ", ".join(COVER_TONES)))
-    if not 2 <= len(c["lines"]) <= 4:
-        sys.exit("%s: cover needs 2 to 4 lines, it has %d" % (path, len(c["lines"])))
-    for line in c["lines"]:
-        kind = next(iter(line), None) if isinstance(line, dict) and len(line) == 1 else None
-        if kind not in COVER_LINES:
-            sys.exit("%s: each cover line is one of %s, got %r" % (path, ", ".join(COVER_LINES), line))
-        v = line[kind]
-        ok = {
-            "row": lambda: isinstance(v, list) and len(v) == 2,
-            "check": lambda: isinstance(v, list) and len(v) in (2, 3) and v[0] in ("yes", "open"),
-            "bar": lambda: isinstance(v, list) and len(v) in (2, 3) and isinstance(v[1], (int, float)) and 0 <= v[1] <= 100,
-            "note": lambda: isinstance(v, str),
-        }[kind]()
-        if not ok:
-            sys.exit("%s: cover line %r is malformed" % (path, line))
-
-
-def _cov_text(t):
-    """Escape, then ~~struck~~ for a value that was replaced."""
-    return re.sub(r"~~(.+?)~~", r"<s>\1</s>", html.escape(smarten(t)))
+def check_cover(path, line):
+    if not isinstance(line, str) or not line.strip():
+        sys.exit("%s: front matter is missing cover_line (the claim in six to ten words)" % path)
+    n = len(line.split())
+    if not 4 <= n <= 11:
+        sys.exit("%s: cover_line runs %d words, keep it to six to ten" % (path, n))
 
 
 def cover(p):
     """The cover's markup. Spans throughout: on the index it sits inside a link."""
-    c = p["cover"]
-    tone = c.get("tone", "neutral")
-    lines = []
-    for line in c["lines"]:
-        kind, v = next(iter(line.items()))
-        if kind == "row":
-            lines.append('<span class="cov-row"><span>%s</span><span>%s</span></span>' % (_cov_text(v[0]), _cov_text(v[1])))
-        elif kind == "check":
-            mark = "✓" if v[0] == "yes" else "?"
-            tag = '<span class="cov-tag">%s</span>' % _cov_text(v[2]) if len(v) > 2 else ""
-            lines.append('<span class="cov-check %s"><span class="cov-mark">%s</span><span class="cov-q">%s</span>%s</span>'
-                         % (v[0], mark, _cov_text(v[1]), tag))
-        elif kind == "bar":
-            now = " now" if len(v) > 2 and v[2] == "now" else ""
-            lines.append('<span class="cov-bar%s"><span>%s</span><span class="cov-track"><span style="--w: %s%%"></span></span><b>%s%%</b></span>'
-                         % (now, _cov_text(v[0]), v[1], v[1]))
-        else:
-            lines.append('<span class="cov-note">%s</span>' % _cov_text(v))
-    status = ('<span class="cov-pill %s">%s</span>' % (tone, _cov_text(c["status"]))) if c.get("status") else ""
-    figure = _cov_text(c["figure"]).replace("→", '<span class="cov-to">→</span>')
-    return (
-        '<span class="cov-in">'
-        '<span class="cov-stat"><span class="cov-n">%s</span><span class="cov-l">%s</span></span>'
-        '<span class="cov-ui"><span class="cov-head"><b>%s</b>%s</span>%s</span>'
-        '</span>'
-    ) % (figure, _cov_text(c["label"]), _cov_text(c["title"]), status, "".join(lines))
-
-
-def cover_label(p):
-    c = p["cover"]
-    return html.escape("Illustration: %s. %s %s." % (smarten(c["title"]), smarten(c["figure"]), smarten(c["label"])))
+    _label, _chip, short = PILLARS[p["pillar"]]
+    return ('<span class="cov-in"><span class="cov-disc"></span><span class="cov-eye">%s</span>'
+            '<span class="cov-line">%s</span><span class="cov-rule"></span></span>'
+            % (html.escape(short), html.escape(p["cover_line"])))
 
 
 def head(*, title, desc, url, css, extra="", og_type="website", ld="", italic=False):
@@ -450,7 +382,7 @@ def render_post(p, nxt):
 
 <section class="section tight">
   <div class="wrap">
-    <figure class="post-art cover p-{p["pillar"]}" role="img" aria-label="{cover_label(p)}" data-reveal style="--vt: post-{p["slug"]}">{cover(p)}</figure>
+    <figure class="post-art cover p-{p["pillar"]}" aria-hidden="true" data-reveal style="--vt: post-{p["slug"]}">{cover(p)}</figure>
     <div class="claim" data-reveal>
       <p class="t-quote">{p["claim"]}</p>
     </div>

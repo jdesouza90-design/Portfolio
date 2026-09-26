@@ -10,8 +10,7 @@
         "allowedProperties": [
           "--i",
           "--crop-pos",
-          "--vt",
-          "--w"
+          "--vt"
         ]
       }
     ]
