@@ -120,7 +120,6 @@
   --dur-ui: 240ms;
   --dur-reveal: 700ms;
   --reveal-y: 48px;
-  --reveal-run: 200px;   /* scroll-driven reveals: the travel over which a block rises into place (section 9) */
 }
 
 /* The dark register (after cursor.com's warm near-black): the same tokens
@@ -198,7 +197,7 @@
 /* The serif speaks: display, title, heading, stat, quote. It is never bold. */
 .t-display, .t-title, .t-heading, .t-stat, .t-quote,
 .brand, .facts dd, .avatar.glyph,
-.prose h2, .prose blockquote p, .pillar-nav a, .byline-mark
+.prose h2, .prose blockquote p, .pillar-nav a
   { font-family: var(--font-display); font-weight: 400; color: var(--ink); margin: 0; }
 .t-display
   { font-size: var(--t-display); line-height: var(--lh-display); letter-spacing: var(--ls-display); max-width: var(--m-display); text-wrap: balance; }
@@ -217,9 +216,9 @@
 .testimonial-foot cite b,
 .prose p, .prose li, .prose h3, .prose figcaption, .prose blockquote cite,
 .post-meta, .post-cta, .sources li, .pillar-count,
-.byline, .card-desc, .ticker-item, .post-search input, .view-toggle button,
+.card-desc, .post-search input, .view-toggle button,
 .layer-tab, .work-cta, .gate-form input, .arcade-post input, .seg-tab,
-.btn, .chip, .nav-links ul a, .back, .crumbs, .tools span, footer,
+.btn, .chip, .nav-links ul a, .nav-kbd, .back, .crumbs, .tools span, footer,
 .facts dt, table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
 .gallery figcaption, .proof-head small, .tooltip, .chart-pill, details.data,
 .dash-live, .dash-list li, .leaflet-container, .leaflet-popup-content,
@@ -232,12 +231,12 @@ thead th, .gauge .lbl, .table-wrap td[data-label]::before, .dash-kind, .dash-now
   { font-size: var(--t-lede); line-height: var(--lh-lede); letter-spacing: var(--ls-lede); font-weight: 400; color: var(--ink-2); max-width: var(--m-lede); }
 .t-body, .layer-tab, .work-cta, .gate-form input, .arcade-post input, .chat-form textarea, .chat-unlock input, .dash-settings :is(input, textarea)
   { font-size: var(--t-body); line-height: var(--lh-body); font-weight: 400; color: var(--ink-2); max-width: var(--m-body); }
-.t-small, .btn, .chip, .nav-links ul a, .back, .crumbs, .tools span, footer, .seg-tab,
+.t-small, .btn, .chip, .nav-links ul a, .nav-kbd, .back, .crumbs, .tools span, footer, .seg-tab,
 table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
 .gallery figcaption, .proof-head small, .tooltip, .chart-pill, details.data,
 .dash-live, .dash-list li, .leaflet-container, .leaflet-popup-content,
 .prose figcaption, .prose blockquote cite, .post-meta, .post-cta, .sources li, .pillar-count,
-.byline, .byline-mark, .card-desc, .ticker-item, .post-search input, .view-toggle button,
+.card-desc, .post-search input, .view-toggle button,
 .chat-msg, .chat-offer-text, .chat-unlock label, .chat-unlocked, .chat-error, .dash-settings :is(label, legend)
   { font-size: var(--t-small); line-height: var(--lh-small); font-weight: 400; color: var(--ink-2); }
 .prose p, .prose li
@@ -263,7 +262,7 @@ body { counter-reset: fig; }
 
 /* Weight: 500 is the one emphasis, for whatever names or acts. */
 strong, b, tbody th, .t-body a, .t-lede a, .prose p a, .prose li a, .post-cta,
-.btn, .chip, .chart-pill, .tooltip b, .tip-val, .nav-links ul a, .back, .crumbs, .tools span, .layer-tab, .layer-mark, .work-cta, .avatar, .testimonial-mark, .seg-tab,
+.btn, .chip, .chart-pill, .tooltip b, .tip-val, .nav-links ul a, .nav-kbd, .back, .crumbs, .tools span, .layer-tab, .layer-mark, .work-cta, .avatar, .testimonial-mark, .seg-tab,
 .chat-msg a, .chat-unlock label, .chat-unlocked, .dash-settings :is(label, legend)
   { font-weight: 500; }
 
@@ -674,8 +673,8 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
     transition: background var(--dur-hover), box-shadow var(--dur-hover);
   }
   .cases.staged .case-row.is-on { background: var(--surface); box-shadow: 0 14px 34px -22px rgba(20, 16, 12, .32), 0 0 0 1px rgba(20, 16, 12, .05); }
-  .cases-stage { grid-column: 2; position: sticky; top: calc(var(--nav-h) + var(--sp-5)); aspect-ratio: 16 / 10; opacity: 0; animation: stage-in var(--dur-reveal) var(--ease) both; }
-  @keyframes stage-in { to { opacity: 1; } }
+  .cases-stage { grid-column: 2; position: sticky; top: calc(var(--nav-h) + var(--sp-5)); aspect-ratio: 16 / 10; transition: opacity var(--dur-reveal) linear; }
+  .anim .cases.staged:not(:has(> .case-row.in)) .cases-stage { opacity: 0; }   /* it rises with the list, not before it */
   .cases-slot { position: absolute; inset: 0; opacity: 0; transition: opacity var(--dur-ui) var(--ease); }
   .cases-slot.is-on { opacity: 1; }
   .cases-slot { pointer-events: none; }
@@ -936,7 +935,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .contact.live { background-image: var(--contact-ground); }
 .contact > :not(.field) { position: relative; z-index: 1; }
 @media (max-width: 720px) { .contact { --contact-origin: 100% 100%; grid-template-columns: 1fr; } }   /* stacked, the buttons sit at the bottom */
-footer { padding: 30px 0 44px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+footer { padding: 30px 0 44px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
 footer a { color: var(--ink-2); text-decoration: none; }
 footer a:hover { color: var(--ink); }
 
@@ -1290,7 +1289,7 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
    their own shots, as they always did. */
 @media (min-width: 761px) {
   .steps.on .cols { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); grid-template-rows: none; column-gap: clamp(28px, 4vw, 64px); row-gap: 0; align-items: start; }
-  .steps.on .col { grid-column: 1; grid-row: auto; display: block; min-height: 40vh; padding: var(--sp-6) 0 var(--sp-6) var(--sp-5); border-left: 1px solid var(--hair); transition: border-color var(--dur-ui); }
+  .steps.on .col { grid-column: 1; grid-row: auto; display: flex; flex-direction: column; justify-content: center; min-height: 36vh; padding: var(--sp-6) 0 var(--sp-6) var(--sp-5); border-left: 1px solid var(--hair); transition: border-color var(--dur-ui); }   /* each step centred in its stretch of scroll, level with the panel */
   .steps.on .col:first-child { padding-top: 0; }
   .steps.on .col .t-subhead::before { display: none; }
   .steps.on .col[aria-current="step"] { border-left-color: var(--accent); }
@@ -1313,7 +1312,7 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 /* The lens (after the audience prompts on axoworks.com): the control above
    the work list re-sorts the rows for the reader's role. main.js (initLens) keeps the choice for the next visit
    and, where the browser can, moves the rows in a view transition. */
-.lens { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-3) var(--sp-5); margin-bottom: clamp(24px, 3vw, 36px); }
+.lens { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: var(--sp-3) var(--sp-5); margin-bottom: clamp(24px, 3vw, 36px); }   /* on the axis of the centred heading above it */
 /* The phone's dropdown: a pill face showing the role (cycling until the
    reader picks) with a native <select> laid over it, so the tap opens the
    phone's own picker and a screen reader meets a plain select. */
@@ -1343,7 +1342,7 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
    under reduced motion it stands at the run's last step. */
 .hero-panel.demo { flex-direction: column; align-items: stretch; padding: clamp(20px, 3.5vw, 40px); }
 .agent-win {
-  position: relative; width: 100%; max-width: 880px; margin-inline: auto; min-height: clamp(300px, 34vw, 430px);
+  position: relative; width: 100%; max-width: 880px; margin-inline: auto; min-height: clamp(240px, 26vw, 330px);   /* holds the longest step without a jump, no taller */
   display: grid; grid-template-rows: auto 1fr; overflow: hidden;
   background: var(--surface); border: 1px solid var(--hair); border-radius: 12px; box-shadow: var(--shadow-screen);
   font-family: var(--font-mono); font-size: var(--t-small); line-height: 1.5; color: var(--ink-2);
@@ -1415,7 +1414,6 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 .pair-verdict { color: var(--ink-3); }
 .pair-item.right .pair-verdict { color: var(--accent-ink); }
 .pair-item .t-body { margin: 0; }
-.pair-note { margin-top: var(--sp-4); color: var(--ink-3); max-width: 62ch; }
 @media (max-width: 640px) { .pair { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 360px) { .pair-grid { grid-template-columns: repeat(3, auto); gap: 5px 6px; } }
 
@@ -1529,32 +1527,18 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
 .anim [data-reveal].in .cols > .col { opacity: 1; transform: none; transition-delay: calc(200ms + var(--col-i, 0) * 160ms); }   /* the wait only on the way in, so hiding at load is instant */
 [data-rise] { animation: rise .6s var(--ease) both; animation-delay: calc(var(--i, 0) * 70ms); }
 @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
-/* Where the browser can drive an animation from scroll (after granola.ai), a
-   block's rise is scrubbed by the reader's own scrolling instead of fired at
-   a line: it fades and lifts over its first --reveal-run of travel into the
-   viewport, so whatever is on screen at load is already in place and the
-   first screen never ends in a blank band. The .in class still arrives from
-   main.js for everything keyed to it (the column stagger, the experience
-   track, the figures). Hero copy keeps its own cascade ([data-rise]). */
-@supports (animation-timeline: view()) {
-  .anim [data-reveal]:not([data-rise]) {
-    transition: none;
-    animation: reveal-view linear both;
-    animation-timeline: view();
-    animation-range: entry 0% entry var(--reveal-run);
-  }
-  @keyframes reveal-view { from { opacity: 0; transform: translateY(var(--reveal-y)); } to { opacity: 1; transform: none; } }
-  .cs-next [data-reveal], footer[data-reveal] { --reveal-run: 48px; }   /* the foot of a page can never travel the full run */
-  /* The hero hands off: over the first screen of scroll the field fades out
-     and the copy drifts up ahead of the page, so the work arrives on plain paper. */
+/* The hero hands off (after granola.ai): where the browser can drive an
+   animation from scroll, the dot field fades over the first screen of
+   scroll, so the work arrives on plain paper. Content blocks rise on the
+   timer above rather than with the scroll: a rise scrubbed by scrolling
+   leaves whatever rests at the foot of the screen half faded. */
+@supports (animation-timeline: scroll()) {
   .hero .field { animation: hero-field linear both; animation-timeline: scroll(root); animation-range: 0 80vh; }
-  .hero > .wrap { animation: hero-drift linear both; animation-timeline: scroll(root); animation-range: 0 100vh; }
   @keyframes hero-field { to { opacity: 0; } }
-  @keyframes hero-drift { to { transform: translateY(-40px); opacity: .35; } }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .hero .field, .hero > .wrap { animation: none; }
+  .hero .field { animation: none; }
   .anim [data-reveal], [data-rise], .anim [data-reveal] .cols > .col { opacity: 1; transform: none; transition: none; animation: none; }
   .opener-body > * { opacity: 1; }                          /* the opener shows still, then goes */
   .opener-seam { transform: none; }
@@ -2081,8 +2065,7 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
   .pillar-nav a:hover { color: var(--accent-ink); }
   .pillar-nav a:hover svg { transform: translateX(.22em); }
   /* Pointing at one line quiets the others (after craft.do's blog) */
-  .pillar-nav ul:has(a:hover) a:not(:hover),
-  .ticker:has(.ticker-item:hover) .ticker-item:not(:hover) { opacity: .3; }
+  .pillar-nav ul:has(a:hover) a:not(:hover) { opacity: .3; }
 }
 .pillar-head { scroll-margin-top: calc(var(--nav-h) + var(--sp-5)); margin-bottom: var(--sp-5); }
 .pillar-group + .pillar-group { margin-top: var(--row); }
@@ -2100,28 +2083,6 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
   .post-cta:hover svg { transform: translateX(5px); }
 }
 
-/* The recent run: titles and dates on one line, swiped sideways on a phone */
-.ticker { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(210px, 1fr); gap: var(--sp-6); overflow-x: auto; padding-block: var(--sp-5); border-block: 1px solid var(--hair); scrollbar-width: thin; }
-.ticker-item { display: block; text-decoration: none; transition: color var(--dur-hover), opacity var(--dur-hover); }
-.ticker-item time { display: block; margin-top: var(--sp-2); color: var(--ink-3); }
-.ticker-item:hover { color: var(--accent-ink); }
-/* With motion allowed, main.js turns the strip into a slow loop: the run is
-   repeated until it is wider than the strip, doubled, and moved one run's
-   width at a time. Hovering or tabbing into it holds it; so does the button. */
-.ticker-frame { position: relative; }
-.ticker.marquee { display: block; overflow: hidden; padding-right: 0; -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 88%, transparent); }
-.ticker-track { display: flex; width: max-content; animation: ticker var(--ticker-dur, 40s) linear infinite; }
-.ticker.marquee .ticker-item { flex: none; width: clamp(210px, 24vw, 300px); padding-right: var(--sp-6); }
-.ticker.marquee:is(:hover, :focus-within) .ticker-track,
-.ticker-frame.held .ticker-track { animation-play-state: paused; }
-.ticker-frame .art-ctl { top: 50%; right: 0; bottom: auto; transform: translateY(-50%); background: var(--surface); }
-.anim .ticker-frame .art-ctl { opacity: 0; transition: opacity var(--dur-ui) var(--ease) var(--dur-reveal); }   /* the button waits for the strip it pauses */
-.anim .ticker-frame:has(.ticker.in) .art-ctl { opacity: 1; }
-@media (max-width: 640px) {
-  .ticker.marquee { -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 74%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 74%, transparent); }   /* the titles have faded out before they reach the button */
-}
-@keyframes ticker { to { transform: translateX(-50%); } }
-@media (prefers-reduced-motion: reduce) { .ticker-track { animation: none; } }
 
 /* The latest three, on their own ground */
 .featured { background: var(--paper-2); border: 1px solid var(--hair); border-radius: var(--radius); padding: clamp(24px, 3.4vw, 48px); }
@@ -2183,8 +2144,6 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
 .post-hero h1 { max-width: 26ch; }
 .post-hero .post-meta { justify-content: center; }
 .post-hero .t-lede { margin-top: var(--sp-5); }
-.byline { display: flex; align-items: center; justify-content: center; gap: 9px; margin-top: clamp(24px, 3vw, 32px); }
-.byline-mark { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--paper-2); border: 1px solid var(--hair); color: var(--ink); }
 /* The cover, full content width above the body */
 /* The cover steps out past the reading column without going full width:
    craft.do runs its text at about 79% of the image, and a 640px column
@@ -2243,7 +2202,6 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
   .posts-controls { width: 100%; }
   .post-search { flex: 1; }
   .post-hero .wrap > * { margin-inline: 0; }
-  .byline { justify-content: flex-start; }
   .post-hero h1 { max-width: none; }
   .claim, .prose blockquote { padding-left: var(--sp-4); }
   .post-next { text-align: left; }
@@ -2509,7 +2467,7 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
    match, and a foot that names the keys. The last row hands the question
    to the assistant.
    -------------------------------------------------------------------------- */
-.nav-kbd { display: inline-flex; align-items: center; gap: 8px; padding: 0; border: 0; background: none; color: inherit; font: inherit; cursor: pointer; transition: color var(--dur-hover); }
+.nav-kbd { display: inline-flex; align-items: center; gap: 8px; padding: 0; border: 0; background: none; cursor: pointer; transition: color var(--dur-hover); }   /* face, size and ink from the nav's role (section 2) */
 .nav-kbd:hover { color: var(--ink); }
 .nav-kbd kbd, .palette-foot kbd { font-family: var(--font-mono); font-size: var(--t-micro); line-height: 1; letter-spacing: .02em; padding: 3px 5px; border: 1px solid var(--hair-2); border-bottom-width: 2px; border-radius: 5px; color: var(--ink-3); }
 html.palette-open { overflow: hidden; }

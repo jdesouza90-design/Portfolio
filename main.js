@@ -292,14 +292,14 @@ const CONFIG = {
      A failsafe drops the animation if nothing has revealed after 2.5s.
 
      Every major block is tagged so sections rise in: anything already marked
-     keeps its tag, otherwise each direct child of a section gets one. A block
-     reveals once its top crosses a line 80% down the viewport, so the move
-     starts as it appears rather than a screen later; the line drops to the
-     bottom edge as the page runs out of scroll, so the last blocks never wait
-     for room that isn't there. Blocks that cross together follow each other
-     60ms apart, in document order. Where the browser drives animations from
-     scroll, styles.css (section 9) scrubs the rise itself and the class here
-     only tells the figures and columns their block has arrived. */
+     keeps its tag, otherwise each direct child of a section gets one. On
+     first paint everything on screen rises at once; after that a block rises
+     once its top crosses a line 90% down the viewport, so it starts as it
+     appears and has landed before the reader gets to it. The line drops to
+     the bottom edge as the page runs out of scroll, so the last blocks never
+     wait for room that isn't there. Blocks that cross together follow each
+     other 60ms apart, in document order. The rise runs on a timer, not with
+     the scroll, so nothing at rest is ever left half faded. */
   const initReveal = () => {
     $$("main > section").forEach((section) => {
       const host = section.querySelector(":scope > .wrap") || section;
@@ -313,7 +313,7 @@ const CONFIG = {
     });
 
     const revealEls = $$("[data-reveal]");
-    const LINE = 0.8;
+    const LINE = 0.9;
     if (reduced || !("IntersectionObserver" in window) || !revealEls.length) return;
     document.documentElement.classList.add("anim");
     afterOpener(() => revealOnScroll(revealEls, LINE));  // after a fresh unlock, the first screen rises as the doors part
@@ -1408,53 +1408,12 @@ const CONFIG = {
     });
   };
 
-  /* ---- Recent-posts ticker ----
-     The blog's recent strip, looped like craft.do's: the run of posts is
-     repeated until it outruns the strip, doubled, and slid one run's width
-     per cycle (styles.css, section 13). The copies are inert, so a reader
-     tabs through each post once. Hovering or tabbing in holds it, and a
-     pause button holds it for good (WCAG 2.2.2). Without JS, or with
-     reduced motion, it stays the sideways-scrolling strip. */
-  const initTicker = () => {
-    const strip = $(".ticker");
-    if (!strip || reduced) return;
-    const items = $$(".ticker-item", strip);
-    if (!items.length) return;
-    const frame = document.createElement("div");
-    frame.className = "ticker-frame";
-    strip.before(frame);
-    frame.append(strip);
-    const track = document.createElement("div");
-    track.className = "ticker-track";
-    track.append(...items);
-    strip.append(track);
-    strip.classList.add("marquee");
-    strip.removeAttribute("data-strip-label");
-    const copy = (el) => { const c = el.cloneNode(true); c.setAttribute("aria-hidden", "true"); c.inert = true; return c; };
-    const run = track.scrollWidth || 1;
-    const reps = Math.max(1, Math.ceil(strip.clientWidth / run));
-    for (let i = 1; i < reps * 2; i++) items.forEach((el) => track.append(copy(el)));
-    strip.style.setProperty("--ticker-dur", `${Math.round((run * reps) / 40)}s`);   // ~40px a second
-
-    const btn = document.createElement("button");
-    btn.className = "art-ctl"; btn.type = "button";
-    btn.innerHTML = '<svg class="i-pause" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="3.5" y="3" width="3" height="10" rx=".8"/><rect x="9.5" y="3" width="3" height="10" rx=".8"/></svg><svg class="i-play" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 3.2v9.6a.6.6 0 0 0 .9.5l7.4-4.8a.6.6 0 0 0 0-1L5.9 2.7a.6.6 0 0 0-.9.5Z"/></svg>';
-    frame.append(btn);
-    let playing = true;
-    setPaused(btn, playing, "recent posts");
-    btn.addEventListener("click", () => {
-      playing = !playing;
-      frame.classList.toggle("held", !playing);
-      setPaused(btn, playing, "recent posts");
-    });
-  };
-
   /* ---- Swipe strips ----
      On a phone the gallery and three-up hero scroll sideways. A region that
      scrolls has to be reachable from the keyboard, so it gets a tab stop only
      while it actually overflows. */
   const initStrips = () => {
-    const strips = $$(".gallery, .hero-panel.three, .ticker:not(.marquee)");
+    const strips = $$(".gallery, .hero-panel.three");
     if (!strips.length) return;
     const stops = () => strips.forEach((s) => {
       if (s.scrollWidth > s.clientWidth + 1) {
@@ -2928,6 +2887,6 @@ const CONFIG = {
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { if (current() === "system") document.dispatchEvent(new CustomEvent("themechange")); });
   };
 
-  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initMatrix, initConfig, initFlows, initTicker, initStrips, initTableWraps, initPortrait, initClock, initArcade, initCases, initLens, initSteps, initDemo, initPalette, initPostList, initChat, initYear, initTheme]
+  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initMatrix, initConfig, initFlows, initStrips, initTableWraps, initPortrait, initClock, initArcade, initCases, initLens, initSteps, initDemo, initPalette, initPostList, initChat, initYear, initTheme]
     .forEach((init) => { try { init(); } catch (err) { console.error(`main.js: ${init.name} failed`, err); } });
 })();

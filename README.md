@@ -377,10 +377,9 @@ between them at all.
 ### The two documents
 
 The **index** (`blog.html`) is organised by argument, not by date: the three
-pillars as serif links, a strip of the recent run, the latest three on their own
+pillars as serif links, the latest three on their own
 ground, then everything grouped under its pillar with a search and a grid/list
-toggle. The **post** is a centred head (title, standfirst, byline, published
-line), its cover full width, the claim, then one column of running text on a
+toggle. The **post** is a centred head (title, standfirst, published line), its cover full width, the claim, then one column of running text on a
 34rem measure. Both follow craft.do/blog, rebuilt on the site's own tokens.
 
 ### One post is one file
@@ -671,19 +670,18 @@ scrolls to it, and every page gets it the same way:
   so the block is still translucent while it moves and lands opaque; the
   travel is on `--ease-soft` (an out-cubic; `--ease` is too quick over
   700ms to be seen). Tokens: `--reveal-y`, `--dur-reveal`, `--ease-soft`.
-- **A block starts once its top crosses a line 80% down the viewport**, so
-  the move starts as the block appears. On first paint anything on screen
-  counts wherever it sits, so the first screen never ends in a blank band.
-  As the page runs out of scroll the line drops toward the bottom edge, so
-  the last blocks on a page (the closing band, the footer) never wait for
-  room that isn't there.
-- **Where the browser drives animations from scroll** (`@supports
-  (animation-timeline: view())`, section 9), the rise is scrubbed by the
-  reader's own scrolling over the block's first `--reveal-run` (200px) of
-  travel into the viewport, after granola.ai. The `.in` class still comes
-  from `main.js` for everything keyed to it (the column stagger, the
-  experience track, the figures). Over the first screen of scroll the hero
-  hands off: the dot field fades and the copy drifts up (`scroll(root)`).
+- **A block starts once its top crosses a line 90% down the viewport**, so
+  the move starts as the block appears and has landed before the reader
+  reaches it. On first paint anything on screen counts wherever it sits, so
+  the first screen never ends in a blank band. As the page runs out of
+  scroll the line drops toward the bottom edge, so the last blocks on a page
+  (the closing band, the footer) never wait for room that isn't there. The
+  rise runs on its timer, not with the scroll: a rise scrubbed by scrolling
+  leaves whatever rests at the foot of the screen half faded.
+- **The hero hands off** where the browser drives animations from scroll
+  (`animation-timeline: scroll(root)`, section 9, after granola.ai): the dot
+  field fades over the first screen of scroll, so the work arrives on plain
+  paper. Under reduced motion it stays.
 - **Between pages** (`@view-transition { navigation: auto }`), the document
   crossfades, the bar, the launcher and the footer hold still, a work row's
   screen grows into its case study's hero and a blog card's cover into its
