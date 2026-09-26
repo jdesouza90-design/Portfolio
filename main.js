@@ -341,9 +341,14 @@ const CONFIG = {
       batch.push(el);
     };
     const io = new IntersectionObserver((entries) => {
-      entries.forEach((e) => { if (e.isIntersecting) { show(e.target); io.unobserve(e.target); } });
+      entries.forEach((e) => { if (e.isIntersecting) { show(e.target); io.unobserve(e.target); whole.unobserve(e.target); } });
     }, { rootMargin: `0px 0px -${Math.round((1 - LINE) * 100)}% 0px`, threshold: 0 });
-    revealEls.forEach((el) => io.observe(el));
+    // A block the reader can already see whole rises too, wherever it sits:
+    // a short one resting under the line would otherwise stay a blank.
+    const whole = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.intersectionRatio >= 0.99) { show(e.target); io.unobserve(e.target); whole.unobserve(e.target); } });
+    }, { threshold: 0.99 });
+    revealEls.forEach((el) => { io.observe(el); whole.observe(el); });
 
     // Backstop for the observer. It measures only the elements still hidden and
     // detaches itself once they have all been revealed, so a long page is not
@@ -362,11 +367,11 @@ const CONFIG = {
         if (el.classList.contains("in")) continue;
         const r = el.getBoundingClientRect();
         const edge = firstPaint ? vh : line;
-        if (r.top < edge && r.bottom > 0) { show(el); io.unobserve(el); }
+        if ((r.top < edge || (r.top >= 0 && r.bottom <= vh)) && r.bottom > 0) { show(el); io.unobserve(el); whole.unobserve(el); }
         else still.push(el);
       }
       pending = still;
-      if (!pending.length) { move.stop(); io.disconnect(); }
+      if (!pending.length) { move.stop(); io.disconnect(); whole.disconnect(); }
     };
     const move = onViewportChange(() => sweep(false));
     sweep(true);

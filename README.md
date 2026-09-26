@@ -670,9 +670,9 @@ scrolls to it, and every page gets it the same way:
   so the block is still translucent while it moves and lands opaque; the
   travel is on `--ease-soft` (an out-cubic; `--ease` is too quick over
   700ms to be seen). Tokens: `--reveal-y`, `--dur-reveal`, `--ease-soft`.
-- **A block starts once its top crosses a line 90% down the viewport**, so
-  the move starts as the block appears and has landed before the reader
-  reaches it. On first paint anything on screen counts wherever it sits, so
+- **A block starts once its top crosses a line 90% down the viewport**, or
+  as soon as it is entirely on screen, so the move starts as the block
+  appears and has landed before the reader reaches it. On first paint anything on screen counts wherever it sits, so
   the first screen never ends in a blank band. As the page runs out of
   scroll the line drops toward the bottom edge, so the last blocks on a page
   (the closing band, the footer) never wait for room that isn't there. The
