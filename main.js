@@ -20,10 +20,19 @@ const CONFIG = {
   // [r, g, b], tint a color as a function of its alpha. Every fallback is
   // the token's value today, for a stylesheet that failed to load.
   const styles = getComputedStyle(document.documentElement);
-  const cssVar = (name, fallback) => styles.getPropertyValue(name).trim() || fallback;
+  // Read once and kept, since the canvases ask every frame; the theme switch
+  // (initTheme) empties the cache and says "themechange", and a tint made
+  // here reads the new value on its next call.
+  const tokens = new Map();
+  const cssVar = (name, fallback) => {
+    if (!tokens.has(name)) tokens.set(name, styles.getPropertyValue(name).trim());
+    return tokens.get(name) || fallback;
+  };
   const hex = (name, fallback) => { const v = cssVar(name, ""); return /^#[0-9a-f]{6}$/i.test(v) ? v : fallback; };
   const rgb = (name, fallback) => hex(name, fallback).match(/\w\w/g).map((h) => parseInt(h, 16));
-  const tint = (name, fallback) => { const c = rgb(name, fallback).join(","); return (alpha) => `rgba(${c},${alpha})`; };
+  const tint = (name, fallback) => (alpha) => `rgba(${rgb(name, fallback).join(",")},${alpha})`;
+  document.addEventListener("themechange", () => tokens.clear());
+  const onTheme = (fn) => document.addEventListener("themechange", fn);
   const EASE = cssVar("--ease", "cubic-bezier(.23, 1, .32, 1)");
   const EASE_IN_OUT = cssVar("--ease-in-out", "cubic-bezier(.77, 0, .175, 1)");
   const debounce = (fn, ms) => { let t; return () => { clearTimeout(t); t = setTimeout(fn, ms); }; };
@@ -581,7 +590,9 @@ const CONFIG = {
     const green = { phi: 2.1, r0: .78, amp: .09, lam: 1.9, p1: 1.2, p2: 3.1, sp: .8, w: 2.2, set: 0 };
     const axis = { phi: 0, r0: 0, amp: 0, lam: 1, p1: 0, p2: 0, sp: 1, set: 0 };
     // the page's own ink and accent, so the strands match the type and the green line the links
-    const accent = hex("--accent", "#3B6B44"), ink = tint("--ink", "#14100C");
+    let accent = hex("--accent", "#3B6B44");
+    const ink = tint("--ink", "#14100C");
+    onTheme(() => { accent = hex("--accent", "#3B6B44"); });
 
     let W = 0, H = 0, dpr = 1;
     const size = () => { W = fig.clientWidth; H = fig.clientHeight; dpr = fitCanvas(c, W, H); };
@@ -860,6 +871,10 @@ const CONFIG = {
   };
 
   const initFields = () => $$("[data-field]").forEach((el) => {
+    startField(el);
+    onTheme(() => { if (el.field) { el.field.stop(); startField(el); } });   // the sprites and tints are the page's own, so a field restarts in the new register
+  });
+  const startField = (el) => {
     const c = $("canvas.field", el), btn = $(".art-ctl", el);
     const ctx = c && c.getContext && c.getContext("2d");
     const make = fields[el.dataset.field];
@@ -957,7 +972,7 @@ const CONFIG = {
       ctx.clearRect(0, 0, W, H);
       el.classList.remove("live");
     } };
-  });
+  };
 
   /* ---- Originations chart ----
      A line over a soft area, drawn in the pixels of its box so the type stays
@@ -1250,6 +1265,7 @@ const CONFIG = {
       raf = requestAnimationFrame(frame);
     };
     const settle = () => { played = true; cancelAnimationFrame(raf); draw(END); };
+    onTheme(() => { if (played) { cancelAnimationFrame(raf); draw(END); } });   // the tints are the page's own: redraw the settled plot in the new register
 
     if (!layout()) return;
     onceInView(plot, 0.35, (animate) => {
@@ -1558,8 +1574,12 @@ const CONFIG = {
     const list = $(".arcade-board", root), post = $(".arcade-post", root);
     const nameIn = post && $("input", post), postBtn = post && $("button", post), note = post && $(".arcade-post-note", post);
     const tok = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-    const INK = tok("--ink") || "#14100C", INK3 = tok("--ink-3") || "#6F675D", HAIR = tok("--hair-2") || "#CFC9BF";
-    const ACCENT = tok("--accent") || "#3B6B44", GREEN = tok("--accent-2") || "#6E9A5A", FLAG = tok("--danger") || "#C0392B", SAND = tok("--surface") || "#FFFFFF";
+    let INK = tok("--ink") || "#14100C", INK3 = tok("--ink-3") || "#6F675D", HAIR = tok("--hair-2") || "#CFC9BF";
+    let ACCENT = tok("--accent") || "#3B6B44", GREEN = tok("--accent-2") || "#6E9A5A", FLAG = tok("--danger") || "#C0392B", SAND = tok("--surface") || "#FFFFFF";
+    onTheme(() => {   // the course is drawn in the page's own inks every frame, so it follows the register
+      INK = tok("--ink") || INK; INK3 = tok("--ink-3") || INK3; HAIR = tok("--hair-2") || HAIR;
+      ACCENT = tok("--accent") || ACCENT; GREEN = tok("--accent-2") || GREEN; FLAG = tok("--danger") || FLAG; SAND = tok("--surface") || SAND;
+    });
     const H = 64, GROUND = 52, TEE = 12;           // logical pixels; the ground line is GROUND
     /* The tunable part, which the dashboard sets (GAME in middleware.js has
        the same defaults and the limits). /api/scores hands the saved values
@@ -2175,6 +2195,121 @@ const CONFIG = {
     if (saved !== "full") apply(saved, false);
   });
 
+  /* ---- The palette ----
+     After the ⌘K menus on vercel.com and docs.stripe.com. ⌘K (Ctrl+K), or
+     the Search row the bar gets here, opens a dialog with one field: type,
+     and the pages, sections, case studies and posts that match come up
+     from /search-index.json (blog.py writes it); arrows move, Enter goes.
+     The last row hands whatever was typed to the assistant, so a question
+     the index cannot answer still gets one. The index loads once, on first
+     open, so a reader who never presses the keys pays nothing. */
+  const initPalette = () => {
+    const nav = $(".nav-links ul");
+    if (!nav) return;
+    const mac = /Mac|iPhone|iPad/.test(navigator.platform || "");
+    const li = document.createElement("li");
+    li.className = "nav-search";
+    li.innerHTML = `<button class="nav-kbd" type="button" aria-keyshortcuts="${mac ? "Meta+K" : "Control+K"}"><span>Search</span><kbd aria-hidden="true">${mac ? "⌘K" : "Ctrl K"}</kbd></button>`;
+    const blog = $$("li", nav).find((l) => /blog\.html$/.test($("a", l)?.getAttribute("href") || ""));
+    if (blog) blog.after(li); else nav.append(li);
+    const trigger = $("button", li);
+
+    const dlg = document.createElement("dialog");
+    dlg.className = "palette";
+    dlg.setAttribute("aria-label", "Search the site");
+    dlg.innerHTML = `
+      <form class="palette-form" role="search">
+        <svg class="palette-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input class="palette-input" id="palette-input" type="text" autocomplete="off" spellcheck="false" placeholder="Search pages, case studies and posts, or ask a question" aria-label="Search" role="combobox" aria-expanded="true" aria-controls="palette-list" aria-autocomplete="list">
+        <button class="palette-close" type="button" aria-label="Close search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </form>
+      <ul class="palette-list" id="palette-list" role="listbox" aria-label="Results"></ul>
+      <p class="palette-foot t-micro" aria-hidden="true"><kbd>↑</kbd><kbd>↓</kbd> move <kbd>↵</kbd> open <kbd>esc</kbd> close</p>`;
+    document.body.append(dlg);
+    const input = $("input", dlg), list = $(".palette-list", dlg);
+    let index = null, loading = null, rows = [], cursor = 0, from = null;
+
+    const load = () => loading || (loading = fetch("/search-index.json").then((r) => (r.ok ? r.json() : [])).then((d) => (index = d)).catch(() => (index = [])));
+    const score = (e, words, q) => {
+      const t = e.t.toLowerCase(), d = (e.d || "").toLowerCase(), k = (e.k || "").toLowerCase();
+      if (!q) return e.k === "Page" || e.k.startsWith("Case") ? 1 : 0;
+      let s = 0;
+      if (t.startsWith(q)) s += 4; else if (t.includes(q)) s += 3;
+      words.forEach((w) => { if (t.includes(w)) s += 1.5; else if (d.includes(w) || k.includes(w)) s += 0.75; });
+      return s;
+    };
+    const escapeHtml = (v) => String(v).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    const draw = () => {
+      const q = input.value.trim().toLowerCase(), words = q.split(/\s+/).filter(Boolean);
+      const hits = (index || []).map((e) => [score(e, words, q), e]).filter(([s]) => s > 0).sort((a, b) => b[0] - a[0]).slice(0, 8).map(([, e]) => e);
+      rows = hits.map((e) => ({ kind: "go", url: e.u, html: `<span class="palette-title">${escapeHtml(e.t)}</span><span class="palette-kind">${escapeHtml(e.k)}</span>${e.d ? `<span class="palette-desc">${escapeHtml(e.d)}</span>` : ""}` }));
+      if (q && $(".chat-launch")) rows.push({ kind: "ask", q: input.value.trim(), html: `<span class="palette-title">Ask: “${escapeHtml(input.value.trim())}”</span><span class="palette-kind">Assistant</span><span class="palette-desc">Hand the question to the assistant, which answers from the site.</span>` });
+      if (!rows.length) rows.push({ kind: "none", html: `<span class="palette-title">Nothing matches</span><span class="palette-desc">Try a page name, a company or a topic.</span>` });
+      cursor = 0;
+      list.innerHTML = rows.map((r, i) => `<li class="palette-row ${r.kind}" role="option" id="palette-opt-${i}" aria-selected="${i === 0}">${r.html}</li>`).join("");
+      input.setAttribute("aria-activedescendant", rows.length ? "palette-opt-0" : "");
+    };
+    const move = (d) => {
+      if (!rows.length) return;
+      cursor = (cursor + d + rows.length) % rows.length;
+      $$(".palette-row", list).forEach((r, i) => r.setAttribute("aria-selected", String(i === cursor)));
+      input.setAttribute("aria-activedescendant", `palette-opt-${cursor}`);
+      $$(".palette-row", list)[cursor].scrollIntoView({ block: "nearest" });
+    };
+    const close = () => {
+      if (!dlg.open) return;
+      dlg.close();
+      document.documentElement.classList.remove("palette-open");
+      if (from && from.isConnected) from.focus({ preventScroll: true });
+    };
+    const ask = (q) => {
+      const launch = $(".chat-launch"), form = $(".chat-form"), field = $("#chat-input");
+      if (!launch || !form || !field) return;
+      if (launch.getAttribute("aria-expanded") !== "true") launch.click();
+      field.value = q;
+      field.dispatchEvent(new Event("input", { bubbles: true }));
+      form.requestSubmit();
+    };
+    const go = (i) => {
+      const r = rows[i];
+      if (!r || r.kind === "none") return;
+      close();
+      if (r.kind === "ask") { ask(r.q); return; }
+      const here = location.pathname + location.hash;
+      const [path, hash] = r.url.split("#");
+      if (path === location.pathname && hash) {
+        const el = document.getElementById(hash);
+        if (el) { history.pushState(null, "", `#${hash}`); el.scrollIntoView({ behavior: reduced ? "auto" : "smooth" }); el.focus({ preventScroll: true }); return; }
+      }
+      if (r.url !== here) location.href = r.url;
+    };
+    const open = () => {
+      if (dlg.open) return;
+      from = document.activeElement;
+      dlg.showModal();
+      document.documentElement.classList.add("palette-open");
+      input.value = "";
+      load().then(draw);
+      draw();
+      input.focus();
+    };
+    trigger.addEventListener("click", open);
+    document.addEventListener("keydown", (e) => {
+      if ((e.metaKey || e.ctrlKey) && !e.altKey && !e.shiftKey && e.key.toLowerCase() === "k") { e.preventDefault(); dlg.open ? close() : open(); }
+    });
+    $(".palette-form", dlg).addEventListener("submit", (e) => { e.preventDefault(); go(cursor); });
+    $(".palette-close", dlg).addEventListener("click", close);
+    dlg.addEventListener("cancel", (e) => { e.preventDefault(); close(); });
+    dlg.addEventListener("click", (e) => { if (e.target === dlg) close(); });
+    input.addEventListener("input", draw);
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowDown") { e.preventDefault(); move(1); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); move(-1); }
+    });
+    list.addEventListener("click", (e) => { const row = e.target.closest(".palette-row"); if (row) go($$(".palette-row", list).indexOf(row)); });
+    list.addEventListener("pointermove", (e) => { const row = e.target.closest(".palette-row"); if (!row) return; const i = $$(".palette-row", list).indexOf(row); if (i !== cursor) { cursor = i; $$(".palette-row", list).forEach((r, k) => r.setAttribute("aria-selected", String(k === i))); } });
+  };
+
   /* ---- Blog post list ----
      Search filters the cards by title and blurb, hiding a pillar group once
      nothing in it matches; the toggle switches every group between the card
@@ -2620,6 +2755,37 @@ const CONFIG = {
   /* ---- Footer year ---- */
   const initYear = () => $$("[data-year]").forEach((el) => (el.textContent = new Date().getFullYear()));
 
-  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initMatrix, initConfig, initFlows, initTicker, initStrips, initTableWraps, initPortrait, initClock, initArcade, initCases, initLens, initSteps, initDemo, initZoom, initPostList, initChat, initYear]
+  /* ---- The theme switch ----
+     After the footer switches on cursor.com and vercel.com: System, Light,
+     Dark, in the footer of every page. A choice is stamped on the root as
+     data-theme and kept in localStorage, which the one-line script in each
+     head reads before first paint so a dark page never flashes paper.
+     System removes the stamp and lets the reader's setting decide. The
+     canvases hear "themechange" and redraw in the new register. */
+  const initTheme = () => {
+    const foot = $("footer");
+    if (!foot) return;
+    const box = document.createElement("div");
+    box.className = "theme";
+    box.innerHTML = `<span class="t-small" id="theme-label">Theme</span><div class="seg" role="group" aria-labelledby="theme-label">${
+      [["system", "System"], ["light", "Light"], ["dark", "Dark"]].map(([k, l]) => `<button class="seg-tab" type="button" data-theme-key="${k}" aria-pressed="false">${l}</button>`).join("")}</div>`;
+    foot.append(box);
+    const tabs = $$(".seg-tab", box);
+    const current = () => { try { return localStorage.getItem("theme") || "system"; } catch (e) { return "system"; } };
+    const mark = (key) => tabs.forEach((t) => t.setAttribute("aria-pressed", String(t.dataset.themeKey === key)));
+    const apply = (key) => {
+      if (key === "dark" || key === "light") document.documentElement.dataset.theme = key;
+      else delete document.documentElement.dataset.theme;
+      try { if (key === "system") localStorage.removeItem("theme"); else localStorage.setItem("theme", key); } catch (e) { /* private mode */ }
+      mark(key);
+      document.dispatchEvent(new CustomEvent("themechange"));
+    };
+    mark(current());
+    tabs.forEach((t) => t.addEventListener("click", () => apply(t.dataset.themeKey)));
+    // The system setting can change underneath a reader who chose System.
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { if (current() === "system") document.dispatchEvent(new CustomEvent("themechange")); });
+  };
+
+  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initMatrix, initConfig, initFlows, initTicker, initStrips, initTableWraps, initPortrait, initClock, initArcade, initCases, initLens, initSteps, initDemo, initZoom, initPalette, initPostList, initChat, initYear, initTheme]
     .forEach((init) => { try { init(); } catch (err) { console.error(`main.js: ${init.name} failed`, err); } });
 })();

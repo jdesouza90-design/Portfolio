@@ -255,6 +255,7 @@ def head(*, title, desc, url, css, extra="", og_type="website", ld="", italic=Fa
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>try{{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t}}catch(e){{}}</script>
 <title>{html.escape(title)}</title>
 <meta name="description" content="{html.escape(desc)}">
 <link rel="canonical" href="{url}">
@@ -733,6 +734,39 @@ def to_markdown(fragment):
     return re.sub(r"\n{3,}", "\n\n", t).strip()
 
 
+def render_search(posts):
+    """The palette's index (main.js initPalette): every page, the home page's
+    sections, the case studies as the work index names them, and every post.
+    A case study's own text stays out: the pages are gated."""
+    entries = [{"t": "Home", "d": "Who John is, the case studies at a glance, how he leads and how to reach him.", "u": "/", "k": "Page"},
+               {"t": "Work", "d": "The case studies from Best Egg, Chainlink Labs and Auth0, each with the business result.", "u": "/work.html", "k": "Page"},
+               {"t": "Blog", "d": "Positions on design leadership, where product design is heading, and trust in fintech and web3.", "u": "/blog.html", "k": "Page"}]
+    home = open("index.html", encoding="utf-8").read()
+    for m in re.finditer(r'<section[^>]*\sid="([a-z-]+)"[^>]*>(.*?)</section>', home, re.S):
+        sid, body = m.group(1), m.group(2)
+        h = re.search(r'<h2 class="t-title[^"]*">(.*?)</h2>', body, re.S)
+        lede = re.search(r'<p class="t-lede">(.*?)</p>', body, re.S)
+        eyebrow = re.search(r'<p class="eyebrow">(.*?)</p>', body, re.S)
+        if not h or sid in ("top", "work"):
+            continue
+        title = strip_tags(eyebrow.group(1)) if eyebrow else strip_tags(h.group(1))
+        entries.append({"t": title, "d": strip_tags(h.group(1)) if eyebrow else (strip_tags(lede.group(1)) if lede else ""), "u": "/#" + sid, "k": "Section"})
+    work = open("work.html", encoding="utf-8").read()
+    work = re.sub(r"<!--.*?-->", "", work, flags=re.S)
+    for m in re.finditer(r'<a class="case-row[^"]*" href="(work/[a-z-]+\.html)"[^>]*>(.*?)</a>\s*\n', work, re.S):
+        href, body = m.group(1), m.group(2)
+        h = re.search(r'<h[23] class="t-heading">(.*?)</h[23]>', body, re.S)
+        p = re.search(r'<p class="t-body">(.*?)</p>', body, re.S)
+        logo = re.search(r'alt="([^"]+)"', body)
+        if not h:
+            continue
+        entries.append({"t": strip_tags(h.group(1)), "d": strip_tags(p.group(1)) if p else "", "u": "/" + href,
+                        "k": "Case study" + (" · " + logo.group(1) if logo else "")})
+    for p in posts:
+        entries.append({"t": p["title"], "d": strip_tags(p["description"]), "u": "/blog/%s.html" % p["slug"], "k": "Post · " + PILLARS[p["pillar"]][0]})
+    return json.dumps(entries, ensure_ascii=False, separators=(",", ":")) + "\n"
+
+
 def render_llms(posts):
     lines = ["# %s" % AUTHOR, "",
              "> %s This site holds his case "
@@ -806,6 +840,7 @@ def main():
     wanted["feed.xml"] = render_feed(posts)
     wanted["llms.txt"] = render_llms(posts)
     wanted["llms-full.txt"] = render_llms_full(posts)
+    wanted["search-index.json"] = render_search(posts)
 
     stale = []
     for path, text in wanted.items():

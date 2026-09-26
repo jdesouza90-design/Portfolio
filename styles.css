@@ -34,6 +34,9 @@
   --shadow-lift: 0 30px 60px -34px rgba(20, 16, 12, .30);
   --shadow-screen: 0 18px 40px -22px rgba(20, 16, 12, .45), 0 0 0 1px rgba(20, 16, 12, .06);
   --shadow-cutout: drop-shadow(0 18px 28px rgba(20, 16, 12, .18));   /* a piece of UI keyed out of its screen */
+  --contact-ground: linear-gradient(155deg, #241D17 0%, #14100C 58%, #100D0A 100%);   /* the contact block's ground and rings, inverted in the dark register */
+  --contact-rings: rgba(246, 244, 240, .07);
+  --scrim: rgba(20, 16, 12, .55);
 
   /* panel ground: the warm sand every screenshot sits on. Each case study
      overrides these from its own subject matter (section 10). */
@@ -114,6 +117,62 @@
   --dur-reveal: 700ms;
   --reveal-y: 48px;
   --reveal-run: 200px;   /* scroll-driven reveals: the travel over which a block rises into place (section 9) */
+}
+
+/* The dark register (after cursor.com's warm near-black): the same tokens
+   in ink and the accent lifted so it still reads on the ground. The panel
+   grounds and the covers stay as they are, plates of paper the screens were
+   drawn for. The switch in the footer (main.js initTheme) stamps
+   data-theme on the root and keeps it; with nothing stamped, the reader's
+   system setting decides. Every colour is set here and nowhere else, so a
+   dark rule never sits alone inside a media query. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+  color-scheme: dark;
+  --paper: #15120D;
+  --paper-2: #1C1812;
+  --surface: #221D16;
+  --surface-2: #1C1812;
+  --ink: #F0EBE2;
+  --ink-2: #BDB4A7;
+  --ink-3: #9C9387;   /* 6.6:1 on paper-2 */
+  --hair: #2C261F;
+  --hair-2: #3F382F;
+  --accent: #7FB279;
+  --accent-ink: #A9D1A0;
+  --accent-2: #8FBE7C;
+  --glow: rgba(127, 178, 121, .16);
+  --danger: #E2705A;
+  --shadow-lift: 0 30px 60px -34px rgba(0, 0, 0, .75);
+  --shadow-screen: 0 18px 40px -22px rgba(0, 0, 0, .8), 0 0 0 1px rgba(255, 255, 255, .06);
+  --shadow-cutout: drop-shadow(0 18px 28px rgba(0, 0, 0, .45));
+  --contact-ground: linear-gradient(155deg, #F6F4F0 0%, #ECE8E1 58%, #E4DFD6 100%);
+  --contact-rings: rgba(20, 16, 12, .08);
+  --scrim: rgba(0, 0, 0, .55);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #15120D;
+  --paper-2: #1C1812;
+  --surface: #221D16;
+  --surface-2: #1C1812;
+  --ink: #F0EBE2;
+  --ink-2: #BDB4A7;
+  --ink-3: #9C9387;   /* 6.6:1 on paper-2 */
+  --hair: #2C261F;
+  --hair-2: #3F382F;
+  --accent: #7FB279;
+  --accent-ink: #A9D1A0;
+  --accent-2: #8FBE7C;
+  --glow: rgba(127, 178, 121, .16);
+  --danger: #E2705A;
+  --shadow-lift: 0 30px 60px -34px rgba(0, 0, 0, .75);
+  --shadow-screen: 0 18px 40px -22px rgba(0, 0, 0, .8), 0 0 0 1px rgba(255, 255, 255, .06);
+  --shadow-cutout: drop-shadow(0 18px 28px rgba(0, 0, 0, .45));
+  --contact-ground: linear-gradient(155deg, #F6F4F0 0%, #ECE8E1 58%, #E4DFD6 100%);
+  --contact-rings: rgba(20, 16, 12, .08);
+  --scrim: rgba(0, 0, 0, .55);
 }
 
 /* --------------------------------------------------------------------------
@@ -327,7 +386,7 @@ main, .nav { position: relative; z-index: 1; }
 .chip {
   display: inline-block; line-height: 1.25;
   background: color-mix(in srgb, var(--surface) 92%, var(--paper));
-  border: 1px solid rgba(20, 16, 12, .10); border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--ink) 10%, transparent); border-radius: 10px;
   padding: 7px 12px; white-space: nowrap;
 }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -462,14 +521,17 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
   .nav-links li:nth-child(3) { --wait: calc(var(--dur-hover) + 120ms); }
   .nav-links li:nth-child(4) { --wait: calc(var(--dur-hover) + 180ms); }
   .nav-links li:nth-child(5) { --wait: calc(var(--dur-hover) + 240ms); }
+  .nav-links li:nth-child(6) { --wait: calc(var(--dur-hover) + 300ms); }
+  .nav-links li:nth-child(7) { --wait: calc(var(--dur-hover) + 360ms); }
   .nav-links li.nav-resume { display: none; }   /* Resume is a button at the foot here */
   /* A menu row takes the title role (the phone rules are allowed to move a
      thing between roles); ink, as every row is a place to go, not a state. */
-  .nav-links ul a, .nav-links ul a.nav-icon {
-    display: block; padding: var(--sp-4) 0;   /* a row's pitch is twice its type size */
+  .nav-links ul a, .nav-links ul a.nav-icon, .nav-links ul .nav-kbd {
+    display: block; padding: var(--sp-4) 0; text-align: left;   /* a row's pitch is twice its type size */
     font-family: var(--font-display); font-weight: 400; font-size: var(--t-title); line-height: var(--lh-title); letter-spacing: var(--ls-title); color: var(--ink);
   }
   .nav-links a.nav-icon span { display: inline; }
+  .nav-links .nav-kbd kbd { display: none; }   /* no keys on a phone */
   .nav-links a.nav-icon svg { display: none; }   /* the word alone here; the mark is for the bar */
   .nav-foot {
     position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--sp-4);
@@ -643,11 +705,18 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .lead-art-panel canvas { display: none; }
 .lead-art-panel.live canvas { display: block; }
 .lead-art-panel.live img { visibility: hidden; }
-.art-ctl { position: absolute; right: 12px; bottom: 12px; width: 36px; height: 36px; padding: 0; border: 1px solid var(--hair-2); border-radius: 999px; background: rgba(255, 255, 255, .55); color: var(--ink); cursor: pointer; display: grid; place-items: center; transition: border-color var(--dur-hover), color var(--dur-hover); }
+.art-ctl { position: absolute; right: 12px; bottom: 12px; width: 36px; height: 36px; padding: 0; border: 1px solid var(--hair-2); border-radius: 999px; background: color-mix(in srgb, var(--surface) 55%, transparent); color: var(--ink); cursor: pointer; display: grid; place-items: center; transition: border-color var(--dur-hover), color var(--dur-hover); }
 .art-ctl:hover { border-color: var(--accent); color: var(--accent-ink); }
 .art-ctl svg { width: 14px; height: 14px; }
 .art-ctl .i-pause, .art-ctl[aria-pressed="true"] .i-play { display: block; }
 .art-ctl .i-play, .art-ctl[aria-pressed="true"] .i-pause { display: none; }
+/* Wordmarks are drawn in their brands' inks for paper; in the dark register
+   they go to one light tone so they stay legible on the ground. */
+:root[data-theme="dark"] img[src*="logo-"] { filter: brightness(0) invert(.9); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) img[src*="logo-"] { filter: brightness(0) invert(.9); } }
+/* The theme switch (main.js initTheme puts it in the footer): System, Light, Dark. */
+.theme { display: inline-flex; align-items: center; gap: var(--sp-3); }
+.theme .seg-tab { padding: 5px 11px; }
 .lead-art .tools { margin-top: var(--sp-6); padding-top: var(--sp-5); border-top: 1px solid var(--hair); }
 @media (max-width: 900px) {
   .lead-solo { grid-template-columns: minmax(0, 1fr); }
@@ -834,13 +903,12 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
   --ink-3: color-mix(in srgb, var(--paper) 56%, transparent);
   --hair-2: color-mix(in srgb, var(--paper) 36%, transparent);
   --contact-origin: 100% 50%;
-  --contact-ground: linear-gradient(155deg, #241D17 0%, #14100C 58%, #100D0A 100%);
   position: relative; overflow: hidden; color: var(--paper);
   /* the panel ground in its dark register: a lifted corner fading to ink,
      and rings in paper rippling out from behind the buttons */
   background-color: var(--ink);
   background-image:
-    repeating-radial-gradient(circle at var(--contact-origin), rgba(246,244,240,.07) 0 1px, transparent 1px 42px),
+    repeating-radial-gradient(circle at var(--contact-origin), var(--contact-rings) 0 1px, transparent 1px 42px),
     var(--contact-ground);
   border-radius: var(--radius); padding: clamp(44px, 7vw, 88px);
   display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 36px; align-items: center;
@@ -1107,7 +1175,7 @@ footer a:hover { color: var(--ink); }
 .chart .anno { font-size: 12px; fill: var(--ink-2); }
 .chart .anno-line { stroke: var(--hair-2); stroke-dasharray: 3 3; }
 .chart-pill { position: absolute; right: 0; z-index: 3; transform: translateY(-50%); padding: 3px 9px 4px; border-radius: 28px; border: 2px solid var(--surface); background: var(--accent); white-space: nowrap; pointer-events: none; line-height: 1.2; }
-.chart-marker { position: absolute; z-index: 1; width: 0; border-left: 1.5px solid rgba(20, 16, 12, .09); transform: translateX(-50%); opacity: 0; transition: opacity var(--dur-hover); pointer-events: none; }
+.chart-marker { position: absolute; z-index: 1; width: 0; border-left: 1.5px solid color-mix(in srgb, var(--ink) 9%, transparent); transform: translateX(-50%); opacity: 0; transition: opacity var(--dur-hover); pointer-events: none; }
 .chart-node { position: absolute; z-index: 2; width: 13px; height: 13px; border-radius: 50%; border: 2px solid var(--surface); background: var(--accent); box-shadow: 0 1px 2px rgba(20, 16, 12, .18); transform: translate(-50%, -50%); opacity: 0; transition: opacity var(--dur-hover); pointer-events: none; }
 .chart-marker.show, .chart-node.show { opacity: 1; }
 .chart-hit { position: absolute; z-index: 5; border-radius: 8px; }
@@ -1153,7 +1221,7 @@ footer a:hover { color: var(--ink); }
 .config-group legend { padding: 0; margin-bottom: 8px; }
 .config-group .chips { gap: 6px; }
 .config .chip { position: relative; padding: 6px 11px; cursor: pointer; user-select: none; transition: background var(--dur-hover) var(--ease), border-color var(--dur-hover) var(--ease), color var(--dur-hover) var(--ease); }
-.config .chip:hover { border-color: rgba(20, 16, 12, .28); }
+.config .chip:hover { border-color: color-mix(in srgb, var(--ink) 28%, transparent); }
 .config .chip:has(:checked) { background: var(--ink); border-color: var(--ink); color: var(--surface); }
 .config .chip:has(:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
 .config-sum { border-top: 1px solid var(--hair); padding-top: var(--sp-3); }
@@ -2363,3 +2431,46 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
   .chat-launch .chat-launch-label { animation: none !important; }
 }
 @media print { .chat-launch, .chat { display: none !important; } }
+
+/* --------------------------------------------------------------------------
+   15. The palette
+   ⌘K (main.js initPalette). A search row joins the bar (a word and a key
+   cap; the word alone in the phone menu). The dialog is a surface card at
+   the top of the screen over a blurred page: one field, the rows that
+   match, and a foot that names the keys. The last row hands the question
+   to the assistant.
+   -------------------------------------------------------------------------- */
+.nav-kbd { display: inline-flex; align-items: center; gap: 8px; padding: 0; border: 0; background: none; color: inherit; font: inherit; cursor: pointer; transition: color var(--dur-hover); }
+.nav-kbd:hover { color: var(--ink); }
+.nav-kbd kbd, .palette-foot kbd { font-family: var(--font-mono); font-size: var(--t-micro); line-height: 1; letter-spacing: .02em; padding: 3px 5px; border: 1px solid var(--hair-2); border-bottom-width: 2px; border-radius: 5px; color: var(--ink-3); }
+html.palette-open { overflow: hidden; }
+.palette {
+  position: fixed; inset: 10vh auto auto 50%; transform: translateX(-50%);
+  width: min(640px, calc(100vw - 2 * var(--gutter))); max-height: 78vh; max-height: 78dvh; margin: 0; padding: 0;
+  display: none; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden;
+  border: 1px solid var(--hair); border-radius: var(--radius); background: var(--surface); color: var(--ink); box-shadow: var(--shadow-lift);
+}
+.palette[open] { display: grid; animation: palette-in var(--dur-ui) var(--ease); }
+@keyframes palette-in { from { opacity: 0; transform: translateX(-50%) translateY(-6px) scale(.985); } }
+.palette::backdrop { background: color-mix(in srgb, var(--ink) 26%, transparent); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.palette-form { display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-3) var(--sp-4) var(--sp-3) var(--sp-5); border-bottom: 1px solid var(--hair); }
+.palette-glass { width: 20px; height: 20px; flex: none; color: var(--ink-3); }
+.palette-input { flex: 1; min-width: 0; padding: var(--sp-3) 0; border: 0; background: none; color: var(--ink); font-family: var(--font-body); font-size: var(--t-lede); line-height: var(--lh-lede); outline: 0; }
+.palette-input::placeholder { color: var(--ink-3); }
+.palette-close { width: 34px; height: 34px; flex: none; display: grid; place-items: center; padding: 0; border: 1px solid var(--hair-2); border-radius: 999px; background: none; color: var(--ink); cursor: pointer; }
+.palette-close svg { width: 14px; height: 14px; }
+.palette-list { list-style: none; margin: 0; padding: var(--sp-2); overflow-y: auto; overscroll-behavior: contain; }
+.palette-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px var(--sp-4); padding: var(--sp-3) var(--sp-4); border-radius: var(--radius-sm); cursor: pointer; }
+.palette-row[aria-selected="true"] { background: var(--paper-2); }
+.palette-title { font-family: var(--font-body); font-size: var(--t-body); line-height: var(--lh-body); font-weight: 500; color: var(--ink); min-width: 0; }
+.palette-kind { font-family: var(--font-mono); font-size: var(--t-micro); line-height: var(--lh-body); letter-spacing: var(--ls-micro); text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
+.palette-desc { grid-column: 1 / -1; font-family: var(--font-body); font-size: var(--t-small); line-height: var(--lh-small); color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.palette-row.ask .palette-title { color: var(--accent-ink); }
+.palette-row.none { cursor: default; }
+.palette-foot { display: flex; gap: 6px; align-items: center; padding: var(--sp-3) var(--sp-5); border-top: 1px solid var(--hair); color: var(--ink-3); text-transform: none; letter-spacing: 0; font-family: var(--font-body); }
+.palette-foot kbd { margin-right: 2px; }
+@media (max-width: 640px) {
+  .palette { inset: var(--sp-3) auto auto 50%; width: calc(100vw - 2 * var(--sp-3)); max-height: calc(100dvh - 2 * var(--sp-3)); }
+  .palette-foot { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .palette[open] { animation: none; } }
