@@ -298,9 +298,11 @@ Function, answers with Claude Haiku 4.5 by default.
 - **The lens** (`initLens`, `[data-lens]` above the list on the home page and
   the work index). Recruiter, Hiring manager, Product manager, Engineer
   re-sort the rows. The orders are fixed
-  in `LENSES` in `main.js` (no model, nothing sent anywhere); the choice is
-  kept in `localStorage` (`lens`); rows move in a view transition
-  (`row-<slug>` names, section 9).
+  in `LENSES` in `main.js` (no model, nothing sent anywhere), and no two
+  give the same order, on the work index or in the home page's three rows.
+  On a desktop the choice is kept in `localStorage` (`lens`); a phone shows
+  a dropdown whose face cycles the roles as a hint and starts every visit
+  there. Rows move in a view transition (`row-<slug>` names, section 9).
 - **Steps** (`initSteps`, after diabrowser.com). A decisions block marked
   `data-steps` whose columns each end in a `.shot` becomes, from 761px up, a
   numbered list beside one sticky panel showing the step under the reader.
