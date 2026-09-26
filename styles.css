@@ -486,6 +486,11 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .nav.scrolled { border-color: var(--hair); }
 .nav .wrap { display: flex; align-items: center; gap: 28px; width: 100%; }
 .brand { display: flex; align-items: center; gap: 11px; text-decoration: none; white-space: nowrap; }
+/* The seal: a J inside a ring, the same drawing as favicon.svg on its 32-unit
+   grid. The ring takes the accent and the J the ink, so it follows the tokens. */
+.brand-mark { width: .95em; height: .95em; flex: none; }
+.brand-mark circle { fill: none; stroke: var(--accent); stroke-width: 2; }
+.brand-mark path { fill: currentColor; }
 .nav-links { margin-left: auto; }
 .nav-links ul { display: flex; gap: 28px; list-style: none; padding: 0; margin: 0; }
 .nav-links ul a { text-decoration: none; transition: color var(--dur-hover); }   /* the rows; the phone foot holds plain .btns */

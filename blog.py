@@ -318,7 +318,7 @@ def nav(current, section=None):
     return f"""
 <header class="nav">
   <div class="wrap">
-    <a class="brand" href="/" aria-label="John DeSouza, home"><span>John DeSouza</span></a>
+    <a class="brand" href="/" aria-label="John DeSouza, home"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="15"/><path d="M10 8H22V12H20V22A2 2 0 0 1 18 24H12A4 4 0 0 1 8 20V18H12V20H16V12H10Z"/></svg><span>John DeSouza</span></a>
     <button class="icon-btn nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M4 9h16"/><path d="M4 15h16"/></svg>
     </button>
