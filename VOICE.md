@@ -4,7 +4,7 @@ How everything on john-desouza.com is written. Read this before editing any copy
 
 ## Who is reading
 
-Hiring managers in product and design, skimming on a phone between meetings. Most will read the headings, the numbers and one paragraph. Write for the skim. Reward anyone who reads further.
+Design leaders in product and design, skimming on a phone between meetings. Most will read the headings, the numbers and one paragraph. Write for the skim. Reward anyone who reads further.
 
 ## The voice
 

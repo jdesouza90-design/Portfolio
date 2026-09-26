@@ -124,7 +124,7 @@ and expect some to be "no".
    each figcaption starting "Before:" or "After:" (refinance-offers.html). Get which screen
    goes with each caption.
 
-3. **Two or three decisions inside the flow that a hiring manager should notice?**
+3. **Two or three decisions inside the flow that a design leader should notice?**
    Slot: `DECISIONS`, the three-column grid. Each is a two-word label, one sentence, and
    optionally the actual UI copy it produced (a heading, a button label) for the snippet.
    Content strategy, progressive disclosure and design-system reuse are the existing three;
@@ -148,7 +148,7 @@ and expect some to be "no".
 
 ## Round 5: My role
 
-Fills the ledger. Hiring managers read this section closely, so precision about "I" and
+Fills the ledger. Design leaders read this section closely, so precision about "I" and
 "we" matters more here than anywhere.
 
 1. **Three things you personally did on this project. For each: a two- or three-word label

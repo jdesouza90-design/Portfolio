@@ -2464,7 +2464,7 @@ const CONFIG = {
     /* Who is asking: each chip sends a fuller question than its label. */
     const AUDIENCE = [
       ["Recruiter", "I’m a recruiter. What has John shipped, with the outcomes, and what size of team has he led?"],
-      ["Hiring manager", "I’m a hiring manager. How does John run a design team, and what does he hold the bar on?"],
+      ["Design leader", "I’m a design leader. How does John run a design team, and what does he hold the bar on?"],
       ["Engineer", "I’m an engineer. How does John work with engineering, and what has he built with AI agents?"],
     ];
 
