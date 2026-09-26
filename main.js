@@ -2025,9 +2025,42 @@ const CONFIG = {
       rows.forEach((r) => list.insertBefore(r, stage));
       list.dispatchEvent(new CustomEvent("lens"));
     };
+    // On a phone the tabs become one dropdown (a native <select> under a
+    // face that shows the choice). Until the reader picks, the face cycles
+    // through the roles, one a beat, so the options are seen before the
+    // dropdown is opened; it stops for good at the first choice or focus,
+    // pauses off screen, and under reduced motion stands on the current role.
+    const names = tabs.map((t) => [t.dataset.lensKey, t.textContent.trim()]);
+    const pick = document.createElement("div");
+    pick.className = "lens-pick";
+    pick.innerHTML = `<span class="lens-pick-face" aria-hidden="true"><span class="lens-pick-word"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="m6 9 6 6 6-6"/></svg></span><select class="lens-select" aria-label="Viewing as">${names.map(([k, n]) => `<option value="${k}">${n}</option>`).join("")}</select>`;
+    $(".seg", lens).after(pick);
+    lens.classList.add("has-pick");
+    const select = $("select", pick), word = $(".lens-pick-word", pick);
+    const face = (key, roll) => {
+      word.textContent = (names.find(([k]) => k === key) || names[0])[1];
+      if (!roll) return;
+      word.classList.remove("roll"); void word.offsetWidth; word.classList.add("roll");   // restart the rise
+    };
+    let current = "recruiter", chosen = false, cycleAt = 0, timer = 0;
+    const phone = window.matchMedia("(max-width: 640px)");
+    const cycle = () => {
+      clearInterval(timer);
+      if (chosen || reduced || !phone.matches || !onScreen()) { face(current, false); return; }
+      timer = setInterval(() => { cycleAt = (cycleAt + 1) % names.length; face(names[cycleAt][0], true); }, 1700);
+    };
+    const onScreen = whileOnScreen(pick, 0, () => cycle());
+    const stop = () => { if (chosen) return; chosen = true; clearInterval(timer); face(current, false); };
+    select.addEventListener("focus", stop);
+    select.addEventListener("pointerdown", stop);
+    select.addEventListener("change", () => { stop(); pick.classList.add("picked"); apply(select.value, true); });   // a real choice: the face goes from hint to value
+    phone.addEventListener("change", cycle);
     const apply = (key, animate) => {
       if (key === "leader") key = "hiring";   // the name it had before the recruiter joined
       if (!LENSES[key]) key = "recruiter";
+      current = key;
+      select.value = key;
+      if (chosen || reduced) face(key, false);
       tabs.forEach((t) => t.setAttribute("aria-pressed", String(t.dataset.lensKey === key)));
       if (note) note.textContent = LENSES[key].note;
       try { localStorage.setItem("lens", key); } catch (e) { /* private mode */ }
@@ -2037,7 +2070,10 @@ const CONFIG = {
     tabs.forEach((t) => t.addEventListener("click", () => apply(t.dataset.lensKey, true)));
     let saved = "recruiter";
     try { saved = localStorage.getItem("lens") || "recruiter"; } catch (e) { /* private mode */ }
-    if (saved !== "recruiter") apply(saved, false);
+    face("recruiter", false);
+    if (saved !== "recruiter") { apply(saved, false); chosen = true; pick.classList.add("picked"); }   // a choice from before is a value, not a hint
+    cycleAt = Math.max(0, names.findIndex(([k]) => k === current));
+    cycle();
   });
 
   /* ---- Steps ----
