@@ -157,7 +157,8 @@ export function pageSections(rel, html) {
     let eyebrow = '', body = text;
     if (carry) {                                     // the eyebrow is the carry's last line that isn't an image
       anchor ||= carry.anchor;
-      eyebrow = carry.text.split('\n').filter((l) => l && !/^\[Image:/.test(l)).pop() || '';
+      eyebrow = (carry.text.split('\n').filter((l) => l && !/^\[Image:/.test(l)).pop() || '').replace(/^#+\s*/, '');   // a page's own title comes through as "# Title"
+      if (eyebrow === heading) eyebrow = '';
       body = `${carry.text}\n${text}`;
       carry = null;
     }
@@ -226,7 +227,7 @@ async function buildSite() {
     const card = { url: source, title: page.name, kind: page.kind, label: '', thumb: '' };
     if (page.kind === 'case') { card.label = `Case study${row && row.company ? ` · ${row.company}` : ''}`; card.thumb = (row && row.thumb) || ''; }
     else if (page.kind === 'post') { card.label = `Blog${page.date ? ` · ${shortDate(page.date)}` : ''}`; card.thumb = covers.get(slug) || (coverFiles.has(`${slug}.svg`) ? `/assets/blog/${slug}.svg` : ''); }
-    else { card.title = s.heading || page.h1 || page.name; card.label = `${page.name}${s.eyebrow ? ` · ${s.eyebrow}` : ''}`; }
+    else { card.title = s.heading || page.h1 || page.name; card.label = `${page.name}${s.eyebrow && s.eyebrow !== card.title ? ` · ${s.eyebrow}` : ''}`; }   // no label that repeats the title above it
     if (!sources.has(source)) sources.set(source, card);
     return { type: 'search_result', source, title: `${page.name}${s.heading ? `: ${s.heading}` : ''}`, content: [{ type: 'text', text: s.text }], citations: { enabled: true } };
   });

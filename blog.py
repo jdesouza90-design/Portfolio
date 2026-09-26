@@ -266,7 +266,7 @@ def head(*, title, desc, url, css, extra="", og_type="website", ld="", italic=Fa
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script>try{{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t}}catch(e){{}}</script>
+<script>try{{var d=document.documentElement;d.classList.add("js");if(/Mac|iPhone|iPad/.test(navigator.platform||""))d.classList.add("mac");var t=localStorage.getItem("theme");if(t==="dark"||t==="light")d.dataset.theme=t}}catch(e){{}}</script>
 <title>{html.escape(title)}</title>
 <meta name="description" content="{html.escape(desc)}">
 <link rel="canonical" href="{url}">
@@ -308,6 +308,7 @@ DOWN_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
 CHECK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="20 6 9 17 4 12"/></svg>'
 PILLAR_ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>'
 RSS_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg>'
+NEXT_ARROW_SVG = '<svg class="cs-next-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>'
 ARROW_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>'
 
 
@@ -319,7 +320,7 @@ def nav(current):
   <div class="wrap">
     <a class="brand" href="/" aria-label="John DeSouza, home"><span>John DeSouza</span></a>
     <button class="icon-btn nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M4 9h16"/><path d="M4 15h16"/></svg>
     </button>
     <nav class="nav-links" id="site-nav" aria-label="Primary">
       <ul>
@@ -327,6 +328,7 @@ def nav(current):
         <li><a href="/#leadership">Leadership</a></li>
         <li><a href="/#about">About</a></li>
         <li><a href="/blog.html"{mark('/blog.html')}>Blog</a></li>
+        <li class="nav-search"><button class="nav-kbd" type="button"><span>Search</span><kbd aria-hidden="true"></kbd></button></li>
         <li><a class="nav-icon" data-link="linkedin" href="#" aria-label="LinkedIn profile" title="LinkedIn">{LINKEDIN_SVG}<span>LinkedIn</span></a></li>
         <li class="nav-resume"><a class="nav-download" data-link="resume" href="#"><span>Resume</span>{DOWN_SVG}</a></li>
       </ul>
@@ -347,7 +349,7 @@ def nav(current):
 
 def contact_band(heading, lede, note, css=""):
     return f"""
-<section class="section">
+<section class="section tight">
   <div class="wrap">
     <div class="contact" data-reveal data-field="rings">
       <canvas class="field" aria-hidden="true"></canvas>
@@ -497,7 +499,7 @@ def render_post(p, nxt):
   <div class="wrap">
     <div class="post-next" data-reveal>
       <p class="eyebrow">Next</p>
-      <h2 class="t-title"><a href="/blog/{nxt["slug"]}.html">{html.escape(nxt["title"])}</a></h2>
+      <h2 class="t-title"><a href="/blog/{nxt["slug"]}.html">{html.escape(nxt["title"])}{NEXT_ARROW_SVG}</a></h2>
       <div class="actions">
         <a class="btn btn-ghost" href="/blog.html">All posts{ARROW_SVG}</a>
       </div>
@@ -753,7 +755,7 @@ def render_search(posts):
         entries.append({"t": strip_tags(h.group(1)), "d": strip_tags(p.group(1)) if p else "", "u": "/" + href,
                         "k": "Case study" + (" · " + logo.group(1) if logo else "")})
     for p in posts:
-        entries.append({"t": p["title"], "d": strip_tags(p["description"]), "u": "/blog/%s.html" % p["slug"], "k": "Post · " + PILLARS[p["pillar"]][0]})
+        entries.append({"t": p["title"], "d": strip_tags(p["description"]), "u": "/blog/%s.html" % p["slug"], "k": "Post · " + PILLARS[p["pillar"]][2]})
     return json.dumps(entries, ensure_ascii=False, separators=(",", ":")) + "\n"
 
 

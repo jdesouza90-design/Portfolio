@@ -139,6 +139,7 @@ const CONFIG = {
     const onEnd = (e) => { if (e.target === block) go(); };     // transitionend bubbles; a child's is not this one
     const onReveal = () => {
       if (!block.classList.contains("in")) return;
+      if (getComputedStyle(block).opacity === "1") { go(); return; }   // it landed before this piece asked: no transition is coming
       document.removeEventListener("reveal", onReveal);
       block.addEventListener("transitionend", onEnd);
       clearTimeout(timer);
@@ -240,15 +241,18 @@ const CONFIG = {
     if (!nav) return;
     // On the home page the bar also says where the reader is: the link for
     // the section under the top third of the viewport is marked current
-    // (a location, not a page). Nothing is marked while the hero is up.
+    // (a location, not a page). Nothing is marked while the hero is up, or
+    // from the contact block down, which no link names.
     const spots = [["work", 'a[href="/work.html"]'], ["leadership", 'a[href="/#leadership"]'], ["about", 'a[href="/#about"]']]
       .map(([id, sel]) => [document.getElementById(id), $(`.nav-links ${sel}`, nav)]);
     const spy = spots.every(([s, a]) => s && a) && !$(".nav-links a[aria-current='page']", nav) ? spots : [];
+    const end = document.getElementById("contact");
     let here = null;
     const locate = () => {
       const line = window.scrollY + window.innerHeight * 0.34;
       let now = null;
       for (const [s, a] of spy) { if (s.offsetTop <= line) now = a; }
+      if (end && end.offsetTop <= line) now = null;
       if (now === here) return;
       if (here) here.removeAttribute("aria-current");
       if (now) now.setAttribute("aria-current", "location");
@@ -278,6 +282,10 @@ const CONFIG = {
       else document.removeEventListener("touchmove", holdTouch);
     };
     toggle.addEventListener("click", () => setOpen(!nav.classList.contains("open")));
+    // The sheet is for widths under 1024px (styles.css); a tablet turned to
+    // a wider screen with it open would keep the page locked, so it closes.
+    const sheet = window.matchMedia("(max-width: 1023px)");
+    sheet.addEventListener("change", () => { if (!sheet.matches && nav.classList.contains("open")) setOpen(false); });
     nav.addEventListener("keydown", (e) => {
       if (e.key !== "Escape" || !nav.classList.contains("open")) return;
       setOpen(false);
@@ -340,14 +348,18 @@ const CONFIG = {
       });
       batch.push(el);
     };
+    // A waiting block is drawn --reveal-y below its place, and the observers
+    // see the drawn box, so every test here allows for the lift: a block
+    // counts by where it will rest, not where it waits.
+    const lift = parseFloat(cssVar("--reveal-y", "48px")) || 0;
     const io = new IntersectionObserver((entries) => {
       entries.forEach((e) => { if (e.isIntersecting) { show(e.target); io.unobserve(e.target); whole.unobserve(e.target); } });
-    }, { rootMargin: `0px 0px -${Math.round((1 - LINE) * 100)}% 0px`, threshold: 0 });
+    }, { rootMargin: `0px 0px ${Math.round(lift - window.innerHeight * (1 - LINE))}px 0px`, threshold: 0 });
     // A block the reader can already see whole rises too, wherever it sits:
     // a short one resting under the line would otherwise stay a blank.
     const whole = new IntersectionObserver((entries) => {
       entries.forEach((e) => { if (e.intersectionRatio >= 0.99) { show(e.target); io.unobserve(e.target); whole.unobserve(e.target); } });
-    }, { threshold: 0.99 });
+    }, { rootMargin: `0px 0px ${Math.round(lift)}px 0px`, threshold: 0.99 });
     revealEls.forEach((el) => { io.observe(el); whole.observe(el); });
 
     // Backstop for the observer. It measures only the elements still hidden and
@@ -366,8 +378,9 @@ const CONFIG = {
       for (const el of pending) {
         if (el.classList.contains("in")) continue;
         const r = el.getBoundingClientRect();
+        const top = r.top - lift, bottom = r.bottom - lift;   // where it will rest
         const edge = firstPaint ? vh : line;
-        if ((r.top < edge || (r.top >= 0 && r.bottom <= vh)) && r.bottom > 0) { show(el); io.unobserve(el); whole.unobserve(el); }
+        if ((top < edge || (top >= 0 && bottom <= vh)) && bottom > 0) { show(el); io.unobserve(el); whole.unobserve(el); }
         else still.push(el);
       }
       pending = still;
@@ -594,10 +607,9 @@ const CONFIG = {
     for (let i = 0; i < N; i++) strands.push({ phi: (i / N) * Math.PI * 2 + r(-.1, .1), r0: r(.55, 1), amp: r(.05, .16), lam: r(1.4, 3), p1: r(0, 6.28), p2: r(0, 6.28), sp: r(.5, 1.1), w: r(.6, 1.2), set: r(.004, .03) });
     const green = { phi: 2.1, r0: .78, amp: .09, lam: 1.9, p1: 1.2, p2: 3.1, sp: .8, w: 2.2, set: 0 };
     const axis = { phi: 0, r0: 0, amp: 0, lam: 1, p1: 0, p2: 0, sp: 1, set: 0 };
-    // the page's own ink and accent, so the strands match the type and the green line the links
-    let accent = hex("--accent", "#3B6B44");
-    const ink = tint("--ink", "#14100C");
-    onTheme(() => { accent = hex("--accent", "#3B6B44"); });
+    // the plate's ink and green: the panel stays sand in both registers, so the strands do too
+    const accent = hex("--plate-accent", "#3B6B44");
+    const ink = tint("--plate-ink-0", "#14100C");
 
     let W = 0, H = 0, dpr = 1;
     const size = () => { W = fig.clientWidth; H = fig.clientHeight; dpr = fitCanvas(c, W, H); };
@@ -1105,7 +1117,7 @@ const CONFIG = {
       }
       data.forEach((d, k) => {
         const anchor = k === 0 ? "start" : k === data.length - 1 ? "end" : "middle";
-        svgEl("text", { class: "axis", x: pts[k].x, y: H - 8, "text-anchor": anchor }, grid, short(d.label, k, narrow));
+        svgEl("text", { class: "axis", x: pts[k].x, y: H - 8, "text-anchor": anchor }, grid, W < 300 && k === 0 ? d.label.split(" ")[0] : short(d.label, k, narrow));   // under 300px "Oct ’25" meets "Nov"; the chart's label carries the year
       });
 
       // Area and line
@@ -1124,7 +1136,7 @@ const CONFIG = {
         const right = ax > W / 2;                    // anchor the text so it stays inside the frame
         const ty = narrow ? 10 + (i % 2) * 14 : 10;  // stagger rows on a phone so two notes never collide
         svgEl("line", { class: "anno-line", x1: ax, x2: ax, y1: ty + 6, y2: pts[a.at].y - 10 }, linesSvg);
-        svgEl("text", { class: "anno", x: ax + (right ? -6 : 6), y: ty + 4, "text-anchor": right ? "end" : "start" }, linesSvg, a.text);
+        svgEl("text", { class: "anno", x: ax + (right ? -6 : 6), y: ty + 4, "text-anchor": right ? "end" : "start" }, linesSvg, narrow && a.short ? a.short : a.text);
       });
 
       // Closing value, on the line at the right edge
@@ -1538,14 +1550,11 @@ const CONFIG = {
     const bestWrap = $(".arcade-score", root), best = $("[data-best]", root), status = $(".arcade-status", root);
     const list = $(".arcade-board", root), post = $(".arcade-post", root);
     const nameIn = post && $("input", post), postBtn = post && $("button", post), note = post && $(".arcade-post-note", post);
+    // The screen's sand holds in both registers, as a panel's does, so the
+    // course is drawn in the plate's inks, which hold too.
     const tok = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-    let INK = tok("--ink") || "#14100C", INK3 = tok("--ink-3") || "#6F675D", HAIR = tok("--hair-2") || "#CFC9BF";
-    let ACCENT = tok("--accent") || "#3B6B44", GREEN = tok("--accent-2") || "#6E9A5A", FLAG = tok("--danger") || "#C0392B", SAND = tok("--surface") || "#FFFFFF";
-    onTheme(() => {   // the course is drawn in the page's own inks every frame, so it follows the register
-      INK = tok("--ink") || INK; INK3 = tok("--ink-3") || INK3; HAIR = tok("--hair-2") || HAIR;
-      ACCENT = tok("--accent") || ACCENT; GREEN = tok("--accent-2") || GREEN; FLAG = tok("--danger") || FLAG; SAND = tok("--surface") || SAND;
-      frame();
-    });
+    const INK = tok("--plate-ink-0") || "#14100C", INK3 = tok("--plate-ink-2") || "#6F675D", HAIR = tok("--plate-hair-2") || "#CFC9BF";
+    const ACCENT = tok("--plate-accent") || "#3B6B44", GREEN = tok("--plate-accent-2") || "#6E9A5A", FLAG = tok("--plate-danger") || "#C0392B", SAND = tok("--plate-surface") || "#FFFFFF";
     const H = 64, GROUND = 52, TEE = 12;           // logical pixels; the ground line is GROUND
     /* The tunable part, which the dashboard sets (GAME in middleware.js has
        the same defaults and the limits). /api/scores hands the saved values
@@ -2026,8 +2035,11 @@ const CONFIG = {
       if (chosen || reduced) face(key, false);
       tabs.forEach((t) => t.setAttribute("aria-pressed", String(t.dataset.lensKey === key)));
       try { localStorage.setItem("lens", key); } catch (e) { /* private mode */ }
-      if (animate && !reduced && document.startViewTransition) document.startViewTransition(() => sort(key));
-      else sort(key);
+      if (animate && !reduced && document.startViewTransition) {
+        const root = document.documentElement;
+        root.classList.add("vt-lens");   // styles.css times this transition as a control's answer, not a page change
+        document.startViewTransition(() => sort(key)).finished.finally(() => root.classList.remove("vt-lens"));
+      } else sort(key);
     };
     tabs.forEach((t) => t.addEventListener("click", () => apply(t.dataset.lensKey, true)));
     let saved = "recruiter";
@@ -2153,6 +2165,19 @@ const CONFIG = {
     if (reduced) { render(last, false); return; }
     const btn = $(".art-ctl", fig);
     let i = -1, timer = 0, playing = true, started = false;
+    // The window keeps its tallest step's height at the current width, so the
+    // page under it never moves as the steps change (on a phone they differ
+    // by a third). Each step is drawn once, unseen, to measure it.
+    const fit = () => {
+      win.style.minHeight = "";
+      const tallest = Math.max(...steps.map((st) => { render(st, false); return win.offsetHeight; }));
+      win.style.minHeight = `${tallest}px`;
+      render(i < 0 ? last : steps[i], false);
+    };
+    fit();
+    if (document.fonts) document.fonts.ready.then(fit);
+    let fitW = window.innerWidth;
+    window.addEventListener("resize", debounce(() => { if (window.innerWidth !== fitW) { fitW = window.innerWidth; fit(); } }, 150));
     const visible = whileOnScreen(fig, 0.2, () => sync());
     const next = () => {
       i = (i + 1) % steps.length;
@@ -2176,7 +2201,8 @@ const CONFIG = {
 
   /* ---- The palette ----
      After the ⌘K menus on vercel.com and docs.stripe.com. ⌘K (Ctrl+K), or
-     the Search row the bar gets here, opens a dialog with one field: type,
+     the bar's Search row (in each page's markup; a page without it gets one
+     here), opens a dialog with one field: type,
      and the pages, sections, case studies and posts that match come up
      from /search-index.json (blog.py writes it); arrows move, Enter goes.
      The last row hands whatever was typed to the assistant, so a question
@@ -2186,12 +2212,16 @@ const CONFIG = {
     const nav = $(".nav-links ul");
     if (!nav) return;
     const mac = /Mac|iPhone|iPad/.test(navigator.platform || "");
-    const li = document.createElement("li");
-    li.className = "nav-search";
-    li.innerHTML = `<button class="nav-kbd" type="button" aria-keyshortcuts="${mac ? "Meta+K" : "Control+K"}"><span>Search</span><kbd aria-hidden="true">${mac ? "⌘K" : "Ctrl K"}</kbd></button>`;
-    const blog = $$("li", nav).find((l) => /blog\.html$/.test($("a", l)?.getAttribute("href") || ""));
-    if (blog) blog.after(li); else nav.append(li);
+    let li = $(".nav-search", nav);
+    if (!li) {
+      li = document.createElement("li");
+      li.className = "nav-search";
+      li.innerHTML = `<button class="nav-kbd" type="button"><span>Search</span><kbd aria-hidden="true"></kbd></button>`;   // the key cap's text comes from styles.css
+      const blog = $$("li", nav).find((l) => /blog\.html$/.test($("a", l)?.getAttribute("href") || ""));
+      if (blog) blog.after(li); else nav.append(li);
+    }
     const trigger = $("button", li);
+    trigger.setAttribute("aria-keyshortcuts", mac ? "Meta+K" : "Control+K");
 
     const dlg = document.createElement("dialog");
     dlg.className = "palette";
@@ -2199,11 +2229,11 @@ const CONFIG = {
     dlg.innerHTML = `
       <form class="palette-form" role="search">
         <svg class="palette-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-        <input class="palette-input" id="palette-input" type="text" autocomplete="off" spellcheck="false" placeholder="Search pages, case studies and posts, or ask a question" aria-label="Search" role="combobox" aria-expanded="true" aria-controls="palette-list" aria-autocomplete="list">
+        <input class="palette-input" id="palette-input" type="text" autocomplete="off" spellcheck="false" placeholder="Search, or ask a question" aria-label="Search" role="combobox" aria-expanded="true" aria-controls="palette-list" aria-autocomplete="list">
         <button class="palette-close" type="button" aria-label="Close search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
       </form>
       <ul class="palette-list" id="palette-list" role="listbox" aria-label="Results" tabindex="-1"></ul>
-      <p class="palette-foot t-micro" aria-hidden="true"><kbd>↑</kbd><kbd>↓</kbd> move <kbd>↵</kbd> open <kbd>esc</kbd> close</p>`;
+      <p class="palette-foot t-micro" aria-hidden="true"><span><kbd>↑</kbd><kbd>↓</kbd> move</span><span><kbd>↵</kbd> open</span><span><kbd>esc</kbd> close</span></p>`;
     document.body.append(dlg);
     const input = $("input", dlg), list = $(".palette-list", dlg);
     let index = null, loading = null, rows = [], cursor = 0, from = null;
@@ -2229,6 +2259,7 @@ const CONFIG = {
       if (!rows.length) rows.push({ kind: "none", html: `<span class="palette-title">Nothing matches</span><span class="palette-desc">Try a page name, a company or a topic.</span>` });
       cursor = 0;
       list.innerHTML = rows.map((r, i) => `<li class="palette-row ${r.kind}" role="option" id="palette-opt-${i}" aria-selected="${i === 0}">${r.html}</li>`).join("");
+      list.scrollTop = 0;   // the selected first row is in view after every keystroke
       input.setAttribute("aria-activedescendant", rows.length ? "palette-opt-0" : "");
     };
     const move = (d) => {
@@ -2448,7 +2479,8 @@ const CONFIG = {
       const li = tpl("chat-tpl-source"), a = $(".chat-source", li), img = $(".chat-source-thumb", li);
       a.href = sitePath(v.url) || "/";
       const thumb = sitePath(v.thumb);
-      if (thumb) { img.src = thumb; img.hidden = false; } else img.remove();
+      if (thumb) { img.src = thumb; img.hidden = false; }
+      else { const slot = document.createElement("span"); slot.className = "chat-source-thumb"; img.replaceWith(slot); }   // the empty slot keeps a row of cards level
       $(".chat-source-title", li).textContent = String(v.title || "");
       $(".chat-source-label", li).textContent = String(v.label || "");
       return li;

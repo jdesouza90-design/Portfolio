@@ -574,12 +574,13 @@ All six case studies are the same document, in this order:
    the accent), the project's screens on its own tinted panel, then four facts
    (role, team, timeline, launch) as a `.facts` stat strip: a small label
    above the value at heading size, cells divided by hairlines.
-2. **Results**: centred title and lede, then one `.proof` frame: the headline
+2. **My role**: hairline ledger rows (`.ledger`), heading left and paragraph
+   right, directly under the facts, so a hiring manager reads the leadership
+   story before the work.
+3. **Results**: centred title and lede, then one `.proof` frame: the headline
    stat top-left, a label top-right, and under it the evidence (chart,
    capacity gauge, A/B table, or a hairline list of what shipped where there
    are no published numbers or the number is too new to chart).
-3. **My role**: hairline ledger rows (`.ledger`), heading left and paragraph
-   right, so a hiring manager reads the leadership story before the work.
 4. **The story** (`#story`), which opens on the problem: the section intro
    is the eyebrow "The problem" and the problem's heading as the Title, and
    the first row under it carries the problem copy (a short paragraph and a
@@ -588,7 +589,9 @@ All six case studies are the same document, in this order:
    sit above the problem and mostly restated it. Then, always in this order:
    the design (a `.row.full` with one framed panel or walkthrough under
    centred copy), any supporting rows (`.row.flip`), then the quotes last (a
-   `.row.full` with an intro line saying where they came from). A full-width
+   `.row.full` with an eyebrow and an intro line saying where they came
+   from; Verifications gives its quotes their own section between Results
+   and the story, as the research that shaped it). A full-width
    row is centred and its headline takes the Title role with a Lede beneath,
    the same as a section intro; a side-by-side row keeps the Heading role.
    Each later row is one eyebrow, one heading, one short paragraph.
