@@ -2965,6 +2965,75 @@ const CONFIG = {
     }
   };
 
+  /* ---- Before and after ----
+     No-code tools' two lanes (data-flow-ba). Staged the moment the script runs,
+     played once when the figure reveals: the before lane walks its steps and
+     stalls at the queue, then rises as the after lane runs straight through.
+     Reduced motion, or a figure that settles without animating, shows both
+     lanes finished. The dot is placed from the steps' own boxes, so it follows
+     whichever layout the width gives (a row, or a column on a phone). */
+  const initBeforeAfter = () => $$("[data-flow-ba]").forEach((fig) => {
+    const [before, after] = $$(".ba-lane", fig);
+    if (!before || !after) return;
+    const steps = (lane) => $$(".ba-steps li", lane);
+    const finish = () => {
+      fig.classList.remove("is-staged");
+      fig.classList.add("is-two");
+      [before, after].forEach((lane) => {
+        const s = steps(lane);
+        s.forEach((li) => { li.classList.remove("is-waiting"); li.classList.add("is-reached"); });
+        s[s.length - 1].classList.add("is-done");
+      });
+    };
+    if (reduced) { finish(); return; }
+    fig.classList.add("is-staged");
+
+    let last = null;   // where each dot was last sent, to put it back after a resize
+    const place = (lane, i, short = false, glide = true) => {
+      const dot = $(".ba-dot", lane), s = steps(lane), L = lane.getBoundingClientRect(), r = s[i].getBoundingClientRect();
+      let x = r.left - L.left + r.width / 2, y = r.top - L.top + r.height / 2;
+      if (short && i > 0) {   // stop on the rail just before the step, instead of on it
+        const p = s[i - 1].getBoundingClientRect();
+        const dx = x - (p.left - L.left + p.width / 2), dy = y - (p.top - L.top + p.height / 2), d = Math.hypot(dx, dy) || 1;
+        const reach = Math.abs(dx) > Math.abs(dy) ? r.width / 2 : r.height / 2;
+        x -= (dx / d) * (reach + 18); y -= (dy / d) * (reach + 18);
+      }
+      if (!glide) { dot.style.transition = "none"; }
+      dot.style.setProperty("--x", `${x}px`);
+      dot.style.setProperty("--y", `${y}px`);
+      if (!glide) { void dot.offsetWidth; dot.style.transition = ""; }
+      dot.classList.add("is-on");
+      last = [lane, i, short];
+    };
+    window.addEventListener("resize", debounce(() => { if (last) place(last[0], last[1], last[2], false); }, 120));
+
+    onceInView(fig, 0.35, (animate) => {
+      if (!animate) { finish(); return; }
+      const b = steps(before), a = steps(after);
+      const at = (ms, fn) => setTimeout(fn, ms);
+      const reach = (li) => li.classList.add("is-reached");
+      // Before: brand change, ticket, a long wait outside the queue, deploy.
+      at(600,   () => { place(before, 0, false, false); reach(b[0]); });
+      at(1400,  () => place(before, 1));
+      at(2100,  () => reach(b[1]));
+      at(2800,  () => place(before, 2, true));
+      at(3500,  () => { reach(b[2]); b[2].classList.add("is-waiting"); });
+      at(6000,  () => { b[2].classList.remove("is-waiting"); place(before, 3); });
+      at(6700,  () => reach(b[3]));
+      at(7000,  () => { b[3].classList.add("is-done"); $(".ba-dot", before).classList.remove("is-on"); });
+      // After: the lanes trade places, then every step in turn, with a beat on each.
+      at(8000,  () => fig.classList.add("is-two"));
+      at(8900,  () => { place(after, 0, false, false); reach(a[0]); });
+      at(9600,  () => place(after, 1));
+      at(10300, () => reach(a[1]));
+      at(11000, () => place(after, 2));
+      at(11700, () => reach(a[2]));
+      at(12400, () => place(after, 3));
+      at(13100, () => reach(a[3]));
+      at(13400, () => { a[3].classList.add("is-done"); fig.classList.remove("is-staged"); });
+    });
+  });
+
   /* ---- Footer year ---- */
   const initYear = () => $$("[data-year]").forEach((el) => (el.textContent = new Date().getFullYear()));
 
@@ -2999,6 +3068,6 @@ const CONFIG = {
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { if (current() === "system") document.dispatchEvent(new CustomEvent("themechange")); });
   };
 
-  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initMatrix, initConfig, initFlows, initStrips, initTableWraps, initPortrait, initClock, initArcade, initCases, initLens, initSteps, initDemo, initPalette, initPostList, initChat, initYear, initTheme]
+  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initMatrix, initConfig, initFlows, initBeforeAfter, initStrips, initTableWraps, initPortrait, initClock, initArcade, initCases, initLens, initSteps, initDemo, initPalette, initPostList, initChat, initYear, initTheme]
     .forEach((init) => { try { init(); } catch (err) { console.error(`main.js: ${init.name} failed`, err); } });
 })();

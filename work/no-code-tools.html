@@ -22,7 +22,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!-- A fresh unlock from the gate: hold the page until its opener is up (initUnlock in main.js). -->
 <script>if (/[?&]unlocked(?=&|$)/.test(location.search)) document.documentElement.classList.add("unlock");</script>
-<link rel="stylesheet" href="../styles.css?v=6ba48fa2">
+<link rel="stylesheet" href="../styles.css?v=a2873074">
 <script defer src="/_vercel/insights/script.js"></script>
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
@@ -106,6 +106,28 @@
       <h2 class="t-title">Anyone on the team can configure the login</h2>
       <p class="t-lede">Implementing Auth0 meant writing code, so only an engineer could set up or change a login flow. We shipped a visual customization panel with a live preview, then a flow builder for assembling, testing and publishing a login journey.</p>
     </header>
+    <figure class="flow-ba" data-flow-ba aria-label="Before and after: who could change a login flow">
+      <div class="ba-lane ba-before">
+        <div class="ba-label"><span class="ba-name">Before</span><span class="eyebrow">Engineer required</span></div>
+        <ol class="ba-steps">
+          <li>Brand change</li>
+          <li>Ticket</li>
+          <li>Engineering queue<span class="ba-wait">Waiting on an engineer</span></li>
+          <li>Deploy</li>
+        </ol>
+        <span class="ba-dot" aria-hidden="true"></span>
+      </div>
+      <div class="ba-lane ba-after">
+        <div class="ba-label"><span class="ba-name">After</span><span class="eyebrow">No code</span></div>
+        <ol class="ba-steps">
+          <li>Anyone on the team</li>
+          <li>Configure</li>
+          <li>Test</li>
+          <li>Publish</li>
+        </ol>
+        <span class="ba-dot" aria-hidden="true"></span>
+      </div>
+    </figure>
     <div class="proof">
       <div class="proof-head">
         <div><div class="t-stat">No code</div><small>to configure, test and publish a login flow</small></div>
@@ -225,6 +247,6 @@
   </div>
 </section>
 </main>
-<script src="../main.js?v=64612b35"></script>
+<script src="../main.js?v=c169f273"></script>
 </body>
 </html>

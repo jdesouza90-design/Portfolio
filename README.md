@@ -36,7 +36,7 @@ robots.txt                      Crawl rules, and where the sitemap is
 styles.css                      Tokens (light and dark), the ten type roles, components, case-study layout,
                                 the blog, the chat, the palette
 main.js                         CONFIG links, then one function per feature: nav (and the scrollspy), scroll reveal, tabs, carousel,
-                                walkthroughs, AI strands, fields (hero dots, contact rings), chart, number flow,
+                                walkthroughs, AI strands, fields (hero dots, contact rings), chart, number flow, before and after,
                                 swipe strips, table frames, About portrait height, the Nine holes arcade, the work
                                 list's stage, the lens, steps, the agent window, the reading control, the palette,
                                 the chat panel, the theme switch
