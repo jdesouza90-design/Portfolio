@@ -53,6 +53,9 @@ bot-check.mjs                   Checks middleware.js's bot list against real use
 ai-process-art.mjs              Draws assets/ai-process.svg, the abstract on the AI card
 assets/                         Mockups, logos, walkthrough recordings exported from the deck
 og-image.png                    Social preview image used when the link is shared
+favicon.svg                     The seal (a J in a ring) on its 32-unit grid; paper J and field green ring in dark mode
+favicon.ico, apple-touch-icon.png  The seal rendered from favicon.svg: 16, 32 and 48 on a paper disc; 180 on paper
+brand/                          The seal for use off the site: color, one ink, reversed, and the 25mm stamp
 ```
 
 ## Deploying
@@ -406,6 +409,32 @@ points at the sitemap and keeps crawlers out of the two gated areas.
    Empty values hide their buttons, so nothing looks broken while they're blank.
 2. **Check the colleague names.** Team details use first names, roles and
    locations from the deck. Remove anyone who would rather not be listed.
+
+## The mark
+
+The seal is a J inside a ring. It signs each surface once: the nav, the browser
+tab, the home-screen icon and the link preview. It is drawn once, on a 32-unit
+grid with every edge on an even coordinate, so it halves cleanly to 16px. The
+ring is 2 units (1px at 16), the stem 4, and the counter is a 4 by 2 rectangle
+rather than an arc. That rectangle is what keeps the J sharp in a tab.
+
+- The nav carries it inline as `.brand-mark` (styles.css section 5). The ring
+  takes `--accent` and the J takes `currentColor`, so it follows the tokens. The
+  same `<svg>` sits in every page's nav, in `blog.py`'s nav and in the gate in
+  `middleware.js`. Change one, change all.
+- `favicon.svg` is the source. Its own `prefers-color-scheme` rule turns the J
+  paper and the ring field green (#6E9A5A) on a dark tab strip. `favicon.ico`
+  (16, 32 and 48) puts the seal on a paper disc so it holds on either strip.
+  `apple-touch-icon.png` is the seal at 128 on a 180 paper square, because iOS
+  fills transparency with black. Render both from `favicon.svg` in Chrome at 1x,
+  then run `stamp.py`.
+- `og-image.png` is the same card as before, with the seal beside the name.
+- `brand/` holds the files for use off the site, and `.vercelignore` keeps it off
+  the deployment: `seal.svg`, `seal-one-ink.svg`, `seal-reversed.svg` and
+  `seal-stamp.svg`, the 25mm stamp with "John DeSouza · design, on the record"
+  on the ring. Outline the stamp's text before it goes to a stamp maker.
+- Green appears only on the ring. Never scale a new size from the master
+  without checking it at 16px; fix the drawing on the 32 grid instead.
 
 ## Type system
 
