@@ -34,6 +34,23 @@
   --shadow-lift: 0 30px 60px -34px rgba(20, 16, 12, .30);
   --shadow-screen: 0 18px 40px -22px rgba(20, 16, 12, .45), 0 0 0 1px rgba(20, 16, 12, .06);
   --shadow-cutout: drop-shadow(0 18px 28px rgba(20, 16, 12, .18));   /* a piece of UI keyed out of its screen */
+  --contact-ground: linear-gradient(155deg, #241D17 0%, #14100C 58%, #100D0A 100%);   /* the contact block's ground and rings, inverted in the dark register */
+  --contact-rings: rgba(246, 244, 240, .07);
+  --scrim: rgba(20, 16, 12, .55);
+  --plate-ink: #4A443D;    /* text on a panel ground, which stays paper in both registers; dark enough for the ruled and tinted grounds */
+  --plate-ink-2: #5C564E;
+  --plate-ink-0: #14100C;
+  --plate-surface: #FFFFFF;
+  --plate-paper: #F6F4F0;
+  --plate-paper-2: #EFECE6;
+  --plate-hair: #E3DFD7;
+  --plate-hair-2: #CFC9BF;
+  --plate-glow: rgba(59, 107, 68, .12);
+  --plate-accent: #3B6B44;
+  --plate-accent-ink: #2B5233;   /* the green on a panel: the accent's paper value, kept in the dark register too */
+  --plate-accent-2: #6E9A5A;
+  --plate-danger: #C0392B;
+  --shadow-pill: 0 14px 34px -22px rgba(20, 16, 12, .32), 0 0 0 1px rgba(20, 16, 12, .05);
 
   /* panel ground: the warm sand every screenshot sits on. Each case study
      overrides these from its own subject matter (section 10). */
@@ -45,6 +62,13 @@
   /* faces */
   --font-display: "Crimson Pro", "Iowan Old Style", Georgia, serif;
   --font-body: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "DM Mono", ui-monospace, "SF Mono", Menlo, monospace;   /* the labels: eyebrows, figure numbers, the facts' keys */
+
+  /* Grain: a static tile of noise multiplied into every panel ground, so a
+     screenshot sits on paper rather than on a gradient. One SVG, rasterised
+     once at its own size and repeated; never a live filter over the page. */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .22 0 0 0 0 .18 0 0 0 0 .13 0 0 0 .13 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  --grain-size: 180px;
 
   /* Type scale: ten roles, and nothing on the site sets a size outside them.
      The serif speaks (display, title, heading, stat, quote); the sans does
@@ -67,7 +91,7 @@
   --lh-stat: 1;       --lh-quote: 1.3;
 
   --ls-display: -.02em; --ls-title: -.015em; --ls-heading: -.012em; --ls-subhead: -.005em;
-  --ls-lede: -.005em;   --ls-micro: .08em;   --ls-stat: -.015em;    --ls-quote: -.01em;
+  --ls-lede: -.005em;   --ls-micro: .06em;   --ls-stat: -.015em;    --ls-quote: -.01em;   /* micro is mono, which is wide already */
 
   /* measure */
   --prose: 40rem;          /* the reading column in a post: ~73 characters */
@@ -108,6 +132,64 @@
   --reveal-y: 48px;
 }
 
+/* The dark register (after cursor.com's warm near-black): the same tokens
+   in ink and the accent lifted so it still reads on the ground. The panel
+   grounds and the covers stay as they are, plates of paper the screens were
+   drawn for. The switch in the footer (main.js initTheme) stamps
+   data-theme on the root and keeps it; with nothing stamped, the reader's
+   system setting decides. Every colour is set here and nowhere else, so a
+   dark rule never sits alone inside a media query. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+  color-scheme: dark;
+  --paper: #15120D;
+  --paper-2: #1C1812;
+  --surface: #221D16;
+  --surface-2: #1C1812;
+  --ink: #F0EBE2;
+  --ink-2: #BDB4A7;
+  --ink-3: #9C9387;   /* 5.8:1 on paper-2 */
+  --hair: #2C261F;
+  --hair-2: #3F382F;
+  --accent: #7FB279;
+  --accent-ink: #A9D1A0;
+  --accent-2: #8FBE7C;
+  --glow: rgba(127, 178, 121, .16);
+  --danger: #E2705A;
+  --shadow-lift: 0 30px 60px -34px rgba(0, 0, 0, .75);
+  --shadow-screen: 0 18px 40px -22px rgba(0, 0, 0, .8), 0 0 0 1px rgba(255, 255, 255, .06);
+  --shadow-cutout: drop-shadow(0 18px 28px rgba(0, 0, 0, .45));
+  --contact-ground: linear-gradient(155deg, #F6F4F0 0%, #ECE8E1 58%, #E4DFD6 100%);
+  --contact-rings: rgba(20, 16, 12, .08);
+  --scrim: rgba(0, 0, 0, .55);
+  --shadow-pill: 0 14px 34px -22px rgba(0, 0, 0, .8), 0 0 0 1px rgba(255, 255, 255, .07);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #15120D;
+  --paper-2: #1C1812;
+  --surface: #221D16;
+  --surface-2: #1C1812;
+  --ink: #F0EBE2;
+  --ink-2: #BDB4A7;
+  --ink-3: #9C9387;   /* 5.8:1 on paper-2 */
+  --hair: #2C261F;
+  --hair-2: #3F382F;
+  --accent: #7FB279;
+  --accent-ink: #A9D1A0;
+  --accent-2: #8FBE7C;
+  --glow: rgba(127, 178, 121, .16);
+  --danger: #E2705A;
+  --shadow-lift: 0 30px 60px -34px rgba(0, 0, 0, .75);
+  --shadow-screen: 0 18px 40px -22px rgba(0, 0, 0, .8), 0 0 0 1px rgba(255, 255, 255, .06);
+  --shadow-cutout: drop-shadow(0 18px 28px rgba(0, 0, 0, .45));
+  --contact-ground: linear-gradient(155deg, #F6F4F0 0%, #ECE8E1 58%, #E4DFD6 100%);
+  --contact-rings: rgba(20, 16, 12, .08);
+  --scrim: rgba(0, 0, 0, .55);
+  --shadow-pill: 0 14px 34px -22px rgba(0, 0, 0, .8), 0 0 0 1px rgba(255, 255, 255, .07);
+}
+
 /* --------------------------------------------------------------------------
    2. Type roles
    Every piece of text on the site takes exactly one of ten roles, and a role
@@ -127,7 +209,7 @@
 /* The serif speaks: display, title, heading, stat, quote. It is never bold. */
 .t-display, .t-title, .t-heading, .t-stat, .t-quote,
 .brand, .facts dd, .avatar.glyph,
-.prose h2, .prose blockquote p, .pillar-nav a, .byline-mark
+.prose h2, .prose blockquote p, .pillar-nav a
   { font-family: var(--font-display); font-weight: 400; color: var(--ink); margin: 0; }
 .t-display
   { font-size: var(--t-display); line-height: var(--lh-display); letter-spacing: var(--ls-display); max-width: var(--m-display); text-wrap: balance; }
@@ -146,9 +228,9 @@
 .testimonial-foot cite b,
 .prose p, .prose li, .prose h3, .prose figcaption, .prose blockquote cite,
 .post-meta, .post-cta, .sources li, .pillar-count,
-.byline, .card-desc, .ticker-item, .post-search input, .view-toggle button,
-.layer-tab, .work-cta, .gate-form input, .arcade-post input,
-.btn, .chip, .nav-links ul a, .back, .crumbs, .tools span, footer,
+.card-desc, .post-search input, .view-toggle button,
+.layer-tab, .work-cta, .gate-form input, .arcade-post input, .seg-tab,
+.btn, .chip, .nav-links ul a, .nav-kbd, .back, .crumbs, .tools span, footer,
 .facts dt, table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
 .gallery figcaption, .proof-head small, .tooltip, .chart-pill, details.data,
 .dash-live, .dash-list li, .leaflet-container, .leaflet-popup-content,
@@ -161,23 +243,39 @@ thead th, .gauge .lbl, .table-wrap td[data-label]::before, .dash-kind, .dash-now
   { font-size: var(--t-lede); line-height: var(--lh-lede); letter-spacing: var(--ls-lede); font-weight: 400; color: var(--ink-2); max-width: var(--m-lede); }
 .t-body, .layer-tab, .work-cta, .gate-form input, .arcade-post input, .chat-form textarea, .chat-unlock input, .dash-settings :is(input, textarea)
   { font-size: var(--t-body); line-height: var(--lh-body); font-weight: 400; color: var(--ink-2); max-width: var(--m-body); }
-.t-small, .btn, .chip, .nav-links ul a, .back, .crumbs, .tools span, footer,
-.facts dt, table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
+.t-small, .btn, .chip, .nav-links ul a, .nav-kbd, .back, .crumbs, .tools span, footer, .seg-tab,
+table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
 .gallery figcaption, .proof-head small, .tooltip, .chart-pill, details.data,
 .dash-live, .dash-list li, .leaflet-container, .leaflet-popup-content,
 .prose figcaption, .prose blockquote cite, .post-meta, .post-cta, .sources li, .pillar-count,
-.byline, .byline-mark, .card-desc, .ticker-item, .post-search input, .view-toggle button,
+.card-desc, .post-search input, .view-toggle button,
 .chat-msg, .chat-offer-text, .chat-unlock label, .chat-unlocked, .chat-error, .dash-settings :is(label, legend)
   { font-size: var(--t-small); line-height: var(--lh-small); font-weight: 400; color: var(--ink-2); }
 .prose p, .prose li
   { font-size: var(--t-body); line-height: var(--lh-prose); font-weight: 400; color: var(--ink-2); max-width: none; }
-.t-micro, .eyebrow, thead th, .gauge .lbl, .table-wrap td[data-label]::before, .dash-kind, .dash-now
-  { font-size: var(--t-micro); line-height: var(--lh-micro); letter-spacing: var(--ls-micro); text-transform: uppercase; font-weight: 500; color: var(--ink-2); }
+/* The mono labels (after linear.app's "FIG 0.1" and warp.dev's "[ fig. 1 ]"):
+   the micro role is the one place the site speaks in a third face, so a label
+   reads as the system's annotation on the page rather than as more copy. The
+   facts' keys and a figure's number take it too. */
+.t-micro, .eyebrow, thead th, .gauge .lbl, .table-wrap td[data-label]::before, .dash-kind, .dash-now, .facts dt, .fig-no
+  { font-family: var(--font-mono); font-size: var(--t-micro); line-height: var(--lh-micro); letter-spacing: var(--ls-micro); text-transform: uppercase; font-weight: 500; color: var(--ink-2); }
 .eyebrow { display: block; }
+.t-lede, .t-body { text-wrap: pretty; }   /* no paragraph ends on a lone word */
+.facts dt, .fig-no { color: var(--ink-3); }
+/* Every captioned figure on a page is numbered in order, the way a report's
+   plates are: "fig. 03" in mono before the caption's own words. */
+body { counter-reset: fig; }
+.panel figcaption { color: var(--plate-ink); }
+.panel figcaption::before, .panel .gallery figcaption::before { color: var(--plate-ink-2); }   /* the gallery rule below would otherwise win on order */
+.gallery figcaption::before, .prose figcaption::before, .walk-note::before {
+  counter-increment: fig; content: "fig. " counter(fig, decimal-leading-zero);
+  font-family: var(--font-mono); font-size: var(--t-micro); letter-spacing: var(--ls-micro); font-weight: 500; color: var(--ink-3);
+  margin-right: .75em;
+}
 
 /* Weight: 500 is the one emphasis, for whatever names or acts. */
 strong, b, tbody th, .t-body a, .t-lede a, .prose p a, .prose li a, .post-cta,
-.btn, .chip, .chart-pill, .tooltip b, .tip-val, .nav-links ul a, .back, .crumbs, .tools span, .layer-tab, .layer-mark, .work-cta, .avatar, .testimonial-mark,
+.btn, .chip, .chart-pill, .tooltip b, .tip-val, .nav-links ul a, .nav-kbd, .back, .crumbs, .tools span, .layer-tab, .layer-mark, .work-cta, .avatar, .testimonial-mark, .seg-tab,
 .chat-msg a, .chat-unlock label, .chat-unlocked, .dash-settings :is(label, legend)
   { font-weight: 500; }
 
@@ -306,7 +404,7 @@ main, .nav { position: relative; z-index: 1; }
 .chip {
   display: inline-block; line-height: 1.25;
   background: color-mix(in srgb, var(--surface) 92%, var(--paper));
-  border: 1px solid rgba(20, 16, 12, .10); border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--ink) 10%, transparent); border-radius: 10px;
   padding: 7px 12px; white-space: nowrap;
 }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -317,20 +415,21 @@ main, .nav { position: relative; z-index: 1; }
   position: relative; overflow: hidden; margin: 0;
   border-radius: var(--radius);
   background-color: var(--panel-base);
-  background-image: var(--panel-art), var(--panel);
-  background-size: var(--panel-size), auto;
+  background-image: var(--grain), var(--panel-art), var(--panel);
+  background-size: var(--grain-size), var(--panel-size), auto;
+  background-blend-mode: multiply, normal, normal;
   display: flex; align-items: center; justify-content: center;
   gap: clamp(16px, 2.6vw, 32px); padding: var(--panel-pad);
 }
 .panel img, .case-media img { width: auto; max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 14px; box-shadow: var(--shadow-screen); }
 .panel.wide img { border-radius: 10px; }
+.row.full > .panel.wide > img { width: 100%; }   /* its width attributes then reserve the height before it loads */
 .panel.flat img { box-shadow: none; }   /* an illustration: keeps the 14px radius of every panel image, drops the screen shadow */
 .panel > .gallery { width: 100%; }
 
 /* Section intro: a centred label + title (+ lede), the way a section opens */
 .section-intro { display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: clamp(40px, 5vw, 64px); }
 .section-intro > * { margin-inline: auto; }
-.section-intro .t-title + .t-lede, .row.full .row-copy .t-title + .t-lede { margin-top: var(--sp-4); }
 
 /* Columns: icon, heading, text. A dashed rule divides the columns, with a
    solid accent segment beside each heading. Used for the facts beneath a
@@ -379,14 +478,14 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .nav {
   position: fixed; inset: 0 0 auto 0; z-index: 50; height: var(--nav-h);
   display: flex; align-items: center;
-  background: color-mix(in srgb, var(--paper) 72%, transparent);
+  background: color-mix(in srgb, var(--paper) 86%, transparent);
   -webkit-backdrop-filter: blur(18px) saturate(1.5); backdrop-filter: blur(18px) saturate(1.5);
   border-bottom: 1px solid transparent;
   transition: border-color var(--dur-hover), background var(--dur-hover);
 }
 .nav.scrolled { border-color: var(--hair); }
 .nav .wrap { display: flex; align-items: center; gap: 28px; width: 100%; }
-.brand { display: flex; align-items: center; gap: 11px; text-decoration: none; }
+.brand { display: flex; align-items: center; gap: 11px; text-decoration: none; white-space: nowrap; }
 .nav-links { margin-left: auto; }
 .nav-links ul { display: flex; gap: 28px; list-style: none; padding: 0; margin: 0; }
 .nav-links ul a { text-decoration: none; transition: color var(--dur-hover); }   /* the rows; the phone foot holds plain .btns */
@@ -395,20 +494,29 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .nav-links a.nav-icon span { display: none; }   /* the icon alone in the bar; the word alone in the phone menu */
 .nav-links a.nav-download { display: inline-flex; align-items: center; gap: 6px; padding-block: 2px; }   /* the word plus a download arrow, so it reads as a file, not a page */
 .nav-links a.nav-download svg { width: 15px; height: 15px; display: block; }
-.nav-links ul a:hover, .nav-links ul a[aria-current="page"] { color: var(--ink); }
+.nav-links ul a:hover, .nav-links ul a[aria-current] { color: var(--ink); }
+/* The current page, or on the home page the section under the reader
+   (main.js marks it location), carries a hairline in the accent. */
+@media (min-width: 1024px) {
+  .nav-links ul a[aria-current] { text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 7px; }
+}
+.nav-links a.nav-icon svg { position: relative; top: 2px; }   /* the mark's optical centre sits on the words' x-height, not the line box's */
 .nav-actions { display: flex; gap: 10px; align-items: center; }
 .nav-toggle { display: none; }
 .nav-foot { display: none; }
-@media (max-width: 760px) {
+/* The bar's row (the name, six links and the button) needs 1024px; below
+   that, tablets included, the menu sheet takes over. */
+@media (max-width: 1023px) {
   .nav .wrap { gap: 12px; position: static; }   /* the sheet measures from the bar, not from the wrap centred inside it */
   /* The phone menu, after harvey.ai: open, the bar goes solid and a sheet of
      paper fills the screen beneath it. The rows take the title role and rise
      into place one after another once the sheet is in; the two things a
      reader does from here, Contact and Resume, are buttons at the foot.
      Everything stays in the tree and transitions both ways. Opening: the
-     sheet fades in (--dur-ui), the foot follows from --dur-press, the rows
-     from --dur-hover, 60ms apart (the reveal's own stagger), each a 16px
-     rise that overshoots by a hair and settles (--ease-settle). Closing
+     sheet fades in (--dur-ui), the foot follows from --dur-press, and the
+     rows rise with the sheet, 20ms apart, each a 16px rise over --dur-hover
+     that overshoots by a hair and settles (--ease-settle), so the last is in
+     place by about 320ms. Closing
      runs in reverse order and faster: rows and foot fade
      together without moving (--dur-press), then the sheet (--dur-ui).
      visibility waits for the last fade, so a hidden sheet takes no taps or
@@ -428,20 +536,23 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
     flex-direction: column; gap: 0; padding: var(--sp-8) var(--gutter) var(--sp-7);
   }
   .nav-links li { opacity: 0; transform: translateY(16px); transition: opacity var(--dur-press) var(--ease), transform 0s var(--dur-press); }   /* closing: fade in place, then reset the rise unseen */
-  .nav.open .nav-links li { opacity: 1; transform: none; transition: opacity var(--dur-ui) var(--ease) var(--wait), transform var(--dur-ui) var(--ease-settle) var(--wait); }   /* the rise settles with a small bounce */
-  .nav-links li:nth-child(1) { --wait: calc(var(--dur-hover) + 0ms); }
-  .nav-links li:nth-child(2) { --wait: calc(var(--dur-hover) + 60ms); }
-  .nav-links li:nth-child(3) { --wait: calc(var(--dur-hover) + 120ms); }
-  .nav-links li:nth-child(4) { --wait: calc(var(--dur-hover) + 180ms); }
-  .nav-links li:nth-child(5) { --wait: calc(var(--dur-hover) + 240ms); }
+  .nav.open .nav-links li { opacity: 1; transform: none; transition: opacity var(--dur-hover) var(--ease) var(--wait), transform var(--dur-hover) var(--ease-settle) var(--wait); }   /* the rise settles with a small bounce */
+  .nav-links li:nth-child(1) { --wait: 0ms; }
+  .nav-links li:nth-child(2) { --wait: 20ms; }
+  .nav-links li:nth-child(3) { --wait: 40ms; }
+  .nav-links li:nth-child(4) { --wait: 60ms; }
+  .nav-links li:nth-child(5) { --wait: 80ms; }
+  .nav-links li:nth-child(6) { --wait: 100ms; }
+  .nav-links li:nth-child(7) { --wait: 120ms; }
   .nav-links li.nav-resume { display: none; }   /* Resume is a button at the foot here */
   /* A menu row takes the title role (the phone rules are allowed to move a
      thing between roles); ink, as every row is a place to go, not a state. */
-  .nav-links ul a, .nav-links ul a.nav-icon {
-    display: block; padding: var(--sp-4) 0;   /* a row's pitch is twice its type size */
+  .nav-links ul a, .nav-links ul a.nav-icon, .nav-links ul .nav-kbd {
+    display: block; padding: var(--sp-4) 0; text-align: left;   /* a row's pitch is twice its type size */
     font-family: var(--font-display); font-weight: 400; font-size: var(--t-title); line-height: var(--lh-title); letter-spacing: var(--ls-title); color: var(--ink);
   }
   .nav-links a.nav-icon span { display: inline; }
+  .nav-links .nav-kbd kbd { display: none; }   /* no keys on a phone */
   .nav-links a.nav-icon svg { display: none; }   /* the word alone here; the mark is for the bar */
   .nav-foot {
     position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--sp-4);
@@ -466,8 +577,10 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
   .nav-toggle path { transform-box: view-box; transform-origin: 12px 12px; transition: transform var(--dur-ui) var(--ease); }
   .nav.open .nav-toggle path:nth-child(1) { transform: rotate(45deg) translateY(3px); }
   .nav.open .nav-toggle path:nth-child(2) { transform: rotate(-45deg) translateY(-3px); }
-  .nav-actions .btn { display: none; }
+  .nav-actions { display: none; }   /* its one button is at the sheet's foot here, so the toggle sits on the gutter */
 }
+/* A narrow phone: the foot's two buttons stack rather than wrap their words */
+@media (max-width: 360px) { .nav-foot { grid-template-columns: minmax(0, 1fr); } }
 
 /* --------------------------------------------------------------------------
    6. Home
@@ -484,19 +597,20 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .hero .field {
   -webkit-mask-image: linear-gradient(to bottom, transparent 0, rgba(0, 0, 0, .4) 12%, #000 30%, #000 88%, transparent 100%);
   mask-image: linear-gradient(to bottom, transparent 0, rgba(0, 0, 0, .4) 12%, #000 30%, #000 88%, transparent 100%); }
-.hero .art-ctl { right: var(--gutter); bottom: 20px; z-index: 2; }
+.hero .art-ctl { right: max(var(--gutter), calc((100% - var(--max)) / 2 + var(--gutter))); bottom: 20px; z-index: 2; }   /* on the content column's edge, not the screen's */
 
 .hero h1 { margin-inline: auto; }
 @media (min-width: 900px) { .hero h1 { max-width: 34ch; } .hero h1 .nowrap-lg { white-space: nowrap; } }
 /* The lede sits over the color wash. Ink-2 fell to 4.1:1 where a blob passes
    under it (3.3:1 where two overlap), so the hero sets it in ink. */
-.hero .t-lede { margin-inline: auto; color: var(--ink); }
+.hero .t-lede { margin-inline: auto; color: var(--ink); text-wrap: pretty; }
 .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: clamp(28px, 3vw, 38px); }
 
 /* Sections */
 .section { padding-block: var(--section); position: relative; }
 .section.tight { padding-top: 0; }
 .section.alt { border-block: 1px solid var(--hair); background: var(--paper-2); }
+.section.alt + .section.alt { border-top: 0; }   /* back to back, they share the one rule */
 
 /* Selected work: an editorial index, each row led by the company's wordmark */
 .cases { display: flex; flex-direction: column; border-top: 1px solid var(--hair); }
@@ -508,6 +622,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 }
 .case-copy { display: flex; flex-direction: column; align-items: flex-start; }
 .case-logo { width: auto; height: 28px; margin-bottom: clamp(18px, 2.2vw, 26px); }
+.case-logo[alt="Best Egg"] { height: 24px; }   /* its heavy wordmark reads a size up at the shared height (the experience track sizes it 25 against 29) */
 .case-copy .t-body { max-width: 46ch; }
 .case-copy .chips { margin-top: var(--sp-4); }
 .case-copy .work-cta { margin-top: var(--sp-5); }
@@ -531,7 +646,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .case-no-code .case-media.emerge { --x: 14%; --y: 12%; --w: 150%; }
 .case-staking .case-media.emerge { --x: 14%; --y: 12%; --w: 140%; }
 .case-audit .case-media.emerge { --x: 10%; --y: 12%; --w: 124%; }
-.case-system .case-media.emerge { --x: 10%; --y: 12%; --w: 124%; }
+.case-system .case-media.emerge { --x: 6%; --y: 8%; --w: 230%; }   /* the sheet's top-left corner at reading size, still running off the ground */
 /* Fade: where a screen runs off the ground (.emerge, .bleed) the ground reasserts
    itself over the last stretch before each edge, so the screen dissolves into it
    instead of stopping at a hard line. The overlay is the ground itself (base, art
@@ -542,8 +657,9 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .case-media.emerge::after, .case-media.bleed::after {
   content: ""; position: absolute; inset: 0; pointer-events: none;
   background-color: var(--panel-base);
-  background-image: var(--panel-art), var(--panel);
-  background-size: var(--panel-size), auto;
+  background-image: var(--grain), var(--panel-art), var(--panel);
+  background-size: var(--grain-size), var(--panel-size), auto;
+  background-blend-mode: multiply, normal, normal;
   --edge: rgba(0, 0, 0, .7), rgba(0, 0, 0, .25) 40%, rgba(0, 0, 0, .08) 75%, transparent; /* a haze, never a full dissolve */
   -webkit-mask:
     linear-gradient(to right, var(--edge)) left / var(--fade) 100% no-repeat,
@@ -563,6 +679,32 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .work-cta { display: inline-flex; align-items: center; gap: 6px; }
 .work-cta::after { content: "→"; transition: transform var(--dur-hover) var(--ease); }
 .work-all { display: flex; justify-content: center; margin-top: clamp(32px, 4vw, 52px); }
+/* The list and the stage (after nelson.co): from 821px up main.js (initCases)
+   lifts every row's screen out into one panel that sits beside the list and
+   travels with it, showing the row under the pointer, the row with focus, or
+   else the row nearest the middle of the screen. The row it shows rises into
+   a soft pill. Below 821px each row keeps its screen. */
+@media (min-width: 821px) {
+  /* With scripts on (html.js, set in each page's head) the list takes the
+     staged layout from the first paint, screens held back, so mounting the
+     stage only fills the empty column and nothing already drawn moves. */
+  .cases.staged, .js .cases { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: clamp(28px, 4vw, 64px); align-items: start; border-top: 0; }
+  .js .cases:not(.staged) > .case-row > .case-media { display: none; }
+  .cases.staged .case-row, .js .cases > .case-row {
+    grid-column: 1; grid-template-columns: minmax(0, 1fr);
+    --pill-pad: clamp(20px, 2.4vw, 32px);
+    padding: clamp(28px, 3.4vw, 44px) var(--pill-pad); margin-inline: calc(-1 * var(--pill-pad)); border-bottom: 0; border-radius: var(--radius);
+    transition: background var(--dur-hover), box-shadow var(--dur-hover);
+  }
+  .cases.staged .case-row.is-on { background: var(--surface); box-shadow: var(--shadow-pill); }
+  .cases-stage { grid-column: 2; position: sticky; top: calc(var(--nav-h) + var(--sp-5)); aspect-ratio: 16 / 10; transition: opacity var(--dur-reveal) linear; }
+  .anim .cases.staged:not(:has(> .case-row.in)) .cases-stage { opacity: 0; }   /* it rises with the list, not before it */
+  .cases-slot { position: absolute; inset: 0; opacity: 0; transition: opacity var(--dur-ui) var(--ease); }
+  .cases-slot.is-on { opacity: 1; }
+  .cases-slot { pointer-events: none; }
+  .cases-slot.is-on { pointer-events: auto; cursor: pointer; }
+  .cases-slot .case-media { position: absolute; inset: 0; aspect-ratio: auto; }
+}
 @media (max-width: 820px) {
   .case-row { grid-template-columns: minmax(0, 1fr); gap: 24px; }
   .case-media { order: -1; aspect-ratio: 4 / 3; }
@@ -570,7 +712,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 
 /* Leadership panels */
 .card { position: relative; background: var(--surface); border: 1px solid var(--hair); border-radius: var(--radius); padding: 28px; }
-.lead-solo + .lead-solo { margin-top: clamp(80px, 10vw, 148px); }
+.lead-solo + .lead-solo { margin-top: var(--row); }
 .lead-solo { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(28px, 5vw, 72px); padding: var(--card-pad); align-items: start; }
 .lead-solo-copy .t-body { max-width: 58ch; }
 .point-icon { width: 22px; height: 22px; display: block; margin: 0 0 14px; color: var(--accent); }
@@ -579,11 +721,16 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .lead-grid { display: block; padding: 0; overflow: hidden; }
 .lead-solo-intro { padding: var(--card-pad) var(--card-pad) clamp(24px, 4vw, 40px); }
 .lead-points { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--hair); border-top: 1px solid var(--hair); }
-.lead-points > div { background: var(--surface); padding: clamp(24px, 3vw, 36px) clamp(28px, 4vw, 48px) clamp(32px, 4.5vw, 56px); }
+.lead-points > div { background: var(--surface); padding: clamp(24px, 3vw, 36px) var(--card-pad) clamp(32px, 4.5vw, 56px); }   /* the intro's inset, so the card has one left edge */
 .lead-points .point-icon { width: 44px; height: 44px; margin: 0 auto clamp(20px, 2.5vw, 32px) 0; }
 .tools { list-style: none; display: flex; flex-wrap: wrap; gap: clamp(18px, 2.4vw, 32px); padding: 0; margin: 26px 0 0; }
 .tools li { display: flex; align-items: center; gap: 10px; }
 .tools img { width: 28px; height: 28px; object-fit: contain; }
+.tools img[src*="figma"] { width: auto; }
+@media (max-width: 560px) {
+  .tools { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-4); }
+  .tools li { flex-direction: column; align-items: flex-start; gap: var(--sp-2); }
+}   /* a tall glyph: its box is its own width, so the label sits as close as the others' */
 /* AI in the process: the copy leads and an abstract on the right fills the card's
    height beside it; the tools row closes the column under a hairline. At one column
    the art moves above the copy as a short cover so the copy stays near the top. */
@@ -594,11 +741,21 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .lead-art-panel canvas { display: none; }
 .lead-art-panel.live canvas { display: block; }
 .lead-art-panel.live img { visibility: hidden; }
-.art-ctl { position: absolute; right: 12px; bottom: 12px; width: 36px; height: 36px; padding: 0; border: 1px solid var(--hair-2); border-radius: 999px; background: rgba(255, 255, 255, .55); color: var(--ink); cursor: pointer; display: grid; place-items: center; transition: border-color var(--dur-hover), color var(--dur-hover); }
+.art-ctl { position: absolute; right: 12px; bottom: 12px; width: 36px; height: 36px; padding: 0; border: 1px solid var(--hair-2); border-radius: 999px; background: color-mix(in srgb, var(--surface) 55%, transparent); color: var(--ink); cursor: pointer; display: grid; place-items: center; transition: border-color var(--dur-hover), color var(--dur-hover); }
 .art-ctl:hover { border-color: var(--accent); color: var(--accent-ink); }
+.panel .art-ctl, .lead-art-panel .art-ctl { background: color-mix(in srgb, var(--plate-surface) 55%, transparent); border-color: var(--plate-hair-2); color: var(--plate-ink-0); }   /* on a plate, which stays paper in both registers */
 .art-ctl svg { width: 14px; height: 14px; }
 .art-ctl .i-pause, .art-ctl[aria-pressed="true"] .i-play { display: block; }
 .art-ctl .i-play, .art-ctl[aria-pressed="true"] .i-pause { display: none; }
+/* Wordmarks are drawn in their brands' inks for paper; in the dark register
+   they go to one light tone so they stay legible on the ground. The tool
+   icons keep their own colours (Cursor's is a tile, Figma's is in colour),
+   all but ChatGPT's, which is a black mark. */
+:root[data-theme="dark"] :is(.case-logo, .exp-label img, .kudo-mark, .tools img[src*="openai"]) { filter: brightness(0) invert(.9); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) :is(.case-logo, .exp-label img, .kudo-mark, .tools img[src*="openai"]) { filter: brightness(0) invert(.9); } }
+/* The theme switch (main.js initTheme puts it in the footer): System, Light, Dark. */
+.theme { display: inline-flex; align-items: center; gap: var(--sp-3); }
+.theme .seg-tab { padding: 5px 11px; }
 .lead-art .tools { margin-top: var(--sp-6); padding-top: var(--sp-5); border-top: 1px solid var(--hair); }
 @media (max-width: 900px) {
   .lead-solo { grid-template-columns: minmax(0, 1fr); }
@@ -631,7 +788,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
    The caption keeps a band at the bottom (the extra padding). */
 .fig-panel { --fig-pad: clamp(20px, 2.6vw, 32px); container-type: size; display: grid; place-items: center; padding: var(--fig-pad) var(--fig-pad) calc(var(--fig-pad) + 60px); border-radius: var(--radius-sm); }
 .fig-nest { position: relative; width: min(100%, 460px); width: min(100cqw, 100cqh, 460px); aspect-ratio: 1; }
-.nest { position: absolute; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--ink) 34%, transparent); transition: border-color var(--dur-ui), box-shadow var(--dur-ui), background var(--dur-ui); }
+.nest { position: absolute; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--plate-ink-0) 34%, transparent); transition: border-color var(--dur-ui), box-shadow var(--dur-ui), background var(--dur-ui); }
 .nest[data-ring="2"] { inset: 0; transform-origin: 50% 80%; --from: .4; }
 .nest[data-ring="1"] { left: 13%; top: 26%; width: 74%; height: 74%; transform-origin: 50% 73%; --from: .54; }
 .nest[data-ring="0"] { left: 30%; top: 60%; width: 40%; height: 40%; transform-origin: 50% 50%; --from: .5; }
@@ -642,29 +799,36 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .nest[data-ring="2"] .nlbl { top: 22%; }
 .nest[data-ring="1"] .nlbl { top: 35.8%; }
 .nest[data-ring="0"] .nlbl { top: 50%; transform: translate(-50%, -50%); white-space: normal; width: 8ch; }
-.nest .t-subhead { color: var(--ink-2); transition: color var(--dur-ui); }
-.nest.hover, .nest.hover .t-subhead { border-color: var(--ink); color: var(--ink); }   /* the ring under the pointer; main.js hit-tests the circle */
+.nest .t-subhead { color: var(--plate-ink); transition: color var(--dur-ui); }   /* the figure sits on a plate, so its inks are the plate's in both registers */
+.nest.hover, .nest.hover .t-subhead { border-color: var(--plate-ink-0); color: var(--plate-ink-0); }   /* the ring under the pointer; main.js hit-tests the circle */
 .nest.on { border-color: var(--accent); box-shadow: 0 0 0 8px var(--glow);
-  background: color-mix(in srgb, var(--surface) 72%, transparent); }   /* the picked ring lifts to a lighter disc so it reads off the ground and the two it shares */
-.nest.on .t-subhead { color: var(--ink); }
+  background: color-mix(in srgb, var(--plate-surface) 72%, transparent); }   /* the picked ring lifts to a lighter disc so it reads off the ground and the two it shares */
+.nest.on .t-subhead { color: var(--plate-ink-0); }
 .fig-cap { position: absolute; left: var(--fig-pad); bottom: var(--fig-pad); display: flex; flex-direction: column; gap: 2px; }
+.fig-cap .eyebrow { color: var(--plate-ink-2); }
+.fig-cap .t-small { color: var(--plate-ink); }
+@media (max-width: 360px) {
+  .fig-panel { padding-bottom: var(--fig-pad); }
+  .fig-cap { position: static; margin-top: var(--sp-4); justify-self: start; }
+}
 /* As the card arrives, Figure A draws itself from the centre: the inner disc
    lands first, then each ring grows out of it (its transform origin is the
    inner disc's centre and its first size, --from, the disc's own), and each
-   label fades in as its ring settles. Timed off the card's reveal, like the
-   experience track; under reduced motion or without JS the figure is still. */
+   label fades in as its ring settles. It starts a quarter second into the
+   card's rise and is at rest by about 900ms, like the experience track;
+   under reduced motion or without JS the figure is still. */
 .anim .lead-fig .nest, .anim .lead-fig .nlbl { opacity: 0; }
-.anim .lead-fig.in .nest { animation: nest-grow .6s var(--ease-soft) var(--dur-reveal) both; }
-.anim .lead-fig.in .nest[data-ring="1"] { animation-delay: calc(var(--dur-reveal) + .22s); }
-.anim .lead-fig.in .nest[data-ring="2"] { animation-delay: calc(var(--dur-reveal) + .44s); }
-.anim .lead-fig.in .nlbl { animation: nest-label .4s var(--ease) calc(var(--dur-reveal) + .3s) both; }
-.anim .lead-fig.in .nest[data-ring="1"] .nlbl { animation-delay: calc(var(--dur-reveal) + .52s); }
-.anim .lead-fig.in .nest[data-ring="2"] .nlbl { animation-delay: calc(var(--dur-reveal) + .74s); }
+.anim .lead-fig.in .nest { animation: nest-grow .4s var(--ease-soft) .25s both; }
+.anim .lead-fig.in .nest[data-ring="1"] { animation-delay: .37s; }
+.anim .lead-fig.in .nest[data-ring="2"] { animation-delay: .49s; }
+.anim .lead-fig.in .nlbl { animation: nest-label .25s var(--ease) .4s both; }
+.anim .lead-fig.in .nest[data-ring="1"] .nlbl { animation-delay: .52s; }
+.anim .lead-fig.in .nest[data-ring="2"] .nlbl { animation-delay: .64s; }
 @keyframes nest-grow { from { opacity: 0; transform: scale(var(--from, .5)); } 30% { opacity: 1; } to { opacity: 1; transform: none; } }
 @keyframes nest-label { from { opacity: 0; } to { opacity: 1; } }
 /* Each tab carries its own slice of the track, and there is no gap between
    them, so the track reads as one line and still works if the strip wraps. */
-.layer-tabs { position: relative; display: flex; flex-wrap: wrap; }
+.layer-tabs { position: relative; display: flex; flex-wrap: wrap; box-shadow: inset 0 -1px var(--hair-2); }   /* the rule runs the column's width; each tab's own border draws over it */
 .layer-tab {
   appearance: none; background: none; border: 0; cursor: pointer;
   padding: 8px clamp(12px, 1.6vw, 18px) 14px; white-space: nowrap;
@@ -719,9 +883,10 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
    run of track from its own marker to the next (the last runs to the edge),
    and the roles already held draw theirs again in ink on top, so the ink
    ends at the current role. Once the list has faded in, the ink sweeps
-   along one segment after another and each marker lands as it arrives.
+   along one segment after another and each marker lands as it arrives,
+   all within a second of the list's arrival.
    Without JS or under reduced motion the track is simply drawn. */
-.exp { --exp-gap: clamp(24px, 4vw, 56px); --exp-seg: .7s; --exp-wait: var(--dur-reveal); --sx: 0; --sy: 1;
+.exp { --exp-gap: clamp(24px, 4vw, 56px); --exp-seg: .18s; --exp-wait: 250ms; --sx: 0; --sy: 1;
   list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--exp-gap);
   padding: 0; margin: var(--sp-5) 0 0; }
 .exp-head { margin-top: clamp(44px, 6vw, 72px); }
@@ -738,7 +903,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .anim .exp.in .exp-item::after { animation: exp-sweep var(--exp-seg) var(--ease-in-out) var(--exp-wait) both; }
 .anim .exp.in .exp-item:nth-child(2)::after { animation-delay: calc(var(--exp-wait) + var(--exp-seg)); }
 .anim .exp.in .exp-item:nth-child(3)::after { animation-delay: calc(var(--exp-wait) + 2 * var(--exp-seg)); }
-.anim .exp.in .exp-mark { animation: exp-land var(--dur-ui) var(--ease) var(--exp-wait) both; }
+.anim .exp.in .exp-mark { animation: exp-land var(--dur-hover) var(--ease) var(--exp-wait) both; }
 .anim .exp.in .exp-item:nth-child(2) .exp-mark { animation-delay: calc(var(--exp-wait) + var(--exp-seg)); }
 .anim .exp.in .exp-item:nth-child(3) .exp-mark { animation-delay: calc(var(--exp-wait) + 2 * var(--exp-seg)); }
 .anim .exp.in .exp-item:nth-child(4) .exp-mark { animation-delay: calc(var(--exp-wait) + 3 * var(--exp-seg)); }
@@ -751,11 +916,13 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 /* official vector lockups, sized so the wordmark text matches across the row;
    the Charm lockup is the widest, so it gives way to its column before the
    others do rather than run under the next one */
-.exp-label img[alt="Best Egg"] { height: 23px; }
+.exp-label img[alt="Best Egg"] { height: 25px; margin-bottom: -3px; }   /* its g descends, so the baseline lands with the others' */
 .exp-label img[alt="Chainlink Labs"] { height: 29px; }
 .exp-label img[alt="Auth0"] { height: 29px; }
 .exp-label img[alt="Charm Solutions"] { width: min(226px, 100%); height: auto; }
 .exp-item .t-body { margin-top: var(--sp-2); }
+@media (min-width: 701px) { .exp-item .t-subhead { min-height: calc(2em * var(--lh-subhead)); } }
+@media (min-width: 701px) and (max-width: 900px) { .exp-item .t-subhead { min-height: calc(3em * var(--lh-subhead)); } }   /* a title that wraps doesn't push its column's lines below the others' */
 .exp-dates { margin-top: auto; padding-top: var(--sp-5); }
 .exp-dates time { white-space: nowrap; }
 /* Senior-leader and peer quotes under the experience track: the case-study
@@ -785,13 +952,12 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
   --ink-3: color-mix(in srgb, var(--paper) 56%, transparent);
   --hair-2: color-mix(in srgb, var(--paper) 36%, transparent);
   --contact-origin: 100% 50%;
-  --contact-ground: linear-gradient(155deg, #241D17 0%, #14100C 58%, #100D0A 100%);
   position: relative; overflow: hidden; color: var(--paper);
   /* the panel ground in its dark register: a lifted corner fading to ink,
      and rings in paper rippling out from behind the buttons */
   background-color: var(--ink);
   background-image:
-    repeating-radial-gradient(circle at var(--contact-origin), rgba(246,244,240,.07) 0 1px, transparent 1px 42px),
+    repeating-radial-gradient(circle at var(--contact-origin), var(--contact-rings) 0 1px, transparent 1px 42px),
     var(--contact-ground);
   border-radius: var(--radius); padding: clamp(44px, 7vw, 88px);
   display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 36px; align-items: center;
@@ -799,7 +965,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .contact .t-title { color: var(--paper); max-width: 20ch; }
 .contact .t-lede { max-width: 50ch; }
 .contact-actions { display: flex; flex-direction: column; gap: 10px; align-items: stretch; }
-.contact-actions .btn { justify-content: center; }
+.contact-actions .btn { justify-content: center; text-align: center; }
 .contact .btn-primary { background: var(--paper); color: var(--ink); }
 .contact .btn-primary:hover { background: var(--surface); color: var(--ink); box-shadow: none; }
 .contact .btn-ghost { border-color: var(--hair-2); color: var(--paper); background: transparent; }
@@ -809,7 +975,10 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .contact.live { background-image: var(--contact-ground); }
 .contact > :not(.field) { position: relative; z-index: 1; }
 @media (max-width: 720px) { .contact { --contact-origin: 100% 100%; grid-template-columns: 1fr; } }   /* stacked, the buttons sit at the bottom */
-footer { padding: 30px 0 44px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+footer { padding: var(--sp-7) 0 calc(var(--chat-edge) + 64px); display: flex; justify-content: flex-start; align-items: center; gap: var(--sp-4) var(--sp-5); flex-wrap: wrap; }   /* the bottom clears the chat launcher, which floats over the page's last corner */
+footer .theme { margin-left: auto; }
+main > .section:last-child { padding-bottom: 0; }   /* the footer inside it ends the page */
+@media (max-width: 640px) { footer { padding-bottom: var(--sp-7); } }   /* the launcher sits in the bar here */
 footer a { color: var(--ink-2); text-decoration: none; }
 footer a:hover { color: var(--ink); }
 
@@ -843,14 +1012,15 @@ footer a:hover { color: var(--ink); }
 
 /* --------------------------------------------------------------------------
    7. Case study
-   One skeleton for every project: hero → facts → results → story rows →
-   how I led → (what I'd do differently) → next. Each part uses only the
-   roles above, so all five read as chapters of the same document.
+   One skeleton for every project: hero → facts → my role → results → story
+   rows → (what I'd do differently) → next. Each part uses only the roles
+   above, so every case study reads as a chapter of the same document.
    -------------------------------------------------------------------------- */
 .cs-hero { padding-top: calc(var(--nav-h) + clamp(40px, 7vw, 88px)); }
 .cs-hero.solo { padding-bottom: clamp(48px, 7vw, 96px); }
 .cs-hero-copy { display: flex; flex-direction: column; align-items: center; text-align: center; margin-inline: auto; }
 .cs-hero-copy h1 { max-width: 22ch; }
+.cs-hero.solo .cs-hero-copy > .t-display:first-child { margin-top: calc(var(--t-micro) * var(--lh-micro) + var(--stack-label)); }   /* no eyebrow above: its room is kept, so the title lands where the blog's does */
 
 /* Breadcrumb: where the page sits, Home / Work / this study. The links run
    in ink-2 and darken to the accent on hover; the current page is plain ink
@@ -887,13 +1057,13 @@ footer a:hover { color: var(--ink); }
    heading size, cells divided by hairlines, after the Mercury stat band. */
 .facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: clamp(28px, 4vw, 48px) 0 0; padding: 0; border-top: 1px solid var(--hair); border-left: 1px solid var(--hair); }
 .facts > div { min-width: 0; padding: clamp(22px, 3vw, 32px) clamp(20px, 3vw, 36px); border-right: 1px solid var(--hair); border-bottom: 1px solid var(--hair); }
-.facts dd { margin-top: clamp(20px, 3vw, 40px); }
-@media (max-width: 820px) { .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.facts dd { margin-top: var(--sp-3); }
+@media (max-width: 1100px) { .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }   /* four columns leave a value 170px at 1024 */
 @media (max-width: 480px) { .facts { grid-template-columns: 1fr; } }
 
 /* Ledger: My role as hairline rows, heading left and paragraph right */
 .ledger { border-top: 1px solid var(--hair); }
-.ledger-row { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(20px, 4vw, 64px); padding: clamp(24px, 3.5vw, 40px) 0; border-bottom: 1px solid var(--hair); align-items: start; }
+.ledger-row { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(20px, 4vw, 64px); padding: clamp(24px, 3.5vw, 40px) 0; border-bottom: 1px solid var(--hair); align-items: baseline; }
 .ledger-row .t-heading { max-width: 14ch; }
 .ledger-row .t-body { margin-top: 0; max-width: 62ch; }   /* beside the heading, not under it */
 
@@ -910,6 +1080,7 @@ footer a:hover { color: var(--ink); }
 
 /* Sections and rows */
 .cs-section { padding-top: var(--section); scroll-margin-top: calc(var(--nav-h) + 24px); }
+.section[id] { scroll-margin-top: calc(var(--nav-h) - var(--section) + var(--sp-5)); }   /* a jump lands with the section's eyebrow clear of the bar, whatever its padding */
 .cs-section .row + .row { margin-top: var(--row); }
 
 /* A row: copy beside a visual panel, the panel a fixed height so every row in
@@ -950,7 +1121,7 @@ footer a:hover { color: var(--ink); }
 /* Tensions: the three forces in a problem, a label and a line each */
 .tensions { list-style: none; margin: var(--sp-6) 0 0; padding: 0; border-top: 1px solid var(--hair); width: 100%; }
 .tensions li { padding: var(--sp-4) 0; border-bottom: 1px solid var(--hair); display: grid; grid-template-columns: minmax(0, 7.5rem) minmax(0, 1fr); gap: var(--sp-4); align-items: baseline; }
-@media (max-width: 560px) { .tensions li { grid-template-columns: 1fr; gap: 4px; } }
+@media (max-width: 560px) { .tensions li, .proof .tensions li { grid-template-columns: minmax(0, 1fr); gap: 4px; } }
 /* .stack: heading over text in one column, for items whose heading is a phrase rather than a word */
 .tensions.stack li { grid-template-columns: minmax(0, 1fr); gap: 0; padding: var(--sp-5) 0; }
 
@@ -961,6 +1132,7 @@ footer a:hover { color: var(--ink); }
    person underneath. Slides share a grid cell so the block is as tall as the
    longest quote and nothing below it jumps as they cross-fade. */
 .testimonials { width: 100%; margin-top: var(--sp-6); }
+.row.full > .testimonials { margin-top: 0; }   /* the row's own gap is the space */
 /* Feedback sits on the same white card as the AI block, so a quote reads as a
    thing someone handed over rather than more page. */
 .testimonials, .kudos { background: var(--surface); border: 1px solid var(--hair); border-radius: var(--radius); padding: var(--panel-pad); }
@@ -987,6 +1159,14 @@ footer a:hover { color: var(--ink); }
 .testimonial-controls .ctl:hover { border-color: var(--accent); color: var(--accent-ink); }
 .testimonial-controls .ctl svg { width: 16px; height: 16px; }
 .testimonial-controls .pause { margin-left: var(--sp-2); }
+.testimonial-controls:has(> .pause)::before { content: ""; flex: none; width: 40px; margin-right: var(--sp-2); }   /* the pause's twin, empty, so the arrows and dots sit on the quote's axis */
+.testimonial-controls .ctl { flex: none; }   /* round at any width */
+@media (max-width: 560px) {   /* flush left here; the row tightens so it fits from 375px, and below that the pause wraps under it */
+  .testimonial-controls:has(> .pause)::before { content: none; }
+  .testimonial-controls { flex-wrap: wrap; gap: var(--sp-3) var(--sp-2); }
+  .testimonial-controls .dots { margin-inline: 0; }
+  .testimonial-controls .pause { margin-left: var(--sp-1); }
+}
 .testimonial-controls .pause .i-pause, .testimonial-controls .pause[aria-pressed="true"] .i-play { display: block; }
 .testimonial-controls .pause .i-play, .testimonial-controls .pause[aria-pressed="true"] .i-pause { display: none; }
 /* Rotation keeps running for reduced-motion users too (the CSS above already drops the
@@ -1010,27 +1190,28 @@ footer a:hover { color: var(--ink); }
 .shot { position: relative; margin: var(--sp-5) 0 0; aspect-ratio: 1.7; border-radius: 12px; overflow: hidden; border: 1px solid var(--hair);
   background-color: var(--panel-base); background-image: var(--panel); }
 /* The screen sits in from the top-left and runs off the right and bottom, so the frame breaks it. No shadow: the hairline is the edge. */
-.shot-frame { position: absolute; left: 8%; top: 10%; width: 100%; height: 100%; overflow: hidden; border-radius: 10px 0 0 0; background: var(--surface); border: 1px solid var(--hair); border-right: 0; border-bottom: 0; }
+.shot-frame { position: absolute; left: 8%; top: 10%; width: 100%; height: 100%; overflow: hidden; border-radius: 10px 0 0 0; background: var(--plate-surface); border: 1px solid var(--plate-hair); border-right: 0; border-bottom: 0; }   /* a screen on the plate: the plate's inks in both registers */
 .shot-frame img { display: block; width: 100%; height: auto; max-width: none; }
 
 /* Gallery: several screens on one ground */
 .gallery { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
 .gallery figure { margin: 0; position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; min-width: 0; }
 .panel .gallery img { max-height: 720px; } /* outranks .row .panel img */
-.gallery figcaption { margin-top: var(--sp-4); text-align: center; }
+.gallery figcaption { margin-top: auto; padding-top: var(--sp-4); text-align: center; }   /* pushed to the figure's foot, so a row of captions shares one line */
 
 /* Walkthrough player: poster first, frames on demand */
 .walk { position: relative; border-radius: 16px; overflow: hidden; border: 1px solid var(--hair); background: var(--ink); max-width: 932px; margin-inline: auto; width: 100%; }
 .walk img { width: 100%; height: auto; display: block; }
 /* A scrim marks the poster as a video still, so the control reads as "play" */
 .walk::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 1; background: linear-gradient(180deg, rgba(20, 16, 12, .12), rgba(20, 16, 12, .34)); transition: opacity var(--dur-ui) var(--ease); }
-.walk .play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 2; display: inline-flex; align-items: center; gap: 9px; padding: 12px 20px 12px 17px; border: 0; border-radius: 999px; white-space: nowrap; background: rgba(255, 255, 255, .97); color: var(--ink); box-shadow: 0 10px 34px rgba(20, 16, 12, .34); transition: transform var(--dur-press) var(--ease), background var(--dur-hover), box-shadow var(--dur-hover), opacity var(--dur-ui) var(--ease); }
-.walk .play:hover { background: var(--surface); box-shadow: 0 14px 40px rgba(20, 16, 12, .42); }
+.walk .play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 2; display: inline-flex; align-items: center; gap: 9px; padding: 12px 20px 12px 17px; border: 0; border-radius: 999px; white-space: nowrap; background: var(--plate-surface); color: var(--plate-ink-0); box-shadow: 0 10px 34px rgba(20, 16, 12, .34); transition: transform var(--dur-press) var(--ease), background var(--dur-hover), box-shadow var(--dur-hover), opacity var(--dur-ui) var(--ease); }
+.walk .play:hover { background: var(--plate-surface); box-shadow: 0 14px 40px rgba(20, 16, 12, .42); }
 .walk .play:focus-visible { outline-color: var(--surface); }
 .walk.loading .play { cursor: progress; }
 .walk.loading .play svg { animation: walk-spin .7s linear infinite; transform-origin: 50% 50%; }
 @keyframes walk-spin { to { transform: rotate(360deg); } }
 .walk .play svg { width: 13px; height: 13px; flex: none; }
+.walk .walk-stop { z-index: 3; }   /* the pause while the recording plays (main.js initWalkthroughs) */
 .walk.playing::after, .walk.playing .play { opacity: 0; }
 .walk.playing .play { visibility: hidden; transition: opacity var(--dur-ui) var(--ease), visibility 0s var(--dur-ui); }
 .walk-note { max-width: 932px; margin: var(--sp-3) auto 0; text-align: center; }
@@ -1045,6 +1226,8 @@ footer a:hover { color: var(--ink); }
 .proof .table-wrap { border: 0; border-top: 1px solid var(--hair); border-radius: 0; background: transparent; }
 .proof .tensions { margin-top: 0; }
 .proof .tensions li { grid-template-columns: minmax(0, 11rem) minmax(0, 1fr); }
+.proof .table-wrap ~ .tensions li { padding-inline: 16px; }   /* the table's cell inset, so the labels line up with its rows */
+@media (max-width: 560px) { .proof .tensions li { grid-template-columns: minmax(0, 1fr); gap: 4px; } }   /* after the rule above, which it has to outlast */
 /* Chart: a line over a soft area, drawn by main.js in the pixels of its box.
    The grid sits under a clipped layer that main.js sweeps open; the pill
    holds the closing value at the right edge; a marker, a dot and a card
@@ -1058,7 +1241,7 @@ footer a:hover { color: var(--ink); }
 .chart .anno { font-size: 12px; fill: var(--ink-2); }
 .chart .anno-line { stroke: var(--hair-2); stroke-dasharray: 3 3; }
 .chart-pill { position: absolute; right: 0; z-index: 3; transform: translateY(-50%); padding: 3px 9px 4px; border-radius: 28px; border: 2px solid var(--surface); background: var(--accent); white-space: nowrap; pointer-events: none; line-height: 1.2; }
-.chart-marker { position: absolute; z-index: 1; width: 0; border-left: 1.5px solid rgba(20, 16, 12, .09); transform: translateX(-50%); opacity: 0; transition: opacity var(--dur-hover); pointer-events: none; }
+.chart-marker { position: absolute; z-index: 1; width: 0; border-left: 1.5px solid color-mix(in srgb, var(--ink) 9%, transparent); transform: translateX(-50%); opacity: 0; transition: opacity var(--dur-hover); pointer-events: none; }
 .chart-node { position: absolute; z-index: 2; width: 13px; height: 13px; border-radius: 50%; border: 2px solid var(--surface); background: var(--accent); box-shadow: 0 1px 2px rgba(20, 16, 12, .18); transform: translate(-50%, -50%); opacity: 0; transition: opacity var(--dur-hover); pointer-events: none; }
 .chart-marker.show, .chart-node.show { opacity: 1; }
 .chart-hit { position: absolute; z-index: 5; border-radius: 8px; }
@@ -1087,7 +1270,7 @@ footer a:hover { color: var(--ink); }
    theme. */
 .config { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(24px, 3vw, 44px); }
 .config-side { display: grid; gap: var(--sp-4); align-content: start; min-width: 0; }
-.specimen { display: grid; place-items: center; min-height: 150px; padding: 24px; border-radius: var(--radius-sm); border: 1px solid var(--hair); background: var(--paper); transition: background var(--dur-ui) var(--ease), border-color var(--dur-ui) var(--ease); }
+.specimen { display: grid; place-items: center; min-height: 150px; padding: 24px; border-radius: var(--radius-sm); border: 1px solid var(--plate-hair); background: var(--plate-paper); transition: background var(--dur-ui) var(--ease), border-color var(--dur-ui) var(--ease); }
 .specimen.navy { background: #0B1F3A; border-color: #0B1F3A; }
 .spec { display: inline-flex; align-items: center; justify-content: center; gap: .5em; border: 1.5px solid transparent; border-radius: 8px; font-family: var(--font-body); font-weight: 500; line-height: 1; cursor: default; pointer-events: none; transition: background var(--dur-hover), color var(--dur-hover), border-color var(--dur-hover), padding var(--dur-hover), font-size var(--dur-hover); }
 .spec svg { width: 1.05em; height: 1.05em; flex: none; }
@@ -1098,13 +1281,13 @@ footer a:hover { color: var(--ink); }
 .spec.icon-only { padding-inline: 0; aspect-ratio: 1; }
 .spec.icon-only.fixed { min-width: 0; }
 .spec.st-link { text-decoration: underline; text-underline-offset: .18em; }
-.spec.focused { box-shadow: 0 0 0 2px var(--specimen-bg, var(--paper)), 0 0 0 4px currentColor; }
+.spec.focused { box-shadow: 0 0 0 2px var(--specimen-bg, var(--plate-paper)), 0 0 0 4px currentColor; }
 .config-form { display: grid; gap: var(--sp-4); }
 .config-group { border: 0; margin: 0; padding: 0; min-width: 0; }
 .config-group legend { padding: 0; margin-bottom: 8px; }
 .config-group .chips { gap: 6px; }
 .config .chip { position: relative; padding: 6px 11px; cursor: pointer; user-select: none; transition: background var(--dur-hover) var(--ease), border-color var(--dur-hover) var(--ease), color var(--dur-hover) var(--ease); }
-.config .chip:hover { border-color: rgba(20, 16, 12, .28); }
+.config .chip:hover { border-color: color-mix(in srgb, var(--ink) 28%, transparent); }
 .config .chip:has(:checked) { background: var(--ink); border-color: var(--ink); color: var(--surface); }
 .config .chip:has(:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
 .config-sum { border-top: 1px solid var(--hair); padding-top: var(--sp-3); }
@@ -1114,6 +1297,7 @@ details.data { margin-top: 14px; }
 details.data summary { cursor: pointer; }
 details.data table { min-width: 0; margin-top: 10px; }
 details.data th, details.data td { white-space: normal; padding-inline: 10px; }   /* wraps rather than clips at 320px */
+@media (max-width: 400px) { main table { width: 100%; table-layout: fixed; } main table :is(th, td) { white-space: normal; overflow-wrap: anywhere; } }   /* the columns share the width and wrap, so no table widens the page */
 /* Gauge: a half dial for capacity. The ring is the pool, filled left to right
    along a 408-unit arc over 2.4s as the block reveals (the in-out: it starts
    and ends on screen); a white slot with a green bar
@@ -1152,7 +1336,158 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
   .cs-next-title .cs-prev-link:hover .cs-next-arrow { transform: translateX(-6px); }
 }
 .cs-next .actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: clamp(28px, 3vw, 40px); }
-.cs-next footer { width: 100%; justify-content: center; padding-bottom: 0; margin-top: clamp(40px, 5vw, 64px); }
+.cs-next footer { width: 100%; justify-content: center; align-items: center; padding-bottom: 0; margin-top: clamp(40px, 5vw, 64px); }
+.cs-next footer .theme { margin: 0; }
+
+/* Steps (after diabrowser.com): a decisions block marked data-steps, whose
+   columns each carry a shot, becomes from 761px up a numbered list beside one
+   panel that sticks and shows the step under the reader. main.js (initSteps)
+   moves the shots into the panel, numbers the heads and marks the current
+   step; the others fall back to ink-3. Below 761px the columns stack with
+   their own shots, as they always did. */
+@media (min-width: 761px) {
+  .steps.on .cols { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); grid-template-rows: none; column-gap: clamp(28px, 4vw, 64px); row-gap: 0; align-items: start; }
+  .steps.on .col { grid-column: 1; grid-row: auto; display: flex; flex-direction: column; justify-content: center; min-height: 36vh; padding: var(--sp-6) 0 var(--sp-6) var(--sp-5); border-left: 1px solid var(--hair); transition: border-color var(--dur-ui); }   /* each step centred in its stretch of scroll, level with the panel */
+  .steps.on .col:first-child { padding-top: 0; }
+  .steps.on .col .t-subhead::before { display: none; }
+  .steps.on .col[aria-current="step"] { border-left-color: var(--accent); }
+  .anim .steps.on .cols > .col.col { transition: border-color var(--dur-ui); transition-delay: 0s; }   /* outranks the column entrance (section 9), which a vertical list of steps doesn't use */
+  .steps.on .col :is(.t-subhead, .t-body, .col-icon) { transition: color var(--dur-ui); }
+  .steps.on .col:not([aria-current="step"]) :is(.t-subhead, .t-body, .col-icon) { color: var(--ink-3); }
+  .steps.on .col .shot { display: none; }
+  .steps-stage { grid-column: 2; position: sticky; top: calc(var(--nav-h) + var(--sp-5)); aspect-ratio: 1.7; }
+  .steps-stage .shot { position: absolute; inset: 0; margin: 0; opacity: 0; transition: opacity var(--dur-ui) var(--ease); }
+  .steps-stage .shot.is-on { opacity: 1; }
+}
+.step-no { min-width: 2.2ch; }
+
+/* Segmented control: a row of options in one pill, the chosen one in ink.
+   The lens above the work list and the reading control on a case study
+   both use it. */
+.seg { display: inline-flex; max-width: 100%; padding: 3px; border: 1px solid var(--hair-2); border-radius: 999px; background: var(--surface); overflow-x: auto; scrollbar-width: none; }
+.seg-tab { border: 0; background: none; color: var(--ink-2); padding: 7px 14px; border-radius: 999px; cursor: pointer; white-space: nowrap; transition: color var(--dur-hover), background var(--dur-hover); }
+.seg-tab:hover { color: var(--ink); }
+.seg-tab[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+/* The lens (after the audience prompts on axoworks.com): the control above
+   the work list re-sorts the rows for the reader's role. main.js (initLens) keeps the choice for the next visit
+   and, where the browser can, moves the rows in a view transition. */
+.lens { display: flex; flex-direction: column; align-items: center; gap: var(--sp-3); margin-bottom: clamp(24px, 3vw, 36px); }   /* the label over the tabs, both on the axis of the centred heading above */
+/* The phone's dropdown: a pill face showing the role (cycling until the
+   reader picks) with a native <select> laid over it, so the tap opens the
+   phone's own picker and a screen reader meets a plain select. */
+.lens-pick { display: none; position: relative; min-width: 12.5rem; }
+.lens-pick-face { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); width: 100%; padding: 9px 14px 9px 18px; border: 1px solid var(--hair-2); border-radius: 999px; background: var(--surface); color: var(--ink); overflow: hidden; }
+.lens-pick-word { display: block; font-family: var(--font-body); font-size: var(--t-small); line-height: var(--lh-small); font-weight: 500; white-space: nowrap; }
+.lens-pick-word.roll { animation: lens-roll .42s var(--ease) both; }
+.lens-pick:not(.picked) .lens-pick-word { color: var(--ink-3); font-weight: 400; }   /* a hint of the options, set like a placeholder; it filters nothing */
+@keyframes lens-roll { from { opacity: 0; transform: translateY(70%); } to { opacity: 1; transform: none; } }
+.lens-pick-face svg { width: 16px; height: 16px; flex: none; color: var(--ink-2); }
+.lens-select { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; font-size: 16px; }   /* 16px: iOS doesn't zoom the page on tap */
+.lens-select:focus-visible + .lens-pick-face, .lens-pick:has(.lens-select:focus-visible) .lens-pick-face { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .lens-pick-word.roll { animation: none; } }
+@media (max-width: 640px) {
+  .lens { align-items: flex-start; }
+  .lens.has-pick { flex-direction: column; align-items: stretch; gap: var(--sp-3); }   /* the label centred over a full-width dropdown */
+  .lens.has-pick .lens-label { text-align: center; }
+  .lens.has-pick .seg { display: none; }   /* the dropdown stands in for the tabs */
+  .lens-pick { display: flex; width: 100%; }
+}
+
+/* The agent window (after granola.ai and replicate.com): the audit case
+   study's hero re-enacts the agent's run in live HTML, from a script the
+   page carries as JSON (data-demo-script) that main.js (initDemo) plays and
+   loops: a title bar with the run's status, a log the lines arrive in, and
+   one figure that counts. It pauses off screen and behind its own button;
+   under reduced motion it stands at the run's last step. */
+/* The window is a screen on the panel, so it takes the plate's inks and
+   stays paper in both registers, as the screenshots do. main.js holds it
+   at its tallest step's height for the current width. */
+.hero-panel.demo { flex-direction: column; align-items: stretch; padding: clamp(20px, 3.5vw, 40px); }
+@media (max-width: 1100px) { .hero-panel.demo { padding-bottom: 60px; } }   /* where the window fills the panel, its pause sits under it, not on its corner */
+.agent-win {
+  position: relative; width: 100%; max-width: 880px; margin-inline: auto; min-height: clamp(240px, 26vw, 330px);
+  display: grid; grid-template-rows: auto 1fr; overflow: hidden;
+  background: var(--plate-surface); border: 1px solid var(--plate-hair); border-radius: 12px; box-shadow: var(--shadow-screen);
+  font-family: var(--font-mono); font-size: var(--t-small); line-height: 1.5; color: var(--plate-ink);
+}
+.agent-bar { display: flex; align-items: center; gap: var(--sp-3); padding: 10px 14px; border-bottom: 1px solid var(--plate-hair); background: var(--plate-paper); }
+.agent-dots { display: inline-flex; gap: 6px; }
+.agent-dots i { width: 10px; height: 10px; border-radius: 50%; background: var(--plate-hair-2); }
+.agent-title, .agent-status { font-size: var(--t-micro); letter-spacing: var(--ls-micro); text-transform: uppercase; }
+.agent-title { color: var(--plate-ink-2); }
+.agent-status { margin-left: auto; display: inline-flex; align-items: center; gap: 8px; color: var(--plate-ink-0); text-align: right; }
+.agent-status::before { content: ""; flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--plate-accent); }
+.agent-win.busy .agent-status::before { animation: agent-pulse 1s ease-in-out infinite; }
+@keyframes agent-pulse { 50% { opacity: .25; } }
+.agent-body { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--sp-5); padding: var(--sp-5); align-items: end; }
+.agent-log { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; align-content: start; align-self: start; }
+.agent-log li { opacity: 0; transform: translateY(6px); animation: agent-line .35s var(--ease) both; animation-delay: calc(var(--i, 0) * 140ms); }
+.agent-log li::before { content: "› "; color: var(--plate-ink-2); }
+@keyframes agent-line { to { opacity: 1; transform: none; } }
+.agent-fig { text-align: right; }
+.agent-fig b { display: block; font-family: var(--font-display); font-weight: 400; font-size: var(--t-stat); line-height: var(--lh-stat); letter-spacing: var(--ls-stat); color: var(--plate-accent-ink); font-variant-numeric: lining-nums tabular-nums; }
+.agent-fig span { display: block; margin-top: 6px; font-size: var(--t-micro); letter-spacing: var(--ls-micro); text-transform: uppercase; color: var(--plate-ink-2); }
+@media (max-width: 640px) {
+  .agent-body { grid-template-columns: minmax(0, 1fr); align-items: start; }
+  .agent-fig { text-align: left; }
+  .agent-title { display: none; }   /* the status alone fits the bar */
+}
+@media (prefers-reduced-motion: reduce) {
+  .agent-log li { animation: none; opacity: 1; transform: none; }
+  .agent-win.busy .agent-status::before { animation: none; }
+}
+
+/* The brief (after wattenberger.com's prompt anatomy): the agent's
+   instructions, one clause a line, each carrying the question it answers as
+   a small mono label above it. Two tints alternate so the clauses read
+   apart; the label is real text, so the meaning never rests on the tint.
+   Each clause here runs a full sentence, not a short phrase, so the block
+   sits as its own row rather than flowing inline: an absolutely positioned
+   label inside a `display: inline` span that wraps across several lines is
+   placed against the union of all its line boxes, not the line it is
+   actually on, and drifts off whichever edge that union reaches. */
+.brief-sheet { width: 100%; max-width: 680px; margin-inline: auto; padding: clamp(24px, 3.5vw, 40px); background: var(--plate-surface); color: var(--plate-ink); border: 1px solid var(--plate-hair); border-radius: 12px; box-shadow: var(--shadow-screen); }   /* a clause runs about 60 characters, the site's measure */
+.brief-sheet :is(.eyebrow, .t-small) { color: var(--plate-ink-2); }
+.brief-text { margin: var(--sp-5) 0 0; display: grid; gap: var(--sp-5); max-width: none; }
+.brief-seg { position: relative; padding: var(--sp-4); border-radius: 10px; background: var(--seg, var(--plate-paper-2)); font-family: var(--font-display); font-size: var(--t-subhead); line-height: var(--lh-subhead); color: var(--plate-ink-0); text-wrap: pretty; }
+.brief-seg:nth-child(even) { --seg: var(--plate-glow); }
+.brief-label { display: block; margin-bottom: var(--sp-2); font-family: var(--font-mono); font-size: var(--t-micro); line-height: 1; letter-spacing: var(--ls-micro); text-transform: uppercase; font-weight: 500; color: var(--plate-ink-2); }
+.panel.brief { flex-direction: column; align-items: stretch; }
+@media (max-width: 560px) {   /* four nested insets left a clause 158px at 320 */
+  .row.full .panel.brief { padding: 12px; }
+  .brief-sheet { padding: var(--sp-4); }
+  .brief-seg { padding: var(--sp-3); }
+}
+
+/* Cut and kept (after emilkowal.ski's wrong-and-right pairs): the two ways
+   a button could carry its icon, built as tiny live components rather than
+   described, with the verdict as a label and the reason in a line. */
+.pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-5); margin-top: var(--sp-5); }
+.pair + .panel { margin-top: var(--sp-5); }   /* as far below the pair as the pair is below the columns */
+.pair-item { display: flex; flex-direction: column; padding: var(--sp-5); border: 1px solid var(--hair); border-radius: var(--radius); background: var(--surface); }
+.pair-demo { margin-bottom: var(--sp-5); }
+.pair-item.right { border-color: color-mix(in srgb, var(--accent) 45%, var(--hair)); }
+.pair-demo { display: grid; place-items: center; min-height: 128px; padding: var(--sp-4); border-radius: 12px; background: var(--paper-2); }
+.pair-grid { display: grid; grid-template-columns: repeat(4, auto); gap: 6px 8px; }
+.mini-btn { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 999px; background: var(--ink); color: var(--paper); font-family: var(--font-mono); font-size: 9px; line-height: 1; letter-spacing: .02em; }
+.mini-btn i { width: 7px; height: 7px; border-radius: 2px; background: var(--paper); opacity: .8; }
+.mini-btn.ghost { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1px var(--hair-2); }
+.mini-btn.ghost i { background: var(--ink); }
+.pair-one { display: flex; align-items: center; gap: var(--sp-5); }
+.pair-one .mini-btn { font-size: 12px; padding: 8px 14px; }
+.pair-one .mini-btn i { width: 10px; height: 10px; }
+.mini-toggles { display: grid; gap: 8px; }
+.mini-toggle { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: var(--t-micro); letter-spacing: var(--ls-micro); text-transform: uppercase; color: var(--ink-2); }
+.mini-toggle i { width: 26px; height: 15px; border-radius: 999px; background: var(--hair-2); position: relative; }
+.mini-toggle i::after { content: ""; position: absolute; top: 2px; left: 2px; width: 11px; height: 11px; border-radius: 50%; background: var(--surface); }
+.mini-toggle.on i { background: var(--accent); }
+.mini-toggle.on i::after { left: 13px; }
+.mini-toggle:not(.on) i::after { background: var(--ink-3); }
+.pair-verdict { color: var(--ink-3); }
+.pair-item.right .pair-verdict { color: var(--accent-ink); }
+@media (max-width: 640px) { .pair { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 360px) { .pair-grid { grid-template-columns: repeat(3, auto); gap: 5px 6px; } }
+
 
 /* --------------------------------------------------------------------------
    8. Password gate
@@ -1205,6 +1540,42 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 /* --------------------------------------------------------------------------
    9. Motion
    -------------------------------------------------------------------------- */
+/* Between pages (after maggieappleton.com and cursor.com): the document
+   crossfades instead of flashing to white, the bar, the launcher and the
+   footer hold still, and the image in a work row grows into that case
+   study's hero (the row's ground and the hero panel share a name per
+   project, so the browser pairs them). A blog card's cover does the same
+   into its post's band through --vt, which blog.py writes on both. A
+   browser without the feature, or a reader who asked for less motion, gets
+   a plain page load. */
+@view-transition { navigation: auto; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .32s; }
+::view-transition-group(*) { animation-duration: .42s; animation-timing-function: var(--ease); }
+html.vt-lens::view-transition-group(*) { animation-duration: var(--dur-ui); }   /* the lens's re-sort (initLens) is a control's answer, not a page change */
+.nav { view-transition-name: site-nav; }
+.chat-launch { view-transition-name: site-launch; }
+footer { view-transition-name: site-foot; }   /* one a page, at the foot of its last section */
+.case-system .case-media, .case-system .hero-panel { view-transition-name: case-system; }
+.case-audit .case-media, .case-audit .hero-panel { view-transition-name: case-audit; }
+.case-cross-sell .case-media, .case-cross-sell .hero-panel { view-transition-name: case-cross-sell; }
+.case-verifications .case-media, .case-verifications .hero-panel { view-transition-name: case-verifications; }
+.case-refi .case-media, .case-refi .hero-panel { view-transition-name: case-refi; }
+.case-staking .case-media, .case-staking .hero-panel { view-transition-name: case-staking; }
+.case-no-code .case-media, .case-no-code .hero-panel { view-transition-name: case-no-code; }
+.case-siwe .case-media, .case-siwe .hero-panel { view-transition-name: case-siwe; }
+.card-art, .post-art { view-transition-name: var(--vt); }
+.featured .card-art { view-transition-name: none; }   /* the latest three appear again in the full list; a name may occur once a page */
+/* The rows themselves, for the lens's reorder (initLens): each row keeps its
+   place in the eye as the list re-sorts. */
+.case-row.case-system { view-transition-name: row-system; }
+.case-row.case-audit { view-transition-name: row-audit; }
+.case-row.case-cross-sell { view-transition-name: row-cross-sell; }
+.case-row.case-verifications { view-transition-name: row-verifications; }
+.case-row.case-refi { view-transition-name: row-refi; }
+.case-row.case-staking { view-transition-name: row-staking; }
+.case-row.case-no-code { view-transition-name: row-no-code; }
+.case-row.case-siwe { view-transition-name: row-siwe; }
+@media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
 /* A block waits below its place and rises into it once the reader reaches
    it (main.js sets .in). The fade runs straight so the block is still
    translucent while it travels and lands opaque; blocks that arrive in the
@@ -1220,21 +1591,33 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
    the block is still settling (a column row reads as a sequence, not a slab). */
 .anim [data-reveal] .cols > .col {
   opacity: 0; transform: translateX(-32px);
-  transition: opacity .6s linear, transform .6s var(--ease-soft);
+  transition: opacity .5s linear, transform .5s var(--ease-soft);
 }
 .anim [data-reveal] .cols > .col:nth-child(2) { --col-i: 1; }
 .anim [data-reveal] .cols > .col:nth-child(3) { --col-i: 2; }
 .anim [data-reveal] .cols > .col:nth-child(4) { --col-i: 3; }
-.anim [data-reveal].in .cols > .col { opacity: 1; transform: none; transition-delay: calc(200ms + var(--col-i, 0) * 160ms); }   /* the wait only on the way in, so hiding at load is instant */
+.anim [data-reveal].in .cols > .col { opacity: 1; transform: none; transition-delay: calc(120ms + var(--col-i, 0) * 100ms); }   /* the wait only on the way in, so hiding at load is instant; a fourth column lands by 920ms */
 [data-rise] { animation: rise .6s var(--ease) both; animation-delay: calc(var(--i, 0) * 70ms); }
 @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+/* The hero hands off (after granola.ai): where the browser can drive an
+   animation from scroll, the dot field fades over the first screen of
+   scroll, so the work arrives on plain paper. Content blocks rise on the
+   timer above rather than with the scroll: a rise scrubbed by scrolling
+   leaves whatever rests at the foot of the screen half faded. */
+@supports (animation-timeline: scroll()) {
+  .hero .field { animation: hero-field linear both; animation-timeline: scroll(root); animation-range: 0 80vh; }
+  @keyframes hero-field { to { opacity: 0; } }
+}
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
+  .hero .field { animation: none; }
   .anim [data-reveal], [data-rise], .anim [data-reveal] .cols > .col { opacity: 1; transform: none; transition: none; animation: none; }
   .opener-body > * { opacity: 1; }                          /* the opener shows still, then goes */
   .opener-seam { transform: none; }
   .gauge .fill, .gauge .needle { animation: none !important; }
-  .layer, .layer-tabs::after, .nest, .nest .t-subhead { transition: none; }
+  .layer, .layer.active, .layer-tabs::after, .nest, .nest .t-subhead, .steps-stage .shot, .testimonial, .testimonial.active { transition: none; }
+  .testimonial { filter: none; }
+  .post-card:hover, .pillar-nav a:hover svg, .btn:hover:active { transform: none; }
   .case-media img, .work-cta::after, .tooltip, .chart-marker, .chart-node { transition: none; transform: none; }
   .tooltip { transform: translate(-50%, 0); }
   .btn:hover, .btn:active, .icon-btn:active, .layer-tab:active, .testimonial-controls button:active { transform: none; }
@@ -1307,7 +1690,6 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 /* My role is nested inside #story, between two rows rather than as its own
    top-level section, so it gets no margin from the row+row rule below it;
    give it the section gap on both sides to match the rest of the page. */
-#story #role { padding-bottom: var(--section); }
 
 /* --------------------------------------------------------------------------
    11. Phone
@@ -1356,13 +1738,15 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
   .proof .table-wrap tbody tr { display: flex; flex-wrap: wrap; gap: var(--sp-3) var(--sp-4); }
   .proof .table-wrap tbody th { flex: 1 1 100%; margin-bottom: 0; }
   .proof .table-wrap tbody td { flex: 1 1 0; min-width: 0; margin-top: 0; }
+  .proof .table-wrap tbody td:not(.hl) { padding-block: 10px; }   /* the tinted cell's inset, so the two values start level */
 }
 
 @media (max-width: 560px) {
   :root { --section: 56px; --row: 48px; }
 
   /* Hero: the statement sits a screen's breath under the bar, not a third of the way down */
-  .hero { padding-top: calc(var(--nav-h) + 56px); padding-bottom: 56px; }
+  .hero { padding-top: calc(var(--nav-h) + 56px); padding-bottom: calc(var(--sp-5) + 36px + var(--sp-4)); }   /* room for the pause under the buttons */
+  .hero .art-ctl { bottom: var(--sp-4); }
   .hero-ctas .btn { flex: 1 1 auto; justify-content: center; }
 
   /* Section openers read left to right on a phone; a seven-line centred paragraph does not */
@@ -1383,15 +1767,15 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
   .case-media.cutout.bleed img { left: 5%; width: 90%; max-width: none; }
   .case-media img { max-width: 44%; }
   .case-logo { height: 24px; }
+  .case-logo[alt="Best Egg"] { height: 21px; }
 
   /* Leadership */
   .lead-solo { padding: 24px 20px; }
   .lead-grid { padding: 0; }
   .lead-solo-intro { padding: 24px 20px 20px; }
   .lead-points > div { padding: 24px 20px 28px; }
-  .lead-solo + .lead-solo { margin-top: 64px; }
   /* the tab strip scrolls instead of wrapping onto a broken second line */
-  .layer-tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .layer-tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent); }
   .layer-tabs::-webkit-scrollbar { display: none; }
   .layer-tab { flex: 0 0 auto; }
   .layer-head { padding: 22px 20px; }
@@ -1411,7 +1795,8 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
   .contact { padding: 32px 24px; gap: 28px; }
   .arcade { margin-top: 40px; }
   .arcade-head { flex-direction: column; align-items: flex-start; gap: 12px; margin-bottom: var(--sp-4); }
-  footer { padding: 24px 0 36px; flex-direction: column; gap: 8px; }
+  footer { padding-top: var(--sp-6); flex-direction: column; align-items: flex-start; gap: var(--sp-2); }
+  footer .theme { margin: var(--sp-2) 0 0; }
 
   /* Case study hero and facts */
   .cs-hero { padding-top: calc(var(--nav-h) + 28px); }
@@ -1422,7 +1807,6 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
   .hero-panel { margin-top: 32px; padding: 24px 20px; }
   .facts { margin-top: 24px; border-left: 0; }
   .facts > div { padding: 14px 0; border-right: 0; }
-  .facts dd { margin-top: 4px; }
 
   /* Story rows: the visual sets its own height, so a phone screen is not
      squeezed into a landscape box. Cropped desktop screens keep the box. */
@@ -1747,19 +2131,21 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 /* ---- Index: the three arguments, a recent strip, the latest, then all ---- */
 /* The way into the blog is the argument, not the date. Two columns of serif
    lines, each one jumping to its own group below. */
-.pillar-nav ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-3) var(--sp-8); }
-.pillar-nav a { display: block; text-decoration: none; max-width: none; text-wrap: balance; transition: color var(--dur-hover), opacity var(--dur-hover); }
+.pillar-nav ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-3) var(--sp-7); }   /* one column a pillar */
+.pillar-nav a { display: flex; flex-direction: column; align-items: flex-start; height: 100%; text-decoration: none; max-width: none; text-wrap: balance; transition: color var(--dur-hover), opacity var(--dur-hover); }
+.pillar-nav .pillar-count { margin-top: auto; padding-top: var(--sp-2); }   /* the counts share a baseline whatever the titles wrap to */
+.pillar-label { text-wrap: balance; }
+@media (max-width: 1100px) { .pillar-nav ul { grid-template-columns: minmax(0, 1fr); } }   /* two-line labels left the counts floating under them */
 .pillar-nav svg { width: .5em; height: .5em; margin-left: .3em; display: inline-block; transition: transform var(--dur-hover) var(--ease); }
-.pillar-count { display: inline-block; margin-left: .6em; white-space: nowrap; vertical-align: .18em; }
+.pillar-count { display: inline-block; white-space: nowrap; }
 @media (hover: hover) and (pointer: fine) {
   .pillar-nav a:hover { color: var(--accent-ink); }
   .pillar-nav a:hover svg { transform: translateX(.22em); }
   /* Pointing at one line quiets the others (after craft.do's blog) */
-  .pillar-nav ul:has(a:hover) a:not(:hover),
-  .ticker:has(.ticker-item:hover) .ticker-item:not(:hover) { opacity: .3; }
+  .pillar-nav ul:has(a:hover) a:not(:hover) { opacity: .3; }
 }
 .pillar-head { scroll-margin-top: calc(var(--nav-h) + var(--sp-5)); margin-bottom: var(--sp-5); }
-.pillar-group + .pillar-group { margin-top: var(--row); }
+.pillar-group:not([hidden]) ~ .pillar-group { margin-top: var(--row); }   /* measured from the last group shown, so a filter leaves no gap above the first */
 .pillar-empty { padding-block: var(--sp-5); }
 /* The feed, beside the eyebrow that names the section */
 .feed-link { display: inline-flex; margin-left: 8px; vertical-align: -2px; color: var(--ink-3); transition: color var(--dur-hover); }
@@ -1774,23 +2160,6 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
   .post-cta:hover svg { transform: translateX(5px); }
 }
 
-/* The recent run: titles and dates on one line, swiped sideways on a phone */
-.ticker { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(210px, 1fr); gap: var(--sp-6); overflow-x: auto; padding-block: var(--sp-5); border-block: 1px solid var(--hair); scrollbar-width: thin; }
-.ticker-item { display: block; text-decoration: none; transition: color var(--dur-hover), opacity var(--dur-hover); }
-.ticker-item time { display: block; margin-top: var(--sp-2); color: var(--ink-3); }
-.ticker-item:hover { color: var(--accent-ink); }
-/* With motion allowed, main.js turns the strip into a slow loop: the run is
-   repeated until it is wider than the strip, doubled, and moved one run's
-   width at a time. Hovering or tabbing into it holds it; so does the button. */
-.ticker-frame { position: relative; }
-.ticker.marquee { display: block; overflow: hidden; padding-right: 0; -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 88%, transparent); }
-.ticker-track { display: flex; width: max-content; animation: ticker var(--ticker-dur, 40s) linear infinite; }
-.ticker.marquee .ticker-item { flex: none; width: clamp(210px, 24vw, 300px); padding-right: var(--sp-6); }
-.ticker.marquee:is(:hover, :focus-within) .ticker-track,
-.ticker-frame.held .ticker-track { animation-play-state: paused; }
-.ticker-frame .art-ctl { top: 50%; right: 0; bottom: auto; transform: translateY(-50%); background: var(--surface); }
-@keyframes ticker { to { transform: translateX(-50%); } }
-@media (prefers-reduced-motion: reduce) { .ticker-track { animation: none; } }
 
 /* The latest three, on their own ground */
 .featured { background: var(--paper-2); border: 1px solid var(--hair); border-radius: var(--radius); padding: clamp(24px, 3.4vw, 48px); }
@@ -1806,9 +2175,15 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2vw, 24px); }
 .post-card { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--hair); border-radius: var(--radius-sm); overflow: hidden; text-decoration: none; transition: transform var(--dur-hover) var(--ease), box-shadow var(--dur-hover), border-color var(--dur-hover); }
 .card-art { display: block; background: var(--paper-2); overflow: hidden; }
-.card-art img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; transition: transform 500ms var(--ease); }
+.card-art img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; transition: transform var(--dur-ui) var(--ease); }
 .card-body { flex: 1; display: flex; flex-direction: column; gap: var(--sp-3); padding: clamp(16px, 1.8vw, 22px); }
-.card-title { display: block; max-width: none; transition: opacity var(--dur-hover); }
+.card-title { display: block; max-width: none; transition: opacity var(--dur-hover); text-box: trim-start cap alphabetic; }   /* the cover's inset reaches the caps, not the line box */
+/* In the grid, a row of cards shares its tracks: art, title, description,
+   meta, so a title that wraps doesn't push its description below the others'. */
+@supports (grid-template-rows: subgrid) {
+  .cards:not([data-view="list"]) .post-card { display: grid; grid-row: span 4; grid-template-rows: subgrid; row-gap: 0; }
+  .cards:not([data-view="list"]) .card-body { display: grid; grid-row: span 3; grid-template-rows: subgrid; row-gap: var(--sp-3); }
+}
 .card-desc { display: block; transition: opacity var(--dur-hover); }
 /* The foot sits on the card's floor, the chip and the read time a gap apart */
 .post-card .post-meta { display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; margin-top: auto; padding-top: var(--sp-2); }
@@ -1826,6 +2201,11 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 .post-search svg { width: 15px; height: 15px; color: var(--ink-3); flex: none; }
 .post-search input { border: 0; background: none; outline: none; min-width: 170px; color: var(--ink); }
 .post-search:focus-within { border-color: var(--accent); }
+.post-search input::-webkit-search-cancel-button {   /* the browser's blue cross, in the site's ink */
+  -webkit-appearance: none; appearance: none; width: 14px; height: 14px; cursor: pointer; background: var(--ink-3);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6 6 18'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6 6 18'/%3E%3C/svg%3E") center / contain no-repeat;
+}
 .view-toggle { display: flex; padding: 3px; gap: 2px; border: 1px solid var(--hair-2); border-radius: 999px; background: var(--surface); }
 .view-toggle button { display: inline-flex; align-items: center; gap: 6px; padding: 7px 13px; border: 0; border-radius: 999px; background: none; color: var(--ink-2); cursor: pointer; transition: background var(--dur-hover), color var(--dur-hover); }
 .view-toggle svg { width: 14px; height: 14px; }
@@ -1837,7 +2217,8 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 .cards[data-view="list"] { grid-template-columns: minmax(0, 1fr); gap: 0; }
 .cards[data-view="list"] .post-card { flex-direction: row; align-items: stretch; border-radius: 0; border-width: 0 0 1px; background: none; }
 .cards[data-view="list"] .post-card:first-child { border-top: 1px solid var(--hair); }
-.cards[data-view="list"] .card-art { flex: none; width: clamp(96px, 14vw, 168px); align-self: center; border-radius: var(--radius-sm); overflow: hidden; margin: var(--sp-4) 0 var(--sp-4) var(--sp-4); }
+.cards[data-view="list"] .card-art { flex: none; width: clamp(96px, 14vw, 168px); align-self: center; border-radius: var(--radius-sm); overflow: hidden; margin: var(--sp-4) 0; }
+.cards[data-view="list"] .card-body { padding-block: var(--sp-4); }
 .cards[data-view="list"] .card-desc { display: none; }
 @media (hover: hover) and (pointer: fine) {
   .cards[data-view="list"] .post-card:hover { transform: none; box-shadow: none; background: var(--surface); }
@@ -1847,12 +2228,11 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 .post-hero { padding-top: calc(var(--nav-h) + clamp(32px, 6vw, 72px)); padding-bottom: clamp(32px, 4vw, 52px); }
 .post-hero .wrap > * { max-width: var(--prose); margin-inline: auto; }
 .post-hero .crumbs { margin-bottom: clamp(24px, 3vw, 36px); }
-.post-hero .t-display, .post-hero .t-lede, .post-hero .post-meta { text-align: center; }
+.post-hero .crumbs ol { justify-content: center; }   /* the whole head sits on one axis */
+.post-hero .eyebrow, .post-hero .t-display, .post-hero .t-lede, .post-hero .post-meta { text-align: center; }
 .post-hero h1 { max-width: 26ch; }
 .post-hero .post-meta { justify-content: center; }
 .post-hero .t-lede { margin-top: var(--sp-5); }
-.byline { display: flex; align-items: center; justify-content: center; gap: 9px; margin-top: clamp(24px, 3vw, 32px); }
-.byline-mark { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--paper-2); border: 1px solid var(--hair); color: var(--ink); }
 /* The cover, full content width above the body */
 /* The cover steps out past the reading column without going full width:
    craft.do runs its text at about 79% of the image, and a 640px column
@@ -1860,6 +2240,7 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 .post-art { max-width: 52rem; margin: 0 auto clamp(32px, 4vw, 52px); border-radius: var(--radius); overflow: hidden; border: 1px solid var(--hair); }
 .post-art img { width: 100%; aspect-ratio: 5 / 2; object-fit: cover; }
 .post-hero .post-meta { margin-top: var(--sp-4); }
+.post-meta > span { white-space: nowrap; }
 
 /* The claim: the one sentence the post defends, standing above the body */
 .claim { max-width: var(--prose); margin: clamp(32px, 4vw, 48px) auto 0; padding-left: clamp(20px, 3vw, 32px); border-left: 2px solid var(--accent); }
@@ -1889,27 +2270,31 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 
 /* Sources: the post's receipts, a hairline list under the body */
 .sources { max-width: var(--prose); margin: clamp(48px, 6vw, 80px) auto 0; padding-top: var(--sp-5); border-top: 1px solid var(--hair); }
-.sources ol { margin-top: var(--sp-4); padding-left: 1.35em; }
+.sources ol { margin: var(--sp-4) 0 0; padding-left: 1.35em; }
 .sources li + li { margin-top: var(--sp-3); }
 .sources a { text-decoration: underline; text-decoration-color: var(--hair-2); text-underline-offset: 3px; transition: text-decoration-color var(--dur-hover); }
 .sources a:hover { text-decoration-color: var(--accent); }
 
-/* Next post, the closing band of a post. Mirrors .cs-next. */
+/* Next post, the closing band of a post: .cs-next's type (eyebrow, title
+   with its arrow, the actions) on the post's own ground. */
 .post-next { text-align: center; }
-.post-next .t-title { margin-top: var(--sp-3); margin-inline: auto; }
+.post-next .t-title { margin-inline: auto; }
+@media (hover: hover) and (pointer: fine) { .post-next .t-title a:hover .cs-next-arrow { transform: translateX(6px); } }
+.post-next .t-title a { text-decoration: none; transition: color var(--dur-hover); }
+@media (hover: hover) and (pointer: fine) { .post-next .t-title a:hover { color: var(--accent-ink); } }
 .post-next .actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: clamp(28px, 3vw, 40px); }
 
 @media (max-width: 560px) {
   /* The index row's date and cue drop under the copy and turn left with it;
      the post column is already one column, so only its rails come in. */
-  .post-hero .t-display, .post-hero .t-lede, .post-hero .post-meta { text-align: left; }
+  .post-hero .eyebrow, .post-hero .t-display, .post-hero .t-lede, .post-hero .post-meta { text-align: left; }
   .post-hero .post-meta { justify-content: flex-start; }
   .pillar-nav ul { grid-template-columns: minmax(0, 1fr); }
   .cards { grid-template-columns: minmax(0, 1fr); }
-  .posts-controls { width: 100%; }
-  .post-search { flex: 1; }
+  .posts-controls { width: 100%; flex-wrap: nowrap; }
+  .post-search { flex: 1; min-width: 0; }
+  .post-search input { min-width: 0; width: 100%; }
   .post-hero .wrap > * { margin-inline: 0; }
-  .byline { justify-content: flex-start; }
   .post-hero h1 { max-width: none; }
   .claim, .prose blockquote { padding-left: var(--sp-4); }
   .post-next { text-align: left; }
@@ -1937,11 +2322,12 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
   box-shadow: var(--shadow-lift);
   opacity: 0; transform: translateY(12px); visibility: hidden;
   transition: opacity var(--dur-ui) var(--ease), transform var(--dur-ui) var(--ease), visibility 0s var(--dur-ui), background var(--dur-hover), box-shadow var(--dur-hover), color var(--dur-hover),
-    --sweep-burst 2s var(--ease), --sweep-span 2s var(--ease);
+    --sweep-burst var(--dur-ui) var(--ease), --sweep-span var(--dur-ui) var(--ease);
 }
 .chat-launch.is-in { opacity: 1; transform: none; visibility: visible; transition-delay: 0s; }
 .chat-launch.is-in[aria-expanded="true"] { opacity: 0; transform: translateY(8px); visibility: hidden; transition-delay: 0s, 0s, var(--dur-ui), 0s, 0s, 0s; }
 .chat-launch.is-in:active { transform: scale(.97); }
+@media (max-width: 1023px) { html.nav-locked .chat-launch.is-in { opacity: 0; visibility: hidden; transition-delay: 0s, 0s, var(--dur-ui), 0s, 0s, 0s; } }   /* it goes with the page while the menu sheet is up */
 @media (hover: hover) and (pointer: fine) {
   .chat-launch.is-in:hover { transform: translateY(-2px); }
   .chat-launch.is-in:hover:active { transform: translateY(-2px) scale(.97); }
@@ -1951,10 +2337,10 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
    arc of light runs the pill's edge once every 7.5 s. The light is a hairline
    ring with a soft glow (.chat-launch-sweep), shown through a conic mask
    whose angle is a registered property, so the arc glides rather than jumps.
-   On hover the arc laps the pill once, fast, and opens to three times its
-   length, and a highlight passes through the label. The pill stays ink on
-   hover so the green arc has something to read against; the lift and the
-   lap are the hover. The ring is accent-2, the lightest green, so it reads on
+   On hover the arc laps the pill once inside --dur-ui and opens to three
+   times its length, the site's 300ms ceiling for anything a reader
+   triggers. The pill stays ink on hover so the green arc has something to
+   read against; the lift and the lap are the hover. The ring is accent-2, the lightest green, so it reads on
    ink and on paper alike. */
 @property --sweep-rest  { syntax: "<angle>"; inherits: true; initial-value: 110deg; }
 @property --sweep-burst { syntax: "<angle>"; inherits: true; initial-value: 0deg; }
@@ -1963,7 +2349,7 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
   --sweep-pad: 40px;     /* room around the pill so the outer glow isn't cut by the mask's box */
   --sweep-fade: 7.5;     /* % of the turn the arc takes to fade in, and again to fade out */
   isolation: isolate;
-  animation: chat-sweep 7.5s linear infinite;
+  animation: chat-sweep 7.5s linear 2;   /* two laps as the page arrives, then it rests: nothing on the site moves for long unasked */
 }
 @keyframes chat-sweep { from { --sweep-rest: 110deg; } to { --sweep-rest: 470deg; } }
 .chat-launch-sweep {
@@ -1979,14 +2365,7 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
   box-shadow: inset 0 0 0 1px var(--accent-2), inset 0 0 8px color-mix(in srgb, var(--accent-2) 60%, transparent), inset 0 0 20px 2px color-mix(in srgb, var(--accent-2) 20%, transparent),
     0 0 8px color-mix(in srgb, var(--accent-2) 60%, transparent), 0 0 20px 2px color-mix(in srgb, var(--accent-2) 20%, transparent);
 }
-.chat-launch-label {
-  background: linear-gradient(90deg, transparent calc(50% - 1.4em), var(--surface), transparent calc(50% + 1.4em)) 100% 50% / 250% 100% no-repeat,
-    linear-gradient(var(--paper), var(--paper));
-  -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent;
-}
-@keyframes chat-shimmer { to { background-position: 0% 50%, 0 0; } }
 .chat-launch:hover, .chat-launch:focus-visible { background: var(--ink); color: var(--paper); --sweep-burst: 360deg; --sweep-span: 16; }
-.chat-launch:hover .chat-launch-label, .chat-launch:focus-visible .chat-launch-label { animation: chat-shimmer 1.5s linear infinite; }
 
 .chat {
   position: fixed; z-index: 46; margin: 0; padding: 0;
@@ -2016,11 +2395,13 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 }
 .chat-log:focus-visible { outline: 2px solid var(--accent); outline-offset: -4px; border-radius: 8px; }
 .chat-msg { max-width: 100%; color: var(--ink); overflow-wrap: anywhere; }
-.chat-msg.is-user { align-self: flex-end; max-width: 85%; padding: 9px 14px; border-radius: 14px 14px 4px 14px; background: var(--paper-2); white-space: pre-wrap; }
+.chat-msg.is-user { align-self: flex-end; max-width: 85%; padding: 9px 14px; border-radius: 14px 14px 4px 14px; background: color-mix(in srgb, var(--ink) 7%, var(--surface)); white-space: pre-wrap; }
 .chat-msg p + p, .chat-msg p + ul, .chat-msg ul + p { margin-top: var(--sp-2); }
 .chat-msg ul { margin: 0; padding-left: 1.15em; }
 .chat-msg li + li { margin-top: 4px; }
 .chat-msg li::marker { color: var(--ink-3); }
+.chat-msg .chat-sources { padding: 0; }
+.chat-msg .chat-sources li { margin: 0; }
 .chat-msg a { text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--accent-ink) 35%, transparent); text-underline-offset: 3px; transition: text-decoration-color var(--dur-hover); }
 .chat-msg a:hover { text-decoration-color: currentColor; }
 .chat-error { color: var(--danger); }
@@ -2055,7 +2436,7 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
    lines where the browser can't grow it. */
 .chat-form {
   flex: none; display: flex; align-items: flex-end; gap: var(--sp-2);
-  margin: var(--sp-1) var(--sp-4) 0; padding: 6px 6px 6px 16px;
+  margin: var(--sp-1) var(--sp-5) 0; padding: 6px 6px 6px 16px;   /* on the head's and the log's inset */
   border: 1px solid var(--hair-2); border-radius: 22px; background: var(--surface);
   transition: border-color var(--dur-hover);
 }
@@ -2078,17 +2459,23 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 .chat-foot { flex: none; padding: var(--sp-3) var(--sp-5) var(--sp-4); color: var(--ink-3); text-align: center; text-wrap: balance; max-width: none; }
 
 @media (max-width: 640px) {
-  /* On a phone the button is the mark alone, a round one, so it covers as
-     little of the page as it can; its name stays for screen readers. */
-  .chat-launch { width: 52px; height: 52px; padding: 0; justify-content: center; border-radius: 50%; }
+  /* On a phone the button is the mark alone, a round one, and it sits in the
+     bar beside the menu toggle rather than floating over the page, so it never
+     covers a line of text; its name stays for screen readers. It goes with the
+     bar while the menu sheet is open. */
+  .chat-launch {
+    top: calc((var(--nav-h) - 42px) / 2); bottom: auto; right: calc(var(--gutter) + 54px); z-index: 51;   /* past the toggle (42px, on the gutter) and the bar's 12px gap */
+    width: 42px; height: 42px; min-height: 0; padding: 0; justify-content: center; border-radius: 50%; box-shadow: none;
+  }
   .chat-launch .chat-launch-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-  .chat-launch svg { width: 22px; height: 22px; }
+  .chat-launch svg { width: 18px; height: 18px; }
   /* The sheet: the whole screen, flush, rising in. The close sits where the
      menu's toggle does; main.js keeps its height to the visible area while
      the keyboard is up. */
   .chat:modal { inset: 0; width: 100%; height: 100%; height: 100dvh; border: 0; border-radius: 0; box-shadow: none; transform: translateY(16px); }
   .chat:modal.is-open { transform: none; }
-  .chat-head { padding: calc(var(--sp-4) + env(safe-area-inset-top, 0px)) var(--gutter) var(--sp-4); }
+  .chat-head { padding: calc((var(--nav-h) - 42px) / 2 + env(safe-area-inset-top, 0px)) var(--gutter) var(--sp-4); }   /* the close lands where the menu toggle is */
+  .chat-close { margin: 0; }
   .chat-log { padding: var(--sp-5) var(--gutter); }
   .chat-form { margin-inline: var(--gutter); }
   .chat-foot { padding: var(--sp-3) var(--gutter) calc(var(--sp-3) + env(safe-area-inset-bottom, 0px)); }
@@ -2100,6 +2487,114 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
   .chat-wait i { animation: none; opacity: .6; }
   .chat-launch { animation: none; }
   .chat-launch:hover, .chat-launch:focus-visible { --sweep-burst: 0deg; --sweep-span: 5; }
-  .chat-launch .chat-launch-label { animation: none !important; }
+}
+
+/* Sources: the pages an answer drew on, one small card each under the text
+   (after ask.lukew.com). The page's own cover, a serif title and a mono label
+   saying what kind of page it is. The answer's text sits in .chat-answer so
+   the cards can follow it inside the same bubble. */
+.chat-answer + .chat-sources, .chat-answer + .chat-card, .chat-sources + .chat-card, .chat-card + .chat-card { margin-top: var(--sp-3); }
+.chat-sources { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: var(--sp-2); }
+.chat-sources li { min-width: 0; display: flex; }
+.chat-msg .chat-source {
+  flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; padding: var(--sp-2);
+  border: 1px solid var(--hair); border-radius: var(--radius-sm); background: var(--paper); color: var(--ink); text-decoration: none;
+  transition: border-color var(--dur-hover), transform var(--dur-press) var(--ease);
+}
+.chat-msg .chat-source:hover { border-color: var(--accent); }
+.chat-msg .chat-source:active { transform: scale(.98); }
+.chat-msg .chat-source:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
+.chat-source-thumb { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 6px; background-color: var(--panel-base); background-image: var(--grain), var(--panel); background-size: var(--grain-size), auto; background-blend-mode: multiply, normal; }   /* a page without a cover gets the panel ground */
+.chat-source-thumb[hidden] { display: none; }
+.chat-source-title { font-family: var(--font-display); font-size: 1rem; line-height: 1.25; color: var(--ink); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.chat-source-label { margin-top: auto; font-family: var(--font-mono); font-size: var(--t-micro); line-height: var(--lh-micro); letter-spacing: var(--ls-micro); text-transform: uppercase; font-weight: 500; color: var(--ink-3); }   /* the micro role */
+
+/* A cited section on the page you are on: rung once by a hairline that fades
+   (main.js adds the class to the section's column and takes it off after). */
+.chat-cited { outline: 1px solid var(--accent); outline-offset: 12px; border-radius: 6px; scroll-margin-top: calc(var(--nav-h) + 24px); animation: chat-cited 1.6s var(--ease) both; }
+@keyframes chat-cited { 0%, 30% { outline-color: var(--accent); } 100% { outline-color: transparent; } }
+
+/* Cards the model asks for with its tools: a case study (logo, title, summary,
+   the outcome once the page is unlocked, the link) and John's contact buttons,
+   both on paper like the offer. Links in them are buttons, not underlined text. */
+.chat-card { display: flex; flex-direction: column; align-items: flex-start; gap: var(--sp-2); padding: var(--sp-4); border: 1px solid var(--hair); border-radius: var(--radius-sm); background: var(--paper); }
+.chat-card .case-logo { height: 18px; margin: 0 0 var(--sp-1); }
+.chat-card-title { font-family: var(--font-display); font-size: 1.25rem; line-height: 1.2; letter-spacing: -.01em; color: var(--ink); text-wrap: balance; }
+.chat-card-summary { color: var(--ink-2); }
+.chat-card-stat { font-family: var(--font-display); font-size: 2.25rem; line-height: 1; letter-spacing: -.02em; color: var(--accent-ink); font-variant-numeric: lining-nums tabular-nums; margin-top: var(--sp-1); }
+.chat-card-note { color: var(--ink-3); max-width: 30ch; }
+.chat-card .chips { margin-top: var(--sp-1); }
+.chat-card .chip { font-size: var(--t-small); padding: 4px 10px; }
+.chat-card-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2); margin-top: var(--sp-2); }
+.chat-card-lock { color: var(--ink-3); }
+.chat-msg .chat-card .btn { text-decoration: none; }
+.chat-msg .chat-card .btn-primary { color: var(--paper); }
+.chat-msg .chat-card .btn-primary:hover { color: var(--surface); }
+.chat-msg .chat-card .btn-ghost { color: var(--ink); }
+.chat-msg .chat-card .btn-ghost:hover { color: var(--accent-ink); }
+
+/* Who is asking: a second row of suggestions on the empty panel, each a
+   longer question than its label. It goes with the starters after the first
+   question. */
+.chat-audience { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.chat-audience-label { font-family: var(--font-mono); font-size: var(--t-micro); line-height: var(--lh-micro); letter-spacing: var(--ls-micro); text-transform: uppercase; font-weight: 500; color: var(--ink-3); }   /* the micro role */
+.chat-audience .btn-ghost { background: var(--glow); border-color: transparent; color: var(--accent-ink); }
+.chat-audience .btn-ghost:hover { border-color: var(--accent); }
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-cited { animation: none; }
+  .chat-msg .chat-source:active { transform: none; }
 }
 @media print { .chat-launch, .chat { display: none !important; } }
+
+/* --------------------------------------------------------------------------
+   15. The palette
+   ⌘K (main.js initPalette). The bar's Search row (a word and a key cap,
+   ⌘K or Ctrl K by the class the head script sets; the word alone in the
+   phone menu) is in each page's markup, so the bar never shifts on load. The dialog is a surface card at
+   the top of the screen over a blurred page: one field, the rows that
+   match, and a foot that names the keys. The last row hands the question
+   to the assistant.
+   -------------------------------------------------------------------------- */
+.nav-kbd { display: inline-flex; align-items: center; gap: 8px; padding: 0; border: 0; background: none; cursor: pointer; transition: color var(--dur-hover); }   /* face, size and ink from the nav's role (section 2) */
+.nav-kbd:hover { color: var(--ink); }
+html:not(.js) .nav-search { display: none; }   /* nothing to open without the script */
+.nav-kbd kbd::before { content: "Ctrl K"; }
+.mac .nav-kbd kbd::before { content: "⌘K"; }
+.nav-kbd kbd, .palette-foot kbd { font-family: var(--font-mono); font-size: var(--t-micro); line-height: 1; letter-spacing: .02em; padding: 3px 5px; border: 1px solid var(--hair-2); border-bottom-width: 2px; border-radius: 5px; color: var(--ink-3); }
+html.palette-open { overflow: hidden; }
+.palette {
+  position: fixed; inset: 10vh auto auto 50%; transform: translateX(-50%);
+  width: min(640px, calc(100vw - 2 * var(--gutter))); max-width: none; max-height: 78vh; max-height: 78dvh; margin: 0; padding: 0;
+  display: none; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden;
+  border: 1px solid var(--hair); border-radius: var(--radius); background: var(--surface); color: var(--ink); box-shadow: var(--shadow-lift);
+}
+.palette[open] { display: grid; animation: palette-in var(--dur-ui) var(--ease); }
+@keyframes palette-in { from { opacity: 0; transform: translateX(-50%) translateY(-6px) scale(.985); } }
+.palette::backdrop { background: var(--scrim); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.palette-form { display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-3) var(--sp-5); border-bottom: 1px solid var(--hair); }   /* the close button's edge on the rows' labels */
+.palette-glass { width: 20px; height: 20px; flex: none; color: var(--ink-3); }
+.palette-input { flex: 1; min-width: 0; padding: var(--sp-3) 0; border: 0; background: none; color: var(--ink); font-family: var(--font-body); font-size: var(--t-lede); line-height: var(--lh-lede); outline: 0; }
+.palette-input { text-overflow: ellipsis; }
+.palette-input::placeholder { color: var(--ink-3); }
+.palette-close { width: 34px; height: 34px; flex: none; display: grid; place-items: center; padding: 0; border: 1px solid var(--hair-2); border-radius: 999px; background: none; color: var(--ink); cursor: pointer; }
+.palette-close svg { width: 14px; height: 14px; }
+.palette-list { list-style: none; margin: 0; padding: var(--sp-2); overflow-y: auto; overscroll-behavior: contain; }
+.palette-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: 2px var(--sp-4); padding: var(--sp-3) var(--sp-4); border-radius: var(--radius-sm); cursor: pointer; }
+.palette-row[aria-selected="true"] { background: color-mix(in srgb, var(--ink) 7%, var(--surface)); }
+.palette-title { font-family: var(--font-body); font-size: var(--t-body); line-height: var(--lh-body); font-weight: 500; color: var(--ink); min-width: 0; }
+.palette-kind { font-family: var(--font-mono); font-size: var(--t-micro); line-height: var(--lh-body); letter-spacing: var(--ls-micro); text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
+.palette-desc { grid-column: 1 / -1; font-family: var(--font-body); font-size: var(--t-small); line-height: var(--lh-small); color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.palette-row.ask .palette-title { color: var(--accent-ink); }
+.palette-row.none { cursor: default; }
+.palette-foot { display: flex; gap: var(--sp-5); align-items: center; padding: var(--sp-3) var(--sp-5); border-top: 1px solid var(--hair); color: var(--ink-3); }   /* the micro role, as every label is */
+.palette-foot span { display: inline-flex; align-items: center; gap: 6px; }
+@media (max-width: 640px) {
+  .palette-row { grid-template-columns: minmax(0, 1fr); }   /* the label drops under the title so the title keeps the width */
+  .palette-kind { grid-row: 2; }
+  .palette-desc { grid-row: 3; }
+  .palette { inset: var(--sp-3) auto auto 50%; width: calc(100vw - 2 * var(--sp-3)); max-height: calc(100dvh - 2 * var(--sp-3)); }
+  .palette-foot { display: none; }
+  .palette-close { width: 42px; height: 42px; }
+}
+@media (prefers-reduced-motion: reduce) { .palette[open] { animation: none; } }

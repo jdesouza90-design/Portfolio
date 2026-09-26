@@ -212,12 +212,13 @@ if order_index and ring_next:
 # ---- Nav and head drift ---------------------------------------------------------------
 ref = pages[0]
 ref_nav = strip_stamps(block(html[ref], '<header class="nav">', "</header>"))
-ref_head = [strip_stamps(l) for l in html[ref].split("\n") if l.startswith(("<link", "<script defer", '<meta name="twitter'))]
+HEAD_LINE = ("<link", "<script defer", '<meta name="twitter')
+head_of = lambda s: [strip_stamps(l) for l in s.split("\n") if l.startswith(HEAD_LINE) and 'rel="canonical"' not in l]   # the canonical differs a page by design
+ref_head = head_of(html[ref])
 for p, s in html.items():
     if strip_stamps(block(s, '<header class="nav">', "</header>")) != ref_nav:
         err(f"{p}: nav differs from {ref}")
-    head = [strip_stamps(l) for l in s.split("\n") if l.startswith(("<link", "<script defer", '<meta name="twitter'))]
-    if head != ref_head:
+    if head_of(s) != ref_head:
         err(f"{p}: head boilerplate (icons, fonts, stylesheet, insights) differs from {ref}")
 # The unlock opener's hold line: without it the page flashes before the sheet (see Motion in the README).
 HOLD = 'classList.add("unlock")'

@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>try{var d=document.documentElement;d.classList.add("js");setTimeout(function(){if(!d.classList.contains("js-ok"))d.classList.remove("js")},4000);if(/Mac|iPhone|iPad/.test(navigator.platform||""))d.classList.add("mac");var t=localStorage.getItem("theme");if(t==="dark"||t==="light")d.dataset.theme=t}catch(e){}</script>
 <title>Prototypes that cannot fail are demos — John DeSouza</title>
 <meta name="description" content="43% of companies expect a working prototype as the deliverable. A deliverable gets approved. A prototype is supposed to be able to come back wrong.">
 <link rel="canonical" href="https://john-desouza.com/blog/prototypes-that-cannot-fail-are-demos.html">
@@ -32,8 +33,8 @@
 <link rel="alternate" type="application/rss+xml" title="John DeSouza — Blog" href="https://john-desouza.com/feed.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../styles.css?v=0ae9ab8c">
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css?v=37c6fb4b">
 <script defer src="/_vercel/insights/script.js"></script>
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
@@ -47,14 +48,15 @@
   <div class="wrap">
     <a class="brand" href="/" aria-label="John DeSouza, home"><span>John DeSouza</span></a>
     <button class="icon-btn nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M4 9h16"/><path d="M4 15h16"/></svg>
     </button>
     <nav class="nav-links" id="site-nav" aria-label="Primary">
       <ul>
         <li><a href="/work.html">Work</a></li>
         <li><a href="/#leadership">Leadership</a></li>
         <li><a href="/#about">About</a></li>
-        <li><a href="/blog.html">Blog</a></li>
+        <li><a href="/blog.html" aria-current="true">Blog</a></li>
+        <li class="nav-search"><button class="nav-kbd" type="button"><span>Search</span><kbd aria-hidden="true"></kbd></button></li>
         <li><a class="nav-icon" data-link="linkedin" href="#" aria-label="LinkedIn profile" title="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.125 2.062 2.062 0 0 1 0 4.125zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/></svg><span>LinkedIn</span></a></li>
         <li class="nav-resume"><a class="nav-download" data-link="resume" href="#"><span>Resume</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11"/><path d="m7 11 5 5 5-5"/><path d="M4 20h16"/></svg></a></li>
       </ul>
@@ -83,11 +85,8 @@
     <p class="eyebrow" data-rise style="--i:0">Where product design is going</p>
     <h1 class="t-display" data-rise style="--i:1">Prototypes that cannot fail are demos</h1>
     <p class="t-lede" data-rise style="--i:2">Forty-three percent of designers say their company expects a working prototype as the deliverable. Cheap fidelity was supposed to buy earlier answers. For most teams it bought an artifact nobody can argue with.</p>
-    <p class="byline t-small"><span class="byline-mark" aria-hidden="true">JD</span>Written by John DeSouza</p>
     <p class="post-meta t-small">
       <span>Published on <time datetime="2026-09-25T10:00:00-04:00">25 September 2026</time></span>
-      <span class="dot" aria-hidden="true">·</span>
-      <span>in Where product design is going</span>
       <span class="dot" aria-hidden="true">·</span>
       <span>4 min read</span>
     </p>
@@ -96,7 +95,7 @@
 
 <section class="section tight">
   <div class="wrap">
-    <figure class="post-art" data-reveal>
+    <figure class="post-art" data-reveal style="--vt: post-prototypes-that-cannot-fail-are-demos">
       <img src="../assets/blog/prototypes-that-cannot-fail-are-demos-wide.svg?v=82919e8d" width="1500" height="600" alt="" decoding="async">
     </figure>
     <div class="claim" data-reveal>
@@ -112,7 +111,7 @@
 
       <p>Go straight to something that runs. Test the real interaction instead of a picture of it. I agree with all of that. The conclusion skips a step, and the step it skips is the one that made prototypes work.</p>
 
-      <p>A high fidelity prototype used to cost about a week of somebody's time. That price did a job nobody assigned to it. It forced a conversation before the build, because no team spends a week without asking what the week is for. The question came first because the budget made it come first.</p>
+      <p>A high fidelity prototype used to cost about a week of somebody’s time. That price did a job nobody assigned to it. It forced a conversation before the build, because no team spends a week without asking what the week is for. The question came first because the budget made it come first.</p>
 
       <h2>The deliverable ate the question</h2>
 
@@ -128,7 +127,7 @@
 
       <p>Nielsen Norman Group ran their own version, rebuilding one of their training pages with three kinds of prompt. The detailed prompts got close to the human original. The outputs still <a href="https://www.nngroup.com/articles/ai-prototyping/">missed visual hierarchy, color contrast and consistent margins</a>, which is why they land on these tools being better for ideation than for production.</p>
 
-      <p>So the thing showing up in your review is competent, conventional and finished-looking. All three at once is very hard to argue with. That is the problem, not the achievement. In Figma's <a href="https://www.figma.com/blog/state-of-the-designer-2026/">State of the Designer 2026</a>, 58% of designers define craft as visual polish, ahead of thoughtful problem solving at 47%. Polish is the part that just became free.</p>
+      <p>So the thing showing up in your review is competent, conventional and finished-looking. All three at once is very hard to argue with. That is the problem, not the achievement. In Figma’s <a href="https://www.figma.com/blog/state-of-the-designer-2026/">State of the Designer 2026</a>, 58% of designers define craft as visual polish, ahead of thoughtful problem solving at 47%. Polish is the part that just became free.</p>
 
       <h2>The rule I hold</h2>
 
@@ -136,17 +135,17 @@
 
       <p>I want that line before the build, not in the deck afterward. If nobody on the team can write it, we are building a demo, and I would rather we call it a demo and put it on the calendar as one. Demos are useful. They are just not evidence.</p>
 
-      <p>The first question in the review is the same question. What would this look like if we were wrong? If the honest answer is "about the same", the prototype tested nothing and the next 40 minutes are a conversation about taste. Sometimes that is the meeting you needed. It should not be the meeting you thought you were having.</p>
+      <p>The first question in the review is the same question. What would this look like if we were wrong? If the honest answer is “about the same”, the prototype tested nothing and the next 40 minutes are a conversation about taste. Sometimes that is the meeting you needed. It should not be the meeting you thought you were having.</p>
 
       <p>At Best Egg, applicants uploaded their documents and then the dashboard went quiet. What we were testing was whether telling them the status after the upload changed how many finished, not whether the screen looked better. That version of the question has a result. It went through an A/B test before rollout and came back with one.</p>
 
       <h2>The forcing function has to come from a person now</h2>
 
-      <p>Eighty percent of designers say they still rely on their own quality meter over the model's. I believe them, and I do not think a quality meter is the thing under threat here. Judgment about whether a screen is good survives cheap production fine.</p>
+      <p>Eighty percent of designers say they still rely on their own quality meter over the model’s. I believe them, and I do not think a quality meter is the thing under threat here. Judgment about whether a screen is good survives cheap production fine.</p>
 
       <p>What does not survive is the part of the process that used to happen on its own because building was expensive. Somebody named the uncertainty. The team agreed ahead of time on what a bad result would look like. And before anyone opened a tool, everyone knew which of the plausible directions the build was there to rule out.</p>
 
-      <p>None of that was ever a method. It was a side effect of the price, and the price is gone. Which means it is now somebody's job, in writing, or it does not happen.</p>
+      <p>None of that was ever a method. It was a side effect of the price, and the price is gone. Which means it is now somebody’s job, in writing, or it does not happen.</p>
 
       <p>The teams that get this wrong are not going to look slow. They are going to look extremely fast, and they are going to ship a lot of usable, conventional, well-spaced work that nobody in the building ever had the standing to question.</p>
     </div>
@@ -169,7 +168,7 @@
   <div class="wrap">
     <div class="post-next" data-reveal>
       <p class="eyebrow">Next</p>
-      <h2 class="t-title"><a href="/blog/train-juniors-on-what-they-reject.html">Train juniors on what they reject</a></h2>
+      <h2 class="t-title"><a href="/blog/train-juniors-on-what-they-reject.html">Train juniors on what they reject<svg class="cs-next-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a></h2>
       <div class="actions">
         <a class="btn btn-ghost" href="/blog.html">All posts<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
       </div>
@@ -177,7 +176,7 @@
   </div>
 </section>
 
-<section class="section">
+<section class="section tight">
   <div class="wrap">
     <div class="contact" data-reveal data-field="rings">
       <canvas class="field" aria-hidden="true"></canvas>
@@ -194,12 +193,12 @@
     </div>
     <footer>
       <span>© <span data-year></span> John DeSouza</span>
-      <span>Posts are my own views. Case studies reflect my role and my teams' work at each company.</span>
+      <span>Posts are my own views.</span>
     </footer>
   </div>
 </section>
 
 </main>
-<script src="../main.js?v=24b37281"></script>
+<script src="../main.js?v=64612b35"></script>
 </body>
 </html>

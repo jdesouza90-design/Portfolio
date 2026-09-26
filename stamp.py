@@ -17,7 +17,7 @@ s = re.sub(r'(resume: "/(assets/[^"?]+))(?:\?v=[a-f0-9]+)?"',
 open('main.js', 'w').write(s)
 
 css_h, js_h = h('styles.css'), h('main.js')
-pages = (['index.html', 'work.html', 'blog.html', 'admin/index.html', 'admin/game.html', 'admin/chat.html']
+pages = (['index.html', 'work.html', 'blog.html', '404.html', 'admin/index.html', 'admin/game.html', 'admin/chat.html']
          + sorted(glob.glob('work/*.html')) + sorted(glob.glob('blog/*.html')))
 for f in pages + ['middleware.js']:
     s = open(f).read()
@@ -26,9 +26,9 @@ for f in pages + ['middleware.js']:
     # The site's own scripts: main.js from every page, dash.js from the dashboard. Never a CDN or /_vercel URL.
     def script(m):
         src = m.group(1)
-        p = os.path.normpath(os.path.join(here, src))
+        p = src[1:] if src.startswith('/') else os.path.normpath(os.path.join(here, src))   # /main.js (the 404 page, served at any depth) is from the root
         return 'src="%s?v=%s"' % (src, h(p)) if os.path.exists(p) else m.group(0)
-    s = re.sub(r'src="((?:\.\./)?[\w-]+(?:/[\w-]+)*\.js)(?:\?v=[a-f0-9]+)?"', script, s)
+    s = re.sub(r'src="((?:\.\./|/)?[\w-]+(?:/[\w-]+)*\.js)(?:\?v=[a-f0-9]+)?"', script, s)
     def asset(m):
         src = m.group(1)
         p = src.replace('../', '')
