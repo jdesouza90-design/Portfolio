@@ -2198,7 +2198,7 @@ const CONFIG = {
         <input class="palette-input" id="palette-input" type="text" autocomplete="off" spellcheck="false" placeholder="Search pages, case studies and posts, or ask a question" aria-label="Search" role="combobox" aria-expanded="true" aria-controls="palette-list" aria-autocomplete="list">
         <button class="palette-close" type="button" aria-label="Close search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
       </form>
-      <ul class="palette-list" id="palette-list" role="listbox" aria-label="Results"></ul>
+      <ul class="palette-list" id="palette-list" role="listbox" aria-label="Results" tabindex="-1"></ul>
       <p class="palette-foot t-micro" aria-hidden="true"><kbd>↑</kbd><kbd>↓</kbd> move <kbd>↵</kbd> open <kbd>esc</kbd> close</p>`;
     document.body.append(dlg);
     const input = $("input", dlg), list = $(".palette-list", dlg);

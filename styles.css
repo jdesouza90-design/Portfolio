@@ -2524,6 +2524,9 @@ html.palette-open { overflow: hidden; }
 .palette-foot { display: flex; gap: 6px; align-items: center; padding: var(--sp-3) var(--sp-5); border-top: 1px solid var(--hair); color: var(--ink-3); text-transform: none; letter-spacing: 0; font-family: var(--font-body); }
 .palette-foot kbd { margin-right: 2px; }
 @media (max-width: 640px) {
+  .palette-row { grid-template-columns: minmax(0, 1fr); }   /* the label drops under the title so the title keeps the width */
+  .palette-kind { grid-row: 2; }
+  .palette-desc { grid-row: 3; }
   .palette { inset: var(--sp-3) auto auto 50%; width: calc(100vw - 2 * var(--sp-3)); max-height: calc(100dvh - 2 * var(--sp-3)); }
   .palette-foot { display: none; }
 }
