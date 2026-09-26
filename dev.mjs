@@ -75,29 +75,57 @@ globalThis.fetch = async (url, init) => {
 // Answers in the Messages API's own event stream, a few words at a time. With
 // the case studies locked, a question about results or numbers gets one
 // sentence and the ask_for_password tool, as the brief tells the real one to.
+// A question that names Best Egg or asks what John shipped cites the pages
+// the way the real one does (citations_delta on the search results the
+// request carries) and calls show_case_study, so the panel's source cards
+// and case card can be seen without a key; one about reaching John calls
+// show_contact.
 function standIn(body) {
-  const unlocked = body.system.some((b) => b.text.startsWith('<case_studies>'));
+  const head = Array.isArray(body.messages[0].content) ? body.messages[0].content : [];
+  const results = head.filter((b) => b.type === 'search_result');
+  const unlocked = results.some((b) => b.source.startsWith('/work/'));
   const last = body.messages[body.messages.length - 1];
-  const q = String(last.content).replace(/\s+/g, ' ').slice(0, 120);
+  const asked = typeof last.content === 'string' ? last.content : (last.content.filter((b) => b.type === 'text').pop() || {}).text || '';
+  const q = String(asked).replace(/\s+/g, ' ').slice(0, 120);
   const wantsDetail = /result|number|metric|how many|how much|process|screens?|password|detail/i.test(q);
+  const shipped = /best egg|shipped/i.test(q);
+  const contact = /contact|reach|email|resume|hire|talk to/i.test(q);
   const events = [];
   const ev = (type, data) => events.push(`event: ${type}\ndata: ${JSON.stringify({ type, ...data })}\n\n`);
-  const text = !unlocked && wantsDetail
-    ? 'That detail is in the password-protected case study, so it opens once you enter the password.'
-    : unlocked && wantsDetail
-      ? `Unlocked, so here are the numbers. The [Staking case study](/work/staking.html) reached **25M LINK** staked, with the pool full within three hours of launch.\n\n- One product designer, across three time zones\n- Launched December 2022\n\n(Local stand-in, not Claude. You asked: "${q}")`
-      : `This is the local stand-in, not Claude, so the answer is scripted. On the live site Claude reads the pages and answers "${q}" from them.\n\nFor example, [the Staking case study](/work/staking.html) puts **pool capacity**, reward rate and eligibility next to the stake action.\n\n- John sets direction and coaches\n- His team designs and ships\n\nAsk about results to see the password step.`;
+  // The answer as the API sends a cited one: a run of text blocks, the cited
+  // ones each followed by the citation naming the search result it came from.
+  const cite = (test) => { const i = results.findIndex((b) => test(b.source)); return i < 0 ? null : { i, b: results[i] }; };
+  const parts = [];
+  if (!unlocked && wantsDetail) parts.push({ text: 'That detail is in the password-protected case study, so it opens once you enter the password.' });
+  else if (shipped) {
+    parts.push({ text: "Here is what John's teams shipped, with the outcomes the site gives.\n\n- " },
+      { text: 'Cross-Sell turned a loan decline into a second offer instead of a dead end, a 0→1 feature across two secured products.', cite: cite((s) => (unlocked ? s === '/work/cross-sell.html#results' : s === '/work.html')) },
+      { text: '\n- ' },
+      { text: 'Verifications closed the loop after document upload, validated in an A/B test before rollout.', cite: cite((s) => s === '/#work') },
+      { text: `\n- Staking v0.1 put pool capacity, reward rate and eligibility next to the stake action.\n\n(Local stand-in, not Claude. You asked: "${q}")` });
+  } else if (unlocked && wantsDetail) parts.push({ text: `Unlocked, so here are the numbers. The [Staking case study](/work/staking.html) reached **25M LINK** staked, with the pool full within three hours of launch.\n\n- One product designer, across three time zones\n- Launched December 2022\n\n(Local stand-in, not Claude. You asked: "${q}")`, cite: cite((s) => s === '/work/staking.html#results') });
+  else if (contact) parts.push({ text: `The quickest way is email, or a message on LinkedIn. His resume is on the site too.\n\n(Local stand-in, not Claude. You asked: "${q}")`, cite: cite((s) => s === '/#contact') });
+  else parts.push({ text: `This is the local stand-in, not Claude, so the answer is scripted. On the live site Claude reads the pages and answers "${q}" from them.\n\nFor example, [the Staking case study](/work/staking.html) puts **pool capacity**, reward rate and eligibility next to the stake action.\n\n- John sets direction and coaches\n- His team designs and ships\n\nAsk about results to see the password step.` });
   ev('message_start', { message: { id: 'msg_dev', type: 'message', role: 'assistant', model: body.model, content: [], stop_reason: null, stop_sequence: null, usage: { input_tokens: 40, output_tokens: 1, cache_creation_input_tokens: 0, cache_read_input_tokens: 9000 } } });
-  ev('content_block_start', { index: 0, content_block: { type: 'text', text: '' } });
-  for (const piece of text.match(/\S+\s*|\s+/g)) ev('content_block_delta', { index: 0, delta: { type: 'text_delta', text: piece } });
-  ev('content_block_stop', { index: 0 });
-  const asks = !unlocked && wantsDetail;
-  if (asks) {
-    ev('content_block_start', { index: 1, content_block: { type: 'tool_use', id: 'toolu_dev', name: 'ask_for_password', input: {} } });
-    ev('content_block_delta', { index: 1, delta: { type: 'input_json_delta', partial_json: '{}' } });
-    ev('content_block_stop', { index: 1 });
+  let index = 0;
+  for (const part of parts) {
+    ev('content_block_start', { index, content_block: { type: 'text', text: '' } });
+    for (const piece of part.text.match(/\S+\s*|\s+/g)) ev('content_block_delta', { index, delta: { type: 'text_delta', text: piece } });
+    if (part.cite) ev('content_block_delta', { index, delta: { type: 'citations_delta', citation: { type: 'search_result_location', cited_text: part.cite.b.content[0].text.slice(0, 120), source: part.cite.b.source, title: part.cite.b.title, search_result_index: part.cite.i, start_block_index: 0, end_block_index: 0 } } });
+    ev('content_block_stop', { index });
+    index++;
   }
-  ev('message_delta', { delta: { stop_reason: asks ? 'tool_use' : 'end_turn', stop_sequence: null }, usage: { output_tokens: 60 } });
+  const tools = [];
+  if (!unlocked && wantsDetail) tools.push(['ask_for_password', {}]);
+  if (shipped) tools.push(['show_case_study', { slug: 'cross-sell' }]);
+  if (contact) tools.push(['show_contact', {}]);
+  for (const [name, input] of tools) {
+    ev('content_block_start', { index, content_block: { type: 'tool_use', id: `toolu_dev_${index}`, name, input: {} } });
+    ev('content_block_delta', { index, delta: { type: 'input_json_delta', partial_json: JSON.stringify(input) } });
+    ev('content_block_stop', { index });
+    index++;
+  }
+  ev('message_delta', { delta: { stop_reason: tools.length ? 'tool_use' : 'end_turn', stop_sequence: null }, usage: { output_tokens: 60 } });
   ev('message_stop', {});
   const enc = new TextEncoder();
   let i = 0;

@@ -2147,4 +2147,61 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
   .chat-launch:hover, .chat-launch:focus-visible { --sweep-burst: 0deg; --sweep-span: 5; }
   .chat-launch .chat-launch-label { animation: none !important; }
 }
+
+/* Sources: the pages an answer drew on, one small card each under the text
+   (after ask.lukew.com). The page's own cover, a serif title and a mono label
+   saying what kind of page it is. The answer's text sits in .chat-answer so
+   the cards can follow it inside the same bubble. */
+.chat-answer + .chat-sources, .chat-answer + .chat-card, .chat-sources + .chat-card, .chat-card + .chat-card { margin-top: var(--sp-3); }
+.chat-sources { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: var(--sp-2); }
+.chat-sources li { min-width: 0; display: flex; }
+.chat-msg .chat-source {
+  flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; padding: var(--sp-2);
+  border: 1px solid var(--hair); border-radius: var(--radius-sm); background: var(--paper); color: var(--ink); text-decoration: none;
+  transition: border-color var(--dur-hover), transform var(--dur-press) var(--ease);
+}
+.chat-msg .chat-source:hover { border-color: var(--accent); }
+.chat-msg .chat-source:active { transform: scale(.98); }
+.chat-msg .chat-source:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
+.chat-source-thumb { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 6px; background: var(--paper-2); }
+.chat-source-thumb[hidden] { display: none; }
+.chat-source-title { font-family: var(--font-display); font-size: 1rem; line-height: 1.25; color: var(--ink); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.chat-source-label { margin-top: auto; font-family: var(--font-mono, ui-monospace, "SF Mono", Menlo, monospace); font-size: .6875rem; line-height: 1.3; letter-spacing: .01em; color: var(--ink-3); }
+
+/* A cited section on the page you are on: rung once by a hairline that fades
+   (main.js adds the class to the section's column and takes it off after). */
+.chat-cited { outline: 1px solid var(--accent); outline-offset: 12px; border-radius: 6px; scroll-margin-top: calc(var(--nav-h) + 24px); animation: chat-cited 1.6s var(--ease) both; }
+@keyframes chat-cited { 0%, 30% { outline-color: var(--accent); } 100% { outline-color: transparent; } }
+
+/* Cards the model asks for with its tools: a case study (logo, title, summary,
+   the outcome once the page is unlocked, the link) and John's contact buttons,
+   both on paper like the offer. Links in them are buttons, not underlined text. */
+.chat-card { display: flex; flex-direction: column; align-items: flex-start; gap: var(--sp-2); padding: var(--sp-4); border: 1px solid var(--hair); border-radius: var(--radius-sm); background: var(--paper); }
+.chat-card .case-logo { height: 18px; margin: 0 0 var(--sp-1); }
+.chat-card-title { font-family: var(--font-display); font-size: 1.25rem; line-height: 1.2; letter-spacing: -.01em; color: var(--ink); text-wrap: balance; }
+.chat-card-summary { color: var(--ink-2); }
+.chat-card-stat { font-family: var(--font-display); font-size: 2.25rem; line-height: 1; letter-spacing: -.02em; color: var(--accent-ink); font-variant-numeric: lining-nums tabular-nums; margin-top: var(--sp-1); }
+.chat-card-note { color: var(--ink-3); max-width: 30ch; }
+.chat-card .chips { margin-top: var(--sp-1); }
+.chat-card .chip { font-size: .8125rem; padding: 4px 10px; }
+.chat-card-row { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-top: var(--sp-2); }
+.chat-card-lock { color: var(--ink-3); }
+.chat-msg .chat-card .btn { text-decoration: none; }
+.chat-msg .chat-card .btn-primary { color: var(--paper); }
+.chat-msg .chat-card .btn-primary:hover { color: var(--surface); }
+.chat-msg .chat-card .btn-ghost { color: var(--ink); }
+.chat-msg .chat-card .btn-ghost:hover { color: var(--accent-ink); }
+
+/* Who is asking: a second row of suggestions on the empty panel, each a
+   longer question than its label. It goes with the starters after the first
+   question. */
+.chat-audience { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.chat-audience-label { font-size: .8125rem; color: var(--ink-3); }
+.chat-audience .btn-ghost { background: var(--glow); border-color: transparent; color: var(--accent-ink); }
+.chat-audience .btn-ghost:hover { border-color: var(--accent); }
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-cited { animation: none; }
+  .chat-msg .chat-source:active { transform: none; }
+}
 @media print { .chat-launch, .chat { display: none !important; } }

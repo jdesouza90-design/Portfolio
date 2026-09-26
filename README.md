@@ -220,11 +220,28 @@ Function, answers with Claude Haiku 4.5 by default.
   it isn't ready and no button appears anywhere. The dashboard's Chat settings
   can also switch it off without touching the key.
 - **What it knows.** The site's own pages, read from disk when an instance
-  starts and cut down to text: home, the work index and the blog for
-  everyone, plus the case studies for a visitor who has unlocked them. A page
-  marked `noindex` is parked and never read. Nothing else is written down for
-  it, so editing a page is editing what it knows. The notes field in Chat
-  settings adds what the pages don't say.
+  starts and cut into sections at their `<section>` and `<h2>` boundaries:
+  home, the work index and the blog for everyone, plus the case studies for
+  a visitor who has unlocked them. Each section goes to the model as one
+  search result (its title, its URL with the section's anchor, its text) with
+  citations on. A page marked `noindex` is parked and never read. Nothing
+  else is written down for it, so editing a page is editing what it knows.
+  The notes field in Chat settings adds what the pages don't say.
+- **Sources.** An answer ends in the pages it drew on, as cards: the page's
+  cover (a case study's index image, a post's cover), a serif title and a
+  small label (Case study · Best Egg, Blog · 22 Sep 2026). They come from the
+  model's citations, one card a page, three at most. A card for another page
+  opens it at the section and rings it once; a card for the page you are on
+  scrolls there instead.
+- **Cards.** Two tools let the model answer with the site's own parts, under
+  its words: `show_case_study` draws a case study's card (logo, title, one-line
+  summary, the outcome number once the case studies are unlocked, Read the
+  case study), and only for a slug that is a page on disk; `show_contact`
+  draws the email, LinkedIn and resume buttons. The panel clones each from a
+  `<template>` and fills it as text, never from model-written HTML.
+- **Who is asking.** Under the suggested questions, the empty panel asks who
+  you are: Hiring manager, Design leader, Engineer. Each sends a fuller
+  question than its label, and the row goes with the first question.
 - **The password.** Asked for something only a case study has, the model
   calls its `ask_for_password` tool and the panel shows a password field. A
   right password sets the gate's own cookie and asks the question again. A
@@ -245,14 +262,19 @@ Function, answers with Claude Haiku 4.5 by default.
   asked on, the place and the visitor hash. The owner's browsers are muted,
   as they are for views.
 - **What it costs.** The instructions and public pages are about 10,000 tokens
-  and the case studies about 9,000 more, both cached. A question costs about a
-  third of a cent when the cache is warm and up to about 2.7 cents when it
-  isn't, so the daily cap of 200 bounds a bad day at roughly $5 on Haiku.
+  and the case studies about 9,000 more (citations add a little for the
+  section boundaries), the public pages ending in one cache breakpoint and
+  the case studies in a second. A question costs about a third of a cent when
+  the cache is warm and up to about 2.7 cents when it isn't, so the daily cap
+  of 200 bounds a bad day at roughly $5 on Haiku.
 - **Trying it locally.** `node dev.mjs` serves `/api/chat` through the function
   with a scripted stand-in for Claude (no key, nothing spent): it streams,
-  links, lists and asks for the password like the real one. Run it with
-  `ANTHROPIC_API_KEY` set to talk to Claude. The static `http.server` has no
-  `/api/chat`, so it shows no button.
+  links, lists and asks for the password like the real one, and a question
+  that names Best Egg or asks what John shipped cites two sections and calls
+  `show_case_study`, so the source cards and the case card can be seen
+  (`cs` unlocks the outcome number); one about reaching John calls
+  `show_contact`. Run it with `ANTHROPIC_API_KEY` set to talk to Claude. The
+  static `http.server` has no `/api/chat`, so it shows no button.
 
 ## The blog
 
