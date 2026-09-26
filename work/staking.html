@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>try{var d=document.documentElement;d.classList.add("js");setTimeout(function(){if(!d.classList.contains("js-ok"))d.classList.remove("js")},4000);if(/Mac|iPhone|iPad/.test(navigator.platform||""))d.classList.add("mac");var t=localStorage.getItem("theme");if(t==="dark"||t==="light")d.dataset.theme=t}catch(e){}</script>
 <title>Staking v0.1 — John DeSouza</title>
 <meta name="description" content="Chainlink Staking v0.1: a crypto staking interface that reached 25M LINK and full capacity within three hours of launch. A case study by John DeSouza.">
 <link rel="canonical" href="https://john-desouza.com/work/staking.html">
@@ -13,15 +14,15 @@
 <meta property="og:description" content="Removing friction from staking LINK: 25M LINK staked and full capacity within three hours of launch.">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.ico?v=04efcc70" sizes="32x32">
-<link rel="icon" href="/favicon.svg?v=c22edfe4" type="image/svg+xml">
+<link rel="icon" href="/favicon.svg?v=59b8d8a0" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=82554182">
 <link rel="alternate" type="application/rss+xml" title="John DeSouza — Blog" href="https://john-desouza.com/feed.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!-- A fresh unlock from the gate: hold the page until its opener is up (initUnlock in main.js). -->
 <script>if (/[?&]unlocked(?=&|$)/.test(location.search)) document.documentElement.classList.add("unlock");</script>
-<link rel="stylesheet" href="../styles.css?v=887d6a51">
+<link rel="stylesheet" href="../styles.css?v=02ad7343">
 <script defer src="/_vercel/insights/script.js"></script>
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
@@ -37,10 +38,11 @@
     </button>
     <nav class="nav-links" id="site-nav" aria-label="Primary">
       <ul>
-        <li><a href="/work.html" aria-current="page">Work</a></li>
+        <li><a href="/work.html" aria-current="true">Work</a></li>
         <li><a href="/#leadership">Leadership</a></li>
         <li><a href="/#about">About</a></li>
         <li><a href="/blog.html">Blog</a></li>
+        <li class="nav-search"><button class="nav-kbd" type="button"><span>Search</span><kbd aria-hidden="true"></kbd></button></li>
         <li><a class="nav-icon" data-link="linkedin" href="#" aria-label="LinkedIn profile" title="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.125 2.062 2.062 0 0 1 0 4.125zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/></svg><span>LinkedIn</span></a></li>
         <li class="nav-resume"><a class="nav-download" data-link="resume" href="#"><span>Resume</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11"/><path d="m7 11 5 5 5-5"/><path d="M4 20h16"/></svg></a></li>
       </ul>
@@ -84,6 +86,20 @@
   </div>
 </section>
 
+<section class="cs-section" id="role">
+  <div class="wrap">
+    <header class="section-intro">
+      <p class="eyebrow">My role</p>
+      <h2 class="t-title">Alignment across design, engineering and protocol</h2>
+    </header>
+    <div class="ledger">
+      <div class="ledger-row"><h3 class="t-heading">Strategic alignment</h3><p class="t-body">I led design planning, working with engineering and protocol partners across three time zones, and set the experience principles the work ran on with product and engineering leadership.</p></div>
+      <div class="ledger-row"><h3 class="t-heading">Cross-functional leadership</h3><p class="t-body">Where a design decision depended on the protocol, I got design, engineering and protocol into one review and settled it there. I represented design in cross-team planning.</p></div>
+      <div class="ledger-row"><h3 class="t-heading">Design execution</h3><p class="t-body">I directed the work from discovery through validation, reviewing at every stage and coordinating handoffs with engineering. The result launched to 25M LINK staked in three hours.</p></div>
+    </div>
+  </div>
+</section>
+
 <section class="cs-section" id="results">
   <div class="wrap">
     <header class="section-intro">
@@ -111,20 +127,6 @@
   </div>
 </section>
 
-<section class="cs-section" id="role">
-  <div class="wrap">
-    <header class="section-intro">
-      <p class="eyebrow">My role</p>
-      <h2 class="t-title">Alignment across design, engineering and protocol</h2>
-    </header>
-    <div class="ledger">
-      <div class="ledger-row"><h3 class="t-heading">Strategic alignment</h3><p class="t-body">I led design planning, working with engineering and protocol partners across three time zones, and set the experience principles the work ran on with product and engineering leadership.</p></div>
-      <div class="ledger-row"><h3 class="t-heading">Cross-functional leadership</h3><p class="t-body">Where a design decision depended on the protocol, I got design, engineering and protocol into one review and settled it there. I represented design in cross-team planning.</p></div>
-      <div class="ledger-row"><h3 class="t-heading">Design execution</h3><p class="t-body">I directed the work from discovery through validation, reviewing at every stage and coordinating handoffs with engineering. The result launched to 25M LINK staked in three hours.</p></div>
-    </div>
-  </div>
-</section>
-
 <section class="cs-section" id="story">
   <div class="wrap">
     <header class="section-intro">
@@ -134,9 +136,9 @@
 
     <article class="row" id="problem">
       <div class="row-copy">
-        <p class="t-body">Staking hadn't launched yet, and the community had no way to participate. It was also Chainlink Labs' first consumer product, after years of developer-only tools, and regulation for staking was still unsettled. People read the docs in one place, checked the pool in another and took the reward terms on faith.</p>
+        <p class="t-body">Staking hadn’t launched yet, and the community had no way to participate. It was also Chainlink Labs’ first consumer product, after years of developer-only tools, and regulation for staking was still unsettled. People read the docs in one place, checked the pool in another and took the reward terms on faith.</p>
         <ul class="tensions">
-          <li><strong>Urgency</strong><span>Staking hadn't launched, and the community had no way to participate.</span></li>
+          <li><strong>Urgency</strong><span>Staking hadn’t launched, and the community had no way to participate.</span></li>
           <li><strong>Unfamiliar ground</strong><span>The team had only ever shipped developer tools, never a product built for consumers.</span></li>
           <li><strong>Regulation</strong><span>Staking regulation was still unsettled, so the design had to hold up under rules that could still change.</span></li>
         </ul>
@@ -163,20 +165,21 @@
       <div class="row-copy">
         <p class="eyebrow">Below the fold</p>
         <h3 class="t-heading">See what your stake secures</h3>
-        <p class="t-body">Under the pool sit the data feeds it secures: each feed's latest answer, its node operators and whether each one responded.</p>
+        <p class="t-body">Under the pool sit the data feeds it secures: each feed’s latest answer, its node operators and whether each one responded.</p>
       </div>
       <figure class="panel wide crop" style="--crop-pos: 30% 0"><img decoding="async" width="1600" height="813" src="../assets/staking-feeds.webp?v=0ecac92b" alt="Data feeds secured: ETH/USD feed details and node operator responses" loading="lazy"></figure>
     </article>
 
     <article class="row full" id="community">
       <div class="row-copy">
+        <p class="eyebrow">Reception</p>
         <h3 class="t-title">What customers told us</h3>
-        <p class="t-lede">Public posts from December 6, 2022. The Ledger feedback fed directly into the next iteration's wallet-connect priorities.</p>
+        <p class="t-lede">Public posts from December 6, 2022. The Ledger feedback fed directly into the next iteration’s wallet-connect priorities.</p>
       </div>
       <section class="testimonials" data-carousel aria-roledescription="carousel" aria-label="What customers told us">
         <div class="testimonial-track" aria-live="off">
           <div class="testimonial active" role="group" aria-roledescription="slide" aria-label="1 of 3">
-            <blockquote class="quote"><p class="t-quote">"Woah this is LIT! 🔥 way to go Chainlink team!!"</p></blockquote>
+            <blockquote class="quote"><p class="t-quote">“Woah this is LIT! 🔥 way to go Chainlink team!!”</p></blockquote>
             <div class="testimonial-foot">
               <span class="avatar" aria-hidden="true">JD</span>
               <cite><b>Jake Damon</b>@IAmJakeDamon · Dec 6, 2022</cite>
@@ -184,7 +187,7 @@
             </div>
           </div>
           <div class="testimonial" role="group" aria-roledescription="slide" aria-label="2 of 3">
-            <blockquote class="quote"><p class="t-quote">"No Ledger wallet connect option? Seriously?"</p></blockquote>
+            <blockquote class="quote"><p class="t-quote">“No Ledger wallet connect option? Seriously?”</p></blockquote>
             <div class="testimonial-foot">
               <span class="avatar" aria-hidden="true">5S</span>
               <cite><b>5G Safeguard</b>@5GSafeguard · Dec 6, 2022</cite>
@@ -192,7 +195,7 @@
             </div>
           </div>
           <div class="testimonial" role="group" aria-roledescription="slide" aria-label="3 of 3">
-            <blockquote class="quote"><p class="t-quote">"For the future please add support for direct staking from Ledger. I for one will never use or interface with MM again."</p></blockquote>
+            <blockquote class="quote"><p class="t-quote">“For the future please add support for direct staking from Ledger. I for one will never use or interface with MM again.”</p></blockquote>
             <div class="testimonial-foot">
               <span class="avatar" aria-hidden="true">A</span>
               <cite><b>AncientMedicine</b>@AncientMedicin3 · Dec 6, 2022</cite>
@@ -229,6 +232,6 @@
   </div>
 </section>
 </main>
-<script src="../main.js?v=24b37281"></script>
+<script src="../main.js?v=64612b35"></script>
 </body>
 </html>

@@ -10,6 +10,7 @@ const CONFIG = {
    runs them in order, each on its own, so a feature that throws (a browser
    without some API, a block of markup that moved) leaves the rest working. */
 (function () {
+  document.documentElement.classList.add("js-ok");   // the head script drops html.js if this never runs
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -20,13 +21,25 @@ const CONFIG = {
   // [r, g, b], tint a color as a function of its alpha. Every fallback is
   // the token's value today, for a stylesheet that failed to load.
   const styles = getComputedStyle(document.documentElement);
-  const cssVar = (name, fallback) => styles.getPropertyValue(name).trim() || fallback;
+  // Read once and kept, since the canvases ask every frame; the theme switch
+  // (initTheme) empties the cache and says "themechange", and a tint made
+  // here reads the new value on its next call.
+  const tokens = new Map();
+  const cssVar = (name, fallback) => {
+    if (!tokens.has(name)) tokens.set(name, styles.getPropertyValue(name).trim());
+    return tokens.get(name) || fallback;
+  };
   const hex = (name, fallback) => { const v = cssVar(name, ""); return /^#[0-9a-f]{6}$/i.test(v) ? v : fallback; };
   const rgb = (name, fallback) => hex(name, fallback).match(/\w\w/g).map((h) => parseInt(h, 16));
-  const tint = (name, fallback) => { const c = rgb(name, fallback).join(","); return (alpha) => `rgba(${c},${alpha})`; };
+  const tint = (name, fallback) => (alpha) => `rgba(${rgb(name, fallback).join(",")},${alpha})`;
+  document.addEventListener("themechange", () => tokens.clear());
+  const onTheme = (fn) => document.addEventListener("themechange", fn);
   const EASE = cssVar("--ease", "cubic-bezier(.23, 1, .32, 1)");
   const EASE_IN_OUT = cssVar("--ease-in-out", "cubic-bezier(.77, 0, .175, 1)");
   const debounce = (fn, ms) => { let t; return () => { clearTimeout(t); t = setTimeout(fn, ms); }; };
+  // Text for matching: lower case, curly quotes folded to straight, so
+  // "occ's" finds the post that prints "occ’s".
+  const fold = (s) => String(s).toLowerCase().replace(/[‘’]/g, "'").replace(/[“”]/g, '"');
   // A pause button says what it holds: pressed means paused.
   const setPaused = (btn, playing, what) => {
     if (!btn) return;
@@ -130,6 +143,7 @@ const CONFIG = {
     const onEnd = (e) => { if (e.target === block) go(); };     // transitionend bubbles; a child's is not this one
     const onReveal = () => {
       if (!block.classList.contains("in")) return;
+      if (getComputedStyle(block).opacity === "1") { go(); return; }   // it landed before this piece asked: no transition is coming
       document.removeEventListener("reveal", onReveal);
       block.addEventListener("transitionend", onEnd);
       clearTimeout(timer);
@@ -229,7 +243,26 @@ const CONFIG = {
   const initNav = () => {
     const nav = $(".nav");
     if (!nav) return;
-    const onScroll = () => nav.classList.toggle("scrolled", window.scrollY > 8);
+    // On the home page the bar also says where the reader is: the link for
+    // the section under the top third of the viewport is marked current
+    // (a location, not a page). Nothing is marked while the hero is up, or
+    // from the contact block down, which no link names.
+    const spots = [["work", 'a[href="/work.html"]'], ["leadership", 'a[href="/#leadership"]'], ["about", 'a[href="/#about"]']]
+      .map(([id, sel]) => [document.getElementById(id), $(`.nav-links ${sel}`, nav)]);
+    const spy = spots.every(([s, a]) => s && a) && !$(".nav-links a[aria-current='page']", nav) ? spots : [];
+    const end = document.getElementById("contact");
+    let here = null;
+    const locate = () => {
+      const line = window.scrollY + window.innerHeight * 0.34;
+      let now = null;
+      for (const [s, a] of spy) { if (s.offsetTop <= line) now = a; }
+      if (end && end.offsetTop <= line) now = null;
+      if (now === here) return;
+      if (here) here.removeAttribute("aria-current");
+      if (now) now.setAttribute("aria-current", "location");
+      here = now;
+    };
+    const onScroll = () => { nav.classList.toggle("scrolled", window.scrollY > 8); if (spy.length) locate(); };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     const toggle = $(".nav-toggle");
@@ -244,20 +277,29 @@ const CONFIG = {
       if (rows && rows.contains(e.target) && rows.scrollHeight > rows.clientHeight) return;
       e.preventDefault();
     };
+    // While the sheet is open the page behind it is inert, so Tab stays in
+    // the bar and the sheet and a screen reader doesn't wander underneath.
+    const behind = () => [$("main"), $(".chat-launch")].filter(Boolean);
     const setOpen = (open) => {
       nav.classList.toggle("open", open);
       toggle.setAttribute("aria-expanded", String(open));
       toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
       document.documentElement.classList.toggle("nav-locked", open);
+      behind().forEach((el) => { el.inert = open; });
       if (open) document.addEventListener("touchmove", holdTouch, { passive: false });
       else document.removeEventListener("touchmove", holdTouch);
     };
     toggle.addEventListener("click", () => setOpen(!nav.classList.contains("open")));
-    nav.addEventListener("keydown", (e) => {
+    // The sheet is for widths under 1024px (styles.css); a tablet turned to
+    // a wider screen with it open would keep the page locked, so it closes.
+    const sheet = window.matchMedia("(max-width: 1023px)");
+    sheet.addEventListener("change", () => { if (!sheet.matches && nav.classList.contains("open")) setOpen(false); });
+    document.addEventListener("keydown", (e) => {
       if (e.key !== "Escape" || !nav.classList.contains("open")) return;
       setOpen(false);
       toggle.focus();
     });
+    document.addEventListener("nav:close", () => { if (nav.classList.contains("open")) setOpen(false); });   // the palette takes the screen
     $$(".nav-links a", nav).forEach((a) => a.addEventListener("click", () => setOpen(false)));
   };
 
@@ -267,12 +309,14 @@ const CONFIG = {
      A failsafe drops the animation if nothing has revealed after 2.5s.
 
      Every major block is tagged so sections rise in: anything already marked
-     keeps its tag, otherwise each direct child of a section gets one. A block
-     reveals once its top crosses a line 70% down the viewport, so the move
-     happens where the reader is looking rather than at the bottom edge; the
-     line drops to the bottom edge as the page runs out of scroll, so the last
-     blocks never wait for room that isn't there. Blocks that cross together
-     follow each other 60ms apart, in document order. */
+     keeps its tag, otherwise each direct child of a section gets one. On
+     first paint everything on screen rises at once; after that a block rises
+     once its top crosses a line 90% down the viewport, so it starts as it
+     appears and has landed before the reader gets to it. The line drops to
+     the bottom edge as the page runs out of scroll, so the last blocks never
+     wait for room that isn't there. Blocks that cross together follow each
+     other 60ms apart, in document order. The rise runs on a timer, not with
+     the scroll, so nothing at rest is ever left half faded. */
   const initReveal = () => {
     $$("main > section").forEach((section) => {
       const host = section.querySelector(":scope > .wrap") || section;
@@ -286,7 +330,7 @@ const CONFIG = {
     });
 
     const revealEls = $$("[data-reveal]");
-    const LINE = 0.7;
+    const LINE = 0.9;
     if (reduced || !("IntersectionObserver" in window) || !revealEls.length) return;
     document.documentElement.classList.add("anim");
     afterOpener(() => revealOnScroll(revealEls, LINE));  // after a fresh unlock, the first screen rises as the doors part
@@ -313,18 +357,26 @@ const CONFIG = {
       });
       batch.push(el);
     };
+    // A waiting block is drawn --reveal-y below its place, and the observers
+    // see the drawn box, so every test here allows for the lift: a block
+    // counts by where it will rest, not where it waits.
+    const lift = parseFloat(cssVar("--reveal-y", "48px")) || 0;
     const io = new IntersectionObserver((entries) => {
-      entries.forEach((e) => { if (e.isIntersecting) { show(e.target); io.unobserve(e.target); } });
-    }, { rootMargin: `0px 0px -${Math.round((1 - LINE) * 100)}% 0px`, threshold: 0 });
-    revealEls.forEach((el) => io.observe(el));
+      entries.forEach((e) => { if (e.isIntersecting) { show(e.target); io.unobserve(e.target); whole.unobserve(e.target); } });
+    }, { rootMargin: `0px 0px ${Math.round(lift - window.innerHeight * (1 - LINE))}px 0px`, threshold: 0 });
+    // A block the reader can already see whole rises too, wherever it sits:
+    // a short one resting under the line would otherwise stay a blank.
+    const whole = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.intersectionRatio >= 0.99) { show(e.target); io.unobserve(e.target); whole.unobserve(e.target); } });
+    }, { rootMargin: `0px 0px ${Math.round(lift)}px 0px`, threshold: 0.99 });
+    revealEls.forEach((el) => { io.observe(el); whole.observe(el); });
 
     // Backstop for the observer. It measures only the elements still hidden and
     // detaches itself once they have all been revealed, so a long page is not
     // paying for a full measure pass on every scroll tick for the rest of the visit.
-    // On first paint the hero counts wherever it sits on screen (a hero never
-    // waits for a scroll); every later section waits at the line, so an intro
-    // peeking at the bottom of the first screen rises when the reader gets there.
-    const hero = $("main > section");
+    // On first paint anything on screen counts wherever it sits (the first
+    // screen is never left with a blank band at its foot); after that a
+    // section waits at the line.
     let pending = revealEls.slice();
     const sweep = (firstPaint) => {
       if (!pending.length) return;
@@ -335,12 +387,13 @@ const CONFIG = {
       for (const el of pending) {
         if (el.classList.contains("in")) continue;
         const r = el.getBoundingClientRect();
-        const edge = firstPaint && hero && hero.contains(el) ? vh : line;
-        if (r.top < edge && r.bottom > 0) { show(el); io.unobserve(el); }
+        const top = r.top - lift, bottom = r.bottom - lift;   // where it will rest
+        const edge = firstPaint ? vh : line;
+        if ((top < edge || (top >= 0 && bottom <= vh)) && bottom > 0) { show(el); io.unobserve(el); whole.unobserve(el); }
         else still.push(el);
       }
       pending = still;
-      if (!pending.length) { move.stop(); io.disconnect(); }
+      if (!pending.length) { move.stop(); io.disconnect(); whole.disconnect(); }
     };
     const move = onViewportChange(() => sweep(false));
     sweep(true);
@@ -517,6 +570,24 @@ const CONFIG = {
   const initWalkthroughs = () => $$(".walk").forEach((w) => {
     const img = $("img", w), btn = $(".play", w);
     if (!img || !btn) return;
+    // Playing, the recording loops; the pause in the corner (the WCAG 2.2.2
+    // stop, as on every moving piece here) puts the poster back and returns
+    // the Play control, and takes focus from Play when Play had it.
+    const poster = img.getAttribute("src");
+    const halt = document.createElement("button");
+    halt.type = "button"; halt.className = "art-ctl walk-stop"; halt.hidden = true;
+    halt.innerHTML = `<svg class="i-pause" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="3.5" y="3" width="3" height="10" rx=".8"/><rect x="9.5" y="3" width="3" height="10" rx=".8"/></svg><svg class="i-play" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 3.2v9.6a.6.6 0 0 0 .9.5l7.4-4.8a.6.6 0 0 0 0-1L5.9 2.7a.6.6 0 0 0-.9.5Z"/></svg>`;
+    setPaused(halt, true, "the recording");
+    w.append(halt);
+    halt.addEventListener("click", () => {
+      img.src = poster;
+      w.classList.remove("playing");
+      btn.classList.remove("playing");
+      btn.setAttribute("aria-pressed", "false");
+      delete btn.dataset.busy;
+      halt.hidden = true;
+      btn.focus({ preventScroll: true });
+    });
     btn.addEventListener("click", () => {
       if (btn.dataset.busy) return;
       // These animations are several megabytes; hold the control in a loading
@@ -533,6 +604,9 @@ const CONFIG = {
         btn.classList.add("playing");
         btn.setAttribute("aria-pressed", "true");
         btn.removeAttribute("aria-busy");
+        const had = document.activeElement === btn;
+        halt.hidden = false;
+        if (had) halt.focus({ preventScroll: true });   // Play is hidden now; focus doesn't drop to the page
       };
       next.onload = start;
       next.onerror = () => {               // never strand the poster with no control
@@ -563,8 +637,9 @@ const CONFIG = {
     for (let i = 0; i < N; i++) strands.push({ phi: (i / N) * Math.PI * 2 + r(-.1, .1), r0: r(.55, 1), amp: r(.05, .16), lam: r(1.4, 3), p1: r(0, 6.28), p2: r(0, 6.28), sp: r(.5, 1.1), w: r(.6, 1.2), set: r(.004, .03) });
     const green = { phi: 2.1, r0: .78, amp: .09, lam: 1.9, p1: 1.2, p2: 3.1, sp: .8, w: 2.2, set: 0 };
     const axis = { phi: 0, r0: 0, amp: 0, lam: 1, p1: 0, p2: 0, sp: 1, set: 0 };
-    // the page's own ink and accent, so the strands match the type and the green line the links
-    const accent = hex("--accent", "#3B6B44"), ink = tint("--ink", "#14100C");
+    // the plate's ink and green: the panel stays sand in both registers, so the strands do too
+    const accent = hex("--plate-accent", "#3B6B44");
+    const ink = tint("--plate-ink-0", "#14100C");
 
     let W = 0, H = 0, dpr = 1;
     const size = () => { W = fig.clientWidth; H = fig.clientHeight; dpr = fitCanvas(c, W, H); };
@@ -843,6 +918,10 @@ const CONFIG = {
   };
 
   const initFields = () => $$("[data-field]").forEach((el) => {
+    startField(el);
+    onTheme(() => { if (el.field) { el.field.stop(); startField(el); } });   // the sprites and tints are the page's own, so a field restarts in the new register
+  });
+  const startField = (el) => {
     const c = $("canvas.field", el), btn = $(".art-ctl", el);
     const ctx = c && c.getContext && c.getContext("2d");
     const make = fields[el.dataset.field];
@@ -861,7 +940,7 @@ const CONFIG = {
     // and dies away within a second of it resting; the pieces scale their
     // response by it, so a resting cursor leaves the field to settle.
     const p = { x: -9999, y: -9999, vx: 0, vy: 0, active: 0, inside: false, ripples: [] };
-    let raf = 0, prev = 0, t = 0, fresh = true, playing = true, stirring = true;
+    let raf = 0, prev = 0, t = 0, fresh = true, playing = el.dataset.paused !== "1", stirring = true;   // a pause outlives a restart (a theme change)
     const box = { top: 0, left: 0, w: 0, h: 0 };
     const measure = () => { const r = el.getBoundingClientRect(); box.top = r.top; box.left = r.left; box.w = r.width; box.h = r.height; };
     const CONTROLS = "a, button, input, select, textarea, label, [role=button], form";
@@ -917,11 +996,13 @@ const CONFIG = {
     el.classList.add("live");
     if (reduced) {
       field.frame(0, 0, p, false);
-      if ("ResizeObserver" in window) new ResizeObserver(() => { size(); field.frame(0, 0, p, false); }).observe(el);
+      const still = "ResizeObserver" in window ? new ResizeObserver(() => { size(); field.frame(0, 0, p, false); }) : null;
+      if (still) still.observe(el);
+      el.field = { stop() { if (still) still.disconnect(); ctx.clearRect(0, 0, W, H); } };   // initFields restarts it on a theme change, with the new register's colours
       return;
     }
     field.frame(0, 0, p, true);
-    const toggle = () => { playing = !playing; sync(); };
+    const toggle = () => { playing = !playing; el.dataset.paused = playing ? "" : "1"; sync(); };
     if (btn) { btn.hidden = false; btn.addEventListener("click", toggle); }
     document.addEventListener("pointermove", move, { passive: true });
     document.addEventListener("pointerleave", leave);
@@ -940,7 +1021,7 @@ const CONFIG = {
       ctx.clearRect(0, 0, W, H);
       el.classList.remove("live");
     } };
-  });
+  };
 
   /* ---- Originations chart ----
      A line over a soft area, drawn in the pixels of its box so the type stays
@@ -1067,7 +1148,7 @@ const CONFIG = {
       }
       data.forEach((d, k) => {
         const anchor = k === 0 ? "start" : k === data.length - 1 ? "end" : "middle";
-        svgEl("text", { class: "axis", x: pts[k].x, y: H - 8, "text-anchor": anchor }, grid, short(d.label, k, narrow));
+        svgEl("text", { class: "axis", x: pts[k].x, y: H - 8, "text-anchor": anchor }, grid, W < 300 && k === 0 ? d.label.split(" ")[0] : short(d.label, k, narrow));   // under 300px "Oct ’25" meets "Nov"; the chart's label carries the year
       });
 
       // Area and line
@@ -1086,7 +1167,7 @@ const CONFIG = {
         const right = ax > W / 2;                    // anchor the text so it stays inside the frame
         const ty = narrow ? 10 + (i % 2) * 14 : 10;  // stagger rows on a phone so two notes never collide
         svgEl("line", { class: "anno-line", x1: ax, x2: ax, y1: ty + 6, y2: pts[a.at].y - 10 }, linesSvg);
-        svgEl("text", { class: "anno", x: ax + (right ? -6 : 6), y: ty + 4, "text-anchor": right ? "end" : "start" }, linesSvg, a.text);
+        svgEl("text", { class: "anno", x: ax + (right ? -6 : 6), y: ty + 4, "text-anchor": right ? "end" : "start" }, linesSvg, narrow && a.short ? a.short : a.text);
       });
 
       // Closing value, on the line at the right edge
@@ -1233,6 +1314,7 @@ const CONFIG = {
       raf = requestAnimationFrame(frame);
     };
     const settle = () => { played = true; cancelAnimationFrame(raf); draw(END); };
+    onTheme(() => { if (played) { cancelAnimationFrame(raf); draw(END); } });   // the tints are the page's own: redraw the settled plot in the new register
 
     if (!layout()) return;
     onceInView(plot, 0.35, (animate) => {
@@ -1310,7 +1392,7 @@ const CONFIG = {
         spec.className = spec.className.replace(/\bs-\w+/g, "").trim() + ` s-${size}`;
         spec.classList.toggle("icon-only", iconOnly);
         spec.classList.toggle("focused", state === "focused");
-        spec.style.setProperty("--specimen-bg", navy ? "#0B1F3A" : cssVar("--paper", "#F6F4F0"));
+        spec.style.setProperty("--specimen-bg", navy ? "#0B1F3A" : cssVar("--plate-paper", "#F6F4F0"));
         spec.innerHTML = iconOnly ? SPARK : `${left ? SPARK : ""}<span>${label}</span>${right ? SPARK : ""}`;
         box.classList.toggle("navy", navy);
       };
@@ -1374,53 +1456,12 @@ const CONFIG = {
     });
   };
 
-  /* ---- Recent-posts ticker ----
-     The blog's recent strip, looped like craft.do's: the run of posts is
-     repeated until it outruns the strip, doubled, and slid one run's width
-     per cycle (styles.css, section 13). The copies are inert, so a reader
-     tabs through each post once. Hovering or tabbing in holds it, and a
-     pause button holds it for good (WCAG 2.2.2). Without JS, or with
-     reduced motion, it stays the sideways-scrolling strip. */
-  const initTicker = () => {
-    const strip = $(".ticker");
-    if (!strip || reduced) return;
-    const items = $$(".ticker-item", strip);
-    if (!items.length) return;
-    const frame = document.createElement("div");
-    frame.className = "ticker-frame";
-    strip.before(frame);
-    frame.append(strip);
-    const track = document.createElement("div");
-    track.className = "ticker-track";
-    track.append(...items);
-    strip.append(track);
-    strip.classList.add("marquee");
-    strip.removeAttribute("data-strip-label");
-    const copy = (el) => { const c = el.cloneNode(true); c.setAttribute("aria-hidden", "true"); c.inert = true; return c; };
-    const run = track.scrollWidth || 1;
-    const reps = Math.max(1, Math.ceil(strip.clientWidth / run));
-    for (let i = 1; i < reps * 2; i++) items.forEach((el) => track.append(copy(el)));
-    strip.style.setProperty("--ticker-dur", `${Math.round((run * reps) / 40)}s`);   // ~40px a second
-
-    const btn = document.createElement("button");
-    btn.className = "art-ctl"; btn.type = "button";
-    btn.innerHTML = '<svg class="i-pause" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="3.5" y="3" width="3" height="10" rx=".8"/><rect x="9.5" y="3" width="3" height="10" rx=".8"/></svg><svg class="i-play" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 3.2v9.6a.6.6 0 0 0 .9.5l7.4-4.8a.6.6 0 0 0 0-1L5.9 2.7a.6.6 0 0 0-.9.5Z"/></svg>';
-    frame.append(btn);
-    let playing = true;
-    setPaused(btn, playing, "recent posts");
-    btn.addEventListener("click", () => {
-      playing = !playing;
-      frame.classList.toggle("held", !playing);
-      setPaused(btn, playing, "recent posts");
-    });
-  };
-
   /* ---- Swipe strips ----
      On a phone the gallery and three-up hero scroll sideways. A region that
      scrolls has to be reachable from the keyboard, so it gets a tab stop only
      while it actually overflows. */
   const initStrips = () => {
-    const strips = $$(".gallery, .hero-panel.three, .ticker:not(.marquee)");
+    const strips = $$(".gallery, .hero-panel.three");
     if (!strips.length) return;
     const stops = () => strips.forEach((s) => {
       if (s.scrollWidth > s.clientWidth + 1) {
@@ -1540,9 +1581,11 @@ const CONFIG = {
     const bestWrap = $(".arcade-score", root), best = $("[data-best]", root), status = $(".arcade-status", root);
     const list = $(".arcade-board", root), post = $(".arcade-post", root);
     const nameIn = post && $("input", post), postBtn = post && $("button", post), note = post && $(".arcade-post-note", post);
+    // The screen's sand holds in both registers, as a panel's does, so the
+    // course is drawn in the plate's inks, which hold too.
     const tok = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-    const INK = tok("--ink") || "#14100C", INK3 = tok("--ink-3") || "#6F675D", HAIR = tok("--hair-2") || "#CFC9BF";
-    const ACCENT = tok("--accent") || "#3B6B44", GREEN = tok("--accent-2") || "#6E9A5A", FLAG = tok("--danger") || "#C0392B", SAND = tok("--surface") || "#FFFFFF";
+    const INK = tok("--plate-ink-0") || "#14100C", INK3 = tok("--plate-ink-2") || "#6F675D", HAIR = tok("--plate-hair-2") || "#CFC9BF";
+    const ACCENT = tok("--plate-accent") || "#3B6B44", GREEN = tok("--plate-accent-2") || "#6E9A5A", FLAG = tok("--plate-danger") || "#C0392B", SAND = tok("--plate-surface") || "#FFFFFF";
     const H = 64, GROUND = 52, TEE = 12;           // logical pixels; the ground line is GROUND
     /* The tunable part, which the dashboard sets (GAME in middleware.js has
        the same defaults and the limits). /api/scores hands the saved values
@@ -1853,9 +1896,13 @@ const CONFIG = {
     /* Input: pointerdown covers tap and mouse; Space, Enter and the up arrow
        act on keydown and are swallowed there, so Space neither scrolls the
        page nor fires the button's own click on keyup. The click handler is
-       left for clicks made without a pointer or a key (assistive tech). */
-    btn.addEventListener("click", (e) => { if (e.detail === 0) act(); });
-    btn.addEventListener("pointerdown", (e) => { if (e.button === 0) { e.preventDefault(); btn.focus({ preventScroll: true }); act(); } });
+       left for clicks made without a pointer or a key (assistive tech).
+       A tap's own click arrives with detail 0 too (Chromium, once its
+       pointerdown is prevented), so a click that follows a pointer press
+       within a second and a half is that press's, already acted on. */
+    let pressed = -1e6;
+    btn.addEventListener("click", (e) => { if (e.detail === 0 && performance.now() - pressed > 1500) act(); });
+    btn.addEventListener("pointerdown", (e) => { if (e.button === 0) { e.preventDefault(); pressed = performance.now(); btn.focus({ preventScroll: true }); act(); } });
     btn.addEventListener("keydown", (e) => {
       if (e.key === " " || e.key === "ArrowUp" || e.key === "Enter") { e.preventDefault(); if (!e.repeat) act(); }
     });
@@ -1880,6 +1927,440 @@ const CONFIG = {
     document.addEventListener("visibilitychange", () => { if (document.hidden) setPaused(true); });
   };
 
+  /* ---- Work list and its stage ----
+     After nelson.co. From 821px up, every row's screen leaves its row for
+     one panel beside the list, which sticks and travels with it. The panel
+     shows the row under the pointer, else the row with focus, else the row
+     nearest the middle of the screen, and that row rises into a pill. Each
+     screen keeps a wrapper carrying its project's class, so the ground and
+     the emerge settings from styles.css still apply. Below 821px the screens
+     go back to their rows, so a phone sees the list it always did. */
+  const initCases = () => $$(".cases").forEach((list) => {
+    const rows = $$(".case-row", list).filter((r) => $(".case-media", r));
+    if (rows.length < 2) return;
+    const wide = window.matchMedia("(min-width: 821px)");
+    const fine = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const stage = document.createElement("div");
+    stage.className = "cases-stage";
+    stage.addEventListener("pointerleave", (e) => { hover = rows.find((r) => r.contains(e.relatedTarget)) || null; pick(); });
+    const media = new Map(rows.map((r) => [r, $(".case-media", r)]));
+    const slot = new Map(rows.map((r) => {
+      const s = document.createElement("a");   // the screen is a link to its case study too, out of the tab order (the row is the stop)
+      s.href = r.getAttribute("href");
+      s.tabIndex = -1;
+      s.className = "cases-slot " + Array.from(r.classList).filter((c) => c.startsWith("case-") && c !== "case-row").join(" ");
+      return [r, s];
+    }));
+    let on = null, hover = null, focus = null, staged = false;
+    const show = (row) => {
+      if (row === on) return;
+      rows.forEach((r) => { r.classList.toggle("is-on", r === row); slot.get(r).classList.toggle("is-on", r === row); slot.get(r).setAttribute("aria-hidden", String(r !== row)); });
+      on = row;
+    };
+    const nearest = () => {
+      const mid = window.innerHeight * 0.45;
+      let best = rows[0], d = Infinity;
+      rows.forEach((r) => { const b = r.getBoundingClientRect(); const gap = Math.abs((b.top + b.bottom) / 2 - mid); if (gap < d) { d = gap; best = r; } });
+      return best;
+    };
+    const pick = () => { if (staged) show(hover || focus || nearest()); };
+    const mount = () => {
+      if (staged) return;
+      staged = true;
+      rows.forEach((r) => { slot.get(r).append(media.get(r)); stage.append(slot.get(r)); });
+      stage.style.gridRow = `1 / span ${rows.length}`;
+      list.append(stage);
+      list.classList.add("staged");
+      pick();
+    };
+    const unmount = () => {
+      if (!staged) return;
+      staged = false;
+      rows.forEach((r) => { r.append(media.get(r)); r.classList.remove("is-on"); slot.get(r).classList.remove("is-on"); slot.get(r).removeAttribute("aria-hidden"); });
+      stage.remove();
+      list.classList.remove("staged");
+      on = null;
+    };
+    const sync = () => (wide.matches ? mount() : unmount());
+    wide.addEventListener("change", sync);
+    sync();
+    rows.forEach((r) => {
+      r.addEventListener("pointerenter", () => { if (fine.matches) { hover = r; pick(); } });
+      r.addEventListener("pointerleave", (e) => { if (staged && stage.contains(e.relatedTarget)) return; hover = null; pick(); });   // across to the screen: it keeps showing this row until the page scrolls
+      r.addEventListener("focusin", () => { if (r.matches(":focus-visible")) { focus = r; pick(); } });   // keyboard focus only; a click leaves no hold behind
+      r.addEventListener("focusout", () => { focus = null; pick(); });
+    });
+    let tick = false, px = -1, py = -1;
+    document.addEventListener("pointermove", (e) => { if (e.pointerType === "mouse") { px = e.clientX; py = e.clientY; } }, { passive: true });
+    const onScroll = () => {
+      if (staged && px >= 0) hover = rows.find((r) => r.contains(document.elementFromPoint(px, py))) || null;   // scrolling moves the rows under a resting pointer: follow what is under it now
+      if (!staged || tick || hover || focus) return;
+      tick = true;
+      requestAnimationFrame(() => { tick = false; pick(); });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("pageshow", (e) => { if (e.persisted) { hover = null; focus = null; pick(); } });   // back from a case study: start from the page, not the row clicked
+    list.addEventListener("lens", pick);   // re-sorted: show the row now nearest
+  });
+
+  /* ---- The lens ----
+     After the audience prompts on axoworks.com and pramit's intent card. A
+     segmented control above a work list re-sorts its rows for the reader's
+     role. The orders are fixed here
+     (no model, nothing sent anywhere); the choice is kept in localStorage
+     for the next page and the next visit. Rows move inside a view
+     transition where the browser has one and the reader hasn't asked for
+     less motion; otherwise they simply re-sort. */
+  const LENSES = {
+    recruiter: { order: ["system", "cross-sell", "verifications", "refi", "staking", "no-code"] },
+    hiring: { order: ["system", "no-code", "staking", "cross-sell", "verifications", "refi"] },
+    pm: { order: ["cross-sell", "refi", "verifications", "system", "staking", "no-code"] },
+    eng: { order: ["staking", "system", "no-code", "verifications", "refi", "cross-sell"] },
+  };
+  const initLens = () => $$("[data-lens]").forEach((lens) => {
+    const list = $(".cases", lens.parentNode);
+    const tabs = $$(".lens-tab", lens);
+    if (!list || !tabs.length) return;
+    const slugOf = (row) => (Array.from(row.classList).find((c) => c.startsWith("case-") && c !== "case-row") || "").slice(5);
+    const sort = (key) => {
+      const order = LENSES[key].order;
+      const rows = $$(".case-row", list).sort((a, b) => {
+        const ia = order.indexOf(slugOf(a)), ib = order.indexOf(slugOf(b));
+        return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
+      });
+      const stage = $(".cases-stage", list);
+      rows.forEach((r) => list.insertBefore(r, stage));
+      list.dispatchEvent(new CustomEvent("lens"));
+    };
+    // On a phone the tabs become one dropdown (a native <select> under a
+    // face that shows the choice). Until the reader picks, the face cycles
+    // through the roles, one a beat, so the options are seen before the
+    // dropdown is opened; it stops for good at the first choice or focus,
+    // pauses off screen, and under reduced motion stands on the current role.
+    const names = tabs.map((t) => [t.dataset.lensKey, t.textContent.trim()]);
+    const pick = document.createElement("div");
+    pick.className = "lens-pick";
+    pick.innerHTML = `<span class="lens-pick-face" aria-hidden="true"><span class="lens-pick-word"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="m6 9 6 6 6-6"/></svg></span><select class="lens-select" aria-label="Viewing as" autocomplete="off"></select>`;
+    names.forEach(([k, n]) => { const o = document.createElement("option"); o.value = k; o.textContent = n; $("select", pick).append(o); });
+    $(".seg", lens).after(pick);
+    lens.classList.add("has-pick");
+    const select = $("select", pick), word = $(".lens-pick-word", pick);
+    const face = (key, roll) => {
+      word.textContent = (names.find(([k]) => k === key) || names[0])[1];
+      if (!roll) return;
+      word.classList.remove("roll"); void word.offsetWidth; word.classList.add("roll");   // restart the rise
+    };
+    let current = "recruiter", chosen = false, cycleAt = 0, timer = 0;
+    const phone = window.matchMedia("(max-width: 640px)");
+    const cycle = () => {
+      clearInterval(timer);
+      if (chosen || reduced || !phone.matches || !onScreen()) { face(current, false); return; }
+      timer = setInterval(() => { cycleAt = (cycleAt + 1) % names.length; face(names[cycleAt][0], true); }, 1700);
+    };
+    const onScreen = whileOnScreen(pick, 0, () => cycle());
+    const stop = () => { if (chosen) return; chosen = true; clearInterval(timer); face(current, false); };
+    select.addEventListener("focus", stop);
+    select.addEventListener("pointerdown", stop);
+    select.addEventListener("change", () => { stop(); pick.classList.add("picked"); apply(select.value, true); });   // a real choice: the face goes from hint to value
+    phone.addEventListener("change", cycle);
+    const apply = (key, animate) => {
+      if (key === "leader") key = "hiring";   // the name it had before the recruiter joined
+      if (!LENSES[key]) key = "recruiter";
+      current = key;
+      select.value = key;
+      if (chosen || reduced) face(key, false);
+      tabs.forEach((t) => t.setAttribute("aria-pressed", String(t.dataset.lensKey === key)));
+      try { localStorage.setItem("lens", key); } catch (e) { /* private mode */ }
+      if (animate && !reduced && document.startViewTransition) {
+        const root = document.documentElement;
+        root.classList.add("vt-lens");   // styles.css times this transition as a control's answer, not a page change
+        document.startViewTransition(() => sort(key)).finished.finally(() => root.classList.remove("vt-lens"));
+      } else sort(key);
+    };
+    tabs.forEach((t) => t.addEventListener("click", () => apply(t.dataset.lensKey, true)));
+    let saved = "recruiter";
+    try { saved = localStorage.getItem("lens") || "recruiter"; } catch (e) { /* private mode */ }
+    face("recruiter", false);
+    if (saved !== "recruiter" && !phone.matches) apply(saved, false);   // on a phone every visit starts on the hint; a choice holds for the page it was made on
+    cycleAt = Math.max(0, names.findIndex(([k]) => k === current));
+    select.value = current;   // the browser may restore an old choice into the select; the list is in this order
+    window.addEventListener("pageshow", () => { select.value = current; });
+    cycle();
+  });
+
+  /* ---- Steps ----
+     After diabrowser.com. A decisions block marked data-steps, whose columns
+     each end in a shot, becomes from 761px up a numbered list beside one
+     panel that sticks and shows the step nearest the middle of the screen.
+     The shots move into the panel and back again below 761px, so nothing
+     is drawn twice. */
+  const initSteps = () => $$("[data-steps]").forEach((block) => {
+    const cols = $(".cols", block);
+    const steps = cols ? $$(":scope > .col", cols).filter((c) => $(".shot", c)) : [];
+    if (steps.length < 2) return;
+    const wide = window.matchMedia("(min-width: 761px)");
+    const stage = document.createElement("div");
+    stage.className = "steps-stage";
+    const shots = steps.map((c) => $(".shot", c));
+    steps.forEach((c, i) => {
+      const head = $(".col-head", c);
+      if (!head || $(".step-no", head)) return;
+      const n = document.createElement("span");
+      n.className = "step-no fig-no";
+      n.textContent = String(i + 1).padStart(2, "0");
+      head.prepend(n);
+    });
+    let on = -1, mounted = false;
+    const show = (i) => {
+      if (i === on) return;
+      steps.forEach((c, k) => { if (k === i) c.setAttribute("aria-current", "step"); else c.removeAttribute("aria-current"); });
+      shots.forEach((s, k) => { s.classList.toggle("is-on", k === i); s.setAttribute("aria-hidden", String(k !== i)); });
+      on = i;
+    };
+    const nearest = () => {
+      const mid = window.innerHeight * 0.45;
+      let best = 0, d = Infinity;
+      steps.forEach((c, i) => { const b = c.getBoundingClientRect(); const gap = Math.abs((b.top + b.bottom) / 2 - mid); if (gap < d) { d = gap; best = i; } });
+      return best;
+    };
+    const mount = () => {
+      if (mounted) return;
+      mounted = true;
+      shots.forEach((s) => stage.append(s));
+      stage.style.gridRow = `1 / span ${steps.length}`;
+      cols.append(stage);
+      block.classList.add("steps", "on");
+      show(nearest());
+    };
+    const unmount = () => {
+      if (!mounted) return;
+      mounted = false;
+      shots.forEach((s, i) => { steps[i].append(s); s.classList.remove("is-on"); s.removeAttribute("aria-hidden"); });
+      stage.remove();
+      block.classList.remove("on");
+      steps.forEach((c) => c.removeAttribute("aria-current"));
+      on = -1;
+    };
+    const sync = () => (wide.matches ? mount() : unmount());
+    wide.addEventListener("change", sync);
+    sync();
+    let tick = false;
+    window.addEventListener("scroll", () => {
+      if (!mounted || tick) return;
+      tick = true;
+      requestAnimationFrame(() => { tick = false; show(nearest()); });
+    }, { passive: true });
+  });
+
+  /* ---- The agent window ----
+     After granola.ai and replicate.com. A figure marked data-demo carries
+     its script as JSON (a script tag inside it) and a window with a status,
+     a log and a figure; this plays the steps in order and loops, holding
+     each for its hold_ms. A figure with a `to` counts from its value to it.
+     It waits for its block to reveal, runs only on screen, stops behind its
+     button, and under reduced motion shows the run's last step and nothing
+     moves. */
+  const initDemo = () => $$("[data-demo]").forEach((fig) => {
+    const src = $("script[data-demo-script]", fig);
+    const win = $(".agent-win", fig);
+    if (!src || !win) return;
+    let script;
+    try { script = JSON.parse(src.textContent); } catch (e) { return; }
+    const steps = script.steps || [];
+    if (!steps.length) return;
+    const status = $("[data-demo-status]", win), log = $("[data-demo-log]", win), figEl = $("[data-demo-fig]", win);
+    const num = $("b", figEl), unit = $("span", figEl);
+    let raf = 0;
+    const count = (f, animate) => {
+      const to = f.to == null ? f.value : f.to;
+      cancelAnimationFrame(raf);
+      if (!animate || f.to == null) { num.textContent = to; return; }
+      const parse = (v) => Number(String(v).replace(/[^0-9.]/g, "")) || 0;
+      const a = parse(f.value), b = parse(to), dec = (String(to).split(".")[1] || "").replace(/\D/g, "").length;
+      const suffix = String(to).replace(/[0-9.,]/g, "");
+      const fmt = (n) => n.toLocaleString("en-US", { minimumFractionDigits: dec, maximumFractionDigits: dec }) + suffix;
+      const t0 = performance.now(), dur = 900;
+      const tick = (now) => {
+        const p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+        num.textContent = p < 1 ? fmt(a + (b - a) * e) : to;
+        if (p < 1) raf = requestAnimationFrame(tick);
+      };
+      raf = requestAnimationFrame(tick);
+    };
+    const render = (step, animate) => {
+      status.textContent = step.label;
+      win.classList.toggle("busy", animate && step.kind !== "result");
+      log.replaceChildren(...(step.lines || []).map((t, i) => {
+        const li = document.createElement("li");
+        li.textContent = t;
+        li.style.setProperty("--i", String(i));
+        return li;
+      }));
+      if (step.figure) { figEl.hidden = false; unit.textContent = step.figure.unit || ""; count(step.figure, animate); }
+      else figEl.hidden = true;
+    };
+    const last = steps.find((s) => s.id === (script.final_state || {}).step) || steps[steps.length - 1];
+    if (reduced) { render(last, false); return; }
+    const btn = $(".art-ctl", fig);
+    let i = -1, timer = 0, playing = true, started = false;
+    // The window keeps its tallest step's height at the current width, so the
+    // page under it never moves as the steps change (on a phone they differ
+    // by a third). Each step is drawn once, unseen, to measure it.
+    const fit = () => {
+      win.style.minHeight = "";
+      const tallest = Math.max(...steps.map((st) => { render(st, false); return win.offsetHeight; }));
+      win.style.minHeight = `${tallest}px`;
+      render(i < 0 ? last : steps[i], false);
+    };
+    fit();
+    if (document.fonts) document.fonts.ready.then(fit);
+    let fitW = window.innerWidth;
+    window.addEventListener("resize", debounce(() => { if (window.innerWidth !== fitW) { fitW = window.innerWidth; fit(); } }, 150));
+    const visible = whileOnScreen(fig, 0.2, () => sync());
+    const next = () => {
+      i = (i + 1) % steps.length;
+      render(steps[i], true);
+      timer = setTimeout(next, steps[i].hold_ms || 1800);
+    };
+    const sync = () => {
+      clearTimeout(timer);
+      if (!started) return;
+      if (playing && visible()) timer = setTimeout(next, i < 0 ? 0 : 500);
+      else win.classList.remove("busy");
+    };
+    if (btn) {
+      btn.hidden = false;
+      setPaused(btn, playing, "the agent demo");
+      btn.addEventListener("click", () => { playing = !playing; setPaused(btn, playing, "the agent demo"); sync(); });
+    }
+    render(last, false);   // still, until its block has arrived
+    afterReveal(fig, () => { started = true; sync(); });
+  });
+
+  /* ---- The palette ----
+     After the ⌘K menus on vercel.com and docs.stripe.com. ⌘K (Ctrl+K), or
+     the bar's Search row (in each page's markup; a page without it gets one
+     here), opens a dialog with one field: type,
+     and the pages, sections, case studies and posts that match come up
+     from /search-index.json (blog.py writes it); arrows move, Enter goes.
+     The last row hands whatever was typed to the assistant, so a question
+     the index cannot answer still gets one. The index loads once, on first
+     open, so a reader who never presses the keys pays nothing. */
+  const initPalette = () => {
+    const nav = $(".nav-links ul");
+    if (!nav) return;
+    const mac = /Mac|iPhone|iPad/.test(navigator.platform || "");
+    let li = $(".nav-search", nav);
+    if (!li) {
+      li = document.createElement("li");
+      li.className = "nav-search";
+      li.innerHTML = `<button class="nav-kbd" type="button"><span>Search</span><kbd aria-hidden="true"></kbd></button>`;   // the key cap's text comes from styles.css
+      const blog = $$("li", nav).find((l) => /blog\.html$/.test($("a", l)?.getAttribute("href") || ""));
+      if (blog) blog.after(li); else nav.append(li);
+    }
+    const trigger = $("button", li);
+    trigger.setAttribute("aria-keyshortcuts", mac ? "Meta+K" : "Control+K");
+
+    const dlg = document.createElement("dialog");
+    dlg.className = "palette";
+    dlg.setAttribute("aria-label", "Search the site");
+    dlg.innerHTML = `
+      <form class="palette-form" role="search">
+        <svg class="palette-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input class="palette-input" id="palette-input" type="text" autocomplete="off" spellcheck="false" placeholder="Search, or ask a question" aria-label="Search" role="combobox" aria-expanded="true" aria-controls="palette-list" aria-autocomplete="list">
+        <button class="palette-close" type="button" aria-label="Close search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </form>
+      <ul class="palette-list" id="palette-list" role="listbox" aria-label="Results" tabindex="-1"></ul>
+      <p class="palette-foot t-micro" aria-hidden="true"><span><kbd>↑</kbd><kbd>↓</kbd> move</span><span><kbd>↵</kbd> open</span><span><kbd>esc</kbd> close</span></p>`;
+    document.body.append(dlg);
+    const input = $("input", dlg), list = $(".palette-list", dlg);
+    let index = null, loading = null, rows = [], cursor = 0, from = null;
+
+    const load = () => loading || (loading = fetch("/search-index.json").then((r) => (r.ok ? r.json() : [])).then((d) => (index = d)).catch(() => (index = [])));
+    const score = (e, words, q) => {
+      const t = fold(e.t), d = fold(e.d || ""), k = fold(e.k || "");
+      if (!q) return e.k === "Page" || e.k.startsWith("Case") ? 1 : 0;
+      let s = 0;
+      if (t.startsWith(q)) s += 4; else if (t.includes(q)) s += 3;
+      words.forEach((w) => {
+        if (w.length < 3) return;                                   // "in", "a": everywhere, so they say nothing
+        const at = new RegExp(`(^|[^a-z0-9])${w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`);   // at the start of a word
+        if (at.test(t)) s += 1.5; else if (at.test(d) || at.test(k)) s += 0.75;
+      });
+      return s;
+    };
+    const escapeHtml = (v) => String(v).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    const draw = () => {
+      const q = fold(input.value.trim()), words = q.split(/\s+/).filter(Boolean);
+      const hits = (index || []).map((e) => [score(e, words, q), e]).filter(([s]) => s > 0).sort((a, b) => b[0] - a[0]).slice(0, 8).map(([, e]) => e);
+      rows = hits.map((e) => ({ kind: "go", url: e.u, html: `<span class="palette-title">${escapeHtml(e.t)}</span><span class="palette-kind">${escapeHtml(e.k)}</span>${e.d ? `<span class="palette-desc">${escapeHtml(e.d)}</span>` : ""}` }));
+      if (q && $(".chat-launch")) {
+        const row = { kind: "ask", q: input.value.trim(), html: `<span class="palette-title">Ask: “${escapeHtml(input.value.trim())}”</span><span class="palette-kind">Assistant</span><span class="palette-desc">Hand the question to the assistant, which answers from the site.</span>` };
+        if (/\?$/.test(q) || words.length >= 4) rows.unshift(row); else rows.push(row);   // a question comes first; a word or two is a search
+      }
+      if (!rows.length) rows.push({ kind: "none", html: `<span class="palette-title">Nothing matches</span><span class="palette-desc">Try a page name, a company or a topic.</span>` });
+      cursor = 0;
+      list.innerHTML = rows.map((r, i) => `<li class="palette-row ${r.kind}" role="option" id="palette-opt-${i}" aria-selected="${i === 0}">${r.html}</li>`).join("");
+      list.scrollTop = 0;   // the selected first row is in view after every keystroke
+      input.setAttribute("aria-activedescendant", rows.length ? "palette-opt-0" : "");
+    };
+    const move = (d) => {
+      if (!rows.length) return;
+      cursor = (cursor + d + rows.length) % rows.length;
+      $$(".palette-row", list).forEach((r, i) => r.setAttribute("aria-selected", String(i === cursor)));
+      input.setAttribute("aria-activedescendant", `palette-opt-${cursor}`);
+      $$(".palette-row", list)[cursor].scrollIntoView({ block: "nearest" });
+    };
+    const close = () => {
+      if (!dlg.open) return;
+      dlg.close();
+      document.documentElement.classList.remove("palette-open");
+      const back = from && from.closest(".nav-links") && sheetWide.matches ? $(".nav-toggle") : from;   // the sheet it came from is closed now
+      if (back && back.isConnected) back.focus({ preventScroll: true });
+    };
+    const ask = (q) => document.dispatchEvent(new CustomEvent("chat:ask", { detail: q }));   // the chat opens and asks, or holds the question if it is busy
+    const go = (i) => {
+      const r = rows[i];
+      if (!r || r.kind === "none") return;
+      close();
+      if (r.kind === "ask") { ask(r.q); return; }
+      const here = location.pathname + location.hash;
+      const [path, hash] = r.url.split("#");
+      if (path === location.pathname && hash) {
+        const el = document.getElementById(hash);
+        if (el) { history.pushState(null, "", `#${hash}`); el.scrollIntoView({ behavior: reduced ? "auto" : "smooth" }); el.tabIndex = -1; el.focus({ preventScroll: true }); return; }
+      }
+      if (r.url !== here) location.href = r.url;
+    };
+    const sheetWide = window.matchMedia("(max-width: 1023px)");
+    const open = () => {
+      if (dlg.open) return;
+      from = document.activeElement;
+      document.dispatchEvent(new CustomEvent("nav:close"));   // a result may scroll this page or open the chat, so the menu sheet goes first
+      dlg.showModal();
+      document.documentElement.classList.add("palette-open");
+      input.value = "";
+      load().then(draw);
+      draw();
+      input.focus();
+    };
+    trigger.addEventListener("click", open);
+    document.addEventListener("keydown", (e) => {
+      if ((e.metaKey || e.ctrlKey) && !e.altKey && !e.shiftKey && e.key.toLowerCase() === "k") { e.preventDefault(); dlg.open ? close() : open(); }
+    });
+    $(".palette-form", dlg).addEventListener("submit", (e) => { e.preventDefault(); go(cursor); });
+    $(".palette-close", dlg).addEventListener("click", close);
+    dlg.addEventListener("cancel", (e) => { e.preventDefault(); close(); });
+    dlg.addEventListener("click", (e) => { if (e.target === dlg) close(); });
+    input.addEventListener("input", draw);
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowDown") { e.preventDefault(); move(1); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); move(-1); }
+    });
+    list.addEventListener("click", (e) => { const row = e.target.closest(".palette-row"); if (row) go($$(".palette-row", list).indexOf(row)); });
+    list.addEventListener("pointermove", (e) => { const row = e.target.closest(".palette-row"); if (!row) return; const i = $$(".palette-row", list).indexOf(row); if (i !== cursor) { cursor = i; $$(".palette-row", list).forEach((r, k) => r.setAttribute("aria-selected", String(k === i))); } });
+  };
+
   /* ---- Blog post list ----
      Search filters the cards by title and blurb, hiding a pillar group once
      nothing in it matches; the toggle switches every group between the card
@@ -1892,12 +2373,12 @@ const CONFIG = {
     const empty = $(".posts-empty");
 
     const filter = () => {
-      const q = head.value.trim().toLowerCase();
+      const q = fold(head.value.trim());
       let shown = 0;
       groups.forEach((g) => {
         let n = 0;
         $$(".post-card", g).forEach((c) => {
-          const hit = !q || c.dataset.title.includes(q) || c.dataset.desc.includes(q);
+          const hit = !q || fold(c.dataset.title).includes(q) || fold(c.dataset.desc).includes(q);
           c.hidden = !hit;
           if (hit) n++;
         });
@@ -1906,6 +2387,9 @@ const CONFIG = {
       });
       if (empty) empty.hidden = shown > 0;
     };
+    // A topic link whose group the search is hiding clears the search first,
+    // so the jump lands on the group rather than on nothing.
+    $$(".pillar-nav a").forEach((a) => a.addEventListener("click", () => { if (head.value) { head.value = ""; filter(); } }));
 
     const view = (name) => {
       $$(".pillar-group .cards").forEach((c) => (c.dataset.view = name));
@@ -1935,7 +2419,14 @@ const CONFIG = {
      password with a tool, the panel answers with a password field, and a
      right password unlocks the case studies site-wide and asks the question
      again. A password typed as a question does the same, and the bubble that
-     carried it is masked. */
+     carried it is masked.
+     Under an answer: the pages it drew on as source cards ({t: 'source'},
+     from the model's citations), and the cards its tools ask for
+     ({t: 'card'}: a case study, or John's contact buttons), every one
+     cloned from a <template> in the panel and filled as text, never built
+     from the model's words as HTML. A source card for the page you are on
+     scrolls to the section and rings it. On the empty panel a second row of
+     suggestions asks who you are, and sends a longer question than its label. */
   const initChat = () => {
     if (!window.ReadableStream || !window.TextDecoder || !window.HTMLDialogElement) return;
     fetch("/api/chat", { cache: "no-store", credentials: "same-origin" })
@@ -1946,7 +2437,7 @@ const CONFIG = {
 
   const buildChat = (state) => {
     const KEY = "chat.v1";
-    const INTRO = "I'm an AI assistant. I answer from the pages on this site, so ask about John's projects, how he leads or what he's looking for next.";
+    const INTRO = "I’m an AI assistant. I answer from the pages on this site, so ask about John’s projects, how he leads or what he’s looking for next.";
     const UNLOCKED = "Unlocked. The case studies are open now, so ask me about the results, the numbers or how the work was done.";
     const phone = window.matchMedia("(max-width: 640px)");
     const fine = window.matchMedia("(pointer: fine)");
@@ -1968,7 +2459,14 @@ const CONFIG = {
     let unlocked = !!state.unlocked;
     let busy = null;                                   // the AbortController of the answer being read
     let offered = !!saved.offered;                     // the walkthrough offer, made once a tab
-    const save = (open) => { try { sessionStorage.setItem(KEY, JSON.stringify({ open, msgs, offered })); } catch (_) { /* nothing to keep it in */ } };
+    const save = (open, cite) => { try { sessionStorage.setItem(KEY, JSON.stringify({ open, msgs, offered, cite })); } catch (_) { /* nothing to keep it in */ } };   // cite: a source card's link, to ring its section on the next page
+
+    /* Who is asking: each chip sends a fuller question than its label. */
+    const AUDIENCE = [
+      ["Recruiter", "I’m a recruiter. What has John shipped, with the outcomes, and what size of team has he led?"],
+      ["Hiring manager", "I’m a hiring manager. How does John run a design team, and what does he hold the bar on?"],
+      ["Engineer", "I’m an engineer. How does John work with engineering, and what has he built with AI agents?"],
+    ];
 
     /* The button and the panel */
     /* What the button offers follows the page: a case study names its
@@ -1993,7 +2491,8 @@ const CONFIG = {
     launch.setAttribute("aria-haspopup", "dialog");
     launch.setAttribute("aria-controls", "chat");
     launch.setAttribute("aria-expanded", "false");
-    launch.innerHTML = `<span class="chat-launch-sweep" aria-hidden="true"></span>${ICON.spark}<span class="chat-launch-label">${topic.label}</span>`;
+    launch.innerHTML = `<span class="chat-launch-sweep" aria-hidden="true"></span>${ICON.spark}<span class="chat-launch-label"></span>`;
+    $(".chat-launch-label", launch).textContent = topic.label;
 
     const dlg = make("dialog", "chat");
     dlg.id = "chat";
@@ -2002,7 +2501,7 @@ const CONFIG = {
       <div class="chat-head">
         <div>
           <p class="eyebrow">AI assistant</p>
-          <h2 class="t-subhead" id="chat-title" tabindex="-1">${topic.label}</h2>
+          <h2 class="t-subhead" id="chat-title" tabindex="-1"></h2>
         </div>
         <button class="icon-btn chat-close" type="button" aria-label="Close the chat">${ICON.close}</button>
       </div>
@@ -2013,10 +2512,91 @@ const CONFIG = {
         <button class="chat-send" type="submit" aria-label="Send">${ICON.send}</button>
       </form>
       <p class="t-small chat-foot">The assistant answers from this site and can get things wrong. I read the questions people ask.</p>
-      <p class="sr-only" role="status" id="chat-status"></p>`;
+      <p class="sr-only" role="status" id="chat-status"></p>
+      <template class="chat-tpl-source"><li><a class="chat-source"><img class="chat-source-thumb" alt="" decoding="async" hidden><span class="chat-source-title"></span><span class="chat-source-label"></span></a></li></template>
+      <template class="chat-tpl-case"><div class="chat-card chat-card-case"><img class="case-logo" alt="" decoding="async"><div class="chat-card-title"></div><div class="t-small chat-card-summary"></div><div class="chat-card-stat"></div><div class="t-small chat-card-note"></div><div class="chips"></div><div class="chat-card-row"><a class="btn btn-primary btn-sm chat-card-link">Read the case study</a><span class="t-small chat-card-lock">Password protected</span></div></div></template>
+      <template class="chat-tpl-contact"><div class="chat-card chat-card-contact"><div class="t-small chat-card-summary">Email is the quickest way to reach me. LinkedIn works too.</div><div class="chat-card-row"><a class="btn btn-primary btn-sm" data-to="email">Email John</a><a class="btn btn-ghost btn-sm" data-to="linkedin" target="_blank" rel="noopener">Message on LinkedIn</a><a class="btn btn-ghost btn-sm" data-to="resume">Download resume</a></div></div></template>`;
+    $("#chat-title", dlg).textContent = topic.label;
     document.body.append(launch, dlg);
     const log = $(".chat-log", dlg), form = $(".chat-form", dlg), input = $("#chat-input", dlg);
     const send = $(".chat-send", dlg), title = $("#chat-title", dlg), status = $("#chat-status", dlg);
+    const tpl = (cls) => $(`template.${cls}`, dlg).content.firstElementChild.cloneNode(true);
+    // A link an answer or a card may carry: a path on this site, https, or
+    // mail. Parsed rather than pattern-matched, since the URL parser drops
+    // tabs and newlines ("/\t/host" would pass a pattern and leave the site),
+    // and a link the parser refuses comes back empty instead of throwing.
+    const safeHref = (u) => {
+      if (typeof u !== "string") return "";
+      let url;
+      try { url = new URL(u, location.href); } catch (_) { return ""; }
+      if (/^\//.test(u)) return url.origin === location.origin ? url.pathname + url.search + url.hash : "";
+      if (url.protocol === "https:" && /^https:\/\//i.test(u)) return url.href;
+      if (url.protocol === "mailto:" && /^mailto:/i.test(u)) return url.href;
+      return "";
+    };
+    const sitePath = (u) => { const h = safeHref(u); return h.startsWith("/") ? h : ""; };   // a path on this site, never another host
+
+    /* The cards under an answer, from the templates above. Every value the
+       server sends lands as text or as a checked path. */
+    const sourceItem = (v) => {
+      const li = tpl("chat-tpl-source"), a = $(".chat-source", li), img = $(".chat-source-thumb", li);
+      a.href = sitePath(v.url) || "/";
+      const thumb = sitePath(v.thumb);
+      if (thumb) { img.src = thumb; img.hidden = false; }
+      else { const slot = document.createElement("span"); slot.className = "chat-source-thumb"; img.replaceWith(slot); }   // the empty slot keeps a row of cards level
+      $(".chat-source-title", li).textContent = String(v.title || "");
+      $(".chat-source-label", li).textContent = String(v.label || "");
+      return li;
+    };
+    const card = (v) => {
+      if (!v || typeof v !== "object") return null;
+      if (v.kind === "contact") {
+        const c = tpl("chat-tpl-contact");
+        const to = { email: CONFIG.email ? `mailto:${CONFIG.email}?subject=${encodeURIComponent("Following up on your work")}` : "", linkedin: CONFIG.linkedin, resume: CONFIG.resume };
+        $$("[data-to]", c).forEach((a) => { if (to[a.dataset.to]) a.href = to[a.dataset.to]; else a.remove(); });
+        return c;
+      }
+      if (v.kind !== "case") return null;
+      const c = tpl("chat-tpl-case"), logo = $(".case-logo", c), url = sitePath(v.url);
+      if (sitePath(v.logo)) { logo.src = v.logo; logo.alt = String(v.company || ""); } else logo.remove();
+      $(".chat-card-title", c).textContent = String(v.title || "");
+      $(".chat-card-summary", c).textContent = String(v.summary || "");
+      const stat = $(".chat-card-stat", c), note = $(".chat-card-note", c), chips = $(".chips", c), link = $(".chat-card-link", c), lock = $(".chat-card-lock", c);
+      if (v.stat) stat.textContent = String(v.stat); else stat.remove();
+      if (v.stat && v.statNote) note.textContent = String(v.statNote); else note.remove();
+      if (Array.isArray(v.chips) && v.chips.length) v.chips.slice(0, 4).forEach((t) => chips.append(make("span", "chip", String(t)))); else chips.remove();
+      if (url) link.href = url; else link.remove();
+      if (!v.locked) lock.remove();
+      return c;
+    };
+    const attach = (m, extras) => {
+      if (!extras) return;
+      const sources = (Array.isArray(extras.sources) ? extras.sources : []).filter((v) => v && typeof v === "object").slice(0, 3);
+      if (sources.length) {
+        const ul = make("ul", "chat-sources");
+        ul.setAttribute("aria-label", "Sources");
+        sources.forEach((v) => ul.append(sourceItem(v)));
+        m.append(ul);
+      }
+      (Array.isArray(extras.cards) ? extras.cards : []).slice(0, 4).forEach((v) => { const c = card(v); if (c) m.append(c); });
+    };
+
+    /* A source card for the page you are on: scroll to its section and ring
+       it for a moment, rather than reload. The ring goes on the section's
+       column (.wrap), so it hugs the text and not the full-bleed ground. */
+    const here = (href) => { try { const u = new URL(href, location.href); return { same: u.pathname === location.pathname, hash: u.hash }; } catch (_) { return { same: false, hash: "" }; } };
+    let ringing = 0;
+    const ring = (hash) => {
+      const target = hash && document.getElementById(decodeURIComponent(hash.slice(1)));
+      if (!target) return false;
+      const box = target.querySelector(":scope > .wrap") || target;
+      clearTimeout(ringing);
+      $$(".chat-cited").forEach((el) => el.classList.remove("chat-cited"));
+      box.classList.add("chat-cited");
+      box.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+      ringing = setTimeout(() => box.classList.remove("chat-cited"), 1700);
+      return true;
+    };
 
     /* Light Markdown, built as nodes. Links go to the site's own pages, to
        https or to mail; anything else stays text. */
@@ -2026,10 +2606,10 @@ const CONFIG = {
       while ((m = re.exec(text))) {
         if (m.index > at) into.append(text.slice(at, m.index));
         if (m[3]) into.append(make("strong", "", m[3]));
-        else if (/^(\/(?![\/\\])|https:\/\/|mailto:)/.test(m[2])) {   // a site path (never //host or /\host), https or mail
-          const a = make("a", "", m[1]);
-          a.href = m[2];
-          if (/^https:/.test(m[2]) && new URL(m[2]).host !== location.host) { a.target = "_blank"; a.rel = "noopener"; }
+        else if (safeHref(m[2])) {   // a site path, https or mail; anything else stays text
+          const href = safeHref(m[2]), a = make("a", "", m[1]);
+          a.href = href;
+          if (/^https:/.test(href) && new URL(href).host !== location.host) { a.target = "_blank"; a.rel = "noopener"; }
           into.append(a);
         } else into.append(m[1]);
         at = re.lastIndex;
@@ -2057,32 +2637,46 @@ const CONFIG = {
        the reader has scrolled up to read something. */
     let pinned = true;
     log.addEventListener("scroll", () => { pinned = log.scrollHeight - log.scrollTop - log.clientHeight < 48; }, { passive: true });
-    const stick = (force) => { if (force || pinned) log.scrollTop = log.scrollHeight; };
-    const bubble = (role, content) => {
+    const stick = (force) => { if (!msgs.length) return; if (force || pinned) log.scrollTop = log.scrollHeight; };   // the empty panel stays at the top: the greeting, then the suggestions
+    const bubble = (role, content, extras) => {
       const m = make("div", `chat-msg is-${role}`);
       if (role === "user") m.append(make("span", "sr-only", "You: "), content);
-      else render(content, m);
+      else {
+        const box = make("div", "chat-answer");
+        render(content, box);
+        m.append(box);
+        attach(m, extras);
+      }
       log.append(m);
       return m;
     };
-    let starters = null;
+    let starters = null, audience = null;
+    const chipRow = (list, label, onPick) => {
+      const ul = make("ul", "chat-starters");
+      ul.setAttribute("aria-label", label);
+      list.forEach(([text, q]) => {
+        const b = make("button", "btn btn-ghost btn-sm", text);
+        b.type = "button";
+        b.addEventListener("click", () => onPick(q));
+        const li = make("li");
+        li.append(b);
+        ul.append(li);
+      });
+      return ul;
+    };
     const drawLog = () => {
       log.replaceChildren();
       bubble("assistant", INTRO);
-      if (!msgs.length && Array.isArray(topic.starters) && topic.starters.length) {
-        starters = make("ul", "chat-starters");
-        starters.setAttribute("aria-label", "Suggested questions");
-        topic.starters.forEach((q) => {
-          const b = make("button", "btn btn-ghost btn-sm", q);
-          b.type = "button";
-          b.addEventListener("click", () => ask(q));
-          const li = make("li");
-          li.append(b);
-          starters.append(li);
-        });
-        log.append(starters);
+      if (!msgs.length) {
+        if (Array.isArray(topic.starters) && topic.starters.length) {
+          starters = chipRow(topic.starters.map((q) => [q, q]), "Suggested questions", ask);
+          log.append(starters);
+        }
+        audience = make("div", "chat-audience");
+        audience.append(make("span", "t-small chat-audience-label", "I’m a"), chipRow(AUDIENCE, "Ask as", ask));
+        log.append(audience);
       }
-      msgs.forEach((m) => bubble(m.role, m.content));
+      msgs.forEach((m) => bubble(m.role, m.content, m));
       if (questions() >= LIMIT) endConversation(false);
       stick(true);
     };
@@ -2103,7 +2697,10 @@ const CONFIG = {
       if (busy || questions() >= LIMIT) return;
       const q = (question ?? input.value).trim();
       if (!q) return;
+      const held = [starters, audience].some((row) => row && row.contains(document.activeElement));
       if (starters) { starters.remove(); starters = null; }
+      if (audience) { audience.remove(); audience = null; }
+      if (held) (fine.matches ? input : title).focus({ preventScroll: true });   // the chip that had focus is gone
       input.value = "";
       msgs.push({ role: "user", content: q });
       const mine = bubble("user", q);
@@ -2123,7 +2720,9 @@ const CONFIG = {
       busy = new AbortController();
       setBusy(true);
       let text = "", asked = false, opened = false, failed = "", frame = 0;
-      const paint = () => { frame = 0; reply.classList.remove("is-waiting"); render(text, reply); stick(); };
+      const sources = [], cards = [];                  // the pages it cites and the cards it asks for, drawn once the words are in
+      const box = make("div", "chat-answer");
+      const paint = () => { frame = 0; reply.classList.remove("is-waiting"); if (!box.isConnected) reply.replaceChildren(box); render(text, box); stick(); };
       try {
         const res = await fetch("/api/chat", {
           method: "POST", credentials: "same-origin", signal: busy.signal,
@@ -2147,6 +2746,8 @@ const CONFIG = {
             let ev;
             try { ev = JSON.parse(line); } catch (_) { continue; }
             if (ev.t === "text") { text += ev.v; if (!frame) frame = requestAnimationFrame(paint); }
+            else if (ev.t === "source") { if (sources.length < 3 && ev.v && typeof ev.v === "object") sources.push(ev.v); }
+            else if (ev.t === "card") { if (cards.length < 4 && ev.v && typeof ev.v === "object") cards.push(ev.v); }
             else if (ev.t === "password") asked = true;
             else if (ev.t === "unlocked") opened = true;
             else if (ev.t === "error") failed = ev.v;
@@ -2164,18 +2765,34 @@ const CONFIG = {
         if (mine) mine.replaceChildren(make("span", "sr-only", "You entered the password: "), "••••••••");
         reply.remove();
         unlocked = true;
-        msgs.push({ role: "assistant", content: UNLOCKED });
-        bubble("assistant", UNLOCKED);
-        status.textContent = UNLOCKED;
+        const waiting = $$(".chat-unlock", log);
+        if (waiting.length) {                          // it answered the field's request: the same as unlocking there
+          waiting.forEach((c) => c.remove());
+          const done = make("p", "chat-unlocked", "Case studies unlocked");
+          done.setAttribute("role", "status");
+          log.append(done);
+          if (msgs.length && msgs[msgs.length - 1].role === "assistant") answer(null);   // the question that needed it, answered in full
+        } else {
+          msgs.push({ role: "assistant", content: UNLOCKED });
+          bubble("assistant", UNLOCKED);
+          status.textContent = UNLOCKED;
+        }
       } else {
-        if (text) { render(text, reply); reply.classList.remove("is-waiting"); msgs.push({ role: "assistant", content: text }); }
+        const drew = !!text || cards.length > 0;
+        if (drew) {                                    // the words, then the sources and cards under them
+          reply.classList.remove("is-waiting");
+          if (!box.isConnected) reply.replaceChildren(box);
+          render(text, box);
+          attach(reply, { sources, cards });
+          msgs.push({ role: "assistant", content: text, sources, cards });
+        }
         if (failed) {
-          if (!text) reply.replaceChildren();
+          if (!drew) reply.replaceChildren();
           reply.classList.remove("is-waiting");
           reply.append(make("p", "chat-error", failed));
         }
-        if (!text && !failed) reply.remove();          // stopped before a word arrived
-        status.textContent = failed || (text ? `Assistant: ${plain(text)}` : "");
+        if (!drew && !failed) reply.remove();          // stopped before a word arrived
+        status.textContent = failed || (text ? `Assistant: ${plain(text)}${sources.length ? ` Sources: ${sources.map((v) => String(v.title).replace(/[.!?…]+$/, "")).join(", ")}.` : ""}` : "");
         if (asked && !unlocked) passwordCard();
         else if (text && questions() >= LIMIT) endConversation(true);
         else if (text && !offered && questions() >= 3) offerWalkthrough();
@@ -2208,7 +2825,7 @@ const CONFIG = {
     const offerWalkthrough = () => {
       offered = true;
       const card = make("div", "chat-offer");
-      card.append(make("p", "chat-offer-text", "Want the full story? I'm happy to walk you through any of this work myself."));
+      card.append(make("p", "chat-offer-text", "Want the full story? I’m happy to walk you through any of this work myself."));
       const row = make("div", "chat-offer-row");
       const mail = make("a", "btn btn-primary btn-sm", "Email John");
       mail.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent("Walkthrough of your work")}`;
@@ -2280,10 +2897,11 @@ const CONFIG = {
     };
     if (vv) { vv.addEventListener("resize", fit); vv.addEventListener("scroll", fit); }
     let closing = 0;
-    const open = (focus) => {
+    const open = (focus, quiet) => {
       clearTimeout(closing);
       if (!dlg.open) {
         if (phone.matches) { dlg.showModal(); root.classList.add("chat-locked"); fit(); }
+        else if (quiet) dlg.setAttribute("open", "");   // restored on a new page: show() would move focus into it, ahead of the skip link
         else dlg.show();
       }
       requestAnimationFrame(() => dlg.classList.add("is-open"));
@@ -2303,11 +2921,31 @@ const CONFIG = {
       closing = setTimeout(() => { dlg.close(); dlg.style.height = dlg.style.top = ""; }, reduced ? 0 : 200);
     };
     launch.addEventListener("click", () => open(true));
+    document.addEventListener("chat:ask", (e) => {   // the palette's Ask row: open and ask, or hold the question if an answer is still coming
+      const q = String(e.detail || "").trim();
+      if (!q) return;
+      if (!dlg.open) open(false);
+      if (busy || questions() >= LIMIT || !form.isConnected || form.hidden) { input.value = q; sync(); input.focus({ preventScroll: true }); return; }
+      ask(q);
+    });
     $(".chat-close", dlg).addEventListener("click", close);
     dlg.addEventListener("cancel", (e) => { e.preventDefault(); close(); });   // Escape on the modal sheet
     dlg.addEventListener("keydown", (e) => { if (e.key === "Escape" && !phone.matches) { e.preventDefault(); close(); } });
-    phone.addEventListener("change", () => { if (!dlg.open) return; dlg.close(); root.classList.remove("chat-locked"); open(false); });
-    log.addEventListener("click", (e) => { if (e.target.closest("a[href^='/']")) save(!phone.matches); });   // on to another page: reopen there, except on a phone
+    phone.addEventListener("change", () => { if (!dlg.open) return; dlg.close(); dlg.style.height = dlg.style.top = ""; root.classList.remove("chat-locked"); open(false); });   // the sheet's fitted height and top belong to the phone
+    log.addEventListener("click", (e) => {
+      const a = e.target.closest("a[href^='/']");
+      if (!a) return;
+      const src = a.classList.contains("chat-source") ? a.getAttribute("href") : "";
+      const at = src ? here(src) : null;
+      if (at && at.same) {                             // a source on this page: go to its section, no reload
+        e.preventDefault();
+        if (phone.matches) close();
+        if (at.hash) { if (ring(at.hash)) history.replaceState(null, "", at.hash); else location.hash = at.hash; }
+        else window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
+        return;
+      }
+      save(!phone.matches, src || undefined);        // on to another page: reopen there, except on a phone; a source rings its section on arrival
+    });
 
     /* The composer: Enter sends, Shift+Enter breaks the line. */
     form.addEventListener("submit", (e) => { e.preventDefault(); if (busy) busy.abort(); else ask(); });
@@ -2319,12 +2957,48 @@ const CONFIG = {
 
     drawLog();
     requestAnimationFrame(() => launch.classList.add("is-in"));
-    if (saved.open && !phone.matches) open(false);
+    if (saved.open && !phone.matches) open(false, true);
+    if (saved.cite) {                                  // a source card brought them here: ring its section, once
+      const at = here(saved.cite);
+      if (at.same && at.hash) requestAnimationFrame(() => ring(at.hash));
+      save(dlg.open);
+    }
   };
 
   /* ---- Footer year ---- */
   const initYear = () => $$("[data-year]").forEach((el) => (el.textContent = new Date().getFullYear()));
 
-  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initMatrix, initConfig, initFlows, initTicker, initStrips, initTableWraps, initPortrait, initClock, initArcade, initPostList, initChat, initYear]
+  /* ---- The theme switch ----
+     After the footer switches on cursor.com and vercel.com: System, Light,
+     Dark, in the footer of every page. A choice is stamped on the root as
+     data-theme and kept in localStorage, which the one-line script in each
+     head reads before first paint so a dark page never flashes paper.
+     System removes the stamp and lets the reader's setting decide. The
+     canvases hear "themechange" and redraw in the new register. */
+  const initTheme = () => {
+    const foot = $("footer");
+    if (!foot) return;
+    const box = document.createElement("div");
+    box.className = "theme";
+    box.innerHTML = `<div class="seg" role="group" aria-label="Theme">${
+      [["system", "System"], ["light", "Light"], ["dark", "Dark"]].map(([k, l]) => `<button class="seg-tab" type="button" data-theme-key="${k}" aria-pressed="false">${l}</button>`).join("")}</div>`;
+    foot.append(box);
+    const tabs = $$(".seg-tab", box);
+    const current = () => { try { return localStorage.getItem("theme") || "system"; } catch (e) { return "system"; } };
+    const mark = (key) => tabs.forEach((t) => t.setAttribute("aria-pressed", String(t.dataset.themeKey === key)));
+    const apply = (key) => {
+      if (key === "dark" || key === "light") document.documentElement.dataset.theme = key;
+      else delete document.documentElement.dataset.theme;
+      try { if (key === "system") localStorage.removeItem("theme"); else localStorage.setItem("theme", key); } catch (e) { /* private mode */ }
+      mark(key);
+      document.dispatchEvent(new CustomEvent("themechange"));
+    };
+    mark(current());
+    tabs.forEach((t) => t.addEventListener("click", () => apply(t.dataset.themeKey)));
+    // The system setting can change underneath a reader who chose System.
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { if (current() === "system") document.dispatchEvent(new CustomEvent("themechange")); });
+  };
+
+  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initMatrix, initConfig, initFlows, initStrips, initTableWraps, initPortrait, initClock, initArcade, initCases, initLens, initSteps, initDemo, initPalette, initPostList, initChat, initYear, initTheme]
     .forEach((init) => { try { init(); } catch (err) { console.error(`main.js: ${init.name} failed`, err); } });
 })();

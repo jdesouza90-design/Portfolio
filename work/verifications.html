@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>try{var d=document.documentElement;d.classList.add("js");setTimeout(function(){if(!d.classList.contains("js-ok"))d.classList.remove("js")},4000);if(/Mac|iPhone|iPad/.test(navigator.platform||""))d.classList.add("mac");var t=localStorage.getItem("theme");if(t==="dark"||t==="light")d.dataset.theme=t}catch(e){}</script>
 <title>Verifications — John DeSouza</title>
 <meta name="description" content="Redesigning Best Egg's document verification experience to cut call volume and lift applicant conversion, now live in a 50% A/B test. A case study by John DeSouza.">
 <link rel="canonical" href="https://john-desouza.com/work/verifications.html">
@@ -13,15 +14,15 @@
 <meta property="og:description" content="Closing the loop after document upload: 7,000 fewer calls a month and +180 bps verification rate, sized and now live in a 50% A/B test.">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.ico?v=04efcc70" sizes="32x32">
-<link rel="icon" href="/favicon.svg?v=c22edfe4" type="image/svg+xml">
+<link rel="icon" href="/favicon.svg?v=59b8d8a0" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=82554182">
 <link rel="alternate" type="application/rss+xml" title="John DeSouza — Blog" href="https://john-desouza.com/feed.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!-- A fresh unlock from the gate: hold the page until its opener is up (initUnlock in main.js). -->
 <script>if (/[?&]unlocked(?=&|$)/.test(location.search)) document.documentElement.classList.add("unlock");</script>
-<link rel="stylesheet" href="../styles.css?v=887d6a51">
+<link rel="stylesheet" href="../styles.css?v=02ad7343">
 <script defer src="/_vercel/insights/script.js"></script>
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
@@ -37,10 +38,11 @@
     </button>
     <nav class="nav-links" id="site-nav" aria-label="Primary">
       <ul>
-        <li><a href="/work.html" aria-current="page">Work</a></li>
+        <li><a href="/work.html" aria-current="true">Work</a></li>
         <li><a href="/#leadership">Leadership</a></li>
         <li><a href="/#about">About</a></li>
         <li><a href="/blog.html">Blog</a></li>
+        <li class="nav-search"><button class="nav-kbd" type="button"><span>Search</span><kbd aria-hidden="true"></kbd></button></li>
         <li><a class="nav-icon" data-link="linkedin" href="#" aria-label="LinkedIn profile" title="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.125 2.062 2.062 0 0 1 0 4.125zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/></svg><span>LinkedIn</span></a></li>
         <li class="nav-resume"><a class="nav-download" data-link="resume" href="#"><span>Resume</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11"/><path d="m7 11 5 5 5-5"/><path d="M4 20h16"/></svg></a></li>
       </ul>
@@ -68,7 +70,7 @@
     <div class="hero-lead">
       <div class="cs-hero-copy">
       <h1 class="t-display" data-rise style="--i:0">Verifications</h1>
-      <p class="t-lede" data-rise style="--i:1">Document verification in the Best Egg loan application. Applicants upload three documents and can now see each one's status instead of calling to ask.</p>
+      <p class="t-lede" data-rise style="--i:1">Document verification in the Best Egg loan application. Applicants upload three documents and can now see each one’s status instead of calling to ask.</p>
     </div>
       <div class="outcome-stat"><p class="eyebrow">Outcome</p><div class="t-stat" data-flow>100%</div><p class="t-small">Upload completion in usability testing. Sized at 7,000 fewer support calls a month</p></div>
     </div>
@@ -82,6 +84,20 @@
       <div><dt>Timeline</dt><dd>3 months</dd></div>
       <div><dt>Scope</dt><dd>Discovery to live A/B test</dd></div>
     </dl>
+  </div>
+</section>
+
+<section class="cs-section" id="role">
+  <div class="wrap">
+    <header class="section-intro">
+      <p class="eyebrow">My role</p>
+      <h2 class="t-title">Alignment first, then design</h2>
+    </header>
+    <div class="ledger">
+      <div class="ledger-row"><h3 class="t-heading">Cross-functional alignment</h3><p class="t-body">I got product, engineering, compliance and operations to agree on requirements before design started, and kept the priorities from shifting once it had.</p></div>
+      <div class="ledger-row"><h3 class="t-heading">Research integration</h3><p class="t-body">With the insights team, we ran A/B usability tests of the current upload flow against the document-led design. The senior product designer and product designer turned the findings into a prioritized list of changes, each tied to a KPI.</p></div>
+      <div class="ledger-row"><h3 class="t-heading">Design leadership</h3><p class="t-body">I set the design strategy and directed a senior product designer and a product designer from discovery through the A/B test, with weekly reviews to hold quality across parallel streams.</p></div>
+    </div>
   </div>
 </section>
 
@@ -116,30 +132,17 @@
   </div>
 </section>
 
-<section class="cs-section" id="role">
-  <div class="wrap">
-    <header class="section-intro">
-      <p class="eyebrow">My role</p>
-      <h2 class="t-title">Alignment first, then design</h2>
-    </header>
-    <div class="ledger">
-      <div class="ledger-row"><h3 class="t-heading">Cross-functional alignment</h3><p class="t-body">I got product, engineering, compliance and operations to agree on requirements before design started, and kept the priorities from shifting once it had.</p></div>
-      <div class="ledger-row"><h3 class="t-heading">Research integration</h3><p class="t-body">With the insights team, we ran A/B usability tests of the current upload flow against the document-led design. The senior product designer and product designer turned the findings into a prioritized list of changes, each tied to a KPI.</p></div>
-      <div class="ledger-row"><h3 class="t-heading">Design leadership</h3><p class="t-body">I set the design strategy and directed a senior product designer and a product designer from discovery through the A/B test, with weekly reviews to hold quality across parallel streams.</p></div>
-    </div>
-  </div>
-</section>
-
 <section class="cs-section" id="research">
   <div class="wrap">
     <header class="section-intro">
+      <p class="eyebrow">Research</p>
       <h2 class="t-title">What customers told us</h2>
-      <p class="t-lede">From the usability sessions on the current upload flow. Each quote is tagged with the change it drove.</p>
+      <p class="t-lede">From the usability sessions on the current upload flow.</p>
     </header>
     <section class="testimonials" data-carousel aria-roledescription="carousel" aria-label="What customers told us">
       <div class="testimonial-track" aria-live="off">
         <div class="testimonial active" role="group" aria-roledescription="slide" aria-label="1 of 3">
-          <blockquote class="quote"><p class="t-quote">"If that 'in review' would've been maybe bigger or a different color, I would've noticed it earlier."</p></blockquote>
+          <blockquote class="quote"><p class="t-quote">“If that ‘in review’ would’ve been maybe bigger or a different color, I would’ve noticed it earlier.”</p></blockquote>
           <div class="testimonial-foot">
             <span class="avatar glyph" aria-hidden="true">“</span>
             <cite><b>Clear status badge</b>Usability session</cite>
@@ -147,7 +150,7 @@
           </div>
         </div>
         <div class="testimonial" role="group" aria-roledescription="slide" aria-label="2 of 3">
-          <blockquote class="quote"><p class="t-quote">"Maybe just telling me how I will hear from you would make me feel more confident and informed."</p></blockquote>
+          <blockquote class="quote"><p class="t-quote">“Maybe just telling me how I will hear from you would make me feel more confident and informed.”</p></blockquote>
           <div class="testimonial-foot">
             <span class="avatar glyph" aria-hidden="true">“</span>
             <cite><b>Communication</b>Usability session</cite>
@@ -155,7 +158,7 @@
           </div>
         </div>
         <div class="testimonial" role="group" aria-roledescription="slide" aria-label="3 of 3">
-          <blockquote class="quote"><p class="t-quote">"Instead of that little circle, there could be a button called upload for each individual W2, pay stub, and ID."</p></blockquote>
+          <blockquote class="quote"><p class="t-quote">“Instead of that little circle, there could be a button called upload for each individual W2, pay stub, and ID.”</p></blockquote>
           <div class="testimonial-foot">
             <span class="avatar glyph" aria-hidden="true">“</span>
             <cite><b>Visual cues</b>Usability session</cite>
@@ -188,9 +191,9 @@
       <div class="row-copy">
         <p class="t-body">Once a file was sent, the dashboard went quiet. Nothing said whether it was pending, accepted or still needed, so applicants called to ask.</p>
         <ul class="tensions">
-          <li><strong>Unclear status</strong><span>After submitting, applicants couldn't tell what was pending, accepted or still needed.</span></li>
-          <li><strong>Ambiguous requirements</strong><span>The dashboard didn't say which formats or alternatives were accepted, so applicants called to ask.</span></li>
-          <li><strong>Progress bar confusion</strong><span>A multi-step progress bar implied steps that didn't exist, right at the point of submission.</span></li>
+          <li><strong>Unclear status</strong><span>After submitting, applicants couldn’t tell what was pending, accepted or still needed.</span></li>
+          <li><strong>Ambiguous requirements</strong><span>The dashboard didn’t say which formats or alternatives were accepted, so applicants called to ask.</span></li>
+          <li><strong>Progress bar confusion</strong><span>A multi-step progress bar implied steps that didn’t exist, right at the point of submission.</span></li>
         </ul>
       </div>
       <figure class="panel"><img decoding="async" width="780" height="2000" src="../assets/ver-step1.webp?v=411d3474" alt="Application pending dashboard with Step 1: Action Required, asking a co-owner to sign a document" loading="lazy"></figure>
@@ -215,7 +218,7 @@
       <div class="row-copy">
         <p class="eyebrow">What we fixed</p>
         <h3 class="t-heading">A finish line after the upload</h3>
-        <p class="t-body">We saw applicants stall after adding their documents: nothing told them they were done. We added an "I'm done" button that takes them back to the dashboard, which ended the confusion and the stall.</p>
+        <p class="t-body">We saw applicants stall after adding their documents: nothing told them they were done. We added an “I’m done” button that takes them back to the dashboard, which ended the confusion and the stall.</p>
       </div>
       <figure class="panel cutout"><img decoding="async" width="718" height="708" src="../assets/ver-done-cta.webp?v=b436dbcf" alt="The uploaded files card: two documents marked In review, then an Upload another button and a filled I'm done button" loading="lazy"></figure>
     </article>
@@ -236,6 +239,6 @@
   </div>
 </section>
 </main>
-<script src="../main.js?v=24b37281"></script>
+<script src="../main.js?v=64612b35"></script>
 </body>
 </html>

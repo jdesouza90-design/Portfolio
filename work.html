@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>try{var d=document.documentElement;d.classList.add("js");setTimeout(function(){if(!d.classList.contains("js-ok"))d.classList.remove("js")},4000);if(/Mac|iPhone|iPad/.test(navigator.platform||""))d.classList.add("mac");var t=localStorage.getItem("theme");if(t==="dark"||t==="light")d.dataset.theme=t}catch(e){}</script>
 <title>Work — John DeSouza</title>
 <meta name="description" content="Case studies from Best Egg, Chainlink Labs and Auth0, each opening with the business result behind it.">
 <link rel="canonical" href="https://john-desouza.com/work.html">
@@ -13,13 +14,13 @@
 <meta property="og:url" content="https://john-desouza.com/work.html">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.ico?v=04efcc70" sizes="32x32">
-<link rel="icon" href="/favicon.svg?v=c22edfe4" type="image/svg+xml">
+<link rel="icon" href="/favicon.svg?v=59b8d8a0" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=82554182">
 <link rel="alternate" type="application/rss+xml" title="John DeSouza — Blog" href="https://john-desouza.com/feed.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=887d6a51">
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=02ad7343">
 <script defer src="/_vercel/insights/script.js"></script>
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
@@ -40,6 +41,7 @@
         <li><a href="/#leadership">Leadership</a></li>
         <li><a href="/#about">About</a></li>
         <li><a href="/blog.html">Blog</a></li>
+        <li class="nav-search"><button class="nav-kbd" type="button"><span>Search</span><kbd aria-hidden="true"></kbd></button></li>
         <li><a class="nav-icon" data-link="linkedin" href="#" aria-label="LinkedIn profile" title="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.125 2.062 2.062 0 0 1 0 4.125zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/></svg><span>LinkedIn</span></a></li>
         <li class="nav-resume"><a class="nav-download" data-link="resume" href="#"><span>Resume</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11"/><path d="m7 11 5 5 5-5"/><path d="M4 20h16"/></svg></a></li>
       </ul>
@@ -59,20 +61,28 @@
 <section class="cs-hero solo">
   <div class="wrap">
     <div class="cs-hero-copy">
-      <p class="eyebrow" data-rise style="--i:0">Selected work</p>
-      <h1 class="t-display" data-rise style="--i:1">Recent and relevant work</h1>
+      <h1 class="t-display" data-rise style="--i:0">Recent and relevant work</h1>
     </div>
   </div>
 </section>
 
 <section class="section tight">
   <div class="wrap">
+    <div class="lens" data-lens data-reveal>
+      <p class="eyebrow lens-label" id="lens-label">Viewing as</p>
+      <div class="seg lens-tabs" role="group" aria-labelledby="lens-label">
+        <button class="seg-tab lens-tab" type="button" aria-pressed="true" data-lens-key="recruiter">Recruiter</button>
+        <button class="seg-tab lens-tab" type="button" aria-pressed="false" data-lens-key="hiring">Hiring manager</button>
+        <button class="seg-tab lens-tab" type="button" aria-pressed="false" data-lens-key="pm">Product manager</button>
+        <button class="seg-tab lens-tab" type="button" aria-pressed="false" data-lens-key="eng">Engineer</button>
+      </div>
+    </div>
     <div class="cases">
       <a class="case-row case-system" href="work/agentic-design-system-audit.html" data-reveal>
         <div class="case-copy">
           <img decoding="async" class="case-logo" width="300" height="63" src="assets/logo-bestegg.svg?v=8ca51028" alt="Best Egg" loading="lazy">
           <h2 class="t-heading">Agentic design system audit and remediation</h2>
-          <p class="t-body">Built the agent that audited Best Egg's whole design system and directed the remediation: 90.7% adoption measured for the first time, with the rest of the library projected to shrink 66%.</p>
+          <p class="t-body">Built the agent that audited Best Egg’s whole design system and directed the remediation: 90.7% adoption measured for the first time, with the rest of the library projected to shrink 66%.</p>
           <div class="chips"><span class="chip">Agent workflow</span><span class="chip">2 senior product designers · 2 quarters</span></div>
           <span class="work-cta">Read the case study</span>
         </div>
@@ -106,7 +116,7 @@
           <span class="work-cta">Read the case study</span>
         </div>
         <div class="case-media emerge">
-          <img decoding="async" width="750" height="2000" src="assets/cs-decline.webp?v=91edc85c" alt="Loan decline screen in the Best Egg app: Unfortunately, we are unable to approve your application at this time" loading="lazy">
+          <img decoding="async" width="750" height="2000" src="assets/cs-offer.webp?v=c4c3a67b" alt="Secured-loan offer screen in the Best Egg app: Congrats, you're approved for a secured loan, with a loan amount selector and offer cards" loading="lazy">
         </div>
       </a>
       <a class="case-row case-verifications" href="work/verifications.html" data-reveal>
@@ -177,14 +187,14 @@
   </div>
 </section>
 
-<section class="section">
+<section class="section tight">
   <div class="wrap">
     <div class="contact" data-reveal data-field="rings">
       <canvas class="field" aria-hidden="true"></canvas>
       <div>
         <p class="eyebrow">Get in touch</p>
         <h2 class="t-title">Want the password, or a walkthrough?</h2>
-        <p class="t-lede">I'm happy to talk through any of these in more depth, or share the full presentation.</p>
+        <p class="t-lede">I’m happy to talk through any of these in more depth, or share the full presentation.</p>
       </div>
       <div class="contact-actions">
         <a class="btn btn-primary" data-link="linkedin" href="#"><span class="icon-swap"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.125 2.062 2.062 0 0 1 0 4.125zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></span>Message me on LinkedIn</a>
@@ -194,12 +204,11 @@
     </div>
     <footer>
       <span>© <span data-year></span> John DeSouza</span>
-      <span>Case studies reflect my role and my teams' work at each company.</span>
     </footer>
   </div>
 </section>
 
 </main>
-<script src="main.js?v=24b37281"></script>
+<script src="main.js?v=64612b35"></script>
 </body>
 </html>

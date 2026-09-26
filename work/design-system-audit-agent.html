@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>try{var d=document.documentElement;d.classList.add("js");setTimeout(function(){if(!d.classList.contains("js-ok"))d.classList.remove("js")},4000);if(/Mac|iPhone|iPad/.test(navigator.platform||""))d.classList.add("mac");var t=localStorage.getItem("theme");if(t==="dark"||t==="light")d.dataset.theme=t}catch(e){}</script>
 <title>Design system audit agent — John DeSouza</title>
 <meta name="description" content="How I coached a senior product designer and a product designer to build an agent at Best Egg that audits the design system: 2,304 button variants became 321, with a guideline and an internal design system site that updates itself from Figma. A case study by John DeSouza.">
 <link rel="canonical" href="https://john-desouza.com/work/design-system-audit-agent.html">
@@ -16,15 +17,15 @@
      the page still opens by URL. check.py reads this noindex as "parked". Remove it to bring the page back. -->
 <meta name="robots" content="noindex">
 <link rel="icon" href="/favicon.ico?v=04efcc70" sizes="32x32">
-<link rel="icon" href="/favicon.svg?v=c22edfe4" type="image/svg+xml">
+<link rel="icon" href="/favicon.svg?v=59b8d8a0" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=82554182">
 <link rel="alternate" type="application/rss+xml" title="John DeSouza — Blog" href="https://john-desouza.com/feed.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!-- A fresh unlock from the gate: hold the page until its opener is up (initUnlock in main.js). -->
 <script>if (/[?&]unlocked(?=&|$)/.test(location.search)) document.documentElement.classList.add("unlock");</script>
-<link rel="stylesheet" href="../styles.css?v=887d6a51">
+<link rel="stylesheet" href="../styles.css?v=02ad7343">
 <script defer src="/_vercel/insights/script.js"></script>
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
@@ -40,10 +41,11 @@
     </button>
     <nav class="nav-links" id="site-nav" aria-label="Primary">
       <ul>
-        <li><a href="/work.html" aria-current="page">Work</a></li>
+        <li><a href="/work.html" aria-current="true">Work</a></li>
         <li><a href="/#leadership">Leadership</a></li>
         <li><a href="/#about">About</a></li>
         <li><a href="/blog.html">Blog</a></li>
+        <li class="nav-search"><button class="nav-kbd" type="button"><span>Search</span><kbd aria-hidden="true"></kbd></button></li>
         <li><a class="nav-icon" data-link="linkedin" href="#" aria-label="LinkedIn profile" title="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.125 2.062 2.062 0 0 1 0 4.125zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/></svg><span>LinkedIn</span></a></li>
         <li class="nav-resume"><a class="nav-download" data-link="resume" href="#"><span>Resume</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11"/><path d="m7 11 5 5 5-5"/><path d="M4 20h16"/></svg></a></li>
       </ul>
@@ -71,7 +73,7 @@
     <div class="hero-lead">
       <div class="cs-hero-copy">
       <h1 class="t-display" data-rise style="--i:0">Design system audit agent</h1>
-      <p class="t-lede" data-rise style="--i:1">I coached a senior product designer and a product designer to build an agent that reads every Figma file at Best Egg, counts each button variant, maps where it's used and flags what to cut. It turned one overloaded button component into three, and an internal design system site now rebuilds itself from Figma every week.</p>
+      <p class="t-lede" data-rise style="--i:1">I coached a senior product designer and a product designer to build an agent that reads every Figma file at Best Egg, counts each button variant, maps where it’s used and flags what to cut. It turned one overloaded button component into three, and an internal design system site now rebuilds itself from Figma every week.</p>
     </div>
       <div class="outcome-stat"><p class="eyebrow">Outcome</p><div class="t-stat" data-flow>86%</div><p class="t-small">Fewer button variants: from 2,304 in one component to 321 across three</p></div>
     </div>
@@ -87,12 +89,26 @@
   </div>
 </section>
 
+<section class="cs-section" id="role">
+  <div class="wrap">
+    <header class="section-intro">
+      <p class="eyebrow">My role</p>
+      <h2 class="t-title">The method, the coaching and the audience</h2>
+    </header>
+    <div class="ledger">
+      <div class="ledger-row"><h3 class="t-heading">The method</h3><p class="t-body">I decided to run the audit as an agent instead of by hand, and I wrote its brief and the rules it worked to: read every file, list every variant, find every instance, flag anything unused or duplicated and show its working. Buttons went first because they were the visible mess. I drove the work and the senior product designer and product designer executed it.</p></div>
+      <div class="ledger-row"><h3 class="t-heading">The coaching</h3><p class="t-body">The senior product designer built the agent, and I coached the pair through it: how to brief it, how to read its list against the files, when to overrule it. Its count was a claim until we checked it, so both ran it and we reviewed the list as a group, then decided the split into three components together. They then had the agent write the guideline and the library to the calls we had made.</p></div>
+      <div class="ledger-row"><h3 class="t-heading">The audience</h3><p class="t-body">I presented the work to product leadership and then to the product org: the reduction, the time saved and what it did to the workflow. New product designers ramp faster on three components than on one that did everything, and engineering can see the button styles instead of guessing between them. Leadership asked for the same run on their own use cases.</p></div>
+    </div>
+  </div>
+</section>
+
 <section class="cs-section" id="results">
   <div class="wrap">
     <header class="section-intro">
       <p class="eyebrow">Results</p>
       <h2 class="t-title">Three components where one did everything</h2>
-      <p class="t-lede">The old .Button carried seven properties multiplied together, and most of the results were never used. I set the direction and the senior product designer and product designer shipped Button, Icon Button and Link, with icons and fixed widths handled inside the component instead of as variants. The counts are the Figma library's own, before and after.</p>
+      <p class="t-lede">The old .Button carried seven properties multiplied together, and most of the results were never used. I set the direction and the senior product designer and product designer shipped Button, Icon Button and Link, with icons and fixed widths handled inside the component instead of as variants. The counts are the Figma library’s own, before and after.</p>
     </header>
     <div class="proof matrix" data-matrix data-total="2304" data-groups='[{"label":"Button","n":141},{"label":"Icon Button","n":120},{"label":"Link","n":60}]'>
       <div class="proof-head">
@@ -110,7 +126,7 @@
             <tr><th scope="row">Properties that multiply</th><td>7</td><td class="hl">4</td></tr>
             <tr><th scope="row">Icons</th><td>A variant, 4× the matrix</td><td class="hl">A boolean and a swap, no multiplier</td></tr>
             <tr><th scope="row">Fixed width</th><td>A variant, 2× the matrix</td><td class="hl">Handled inside the component</td></tr>
-            <tr><th scope="row">Disabled state</th><td>One per color</td><td class="hl">Danger, Brand and Action reuse Primary's</td></tr>
+            <tr><th scope="row">Disabled state</th><td>One per color</td><td class="hl">Danger, Brand and Action reuse Primary’s</td></tr>
           </tbody>
         </table>
       </details>
@@ -130,7 +146,7 @@
         <p class="t-body">One component, .Button, held seven properties: style, color, size, icon, fixed width, state and theme. Multiplied out, that was 2,304 variants, most of them unused and many near-identical. It was confusing, it was frustrating, and it was hard to tell which button was the correct one.</p>
         <ul class="tensions">
           <li><strong>Coverage</strong><span>Three components still had to cover every real use in the product.</span></li>
-          <li><strong>Trust</strong><span>The team had to believe an agent's count over its own sense of what was in the file.</span></li>
+          <li><strong>Trust</strong><span>The team had to believe an agent’s count over its own sense of what was in the file.</span></li>
           <li><strong>Adoption</strong><span>A new structure only counts once product designers use it.</span></li>
         </ul>
       </div>
@@ -141,7 +157,7 @@
       <div class="row-copy">
         <p class="eyebrow">The design</p>
         <h3 class="t-title">The agent counted, we decided</h3>
-        <p class="t-lede">The agent, built on Claude, ran through every Figma file: it listed each variant, found every instance in the product files and flagged what was unused or duplicated. The senior product designer and product designer ran each pass and brought the list to me. As a group we kept 321, split them into Button, Icon Button and Link, and had the agent write the usage guideline.</p>
+        <p class="t-lede">The agent ran through every Figma file: it listed each variant, found every instance in the product files and flagged what was unused or duplicated. The senior product designer and product designer ran each pass and brought the list to me. As a group we kept 321, split them into Button, Icon Button and Link, and had the agent write the usage guideline.</p>
       </div>
       <div class="cols">
         <div class="col">
@@ -154,7 +170,7 @@
         </div>
         <div class="col">
           <div class="col-head"><svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="3.5" width="7" height="4" rx="1.5"/><rect x="2.5" y="10" width="7" height="4" rx="1.5"/><rect x="2.5" y="16.5" width="7" height="4" rx="1.5"/><path d="M9.5 5.5h2c1.5 0 2 1.5 2.5 3M9.5 12h5M9.5 18.5h2c1.5 0 2-1.5 2.5-3"/><rect class="ac" x="15" y="9" width="6.5" height="6" rx="1.5"/></svg><h4 class="t-subhead">One disabled state</h4></div>
-          <p class="t-body">Danger, Brand and Action reuse Primary's disabled variant instead of defining their own.</p>
+          <p class="t-body">Danger, Brand and Action reuse Primary’s disabled variant instead of defining their own.</p>
         </div>
       </div>
       <figure class="panel wide"><img decoding="async" width="1800" height="866" src="../assets/btn-sheet-after.webp?v=63fac1b2" alt="The three new components side by side: the Button sheet, the Icon Button sheet and the Link sheet, every style, state and size on one page" loading="lazy"></figure>
@@ -214,20 +230,6 @@
 </section>
 
 
-<section class="cs-section" id="role">
-  <div class="wrap">
-    <header class="section-intro">
-      <p class="eyebrow">My role</p>
-      <h2 class="t-title">The method, the coaching and the audience</h2>
-    </header>
-    <div class="ledger">
-      <div class="ledger-row"><h3 class="t-heading">The method</h3><p class="t-body">I decided to run the audit as an agent instead of by hand, and I wrote its brief and the rules it worked to: read every file, list every variant, find every instance, flag anything unused or duplicated and show its working. Buttons went first because they were the visible mess. I drove the work and the senior product designer and product designer executed it.</p></div>
-      <div class="ledger-row"><h3 class="t-heading">The coaching</h3><p class="t-body">The senior product designer built the agent, and I coached the pair through it: how to brief it, how to read its list against the files, when to overrule it. Its count was a claim until we checked it, so both ran it and we reviewed the list as a group, then decided the split into three components together. They then had the agent write the guideline and the library to the calls we had made.</p></div>
-      <div class="ledger-row"><h3 class="t-heading">The audience</h3><p class="t-body">I presented the work to product leadership and then to the product org: the reduction, the time saved and what it did to the workflow. New product designers ramp faster on three components than on one that did everything, and engineering can see the button styles instead of guessing between them. Leadership asked for the same run on their own use cases.</p></div>
-    </div>
-  </div>
-</section>
-
 <section class="cs-next">
   <div class="wrap">
     <p class="eyebrow">Next case study</p>
@@ -242,6 +244,6 @@
   </div>
 </section>
 </main>
-<script src="../main.js?v=24b37281"></script>
+<script src="../main.js?v=64612b35"></script>
 </body>
 </html>

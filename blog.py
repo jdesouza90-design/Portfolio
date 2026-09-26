@@ -76,7 +76,9 @@ def read_posts():
                      "2026-09-22T09:00:00-04:00" % path)
 
         words = len(re.findall(r"\w+", re.sub(r"<[^>]+>", " ", body)))
-        meta.update(slug=slug, body=body, src=path, words=words,
+        for key in ("title", "description", "lede", "claim"):
+            meta[key] = smarten(meta[key])
+        meta.update(slug=slug, body=smarten_html(body), src=path, words=words,
                     minutes=max(1, round(words / WPM)))
         posts.append(meta)
 
@@ -87,6 +89,50 @@ def read_posts():
 def pretty_date(iso):
     d = datetime.datetime.fromisoformat(iso)
     return "%d %s %d" % (d.day, d.strftime("%B"), d.year)
+
+
+# The serif shows the difference between a straight quote and a typographic
+# one, so a post is set in the latter whatever the source file typed. smarten
+# works on plain text; smarten_html leaves tags, attributes and anything
+# inside code, pre, kbd, script, style and svg alone.
+def smarten(text):
+    text = re.sub(r"(?<=\w)'(?=\w)", "’", text)                # don't
+    text = re.sub(r"'(?=\d\d(?:s|\b))", "’", text)             # '90s
+    text = re.sub(r"(?<![\w’])'(?=\S)", "‘", text)        # opening single
+    text = text.replace("'", "’")                              # every other single closes
+    text = re.sub(r'(?<![\w”,.!?;:)])"(?=\S)', "“", text)  # opening double
+    return text.replace('"', "”")
+
+
+SMARTEN_SKIP = ("script", "style", "code", "pre", "kbd", "textarea", "svg")
+SMARTEN_TOKEN = re.compile(r"(<!--.*?-->|<[^>]+>)", re.S)
+SMARTEN_OPEN = re.compile(r"^\s*<(%s)\b" % "|".join(SMARTEN_SKIP), re.I)
+SMARTEN_CLOSE = re.compile(r"^\s*</(%s)\b" % "|".join(SMARTEN_SKIP), re.I)
+
+
+def smarten_html(fragment):
+    """A quote against an inline tag reads across it: "<strong>Yes</strong>,"
+    opens before the tag and closes after it, so the text on either side is
+    smartened with a stand-in letter for what the tag holds."""
+    parts = SMARTEN_TOKEN.split(fragment)
+    depth, out = 0, []
+    for i, part in enumerate(parts):
+        if part.startswith("<"):
+            if SMARTEN_OPEN.match(part) and not part.endswith("/>"):
+                depth += 1
+            elif SMARTEN_CLOSE.match(part):
+                depth = max(0, depth - 1)
+            out.append(part)
+        elif depth == 0:
+            before = parts[i - 1] if i > 0 else ""
+            after = parts[i + 1] if i + 1 < len(parts) else ""
+            lead = "x" if before.startswith("</") else ""
+            tail = "x" if after.startswith("<") and not after.startswith(("</", "<!--")) else ""
+            text = smarten(lead + part + tail)
+            out.append(text[len(lead):len(text) - len(tail) if tail else None])
+        else:
+            out.append(part)
+    return "".join(out)
 
 
 # ------------------------------------------------------------ cover art ----
@@ -220,6 +266,7 @@ def head(*, title, desc, url, css, extra="", og_type="website", ld="", italic=Fa
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>try{{var d=document.documentElement;d.classList.add("js");setTimeout(function(){{if(!d.classList.contains("js-ok"))d.classList.remove("js")}},4000);if(/Mac|iPhone|iPad/.test(navigator.platform||""))d.classList.add("mac");var t=localStorage.getItem("theme");if(t==="dark"||t==="light")d.dataset.theme=t}}catch(e){{}}</script>
 <title>{html.escape(title)}</title>
 <meta name="description" content="{html.escape(desc)}">
 <link rel="canonical" href="{url}">
@@ -242,7 +289,7 @@ def head(*, title, desc, url, css, extra="", og_type="website", ld="", italic=Fa
 <link rel="alternate" type="application/rss+xml" title="{AUTHOR} — Blog" href="{SITE}/feed.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:{"ital,wght@0,400;1,400" if italic else "wght@400"}&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:{"ital,wght@0,400;1,400" if italic else "wght@400"}&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{css}styles.css?v={stamp('styles.css')}">
 <script defer src="/_vercel/insights/script.js"></script>
 <script>window.si = window.si || function () {{ (window.siq = window.siq || []).push(arguments); }};</script>
@@ -261,18 +308,19 @@ DOWN_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
 CHECK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="20 6 9 17 4 12"/></svg>'
 PILLAR_ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>'
 RSS_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg>'
+NEXT_ARROW_SVG = '<svg class="cs-next-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>'
 ARROW_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>'
 
 
-def nav(current):
-    def mark(href):
-        return ' aria-current="page"' if href == current else ''
+def nav(current, section=None):
+    def mark(href):   # the page itself, or the section a page sits in (a post in the blog)
+        return ' aria-current="page"' if href == current else ' aria-current="true"' if href == section else ''
     return f"""
 <header class="nav">
   <div class="wrap">
     <a class="brand" href="/" aria-label="John DeSouza, home"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="15"/><path d="M10 8H22V12H20V22A2 2 0 0 1 18 24H12A4 4 0 0 1 8 20V18H12V20H16V12H10Z"/></svg><span>John DeSouza</span></a>
     <button class="icon-btn nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M4 9h16"/><path d="M4 15h16"/></svg>
     </button>
     <nav class="nav-links" id="site-nav" aria-label="Primary">
       <ul>
@@ -280,6 +328,7 @@ def nav(current):
         <li><a href="/#leadership">Leadership</a></li>
         <li><a href="/#about">About</a></li>
         <li><a href="/blog.html"{mark('/blog.html')}>Blog</a></li>
+        <li class="nav-search"><button class="nav-kbd" type="button"><span>Search</span><kbd aria-hidden="true"></kbd></button></li>
         <li><a class="nav-icon" data-link="linkedin" href="#" aria-label="LinkedIn profile" title="LinkedIn">{LINKEDIN_SVG}<span>LinkedIn</span></a></li>
         <li class="nav-resume"><a class="nav-download" data-link="resume" href="#"><span>Resume</span>{DOWN_SVG}</a></li>
       </ul>
@@ -300,7 +349,7 @@ def nav(current):
 
 def contact_band(heading, lede, note, css=""):
     return f"""
-<section class="section">
+<section class="section tight">
   <div class="wrap">
     <div class="contact" data-reveal data-field="rings">
       <canvas class="field" aria-hidden="true"></canvas>
@@ -393,7 +442,7 @@ def render_post(p, nxt):
 
     out = head(title="%s — %s" % (p["title"], AUTHOR), desc=p["description"],
                url=url, css="../", extra=extra, og_type="article", ld=ld_block, italic=True)
-    out += nav(None)
+    out += nav(None, "/blog.html")
 
     sources = ""
     if p.get("sources"):
@@ -421,11 +470,8 @@ def render_post(p, nxt):
     <p class="eyebrow" data-rise style="--i:0">{pillar_label}</p>
     <h1 class="t-display" data-rise style="--i:1">{html.escape(p["title"])}</h1>
     <p class="t-lede" data-rise style="--i:2">{p["lede"]}</p>
-    <p class="byline t-small"><span class="byline-mark" aria-hidden="true">JD</span>Written by {AUTHOR}</p>
     <p class="post-meta t-small">
       <span>Published on <time datetime="{p["date"]}">{pretty_date(p["date"])}</time></span>
-      <span class="dot" aria-hidden="true">·</span>
-      <span>in {pillar_label}</span>
       <span class="dot" aria-hidden="true">·</span>
       <span>{p["minutes"]} min read</span>
     </p>
@@ -434,7 +480,7 @@ def render_post(p, nxt):
 
 <section class="section tight">
   <div class="wrap">
-    <figure class="post-art" data-reveal>
+    <figure class="post-art" data-reveal style="--vt: post-{p["slug"]}">
       <img src="../assets/blog/{p["slug"]}-wide.svg?v={stamp('assets/blog/%s-wide.svg' % p["slug"])}" width="1500" height="600" alt="" decoding="async">
     </figure>
     <div class="claim" data-reveal>
@@ -453,7 +499,7 @@ def render_post(p, nxt):
   <div class="wrap">
     <div class="post-next" data-reveal>
       <p class="eyebrow">Next</p>
-      <h2 class="t-title"><a href="/blog/{nxt["slug"]}.html">{html.escape(nxt["title"])}</a></h2>
+      <h2 class="t-title"><a href="/blog/{nxt["slug"]}.html">{html.escape(nxt["title"])}{NEXT_ARROW_SVG}</a></h2>
       <div class="actions">
         <a class="btn btn-ghost" href="/blog.html">All posts{ARROW_SVG}</a>
       </div>
@@ -464,7 +510,7 @@ def render_post(p, nxt):
     out += contact_band(
         "Disagree with any of this?",
         "I'd rather hear it than not. The arguments get better when somebody pushes back.",
-        "Posts are my own views. Case studies reflect my role and my teams' work at each company.",
+        "Posts are my own views.",
         css="../")
     return out
 
@@ -519,23 +565,6 @@ def render_index(posts):
       <ul>
 {links}      </ul>
     </nav>
-  </div>
-</section>
-"""
-
-    # 2. The recent run, as a strip of titles and dates.
-    if len(posts) > 1:
-        strip = ""
-        for p in posts[:6]:
-            strip += f"""        <a class="ticker-item" href="/blog/{p["slug"]}.html">
-          <span class="t-small">{html.escape(p["title"])}</span>
-          <time class="t-small" datetime="{p["date"]}">{pretty_date(p["date"])}</time>
-        </a>\n"""
-        out += f"""
-<section class="section tight">
-  <div class="wrap">
-    <div class="ticker" data-strip-label="Recent posts, scroll sideways">
-{strip}    </div>
   </div>
 </section>
 """
@@ -595,7 +624,7 @@ def render_index(posts):
     out += contact_band(
         "Want to argue about one of these?",
         "I'm looking for a Director of Product Design role. I'm also happy to just talk shop.",
-        "Posts are my own views. Case studies reflect my role and my teams' work at each company.")
+        "Posts are my own views.")
     return out
 
 
@@ -605,9 +634,8 @@ def card(p):
     label, chip_class, short = PILLARS[p["pillar"]]
     return f"""
         <a class="post-card" href="/blog/{p["slug"]}.html" data-title="{html.escape(p["title"].lower())}" data-desc="{html.escape(p["description"].lower())}" data-pillar="{p["pillar"]}">
-          <span class="card-art"><img src="assets/blog/{p["slug"]}.svg?v={stamp('assets/blog/%s.svg' % p["slug"])}" width="{CW}" height="{CH}" alt="" loading="lazy" decoding="async"></span>
+          <span class="card-art" style="--vt: post-{p["slug"]}"><img src="assets/blog/{p["slug"]}.svg?v={stamp('assets/blog/%s.svg' % p["slug"])}" width="{CW}" height="{CH}" alt="" loading="lazy" decoding="async"></span>
           <span class="card-body">
-            <span class="eyebrow">{d.strftime("%B %Y")}</span>
             <span class="t-heading card-title">{html.escape(p["title"])}</span>
             <span class="t-small card-desc">{p["description"]}</span>
             <span class="post-meta t-small"><span class="chip {chip_class}">{short}</span><span>{p["minutes"]} min</span></span>
@@ -698,6 +726,39 @@ def to_markdown(fragment):
     return re.sub(r"\n{3,}", "\n\n", t).strip()
 
 
+def render_search(posts):
+    """The palette's index (main.js initPalette): every page, the home page's
+    sections, the case studies as the work index names them, and every post.
+    A case study's own text stays out: the pages are gated."""
+    entries = [{"t": "Home", "d": "Who John is, the case studies at a glance, how he leads and how to reach him.", "u": "/", "k": "Page"},
+               {"t": "Work", "d": "The case studies from Best Egg, Chainlink Labs and Auth0, each with the business result.", "u": "/work.html", "k": "Page"},
+               {"t": "Blog", "d": "Positions on design leadership, where product design is heading, and trust in fintech and web3.", "u": "/blog.html", "k": "Page"}]
+    home = open("index.html", encoding="utf-8").read()
+    for m in re.finditer(r'<section[^>]*\sid="([a-z-]+)"[^>]*>(.*?)</section>', home, re.S):
+        sid, body = m.group(1), m.group(2)
+        h = re.search(r'<h2 class="t-title[^"]*">(.*?)</h2>', body, re.S)
+        lede = re.search(r'<p class="t-lede">(.*?)</p>', body, re.S)
+        eyebrow = re.search(r'<p class="eyebrow">(.*?)</p>', body, re.S)
+        if not h or sid in ("top", "work"):
+            continue
+        title = strip_tags(eyebrow.group(1)) if eyebrow else strip_tags(h.group(1))
+        entries.append({"t": title, "d": strip_tags(h.group(1)) if eyebrow else (strip_tags(lede.group(1)) if lede else ""), "u": "/#" + sid, "k": "Section"})
+    work = open("work.html", encoding="utf-8").read()
+    work = re.sub(r"<!--.*?-->", "", work, flags=re.S)
+    for m in re.finditer(r'<a class="case-row[^"]*" href="(work/[a-z-]+\.html)"[^>]*>(.*?)</a>\s*\n', work, re.S):
+        href, body = m.group(1), m.group(2)
+        h = re.search(r'<h[23] class="t-heading">(.*?)</h[23]>', body, re.S)
+        p = re.search(r'<p class="t-body">(.*?)</p>', body, re.S)
+        logo = re.search(r'alt="([^"]+)"', body)
+        if not h:
+            continue
+        entries.append({"t": strip_tags(h.group(1)), "d": strip_tags(p.group(1)) if p else "", "u": "/" + href,
+                        "k": "Case study" + (" · " + logo.group(1) if logo else "")})
+    for p in posts:
+        entries.append({"t": p["title"], "d": strip_tags(p["description"]), "u": "/blog/%s.html" % p["slug"], "k": "Post · " + PILLARS[p["pillar"]][2]})
+    return json.dumps(entries, ensure_ascii=False, separators=(",", ":")) + "\n"
+
+
 def render_llms(posts):
     lines = ["# %s" % AUTHOR, "",
              "> %s This site holds his case "
@@ -771,6 +832,7 @@ def main():
     wanted["feed.xml"] = render_feed(posts)
     wanted["llms.txt"] = render_llms(posts)
     wanted["llms-full.txt"] = render_llms_full(posts)
+    wanted["search-index.json"] = render_search(posts)
 
     stale = []
     for path, text in wanted.items():
