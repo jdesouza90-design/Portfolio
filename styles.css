@@ -1157,6 +1157,13 @@ footer a:hover { color: var(--ink); }
 .testimonial-controls .ctl svg { width: 16px; height: 16px; }
 .testimonial-controls .pause { margin-left: var(--sp-2); }
 .testimonial-controls:has(> .pause)::before { content: ""; flex: none; width: 40px; margin-right: var(--sp-2); }   /* the pause's twin, empty, so the arrows and dots sit on the quote's axis */
+.testimonial-controls .ctl { flex: none; }   /* round at any width */
+@media (max-width: 560px) {   /* flush left here; the row tightens so it fits from 375px, and below that the pause wraps under it */
+  .testimonial-controls:has(> .pause)::before { content: none; }
+  .testimonial-controls { flex-wrap: wrap; gap: var(--sp-3) var(--sp-2); }
+  .testimonial-controls .dots { margin-inline: 0; }
+  .testimonial-controls .pause { margin-left: var(--sp-1); }
+}
 .testimonial-controls .pause .i-pause, .testimonial-controls .pause[aria-pressed="true"] .i-play { display: block; }
 .testimonial-controls .pause .i-play, .testimonial-controls .pause[aria-pressed="true"] .i-pause { display: none; }
 /* Rotation keeps running for reduced-motion users too (the CSS above already drops the
@@ -1258,7 +1265,7 @@ footer a:hover { color: var(--ink); }
    theme. */
 .config { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(24px, 3vw, 44px); }
 .config-side { display: grid; gap: var(--sp-4); align-content: start; min-width: 0; }
-.specimen { display: grid; place-items: center; min-height: 150px; padding: 24px; border-radius: var(--radius-sm); border: 1px solid var(--hair); background: var(--paper); transition: background var(--dur-ui) var(--ease), border-color var(--dur-ui) var(--ease); }
+.specimen { display: grid; place-items: center; min-height: 150px; padding: 24px; border-radius: var(--radius-sm); border: 1px solid var(--plate-hair); background: var(--plate-paper); transition: background var(--dur-ui) var(--ease), border-color var(--dur-ui) var(--ease); }
 .specimen.navy { background: #0B1F3A; border-color: #0B1F3A; }
 .spec { display: inline-flex; align-items: center; justify-content: center; gap: .5em; border: 1.5px solid transparent; border-radius: 8px; font-family: var(--font-body); font-weight: 500; line-height: 1; cursor: default; pointer-events: none; transition: background var(--dur-hover), color var(--dur-hover), border-color var(--dur-hover), padding var(--dur-hover), font-size var(--dur-hover); }
 .spec svg { width: 1.05em; height: 1.05em; flex: none; }
@@ -1269,7 +1276,7 @@ footer a:hover { color: var(--ink); }
 .spec.icon-only { padding-inline: 0; aspect-ratio: 1; }
 .spec.icon-only.fixed { min-width: 0; }
 .spec.st-link { text-decoration: underline; text-underline-offset: .18em; }
-.spec.focused { box-shadow: 0 0 0 2px var(--specimen-bg, var(--paper)), 0 0 0 4px currentColor; }
+.spec.focused { box-shadow: 0 0 0 2px var(--specimen-bg, var(--plate-paper)), 0 0 0 4px currentColor; }
 .config-form { display: grid; gap: var(--sp-4); }
 .config-group { border: 0; margin: 0; padding: 0; min-width: 0; }
 .config-group legend { padding: 0; margin-bottom: 8px; }
@@ -1339,6 +1346,7 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
   .steps.on .col:first-child { padding-top: 0; }
   .steps.on .col .t-subhead::before { display: none; }
   .steps.on .col[aria-current="step"] { border-left-color: var(--accent); }
+  .anim .steps.on .cols > .col.col { transition: border-color var(--dur-ui); transition-delay: 0s; }   /* outranks the column entrance (section 9), which a vertical list of steps doesn't use */
   .steps.on .col :is(.t-subhead, .t-body, .col-icon) { transition: color var(--dur-ui); }
   .steps.on .col:not([aria-current="step"]) :is(.t-subhead, .t-body, .col-icon) { color: var(--ink-3); }
   .steps.on .col .shot { display: none; }
@@ -1601,7 +1609,8 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
   .opener-body > * { opacity: 1; }                          /* the opener shows still, then goes */
   .opener-seam { transform: none; }
   .gauge .fill, .gauge .needle { animation: none !important; }
-  .layer, .layer-tabs::after, .nest, .nest .t-subhead, .steps-stage .shot { transition: none; }
+  .layer, .layer.active, .layer-tabs::after, .nest, .nest .t-subhead, .steps-stage .shot { transition: none; }
+  .post-card:hover, .pillar-nav a:hover svg, .btn:hover:active { transform: none; }
   .case-media img, .work-cta::after, .tooltip, .chart-marker, .chart-node { transition: none; transform: none; }
   .tooltip { transform: translate(-50%, 0); }
   .btn:hover, .btn:active, .icon-btn:active, .layer-tab:active, .testimonial-controls button:active { transform: none; }
@@ -2311,6 +2320,7 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
 .chat-launch.is-in { opacity: 1; transform: none; visibility: visible; transition-delay: 0s; }
 .chat-launch.is-in[aria-expanded="true"] { opacity: 0; transform: translateY(8px); visibility: hidden; transition-delay: 0s, 0s, var(--dur-ui), 0s, 0s, 0s; }
 .chat-launch.is-in:active { transform: scale(.97); }
+@media (max-width: 1023px) { html.nav-locked .chat-launch.is-in { opacity: 0; visibility: hidden; transition-delay: 0s, 0s, var(--dur-ui), 0s, 0s, 0s; } }   /* it goes with the page while the menu sheet is up */
 @media (hover: hover) and (pointer: fine) {
   .chat-launch.is-in:hover { transform: translateY(-2px); }
   .chat-launch.is-in:hover:active { transform: translateY(-2px) scale(.97); }
@@ -2332,7 +2342,7 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
   --sweep-pad: 40px;     /* room around the pill so the outer glow isn't cut by the mask's box */
   --sweep-fade: 7.5;     /* % of the turn the arc takes to fade in, and again to fade out */
   isolation: isolate;
-  animation: chat-sweep 7.5s linear infinite;
+  animation: chat-sweep 7.5s linear 2;   /* two laps as the page arrives, then it rests: nothing on the site moves for long unasked */
 }
 @keyframes chat-sweep { from { --sweep-rest: 110deg; } to { --sweep-rest: 470deg; } }
 .chat-launch-sweep {
@@ -2450,7 +2460,6 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
     top: calc((var(--nav-h) - 42px) / 2); bottom: auto; right: calc(var(--gutter) + 54px); z-index: 51;   /* past the toggle (42px, on the gutter) and the bar's 12px gap */
     width: 42px; height: 42px; min-height: 0; padding: 0; justify-content: center; border-radius: 50%; box-shadow: none;
   }
-  html.nav-locked .chat-launch.is-in { opacity: 0; visibility: hidden; transition-delay: 0s, 0s, var(--dur-ui), 0s, 0s, 0s; }
   .chat-launch .chat-launch-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .chat-launch svg { width: 18px; height: 18px; }
   /* The sheet: the whole screen, flush, rising in. The close sits where the

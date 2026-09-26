@@ -10,6 +10,7 @@ const CONFIG = {
    runs them in order, each on its own, so a feature that throws (a browser
    without some API, a block of markup that moved) leaves the rest working. */
 (function () {
+  document.documentElement.classList.add("js-ok");   // the head script drops html.js if this never runs
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -36,6 +37,9 @@ const CONFIG = {
   const EASE = cssVar("--ease", "cubic-bezier(.23, 1, .32, 1)");
   const EASE_IN_OUT = cssVar("--ease-in-out", "cubic-bezier(.77, 0, .175, 1)");
   const debounce = (fn, ms) => { let t; return () => { clearTimeout(t); t = setTimeout(fn, ms); }; };
+  // Text for matching: lower case, curly quotes folded to straight, so
+  // "occ's" finds the post that prints "occ’s".
+  const fold = (s) => String(s).toLowerCase().replace(/[‘’]/g, "'").replace(/[“”]/g, '"');
   // A pause button says what it holds: pressed means paused.
   const setPaused = (btn, playing, what) => {
     if (!btn) return;
@@ -273,11 +277,15 @@ const CONFIG = {
       if (rows && rows.contains(e.target) && rows.scrollHeight > rows.clientHeight) return;
       e.preventDefault();
     };
+    // While the sheet is open the page behind it is inert, so Tab stays in
+    // the bar and the sheet and a screen reader doesn't wander underneath.
+    const behind = () => [$("main"), $(".chat-launch")].filter(Boolean);
     const setOpen = (open) => {
       nav.classList.toggle("open", open);
       toggle.setAttribute("aria-expanded", String(open));
       toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
       document.documentElement.classList.toggle("nav-locked", open);
+      behind().forEach((el) => { el.inert = open; });
       if (open) document.addEventListener("touchmove", holdTouch, { passive: false });
       else document.removeEventListener("touchmove", holdTouch);
     };
@@ -286,11 +294,12 @@ const CONFIG = {
     // a wider screen with it open would keep the page locked, so it closes.
     const sheet = window.matchMedia("(max-width: 1023px)");
     sheet.addEventListener("change", () => { if (!sheet.matches && nav.classList.contains("open")) setOpen(false); });
-    nav.addEventListener("keydown", (e) => {
+    document.addEventListener("keydown", (e) => {
       if (e.key !== "Escape" || !nav.classList.contains("open")) return;
       setOpen(false);
       toggle.focus();
     });
+    document.addEventListener("nav:close", () => { if (nav.classList.contains("open")) setOpen(false); });   // the palette takes the screen
     $$(".nav-links a", nav).forEach((a) => a.addEventListener("click", () => setOpen(false)));
   };
 
@@ -910,7 +919,7 @@ const CONFIG = {
     // and dies away within a second of it resting; the pieces scale their
     // response by it, so a resting cursor leaves the field to settle.
     const p = { x: -9999, y: -9999, vx: 0, vy: 0, active: 0, inside: false, ripples: [] };
-    let raf = 0, prev = 0, t = 0, fresh = true, playing = true, stirring = true;
+    let raf = 0, prev = 0, t = 0, fresh = true, playing = el.dataset.paused !== "1", stirring = true;   // a pause outlives a restart (a theme change)
     const box = { top: 0, left: 0, w: 0, h: 0 };
     const measure = () => { const r = el.getBoundingClientRect(); box.top = r.top; box.left = r.left; box.w = r.width; box.h = r.height; };
     const CONTROLS = "a, button, input, select, textarea, label, [role=button], form";
@@ -966,12 +975,13 @@ const CONFIG = {
     el.classList.add("live");
     if (reduced) {
       field.frame(0, 0, p, false);
-      if ("ResizeObserver" in window) new ResizeObserver(() => { size(); field.frame(0, 0, p, false); }).observe(el);
-      onTheme(() => field.frame(0, 0, p, false));
+      const still = "ResizeObserver" in window ? new ResizeObserver(() => { size(); field.frame(0, 0, p, false); }) : null;
+      if (still) still.observe(el);
+      el.field = { stop() { if (still) still.disconnect(); ctx.clearRect(0, 0, W, H); } };   // initFields restarts it on a theme change, with the new register's colours
       return;
     }
     field.frame(0, 0, p, true);
-    const toggle = () => { playing = !playing; sync(); };
+    const toggle = () => { playing = !playing; el.dataset.paused = playing ? "" : "1"; sync(); };
     if (btn) { btn.hidden = false; btn.addEventListener("click", toggle); }
     document.addEventListener("pointermove", move, { passive: true });
     document.addEventListener("pointerleave", leave);
@@ -1361,7 +1371,7 @@ const CONFIG = {
         spec.className = spec.className.replace(/\bs-\w+/g, "").trim() + ` s-${size}`;
         spec.classList.toggle("icon-only", iconOnly);
         spec.classList.toggle("focused", state === "focused");
-        spec.style.setProperty("--specimen-bg", navy ? "#0B1F3A" : cssVar("--paper", "#F6F4F0"));
+        spec.style.setProperty("--specimen-bg", navy ? "#0B1F3A" : cssVar("--plate-paper", "#F6F4F0"));
         spec.innerHTML = iconOnly ? SPARK : `${left ? SPARK : ""}<span>${label}</span>${right ? SPARK : ""}`;
         box.classList.toggle("navy", navy);
       };
@@ -2005,7 +2015,8 @@ const CONFIG = {
     const names = tabs.map((t) => [t.dataset.lensKey, t.textContent.trim()]);
     const pick = document.createElement("div");
     pick.className = "lens-pick";
-    pick.innerHTML = `<span class="lens-pick-face" aria-hidden="true"><span class="lens-pick-word"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="m6 9 6 6 6-6"/></svg></span><select class="lens-select" aria-label="Viewing as">${names.map(([k, n]) => `<option value="${k}">${n}</option>`).join("")}</select>`;
+    pick.innerHTML = `<span class="lens-pick-face" aria-hidden="true"><span class="lens-pick-word"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="m6 9 6 6 6-6"/></svg></span><select class="lens-select" aria-label="Viewing as"></select>`;
+    names.forEach(([k, n]) => { const o = document.createElement("option"); o.value = k; o.textContent = n; $("select", pick).append(o); });
     $(".seg", lens).after(pick);
     lens.classList.add("has-pick");
     const select = $("select", pick), word = $(".lens-pick-word", pick);
@@ -2240,7 +2251,7 @@ const CONFIG = {
 
     const load = () => loading || (loading = fetch("/search-index.json").then((r) => (r.ok ? r.json() : [])).then((d) => (index = d)).catch(() => (index = [])));
     const score = (e, words, q) => {
-      const t = e.t.toLowerCase(), d = (e.d || "").toLowerCase(), k = (e.k || "").toLowerCase();
+      const t = fold(e.t), d = fold(e.d || ""), k = fold(e.k || "");
       if (!q) return e.k === "Page" || e.k.startsWith("Case") ? 1 : 0;
       let s = 0;
       if (t.startsWith(q)) s += 4; else if (t.includes(q)) s += 3;
@@ -2249,7 +2260,7 @@ const CONFIG = {
     };
     const escapeHtml = (v) => String(v).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
     const draw = () => {
-      const q = input.value.trim().toLowerCase(), words = q.split(/\s+/).filter(Boolean);
+      const q = fold(input.value.trim()), words = q.split(/\s+/).filter(Boolean);
       const hits = (index || []).map((e) => [score(e, words, q), e]).filter(([s]) => s > 0).sort((a, b) => b[0] - a[0]).slice(0, 8).map(([, e]) => e);
       rows = hits.map((e) => ({ kind: "go", url: e.u, html: `<span class="palette-title">${escapeHtml(e.t)}</span><span class="palette-kind">${escapeHtml(e.k)}</span>${e.d ? `<span class="palette-desc">${escapeHtml(e.d)}</span>` : ""}` }));
       if (q && $(".chat-launch")) {
@@ -2273,7 +2284,8 @@ const CONFIG = {
       if (!dlg.open) return;
       dlg.close();
       document.documentElement.classList.remove("palette-open");
-      if (from && from.isConnected) from.focus({ preventScroll: true });
+      const back = from && from.closest(".nav-links") && sheetWide.matches ? $(".nav-toggle") : from;   // the sheet it came from is closed now
+      if (back && back.isConnected) back.focus({ preventScroll: true });
     };
     const ask = (q) => document.dispatchEvent(new CustomEvent("chat:ask", { detail: q }));   // the chat opens and asks, or holds the question if it is busy
     const go = (i) => {
@@ -2289,9 +2301,11 @@ const CONFIG = {
       }
       if (r.url !== here) location.href = r.url;
     };
+    const sheetWide = window.matchMedia("(max-width: 1023px)");
     const open = () => {
       if (dlg.open) return;
       from = document.activeElement;
+      document.dispatchEvent(new CustomEvent("nav:close"));   // a result may scroll this page or open the chat, so the menu sheet goes first
       dlg.showModal();
       document.documentElement.classList.add("palette-open");
       input.value = "";
@@ -2328,12 +2342,12 @@ const CONFIG = {
     const empty = $(".posts-empty");
 
     const filter = () => {
-      const q = head.value.trim().toLowerCase();
+      const q = fold(head.value.trim());
       let shown = 0;
       groups.forEach((g) => {
         let n = 0;
         $$(".post-card", g).forEach((c) => {
-          const hit = !q || c.dataset.title.includes(q) || c.dataset.desc.includes(q);
+          const hit = !q || fold(c.dataset.title).includes(q) || fold(c.dataset.desc).includes(q);
           c.hidden = !hit;
           if (hit) n++;
         });
@@ -2443,7 +2457,8 @@ const CONFIG = {
     launch.setAttribute("aria-haspopup", "dialog");
     launch.setAttribute("aria-controls", "chat");
     launch.setAttribute("aria-expanded", "false");
-    launch.innerHTML = `<span class="chat-launch-sweep" aria-hidden="true"></span>${ICON.spark}<span class="chat-launch-label">${topic.label}</span>`;
+    launch.innerHTML = `<span class="chat-launch-sweep" aria-hidden="true"></span>${ICON.spark}<span class="chat-launch-label"></span>`;
+    $(".chat-launch-label", launch).textContent = topic.label;
 
     const dlg = make("dialog", "chat");
     dlg.id = "chat";
@@ -2452,7 +2467,7 @@ const CONFIG = {
       <div class="chat-head">
         <div>
           <p class="eyebrow">AI assistant</p>
-          <h2 class="t-subhead" id="chat-title" tabindex="-1">${topic.label}</h2>
+          <h2 class="t-subhead" id="chat-title" tabindex="-1"></h2>
         </div>
         <button class="icon-btn chat-close" type="button" aria-label="Close the chat">${ICON.close}</button>
       </div>
@@ -2467,11 +2482,25 @@ const CONFIG = {
       <template class="chat-tpl-source"><li><a class="chat-source"><img class="chat-source-thumb" alt="" decoding="async" hidden><span class="chat-source-title"></span><span class="chat-source-label"></span></a></li></template>
       <template class="chat-tpl-case"><div class="chat-card chat-card-case"><img class="case-logo" alt="" decoding="async"><div class="chat-card-title"></div><div class="t-small chat-card-summary"></div><div class="chat-card-stat"></div><div class="t-small chat-card-note"></div><div class="chips"></div><div class="chat-card-row"><a class="btn btn-primary btn-sm chat-card-link">Read the case study</a><span class="t-small chat-card-lock">Password protected</span></div></div></template>
       <template class="chat-tpl-contact"><div class="chat-card chat-card-contact"><div class="t-small chat-card-summary">Email is the quickest way to reach me. LinkedIn works too.</div><div class="chat-card-row"><a class="btn btn-primary btn-sm" data-to="email">Email John</a><a class="btn btn-ghost btn-sm" data-to="linkedin" target="_blank" rel="noopener">Message on LinkedIn</a><a class="btn btn-ghost btn-sm" data-to="resume">Download resume</a></div></div></template>`;
+    $("#chat-title", dlg).textContent = topic.label;
     document.body.append(launch, dlg);
     const log = $(".chat-log", dlg), form = $(".chat-form", dlg), input = $("#chat-input", dlg);
     const send = $(".chat-send", dlg), title = $("#chat-title", dlg), status = $("#chat-status", dlg);
     const tpl = (cls) => $(`template.${cls}`, dlg).content.firstElementChild.cloneNode(true);
-    const sitePath = (u) => (typeof u === "string" && /^\/(?![\/\\])/.test(u) ? u : "");   // a path on this site, never //host or /\host
+    // A link an answer or a card may carry: a path on this site, https, or
+    // mail. Parsed rather than pattern-matched, since the URL parser drops
+    // tabs and newlines ("/\t/host" would pass a pattern and leave the site),
+    // and a link the parser refuses comes back empty instead of throwing.
+    const safeHref = (u) => {
+      if (typeof u !== "string") return "";
+      let url;
+      try { url = new URL(u, location.href); } catch (_) { return ""; }
+      if (/^\//.test(u)) return url.origin === location.origin ? url.pathname + url.search + url.hash : "";
+      if (url.protocol === "https:" && /^https:\/\//i.test(u)) return url.href;
+      if (url.protocol === "mailto:" && /^mailto:/i.test(u)) return url.href;
+      return "";
+    };
+    const sitePath = (u) => { const h = safeHref(u); return h.startsWith("/") ? h : ""; };   // a path on this site, never another host
 
     /* The cards under an answer, from the templates above. Every value the
        server sends lands as text or as a checked path. */
@@ -2543,10 +2572,10 @@ const CONFIG = {
       while ((m = re.exec(text))) {
         if (m.index > at) into.append(text.slice(at, m.index));
         if (m[3]) into.append(make("strong", "", m[3]));
-        else if (/^(\/(?![\/\\])|https:\/\/|mailto:)/.test(m[2])) {   // a site path (never //host or /\host), https or mail
-          const a = make("a", "", m[1]);
-          a.href = m[2];
-          if (/^https:/.test(m[2]) && new URL(m[2]).host !== location.host) { a.target = "_blank"; a.rel = "noopener"; }
+        else if (safeHref(m[2])) {   // a site path, https or mail; anything else stays text
+          const href = safeHref(m[2]), a = make("a", "", m[1]);
+          a.href = href;
+          if (/^https:/.test(href) && new URL(href).host !== location.host) { a.target = "_blank"; a.rel = "noopener"; }
           into.append(a);
         } else into.append(m[1]);
         at = re.lastIndex;
@@ -2718,7 +2747,7 @@ const CONFIG = {
           reply.append(make("p", "chat-error", failed));
         }
         if (!drew && !failed) reply.remove();          // stopped before a word arrived
-        status.textContent = failed || (text ? `Assistant: ${plain(text)}${sources.length ? ` Sources: ${sources.map((v) => v.title).join(", ")}.` : ""}` : "");
+        status.textContent = failed || (text ? `Assistant: ${plain(text)}${sources.length ? ` Sources: ${sources.map((v) => String(v.title).replace(/[.!?…]+$/, "")).join(", ")}.` : ""}` : "");
         if (asked && !unlocked) passwordCard();
         else if (text && questions() >= LIMIT) endConversation(true);
         else if (text && !offered && questions() >= 3) offerWalkthrough();
@@ -2823,10 +2852,11 @@ const CONFIG = {
     };
     if (vv) { vv.addEventListener("resize", fit); vv.addEventListener("scroll", fit); }
     let closing = 0;
-    const open = (focus) => {
+    const open = (focus, quiet) => {
       clearTimeout(closing);
       if (!dlg.open) {
         if (phone.matches) { dlg.showModal(); root.classList.add("chat-locked"); fit(); }
+        else if (quiet) dlg.setAttribute("open", "");   // restored on a new page: show() would move focus into it, ahead of the skip link
         else dlg.show();
       }
       requestAnimationFrame(() => dlg.classList.add("is-open"));
@@ -2882,7 +2912,7 @@ const CONFIG = {
 
     drawLog();
     requestAnimationFrame(() => launch.classList.add("is-in"));
-    if (saved.open && !phone.matches) open(false);
+    if (saved.open && !phone.matches) open(false, true);
     if (saved.cite) {                                  // a source card brought them here: ring its section, once
       const at = here(saved.cite);
       if (at.same && at.hash) requestAnimationFrame(() => ring(at.hash));

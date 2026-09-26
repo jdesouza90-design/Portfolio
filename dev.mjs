@@ -238,6 +238,7 @@ const root = path.dirname(new URL(import.meta.url).pathname);
 
 function serveStatic(pathname, res, cookies = []) {
   let file = path.join(root, decodeURIComponent(pathname));
+  if (file !== root && !file.startsWith(root + path.sep)) { res.writeHead(404); res.end('Not found'); return; }   // no ../ out of the site
   if (pathname.endsWith('/')) file = path.join(file, 'index.html');
   if (!fs.existsSync(file) && fs.existsSync(file + '.html')) file += '.html';
   if (!fs.existsSync(file) || fs.statSync(file).isDirectory()) { res.writeHead(404); res.end('Not found'); return; }

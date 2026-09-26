@@ -266,7 +266,7 @@ def head(*, title, desc, url, css, extra="", og_type="website", ld="", italic=Fa
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script>try{{var d=document.documentElement;d.classList.add("js");if(/Mac|iPhone|iPad/.test(navigator.platform||""))d.classList.add("mac");var t=localStorage.getItem("theme");if(t==="dark"||t==="light")d.dataset.theme=t}}catch(e){{}}</script>
+<script>try{{var d=document.documentElement;d.classList.add("js");setTimeout(function(){{if(!d.classList.contains("js-ok"))d.classList.remove("js")}},4000);if(/Mac|iPhone|iPad/.test(navigator.platform||""))d.classList.add("mac");var t=localStorage.getItem("theme");if(t==="dark"||t==="light")d.dataset.theme=t}}catch(e){{}}</script>
 <title>{html.escape(title)}</title>
 <meta name="description" content="{html.escape(desc)}">
 <link rel="canonical" href="{url}">
