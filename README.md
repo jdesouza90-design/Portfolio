@@ -359,10 +359,9 @@ eight rules every post follows. Read it with `VOICE.md` before writing.
 ### The reading column
 
 `--prose` (40rem, about 73 characters) is the measure a post is set on, and the
-head, the claim, the body and the sources all sit on it. The cover steps out to
-52rem. Both come from craft.do, which runs its text at roughly 79% of its cover
-width; matching that ratio matters more than matching its absolute 854px, which
-is 91 characters a line and too wide to read comfortably.
+head, the claim, the body and the sources all sit on it. It comes from
+craft.do; their absolute 854px is 91 characters a line and too wide to read
+comfortably.
 
 Every gap inside `.prose` is set by naming the tag (`p + p`, `h2 + *`), never by
 `* + *`. The roles in section 2 set `margin: 0` at the same specificity, so a
@@ -374,7 +373,7 @@ between them at all.
 The **index** (`blog.html`) is organised by argument, not by date: the three
 pillars as serif links, the latest three on their own
 ground, then everything grouped under its pillar with a search and a grid/list
-toggle. The **post** is a centred head (title, standfirst, published line), its cover full width, the claim, then one column of running text on a
+toggle. The **post** is a centred head (title, standfirst, published line), the claim, then one column of running text on a
 34rem measure. Both follow craft.do/blog, rebuilt on the site's own tokens.
 
 ### One post is one file
@@ -449,9 +448,10 @@ markup (spans, since on the index it sits inside a link), not an image, so it
 sets in the site's faces and stays sharp at every size. It refuses a post
 without one, or with one outside four to eleven words. The line is not the
 title or the claim repeated: it is the claim with the reasoning cut off, the
-sentence someone would quote. One set of markup draws the 3:2 card, the list
-thumbnail and the 5:2 post hero, every size in container units; under 640px the
-hero keeps the card's 3:2 so the line has room. Like the case-study panels, a
+sentence someone would quote. One set of markup draws the 3:2 card and the list
+thumbnail, every size in container units. The cover lives on the index only:
+the post page opens on the title and the full claim, and a cover above the
+claim said the same thing twice (dropped at John's call, Sep 26 2026). Like the case-study panels, a
 cover is a plate of paper: it keeps its light palette in the dark theme, so its
 colors are its own `--cv-*` properties, not the page's tokens. The card's hover
 zoom scales `.cov-in`.
@@ -675,10 +675,8 @@ scrolls to it, and every page gets it the same way:
   field fades over the first screen of scroll, so the work arrives on plain
   paper. Under reduced motion it stays.
 - **Between pages** (`@view-transition { navigation: auto }`), the document
-  crossfades, the bar, the launcher and the footer hold still, a work row's
-  screen grows into its case study's hero and a blog card's cover into its
-  post's band (`--vt`, which `blog.py` writes on both). A name may occur once
-  a page, which is why the Latest cards are excluded. Firefox, and a reader
+  crossfades, the bar, the launcher and the footer hold still, and a work row's
+  screen grows into its case study's hero. Firefox, and a reader
   who asked for less motion, get a plain page load.
 - **Blocks that cross the line in the same frame follow each other 60ms
   apart**, in document order (`--reveal-i`, capped at 240ms). The stagger

@@ -143,7 +143,8 @@ def smarten_html(fragment):
 # words, set in the serif's italic over a double rule, on the pillar's ground
 # (after Harvey's title plates). It is written per post as `cover_line` in the
 # front matter and drawn here as markup, so it sets in the site's faces and
-# stays sharp at any size. The card draws it at 3:2 and the post hero at 5:2.
+# stays sharp at any size. It lives on the index only: on the post page the
+# full claim sits under the title, and the line would say it twice.
 
 
 def check_cover(path, line):
@@ -382,7 +383,6 @@ def render_post(p, nxt):
 
 <section class="section tight">
   <div class="wrap">
-    <figure class="post-art cover p-{p["pillar"]}" aria-hidden="true" data-reveal style="--vt: post-{p["slug"]}">{cover(p)}</figure>
     <div class="claim" data-reveal>
       <p class="t-quote">{p["claim"]}</p>
     </div>
@@ -534,7 +534,7 @@ def card(p):
     label, chip_class, short = PILLARS[p["pillar"]]
     return f"""
         <a class="post-card" href="/blog/{p["slug"]}.html" data-title="{html.escape(p["title"].lower())}" data-desc="{html.escape(p["description"].lower())}" data-pillar="{p["pillar"]}">
-          <span class="card-art cover p-{p["pillar"]}" aria-hidden="true" style="--vt: post-{p["slug"]}">{cover(p)}</span>
+          <span class="card-art cover p-{p["pillar"]}" aria-hidden="true">{cover(p)}</span>
           <span class="card-body">
             <span class="t-heading card-title">{html.escape(p["title"])}</span>
             <span class="t-small card-desc">{p["description"]}</span>
