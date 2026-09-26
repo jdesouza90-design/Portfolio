@@ -1208,6 +1208,7 @@ footer a:hover { color: var(--ink); }
 .walk.loading .play svg { animation: walk-spin .7s linear infinite; transform-origin: 50% 50%; }
 @keyframes walk-spin { to { transform: rotate(360deg); } }
 .walk .play svg { width: 13px; height: 13px; flex: none; }
+.walk .walk-stop { z-index: 3; }   /* the pause while the recording plays (main.js initWalkthroughs) */
 .walk.playing::after, .walk.playing .play { opacity: 0; }
 .walk.playing .play { visibility: hidden; transition: opacity var(--dur-ui) var(--ease), visibility 0s var(--dur-ui); }
 .walk-note { max-width: 932px; margin: var(--sp-3) auto 0; text-align: center; }
@@ -1609,7 +1610,8 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
   .opener-body > * { opacity: 1; }                          /* the opener shows still, then goes */
   .opener-seam { transform: none; }
   .gauge .fill, .gauge .needle { animation: none !important; }
-  .layer, .layer.active, .layer-tabs::after, .nest, .nest .t-subhead, .steps-stage .shot { transition: none; }
+  .layer, .layer.active, .layer-tabs::after, .nest, .nest .t-subhead, .steps-stage .shot, .testimonial, .testimonial.active { transition: none; }
+  .testimonial { filter: none; }
   .post-card:hover, .pillar-nav a:hover svg, .btn:hover:active { transform: none; }
   .case-media img, .work-cta::after, .tooltip, .chart-marker, .chart-node { transition: none; transform: none; }
   .tooltip { transform: translate(-50%, 0); }

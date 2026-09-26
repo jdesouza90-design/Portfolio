@@ -570,6 +570,24 @@ const CONFIG = {
   const initWalkthroughs = () => $$(".walk").forEach((w) => {
     const img = $("img", w), btn = $(".play", w);
     if (!img || !btn) return;
+    // Playing, the recording loops; the pause in the corner (the WCAG 2.2.2
+    // stop, as on every moving piece here) puts the poster back and returns
+    // the Play control, and takes focus from Play when Play had it.
+    const poster = img.getAttribute("src");
+    const halt = document.createElement("button");
+    halt.type = "button"; halt.className = "art-ctl walk-stop"; halt.hidden = true;
+    halt.innerHTML = `<svg class="i-pause" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="3.5" y="3" width="3" height="10" rx=".8"/><rect x="9.5" y="3" width="3" height="10" rx=".8"/></svg><svg class="i-play" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 3.2v9.6a.6.6 0 0 0 .9.5l7.4-4.8a.6.6 0 0 0 0-1L5.9 2.7a.6.6 0 0 0-.9.5Z"/></svg>`;
+    setPaused(halt, true, "the recording");
+    w.append(halt);
+    halt.addEventListener("click", () => {
+      img.src = poster;
+      w.classList.remove("playing");
+      btn.classList.remove("playing");
+      btn.setAttribute("aria-pressed", "false");
+      delete btn.dataset.busy;
+      halt.hidden = true;
+      btn.focus({ preventScroll: true });
+    });
     btn.addEventListener("click", () => {
       if (btn.dataset.busy) return;
       // These animations are several megabytes; hold the control in a loading
@@ -586,6 +604,9 @@ const CONFIG = {
         btn.classList.add("playing");
         btn.setAttribute("aria-pressed", "true");
         btn.removeAttribute("aria-busy");
+        const had = document.activeElement === btn;
+        halt.hidden = false;
+        if (had) halt.focus({ preventScroll: true });   // Play is hidden now; focus doesn't drop to the page
       };
       next.onload = start;
       next.onerror = () => {               // never strand the poster with no control
@@ -1875,9 +1896,13 @@ const CONFIG = {
     /* Input: pointerdown covers tap and mouse; Space, Enter and the up arrow
        act on keydown and are swallowed there, so Space neither scrolls the
        page nor fires the button's own click on keyup. The click handler is
-       left for clicks made without a pointer or a key (assistive tech). */
-    btn.addEventListener("click", (e) => { if (e.detail === 0) act(); });
-    btn.addEventListener("pointerdown", (e) => { if (e.button === 0) { e.preventDefault(); btn.focus({ preventScroll: true }); act(); } });
+       left for clicks made without a pointer or a key (assistive tech).
+       A tap's own click arrives with detail 0 too (Chromium, once its
+       pointerdown is prevented), so a click that follows a pointer press
+       within a second and a half is that press's, already acted on. */
+    let pressed = -1e6;
+    btn.addEventListener("click", (e) => { if (e.detail === 0 && performance.now() - pressed > 1500) act(); });
+    btn.addEventListener("pointerdown", (e) => { if (e.button === 0) { e.preventDefault(); pressed = performance.now(); btn.focus({ preventScroll: true }); act(); } });
     btn.addEventListener("keydown", (e) => {
       if (e.key === " " || e.key === "ArrowUp" || e.key === "Enter") { e.preventDefault(); if (!e.repeat) act(); }
     });
@@ -1988,9 +2013,9 @@ const CONFIG = {
      less motion; otherwise they simply re-sort. */
   const LENSES = {
     recruiter: { order: ["system", "cross-sell", "verifications", "refi", "staking", "no-code"] },
-    hiring: { order: ["system", "no-code", "cross-sell", "verifications", "refi", "staking"] },
+    hiring: { order: ["system", "no-code", "staking", "cross-sell", "verifications", "refi"] },
     pm: { order: ["cross-sell", "refi", "verifications", "system", "staking", "no-code"] },
-    eng: { order: ["system", "staking", "no-code", "verifications", "refi", "cross-sell"] },
+    eng: { order: ["staking", "system", "no-code", "verifications", "refi", "cross-sell"] },
   };
   const initLens = () => $$("[data-lens]").forEach((lens) => {
     const list = $(".cases", lens.parentNode);
@@ -2015,7 +2040,7 @@ const CONFIG = {
     const names = tabs.map((t) => [t.dataset.lensKey, t.textContent.trim()]);
     const pick = document.createElement("div");
     pick.className = "lens-pick";
-    pick.innerHTML = `<span class="lens-pick-face" aria-hidden="true"><span class="lens-pick-word"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="m6 9 6 6 6-6"/></svg></span><select class="lens-select" aria-label="Viewing as"></select>`;
+    pick.innerHTML = `<span class="lens-pick-face" aria-hidden="true"><span class="lens-pick-word"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="m6 9 6 6 6-6"/></svg></span><select class="lens-select" aria-label="Viewing as" autocomplete="off"></select>`;
     names.forEach(([k, n]) => { const o = document.createElement("option"); o.value = k; o.textContent = n; $("select", pick).append(o); });
     $(".seg", lens).after(pick);
     lens.classList.add("has-pick");
@@ -2058,6 +2083,8 @@ const CONFIG = {
     face("recruiter", false);
     if (saved !== "recruiter" && !phone.matches) apply(saved, false);   // on a phone every visit starts on the hint; a choice holds for the page it was made on
     cycleAt = Math.max(0, names.findIndex(([k]) => k === current));
+    select.value = current;   // the browser may restore an old choice into the select; the list is in this order
+    window.addEventListener("pageshow", () => { select.value = current; });
     cycle();
   });
 
@@ -2255,7 +2282,11 @@ const CONFIG = {
       if (!q) return e.k === "Page" || e.k.startsWith("Case") ? 1 : 0;
       let s = 0;
       if (t.startsWith(q)) s += 4; else if (t.includes(q)) s += 3;
-      words.forEach((w) => { if (t.includes(w)) s += 1.5; else if (d.includes(w) || k.includes(w)) s += 0.75; });
+      words.forEach((w) => {
+        if (w.length < 3) return;                                   // "in", "a": everywhere, so they say nothing
+        const at = new RegExp(`(^|[^a-z0-9])${w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`);   // at the start of a word
+        if (at.test(t)) s += 1.5; else if (at.test(d) || at.test(k)) s += 0.75;
+      });
       return s;
     };
     const escapeHtml = (v) => String(v).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -2356,6 +2387,9 @@ const CONFIG = {
       });
       if (empty) empty.hidden = shown > 0;
     };
+    // A topic link whose group the search is hiding clears the search first,
+    // so the jump lands on the group rather than on nothing.
+    $$(".pillar-nav a").forEach((a) => a.addEventListener("click", () => { if (head.value) { head.value = ""; filter(); } }));
 
     const view = (name) => {
       $$(".pillar-group .cards").forEach((c) => (c.dataset.view = name));
@@ -2663,8 +2697,10 @@ const CONFIG = {
       if (busy || questions() >= LIMIT) return;
       const q = (question ?? input.value).trim();
       if (!q) return;
+      const held = [starters, audience].some((row) => row && row.contains(document.activeElement));
       if (starters) { starters.remove(); starters = null; }
       if (audience) { audience.remove(); audience = null; }
+      if (held) (fine.matches ? input : title).focus({ preventScroll: true });   // the chip that had focus is gone
       input.value = "";
       msgs.push({ role: "user", content: q });
       const mine = bubble("user", q);
@@ -2729,9 +2765,18 @@ const CONFIG = {
         if (mine) mine.replaceChildren(make("span", "sr-only", "You entered the password: "), "••••••••");
         reply.remove();
         unlocked = true;
-        msgs.push({ role: "assistant", content: UNLOCKED });
-        bubble("assistant", UNLOCKED);
-        status.textContent = UNLOCKED;
+        const waiting = $$(".chat-unlock", log);
+        if (waiting.length) {                          // it answered the field's request: the same as unlocking there
+          waiting.forEach((c) => c.remove());
+          const done = make("p", "chat-unlocked", "Case studies unlocked");
+          done.setAttribute("role", "status");
+          log.append(done);
+          if (msgs.length && msgs[msgs.length - 1].role === "assistant") answer(null);   // the question that needed it, answered in full
+        } else {
+          msgs.push({ role: "assistant", content: UNLOCKED });
+          bubble("assistant", UNLOCKED);
+          status.textContent = UNLOCKED;
+        }
       } else {
         const drew = !!text || cards.length > 0;
         if (drew) {                                    // the words, then the sources and cards under them
@@ -2886,7 +2931,7 @@ const CONFIG = {
     $(".chat-close", dlg).addEventListener("click", close);
     dlg.addEventListener("cancel", (e) => { e.preventDefault(); close(); });   // Escape on the modal sheet
     dlg.addEventListener("keydown", (e) => { if (e.key === "Escape" && !phone.matches) { e.preventDefault(); close(); } });
-    phone.addEventListener("change", () => { if (!dlg.open) return; dlg.close(); root.classList.remove("chat-locked"); open(false); });
+    phone.addEventListener("change", () => { if (!dlg.open) return; dlg.close(); dlg.style.height = dlg.style.top = ""; root.classList.remove("chat-locked"); open(false); });   // the sheet's fitted height and top belong to the phone
     log.addEventListener("click", (e) => {
       const a = e.target.closest("a[href^='/']");
       if (!a) return;

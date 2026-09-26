@@ -312,9 +312,9 @@ NEXT_ARROW_SVG = '<svg class="cs-next-arrow" viewBox="0 0 24 24" fill="none" str
 ARROW_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>'
 
 
-def nav(current):
-    def mark(href):
-        return ' aria-current="page"' if href == current else ''
+def nav(current, section=None):
+    def mark(href):   # the page itself, or the section a page sits in (a post in the blog)
+        return ' aria-current="page"' if href == current else ' aria-current="true"' if href == section else ''
     return f"""
 <header class="nav">
   <div class="wrap">
@@ -442,7 +442,7 @@ def render_post(p, nxt):
 
     out = head(title="%s — %s" % (p["title"], AUTHOR), desc=p["description"],
                url=url, css="../", extra=extra, og_type="article", ld=ld_block, italic=True)
-    out += nav(None)
+    out += nav(None, "/blog.html")
 
     sources = ""
     if p.get("sources"):
