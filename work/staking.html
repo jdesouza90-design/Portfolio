@@ -18,10 +18,10 @@
 <link rel="alternate" type="application/rss+xml" title="John DeSouza — Blog" href="https://john-desouza.com/feed.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!-- A fresh unlock from the gate: hold the page until its opener is up (initUnlock in main.js). -->
 <script>if (/[?&]unlocked(?=&|$)/.test(location.search)) document.documentElement.classList.add("unlock");</script>
-<link rel="stylesheet" href="../styles.css?v=3f879b5f">
+<link rel="stylesheet" href="../styles.css?v=cbf4b546">
 <script defer src="/_vercel/insights/script.js"></script>
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
@@ -81,6 +81,32 @@
       <div><dt>Time zones</dt><dd>3</dd></div>
       <div><dt>Launched</dt><dd>December 2022</dd></div>
     </dl>
+    <div class="zoom" data-zoom data-reveal>
+      <p class="eyebrow" id="zoom-label">Reading</p>
+      <div class="seg" role="group" aria-labelledby="zoom-label">
+        <button class="seg-tab" type="button" aria-pressed="true" data-zoom-key="full">Full</button>
+        <button class="seg-tab" type="button" aria-pressed="false" data-zoom-key="short">Short</button>
+        <button class="seg-tab" type="button" aria-pressed="false" data-zoom-key="line">One line</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section tight zoom-view short" aria-label="Short version">
+  <div class="wrap">
+    <div class="note" data-reveal>
+      <p class="t-body">Chainlink Staking v0.1 launched in December 2022 and reached 25M LINK staked, with the pool full within three hours. It was Chainlink Labs’ first consumer product, shipped while staking regulation was still unsettled.</p>      <p class="t-body">Before it, the community had no way to participate. People read the docs in one place, checked the pool in another and took the reward terms on faith. We put pool capacity, reward rate and remaining allotment beside the stake action, so deciding didn’t mean leaving the page.</p>      <p class="t-body">I led design planning across three time zones and directed one product designer from discovery through validation. Where a design decision depended on the protocol, I got design, engineering and protocol into one review and settled it there. We shipped without Ledger wallet connect, and the first public complaints fed directly into the next iteration’s wallet-connect priorities.</p>
+      <p class="t-small zoom-tag">A summary of the case study, drafted with Claude.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section tight zoom-view line" aria-label="One-line version">
+  <div class="wrap">
+    <div class="note" data-reveal>
+      <p class="t-quote">Chainlink Staking v0.1 reached 25M LINK and a full pool within three hours of launch, with capacity, reward rate and allotment beside the stake action.</p>
+      <p class="t-small zoom-tag">One line, drafted with Claude.</p>
+    </div>
   </div>
 </section>
 
@@ -229,6 +255,6 @@
   </div>
 </section>
 </main>
-<script src="../main.js?v=adb92ab1"></script>
+<script src="../main.js?v=7774ffea"></script>
 </body>
 </html>

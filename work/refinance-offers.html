@@ -18,10 +18,10 @@
 <link rel="alternate" type="application/rss+xml" title="John DeSouza — Blog" href="https://john-desouza.com/feed.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!-- A fresh unlock from the gate: hold the page until its opener is up (initUnlock in main.js). -->
 <script>if (/[?&]unlocked(?=&|$)/.test(location.search)) document.documentElement.classList.add("unlock");</script>
-<link rel="stylesheet" href="../styles.css?v=3f879b5f">
+<link rel="stylesheet" href="../styles.css?v=cbf4b546">
 <script defer src="/_vercel/insights/script.js"></script>
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
@@ -82,6 +82,32 @@
       <div><dt>Timeline</dt><dd>7 weeks</dd></div>
       <div><dt>Rollout</dt><dd>25% to 100% in 3 days</dd></div>
     </dl>
+    <div class="zoom" data-zoom data-reveal>
+      <p class="eyebrow" id="zoom-label">Reading</p>
+      <div class="seg" role="group" aria-labelledby="zoom-label">
+        <button class="seg-tab" type="button" aria-pressed="true" data-zoom-key="full">Full</button>
+        <button class="seg-tab" type="button" aria-pressed="false" data-zoom-key="short">Short</button>
+        <button class="seg-tab" type="button" aria-pressed="false" data-zoom-key="line">One line</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section tight zoom-view short" aria-label="Short version">
+  <div class="wrap">
+    <div class="note" data-reveal>
+      <p class="t-body">In the Best Egg app, customers with a lower rate available now see a refinance offer, not a generic invitation. Finance counts $1.9M in additional originations from native mobile since the September 8, 2026 launch. The card was A/B tested against other variants before it shipped.</p>      <p class="t-body">Before, the app offered every customer the same thing: you’re pre-approved for another loan. It understated what eligible customers could get, and the 10% with two active loans got no offer at all. Refinancing earns 1.5 times what a second loan does.</p>      <p class="t-body">I set the direction for the card: it leads with the rate and reads as a suggestion, not a promotion. I got product, marketing and compliance to one rule: one offer, every channel. View offer opens the mobile web application, so we shipped in seven weeks without a native flow.</p>
+      <p class="t-small zoom-tag">A summary of the case study, drafted with Claude.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section tight zoom-view line" aria-label="One-line version">
+  <div class="wrap">
+    <div class="note" data-reveal>
+      <p class="t-quote">Customers who qualify for a lower rate now see the refinance offer in the Best Egg app: $1.9M in additional originations from native mobile since launch.</p>
+      <p class="t-small zoom-tag">One line, drafted with Claude.</p>
+    </div>
   </div>
 </section>
 
@@ -185,6 +211,6 @@
   </div>
 </section>
 </main>
-<script src="../main.js?v=adb92ab1"></script>
+<script src="../main.js?v=7774ffea"></script>
 </body>
 </html>

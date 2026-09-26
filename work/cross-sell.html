@@ -18,10 +18,10 @@
 <link rel="alternate" type="application/rss+xml" title="John DeSouza — Blog" href="https://john-desouza.com/feed.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!-- A fresh unlock from the gate: hold the page until its opener is up (initUnlock in main.js). -->
 <script>if (/[?&]unlocked(?=&|$)/.test(location.search)) document.documentElement.classList.add("unlock");</script>
-<link rel="stylesheet" href="../styles.css?v=3f879b5f">
+<link rel="stylesheet" href="../styles.css?v=cbf4b546">
 <script defer src="/_vercel/insights/script.js"></script>
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
@@ -83,6 +83,32 @@
       <div><dt>Timeline</dt><dd>5 months</dd></div>
       <div><dt>Live</dt><dd>Oct 30, 2025 and Jan 29, 2026</dd></div>
     </dl>
+    <div class="zoom" data-zoom data-reveal>
+      <p class="eyebrow" id="zoom-label">Reading</p>
+      <div class="seg" role="group" aria-labelledby="zoom-label">
+        <button class="seg-tab" type="button" aria-pressed="true" data-zoom-key="full">Full</button>
+        <button class="seg-tab" type="button" aria-pressed="false" data-zoom-key="short">Short</button>
+        <button class="seg-tab" type="button" aria-pressed="false" data-zoom-key="line">One line</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section tight zoom-view short" aria-label="Short version">
+  <div class="wrap">
+    <div class="note" data-reveal>
+      <p class="t-body">Best Egg’s loan decline now ends in a second offer: $7.56M in new secured-loan originations from launch through February 2026. Vehicle Equity and Home Secured launched three months apart, built from the same design system components. Before, a declined applicant saw a rejection and a third-party partner offer, with no path back into Best Egg.</p>      <p class="t-body">I set the cross-sell framework for the whole funnel: where a redirect is worth offering and what it looks like every time. Two products, two roadmaps, two release calendars: I ran the weekly reviews for both so the patterns stayed shared. I started the project directing and finished it coaching.</p>      <p class="t-body">The A/B test came after Vehicle Equity launched, and testing the redirect copy earlier would have spared some applicants the frustration. Next time I’d scope the journey before scoping each product.</p>
+      <p class="t-small zoom-tag">A summary of the case study, drafted with Claude.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section tight zoom-view line" aria-label="One-line version">
+  <div class="wrap">
+    <div class="note" data-reveal>
+      <p class="t-quote">We turned Best Egg’s loan decline into a secured-loan offer: $7.56M in new originations from launch through February 2026.</p>
+      <p class="t-small zoom-tag">One line, drafted with Claude.</p>
+    </div>
   </div>
 </section>
 
@@ -165,7 +191,7 @@
       </div>
     </article>
 
-    <article class="row full" id="decisions">
+    <article class="row full" id="decisions" data-steps>
       <div class="row-copy">
         <p class="eyebrow">Design decisions</p>
         <h3 class="t-title">Three decisions inside the flow</h3>
@@ -264,6 +290,6 @@
   </div>
 </section>
 </main>
-<script src="../main.js?v=adb92ab1"></script>
+<script src="../main.js?v=7774ffea"></script>
 </body>
 </html>

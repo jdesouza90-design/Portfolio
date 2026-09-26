@@ -277,7 +277,7 @@ def head(*, title, desc, url, css, extra="", og_type="website", ld="", italic=Fa
 <link rel="alternate" type="application/rss+xml" title="{AUTHOR} — Blog" href="{SITE}/feed.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:{"ital,wght@0,400;1,400" if italic else "wght@400"}&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:{"ital,wght@0,400;1,400" if italic else "wght@400"}&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{css}styles.css?v={stamp('styles.css')}">
 <script defer src="/_vercel/insights/script.js"></script>
 <script>window.si = window.si || function () {{ (window.siq = window.siq || []).push(arguments); }};</script>
@@ -469,7 +469,7 @@ def render_post(p, nxt):
 
 <section class="section tight">
   <div class="wrap">
-    <figure class="post-art" data-reveal>
+    <figure class="post-art" data-reveal style="--vt: post-{p["slug"]}">
       <img src="../assets/blog/{p["slug"]}-wide.svg?v={stamp('assets/blog/%s-wide.svg' % p["slug"])}" width="1500" height="600" alt="" decoding="async">
     </figure>
     <div class="claim" data-reveal>
@@ -640,7 +640,7 @@ def card(p):
     label, chip_class, short = PILLARS[p["pillar"]]
     return f"""
         <a class="post-card" href="/blog/{p["slug"]}.html" data-title="{html.escape(p["title"].lower())}" data-desc="{html.escape(p["description"].lower())}" data-pillar="{p["pillar"]}">
-          <span class="card-art"><img src="assets/blog/{p["slug"]}.svg?v={stamp('assets/blog/%s.svg' % p["slug"])}" width="{CW}" height="{CH}" alt="" loading="lazy" decoding="async"></span>
+          <span class="card-art" style="--vt: post-{p["slug"]}"><img src="assets/blog/{p["slug"]}.svg?v={stamp('assets/blog/%s.svg' % p["slug"])}" width="{CW}" height="{CH}" alt="" loading="lazy" decoding="async"></span>
           <span class="card-body">
             <span class="eyebrow">{d.strftime("%B %Y")}</span>
             <span class="t-heading card-title">{html.escape(p["title"])}</span>

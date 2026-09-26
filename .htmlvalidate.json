@@ -1,7 +1,18 @@
 {
-  "extends": ["html-validate:recommended"],
+  "extends": [
+    "html-validate:recommended"
+  ],
   "rules": {
     "doctype-style": "off",
-    "no-inline-style": ["error", { "allowedProperties": ["--i", "--crop-pos"] }]
+    "no-inline-style": [
+      "error",
+      {
+        "allowedProperties": [
+          "--i",
+          "--crop-pos",
+          "--vt"
+        ]
+      }
+    ]
   }
 }

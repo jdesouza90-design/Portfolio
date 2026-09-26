@@ -18,10 +18,10 @@
 <link rel="alternate" type="application/rss+xml" title="John DeSouza — Blog" href="https://john-desouza.com/feed.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!-- A fresh unlock from the gate: hold the page until its opener is up (initUnlock in main.js). -->
 <script>if (/[?&]unlocked(?=&|$)/.test(location.search)) document.documentElement.classList.add("unlock");</script>
-<link rel="stylesheet" href="../styles.css?v=3f879b5f">
+<link rel="stylesheet" href="../styles.css?v=cbf4b546">
 <script defer src="/_vercel/insights/script.js"></script>
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
@@ -82,6 +82,32 @@
       <div><dt>Timeline</dt><dd>3 months</dd></div>
       <div><dt>Scope</dt><dd>Discovery to A/B test</dd></div>
     </dl>
+    <div class="zoom" data-zoom data-reveal>
+      <p class="eyebrow" id="zoom-label">Reading</p>
+      <div class="seg" role="group" aria-labelledby="zoom-label">
+        <button class="seg-tab" type="button" aria-pressed="true" data-zoom-key="full">Full</button>
+        <button class="seg-tab" type="button" aria-pressed="false" data-zoom-key="short">Short</button>
+        <button class="seg-tab" type="button" aria-pressed="false" data-zoom-key="line">One line</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section tight zoom-view short" aria-label="Short version">
+  <div class="wrap">
+    <div class="note" data-reveal>
+      <p class="t-body">Best Egg applicants can now see each document’s status after upload instead of calling to ask. In the A/B usability test, 100% of applicants uploaded all three documents with the document-led design. The opportunity, 7,000 fewer support calls a month, was sized with product and operations before work began.</p>      <p class="t-body">Once a file was sent, the dashboard went quiet. Nothing said whether it was pending, accepted or still needed, and a progress bar implied steps that didn’t exist. We replaced it with a checklist per document, format guidance and a status the moment a file lands.</p>      <p class="t-body">I got product, engineering, compliance and operations to agree on requirements before design started. I directed the senior product designer and product designer from discovery through the A/B test. They turned the findings into a prioritized list of changes, each tied to a KPI.</p>
+      <p class="t-small zoom-tag">A summary of the case study, drafted with Claude.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section tight zoom-view line" aria-label="One-line version">
+  <div class="wrap">
+    <div class="note" data-reveal>
+      <p class="t-quote">Applicants can now see each document’s status after upload, sized at 7,000 fewer support calls a month and validated in an A/B usability test.</p>
+      <p class="t-small zoom-tag">One line, drafted with Claude.</p>
+    </div>
   </div>
 </section>
 
@@ -222,6 +248,6 @@
   </div>
 </section>
 </main>
-<script src="../main.js?v=adb92ab1"></script>
+<script src="../main.js?v=7774ffea"></script>
 </body>
 </html>

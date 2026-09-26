@@ -1897,6 +1897,284 @@ const CONFIG = {
     document.addEventListener("visibilitychange", () => { if (document.hidden) setPaused(true); });
   };
 
+  /* ---- Work list and its stage ----
+     After nelson.co. From 821px up, every row's screen leaves its row for
+     one panel beside the list, which sticks and travels with it. The panel
+     shows the row under the pointer, else the row with focus, else the row
+     nearest the middle of the screen, and that row rises into a pill. Each
+     screen keeps a wrapper carrying its project's class, so the ground and
+     the emerge settings from styles.css still apply. Below 821px the screens
+     go back to their rows, so a phone sees the list it always did. */
+  const initCases = () => $$(".cases").forEach((list) => {
+    const rows = $$(".case-row", list).filter((r) => $(".case-media", r));
+    if (rows.length < 2) return;
+    const wide = window.matchMedia("(min-width: 821px)");
+    const fine = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const stage = document.createElement("div");
+    stage.className = "cases-stage";
+    stage.setAttribute("aria-hidden", "true");
+    const media = new Map(rows.map((r) => [r, $(".case-media", r)]));
+    const slot = new Map(rows.map((r) => {
+      const s = document.createElement("div");
+      s.className = "cases-slot " + Array.from(r.classList).filter((c) => c.startsWith("case-") && c !== "case-row").join(" ");
+      return [r, s];
+    }));
+    let on = null, hover = null, focus = null, staged = false;
+    const show = (row) => {
+      if (row === on) return;
+      rows.forEach((r) => { r.classList.toggle("is-on", r === row); slot.get(r).classList.toggle("is-on", r === row); });
+      on = row;
+    };
+    const nearest = () => {
+      const mid = window.innerHeight * 0.45;
+      let best = rows[0], d = Infinity;
+      rows.forEach((r) => { const b = r.getBoundingClientRect(); const gap = Math.abs((b.top + b.bottom) / 2 - mid); if (gap < d) { d = gap; best = r; } });
+      return best;
+    };
+    const pick = () => { if (staged) show(hover || focus || nearest()); };
+    const mount = () => {
+      if (staged) return;
+      staged = true;
+      rows.forEach((r) => { slot.get(r).append(media.get(r)); stage.append(slot.get(r)); });
+      stage.style.gridRow = `1 / span ${rows.length}`;
+      list.append(stage);
+      list.classList.add("staged");
+      pick();
+    };
+    const unmount = () => {
+      if (!staged) return;
+      staged = false;
+      rows.forEach((r) => { r.append(media.get(r)); r.classList.remove("is-on"); slot.get(r).classList.remove("is-on"); });
+      stage.remove();
+      list.classList.remove("staged");
+      on = null;
+    };
+    const sync = () => (wide.matches ? mount() : unmount());
+    wide.addEventListener("change", sync);
+    sync();
+    rows.forEach((r) => {
+      r.addEventListener("pointerenter", () => { if (fine.matches) { hover = r; pick(); } });
+      r.addEventListener("pointerleave", () => { hover = null; pick(); });
+      r.addEventListener("focusin", () => { focus = r; pick(); });
+      r.addEventListener("focusout", () => { focus = null; pick(); });
+    });
+    let tick = false;
+    const onScroll = () => {
+      if (!staged || tick || hover || focus) return;
+      tick = true;
+      requestAnimationFrame(() => { tick = false; pick(); });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    list.addEventListener("lens", () => { if (staged) { stage.style.gridRow = `1 / span ${rows.length}`; list.append(stage); pick(); } });   // re-sorted: the stage stays last in the grid
+  });
+
+  /* ---- The lens ----
+     After the audience prompts on axoworks.com and pramit's intent card. A
+     segmented control above a work list re-sorts its rows for the reader's
+     role and says in a line what the order is. The orders are fixed here
+     (no model, nothing sent anywhere); the choice is kept in localStorage
+     for the next page and the next visit. Rows move inside a view
+     transition where the browser has one and the reader hasn't asked for
+     less motion; otherwise they simply re-sort. */
+  const LENSES = {
+    hiring: { note: "Outcome first: the business result each piece of work is measured by.", order: ["system", "cross-sell", "verifications", "refi", "staking", "no-code"] },
+    leader: { note: "How the work was run: who did what, at what size, and what was handed to an agent.", order: ["system", "no-code", "cross-sell", "verifications", "refi", "staking"] },
+    pm: { note: "The funnel and its numbers: declines, offers and verifications, with the revenue behind each.", order: ["cross-sell", "refi", "verifications", "system", "staking", "no-code"] },
+    eng: { note: "The systems underneath: the agent and its rules, the design system, and the on-chain product.", order: ["system", "staking", "no-code", "verifications", "refi", "cross-sell"] },
+  };
+  const initLens = () => $$("[data-lens]").forEach((lens) => {
+    const list = $(".cases", lens.parentNode);
+    const note = $(".lens-note", lens);
+    const tabs = $$(".lens-tab", lens);
+    if (!list || !tabs.length) return;
+    const slugOf = (row) => (Array.from(row.classList).find((c) => c.startsWith("case-") && c !== "case-row") || "").slice(5);
+    const sort = (key) => {
+      const order = LENSES[key].order;
+      const rows = $$(".case-row", list).sort((a, b) => {
+        const ia = order.indexOf(slugOf(a)), ib = order.indexOf(slugOf(b));
+        return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
+      });
+      rows.forEach((r) => list.append(r));
+      list.dispatchEvent(new CustomEvent("lens"));
+    };
+    const apply = (key, animate) => {
+      if (!LENSES[key]) key = "hiring";
+      tabs.forEach((t) => t.setAttribute("aria-pressed", String(t.dataset.lensKey === key)));
+      if (note) note.textContent = LENSES[key].note;
+      try { localStorage.setItem("lens", key); } catch (e) { /* private mode */ }
+      if (animate && !reduced && document.startViewTransition) document.startViewTransition(() => sort(key));
+      else sort(key);
+    };
+    tabs.forEach((t) => t.addEventListener("click", () => apply(t.dataset.lensKey, true)));
+    let saved = "hiring";
+    try { saved = localStorage.getItem("lens") || "hiring"; } catch (e) { /* private mode */ }
+    if (saved !== "hiring") apply(saved, false);
+  });
+
+  /* ---- Steps ----
+     After diabrowser.com. A decisions block marked data-steps, whose columns
+     each end in a shot, becomes from 761px up a numbered list beside one
+     panel that sticks and shows the step nearest the middle of the screen.
+     The shots move into the panel and back again below 761px, so nothing
+     is drawn twice. */
+  const initSteps = () => $$("[data-steps]").forEach((block) => {
+    const cols = $(".cols", block);
+    const steps = cols ? $$(":scope > .col", cols).filter((c) => $(".shot", c)) : [];
+    if (steps.length < 2) return;
+    const wide = window.matchMedia("(min-width: 761px)");
+    const stage = document.createElement("div");
+    stage.className = "steps-stage";
+    stage.setAttribute("aria-hidden", "true");
+    const shots = steps.map((c) => $(".shot", c));
+    steps.forEach((c, i) => {
+      const head = $(".col-head", c);
+      if (!head || $(".step-no", head)) return;
+      const n = document.createElement("span");
+      n.className = "step-no fig-no";
+      n.textContent = String(i + 1).padStart(2, "0");
+      head.prepend(n);
+    });
+    let on = -1, mounted = false;
+    const show = (i) => {
+      if (i === on) return;
+      steps.forEach((c, k) => { if (k === i) c.setAttribute("aria-current", "step"); else c.removeAttribute("aria-current"); });
+      shots.forEach((s, k) => s.classList.toggle("is-on", k === i));
+      on = i;
+    };
+    const nearest = () => {
+      const mid = window.innerHeight * 0.45;
+      let best = 0, d = Infinity;
+      steps.forEach((c, i) => { const b = c.getBoundingClientRect(); const gap = Math.abs((b.top + b.bottom) / 2 - mid); if (gap < d) { d = gap; best = i; } });
+      return best;
+    };
+    const mount = () => {
+      if (mounted) return;
+      mounted = true;
+      shots.forEach((s) => stage.append(s));
+      stage.style.gridRow = `1 / span ${steps.length}`;
+      cols.append(stage);
+      block.classList.add("steps", "on");
+      show(nearest());
+    };
+    const unmount = () => {
+      if (!mounted) return;
+      mounted = false;
+      shots.forEach((s, i) => { steps[i].append(s); s.classList.remove("is-on"); });
+      stage.remove();
+      block.classList.remove("on");
+      steps.forEach((c) => c.removeAttribute("aria-current"));
+      on = -1;
+    };
+    const sync = () => (wide.matches ? mount() : unmount());
+    wide.addEventListener("change", sync);
+    sync();
+    let tick = false;
+    window.addEventListener("scroll", () => {
+      if (!mounted || tick) return;
+      tick = true;
+      requestAnimationFrame(() => { tick = false; show(nearest()); });
+    }, { passive: true });
+  });
+
+  /* ---- The agent window ----
+     After granola.ai and replicate.com. A figure marked data-demo carries
+     its script as JSON (a script tag inside it) and a window with a status,
+     a log and a figure; this plays the steps in order and loops, holding
+     each for its hold_ms. A figure with a `to` counts from its value to it.
+     It waits for its block to reveal, runs only on screen, stops behind its
+     button, and under reduced motion shows the run's last step and nothing
+     moves. */
+  const initDemo = () => $$("[data-demo]").forEach((fig) => {
+    const src = $("script[data-demo-script]", fig);
+    const win = $(".agent-win", fig);
+    if (!src || !win) return;
+    let script;
+    try { script = JSON.parse(src.textContent); } catch (e) { return; }
+    const steps = script.steps || [];
+    if (!steps.length) return;
+    const status = $("[data-demo-status]", win), log = $("[data-demo-log]", win), figEl = $("[data-demo-fig]", win);
+    const num = $("b", figEl), unit = $("span", figEl);
+    let raf = 0;
+    const count = (f, animate) => {
+      const to = f.to == null ? f.value : f.to;
+      cancelAnimationFrame(raf);
+      if (!animate || f.to == null) { num.textContent = to; return; }
+      const parse = (v) => Number(String(v).replace(/[^0-9.]/g, "")) || 0;
+      const a = parse(f.value), b = parse(to), dec = (String(to).split(".")[1] || "").replace(/\D/g, "").length;
+      const suffix = String(to).replace(/[0-9.,]/g, "");
+      const fmt = (n) => n.toLocaleString("en-US", { minimumFractionDigits: dec, maximumFractionDigits: dec }) + suffix;
+      const t0 = performance.now(), dur = 900;
+      const tick = (now) => {
+        const p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+        num.textContent = p < 1 ? fmt(a + (b - a) * e) : to;
+        if (p < 1) raf = requestAnimationFrame(tick);
+      };
+      raf = requestAnimationFrame(tick);
+    };
+    const render = (step, animate) => {
+      status.textContent = step.label;
+      win.classList.toggle("busy", animate && step.kind !== "result");
+      log.replaceChildren(...(step.lines || []).map((t, i) => {
+        const li = document.createElement("li");
+        li.textContent = t;
+        li.style.setProperty("--i", String(i));
+        return li;
+      }));
+      if (step.figure) { figEl.hidden = false; unit.textContent = step.figure.unit || ""; count(step.figure, animate); }
+      else figEl.hidden = true;
+    };
+    const last = steps.find((s) => s.id === (script.final_state || {}).step) || steps[steps.length - 1];
+    if (reduced) { render(last, false); return; }
+    const btn = $(".art-ctl", fig);
+    let i = -1, timer = 0, playing = true, started = false;
+    const visible = whileOnScreen(fig, 0.2, () => sync());
+    const next = () => {
+      i = (i + 1) % steps.length;
+      render(steps[i], true);
+      timer = setTimeout(next, steps[i].hold_ms || 1800);
+    };
+    const sync = () => {
+      clearTimeout(timer);
+      if (!started) return;
+      if (playing && visible()) timer = setTimeout(next, i < 0 ? 0 : 500);
+      else win.classList.remove("busy");
+    };
+    if (btn) {
+      btn.hidden = false;
+      setPaused(btn, playing, "the agent demo");
+      btn.addEventListener("click", () => { playing = !playing; setPaused(btn, playing, "the agent demo"); sync(); });
+    }
+    render(last, false);   // still, until its block has arrived
+    afterReveal(fig, () => { started = true; sync(); });
+  });
+
+  /* ---- Reading control ----
+     After wattenberger.com's fish-eye. Three lengths of a case study: Full
+     is the page, Short and One line are the summaries the page carries.
+     The body takes data-zoom and styles.css swaps the story for the
+     summary, keeping the hero and the next-case band; the choice holds
+     across case studies. Where the browser can, the swap is a view
+     transition. */
+  const initZoom = () => $$("[data-zoom]").forEach((ctl) => {
+    const tabs = $$(".seg-tab", ctl);
+    if (!tabs.length) return;
+    const keys = ["full", "short", "line"];
+    const set = (key) => {
+      tabs.forEach((t) => t.setAttribute("aria-pressed", String(t.dataset.zoomKey === key)));
+      if (key === "full") delete document.body.dataset.zoom; else document.body.dataset.zoom = key;
+    };
+    const apply = (key, animate) => {
+      if (!keys.includes(key)) key = "full";
+      try { localStorage.setItem("zoom", key); } catch (e) { /* private mode */ }
+      if (animate && !reduced && document.startViewTransition) document.startViewTransition(() => set(key));
+      else set(key);
+    };
+    tabs.forEach((t) => t.addEventListener("click", () => apply(t.dataset.zoomKey, true)));
+    let saved = "full";
+    try { saved = localStorage.getItem("zoom") || "full"; } catch (e) { /* private mode */ }
+    if (saved !== "full") apply(saved, false);
+  });
+
   /* ---- Blog post list ----
      Search filters the cards by title and blurb, hiding a pillar group once
      nothing in it matches; the toggle switches every group between the card
@@ -2342,6 +2620,6 @@ const CONFIG = {
   /* ---- Footer year ---- */
   const initYear = () => $$("[data-year]").forEach((el) => (el.textContent = new Date().getFullYear()));
 
-  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initMatrix, initConfig, initFlows, initTicker, initStrips, initTableWraps, initPortrait, initClock, initArcade, initPostList, initChat, initYear]
+  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initMatrix, initConfig, initFlows, initTicker, initStrips, initTableWraps, initPortrait, initClock, initArcade, initCases, initLens, initSteps, initDemo, initZoom, initPostList, initChat, initYear]
     .forEach((init) => { try { init(); } catch (err) { console.error(`main.js: ${init.name} failed`, err); } });
 })();
