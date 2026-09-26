@@ -12,6 +12,7 @@ Posts are John's own views. Every number in a post links to the primary source t
 
 ## Blog: Design leadership
 
+- [Count the drift, not the adoption rate](https://john-desouza.com/blog/count-the-drift-not-the-adoption-rate.html): A design system team earns its staffing on the count of what the system failed to prevent, not on an adoption rate or an estimate of hours saved.
 - [Train juniors on what they reject](https://john-desouza.com/blog/train-juniors-on-what-they-reject.html): AI makes a junior's output look senior long before their judgment is, so the unit of training has to move from what they produce to what they reject and why.
 - [Your team stopped taking your advice](https://john-desouza.com/blog/your-team-stopped-taking-your-advice.html): You are no longer the fastest source of useful knowledge on your team, and trying to win that back is the most expensive mistake available to you right now.
 

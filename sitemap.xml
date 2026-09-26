@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://john-desouza.com/</loc><lastmod>2026-09-25</lastmod><priority>1.0</priority></url>
-  <url><loc>https://john-desouza.com/work.html</loc><lastmod>2026-09-25</lastmod><priority>0.9</priority></url>
-  <url><loc>https://john-desouza.com/blog.html</loc><lastmod>2026-09-25</lastmod><priority>0.9</priority></url>
+  <url><loc>https://john-desouza.com/</loc><lastmod>2026-09-26</lastmod><priority>1.0</priority></url>
+  <url><loc>https://john-desouza.com/work.html</loc><lastmod>2026-09-26</lastmod><priority>0.9</priority></url>
+  <url><loc>https://john-desouza.com/blog.html</loc><lastmod>2026-09-26</lastmod><priority>0.9</priority></url>
+  <url><loc>https://john-desouza.com/blog/count-the-drift-not-the-adoption-rate.html</loc><lastmod>2026-09-26</lastmod><priority>0.7</priority></url>
   <url><loc>https://john-desouza.com/blog/prototypes-that-cannot-fail-are-demos.html</loc><lastmod>2026-09-25</lastmod><priority>0.7</priority></url>
   <url><loc>https://john-desouza.com/blog/train-juniors-on-what-they-reject.html</loc><lastmod>2026-09-24</lastmod><priority>0.7</priority></url>
   <url><loc>https://john-desouza.com/blog/design-systems-check-spelling-not-judgment.html</loc><lastmod>2026-09-24</lastmod><priority>0.7</priority></url>

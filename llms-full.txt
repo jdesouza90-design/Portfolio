@@ -4,6 +4,87 @@
 
 ---
 
+## Count the drift, not the adoption rate
+
+- URL: https://john-desouza.com/blog/count-the-drift-not-the-adoption-rate.html
+- Author: John DeSouza
+- Published: 2026-09-26
+- Topic: Design leadership
+- Claim: A design system team earns its staffing on the count of what the system failed to prevent, not on an adoption rate or an estimate of hours saved.
+
+Stakeholder buy-in for design systems dropped 10 points in a year and dissatisfaction nearly doubled. The advice going around is to build a better business case. Only 5% of teams measure the return they would be making that case from.
+
+Satisfaction with stakeholder buy-in for design systems fell to 32% this year, down from 42%. The share of practitioners calling themselves dissatisfied went from 23% to 40%. Both numbers come from [zeroheight's fifth annual report](https://report.zeroheight.com/), which surveyed 147 people who run a design system.
+
+In the same survey, 56% named a lack of resourcing or staffing as their biggest problem. So the people holding the budget are less convinced than they were, and the teams have fewer people than they need.
+
+## The answer the field reached for
+
+The field's answer is to get better at the business case. Figma's [new business case for design systems](https://www.figma.com/blog/the-new-business-case-for-design-systems/), published in January, argues that systems "have evolved from static libraries to key drivers of business revenue, customer loyalty, and product strategy". It comes with receipts. Freshworks cut customer service costs 28%. Grammarly saved its design and development teams 25% of a work week.
+
+That is a fair position. I would rather a design system lead walked into a budget review talking about revenue than about component counts.
+
+The trouble is sitting in the other half of the zeroheight report. Only 5% of teams measure return on investment at all. Just 41% track adoption. The field is being told to argue from evidence most of it has never collected.
+
+So the case gets built out of somebody else's numbers. Freshworks did the work and published it, and the slide borrows it. Nobody in your finance review is funding your team on Grammarly's week.
+
+## The hours nobody followed
+
+[Shane P Williams put the sharpest version of this](https://designsystemscollective.substack.com/p/the-hours-came-back-nobody-asked) on September 14. Teams are good at counting the hours a system gives back and bad at saying where those hours went. "Two thousand reclaimed hours is only a win if you can name what they bought," he writes. If they went into shipping more of the same, faster, "then what the system funded is volume".
+
+He's right, and I'd push it one step further back. Most teams can't name what the hours bought because they never had the hours. The saving came out of a spreadsheet, not a measurement.
+
+And when a team does go and measure, the first number they reach for is the one that hides the problem.
+
+## Adoption rate is a flattering number
+
+Adoption answers one question: are people using our components. That is the number a system team hopes to see, which is most of the reason it gets picked.
+
+It is also the number the tools hand you. The report found measurement scattered across Figma analytics, surveys, code repository tracking and spreadsheets, with 37% of teams using Figma analytics. Adoption is what comes out of the box, so adoption is what gets reported.
+
+When I [measured our library at Best Egg](https://john-desouza.com/work/agentic-design-system-audit.html), adoption came back at 90.7% across 1.15 million instances in 296 files. Read on its own, that number says the work is finished.
+
+The same audit found 844,333 values hand-set in files where a published token was sitting right there, unwired. It found 770 components with zero instances. Half the standalone library turned out to be illustrations that every designer scrolls past on the way to a button.
+
+Adoption was 90.7% and the library still cost the team something every day. One of those numbers is an argument for leaving us alone. The other is an argument for funding us.
+
+## Count the drift
+
+Drift is what the system failed to prevent. It is countable, and it is the only design system number I have watched change a staffing conversation.
+
+- **Hand-set values that already have a token.** Every one is a decision the system was supposed to have made for somebody.
+- **Components with no instances.** Maintenance you pay for and nobody uses.
+- **Ties the data can't break.** The value 10px appeared 1,834 times in our files and 12px 1,796. Nothing in the counts picks one. A person has to, and that person costs money.
+
+A number like 844,333 does something an adoption rate can't. It hands the person holding the budget a quantity they can multiply by a cost, and it names the work that would bring it down.
+
+## Make the number harder to like
+
+The rule I hold is that the measurement has to be able to embarrass me.
+
+Ours nearly wasn't. The adoption formula had a name-match heuristic in it, counting a layer as on-system when its name looked close enough to a real component. I took it out. I excluded the archives and the library's own file, and reported Brand Studio separately, because marketing collateral does not instance a dropdown.
+
+Every one of those choices pushed my own number down. That is the point. An adoption rate that only ever goes up is a marketing asset, and the people reading it can tell.
+
+The other half of the rule is the calendar. The audit runs again on the first of every month, so drift has a trend and not a snapshot. One reading is a claim. Twelve of them is a line on a chart, and a line is what survives a budget review where nobody in the room designs anything.
+
+## Where the 56% comes from
+
+Put the two findings next to each other. Resourcing is the top challenge, named by 56% of teams. Return on investment is measured by 5%.
+
+Those are the same fact. Design system teams are asking for headcount in a currency they never minted. The business case advice isn't wrong. It's out of order. Instrument the thing, find out what it is failing to prevent, and the case is yours instead of borrowed.
+
+Seven percent of the teams in that survey report full adoption. Another 22% say the system reaches few teams. Somewhere in the gap between those two lines is a number with a dollar sign on it, and almost nobody has gone and counted it.
+
+Sources:
+
+- [Design Systems Report 2026](https://report.zeroheight.com/)
+- [The new business case for design systems](https://www.figma.com/blog/the-new-business-case-for-design-systems/)
+- [The hours came back. Nobody asked where they went.](https://designsystemscollective.substack.com/p/the-hours-came-back-nobody-asked)
+- [Agentic design system audit and remediation](/work/agentic-design-system-audit.html)
+
+---
+
 ## Prototypes that cannot fail are demos
 
 - URL: https://john-desouza.com/blog/prototypes-that-cannot-fail-are-demos.html
