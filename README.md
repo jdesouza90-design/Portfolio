@@ -308,13 +308,6 @@ Function, answers with Claude Haiku 4.5 by default.
 
 ## Inside a case study
 
-- **The reading control** (`initZoom`, `[data-zoom]` under the facts): Full,
-  Short, One line. Full is the page; the two summaries are sections the page
-  carries (`.zoom-view.short`, `.zoom-view.line`), drafted with Claude and
-  tagged so, and the body takes `data-zoom` so `styles.css` swaps the story
-  for the summary, keeping the hero and the next-case band. The choice holds
-  across case studies (`localStorage` `zoom`). The summaries are copy: edit
-  them in the page like anything else.
 - **The agent window** (`initDemo`, the audit case study's hero, after
   granola.ai). A figure marked `data-demo` carries its script as JSON in a
   `<script type="application/json" data-demo-script>` and a window with a

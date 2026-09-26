@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script>try{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t}catch(e){}</script>
 <title>Agentic design system audit and remediation — John DeSouza</title>
-<meta name="description" content="A senior product designer's agent cut 2,304 button variants to 321 at Best Egg. Then I built the agent that audited the whole design system across 296 files and directed the remediation: 28 fixes split between a senior product designer and a Claude agent, with the audit run again every month. A case study by John DeSouza.">
+<meta name="description" content="A senior product designer's agent cut 2,304 button variants to 321 at Best Egg. Then I built the agent that audited the whole design system across 296 files and directed the remediation: 28 fixes split between a senior product designer and an agent, with the audit run again every month. A case study by John DeSouza.">
 <link rel="canonical" href="https://john-desouza.com/work/agentic-design-system-audit.html">
 <meta property="og:title" content="Agentic design system audit and remediation — John DeSouza">
 <meta property="og:type" content="article">
@@ -22,7 +22,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!-- A fresh unlock from the gate: hold the page until its opener is up (initUnlock in main.js). -->
 <script>if (/[?&]unlocked(?=&|$)/.test(location.search)) document.documentElement.classList.add("unlock");</script>
-<link rel="stylesheet" href="../styles.css?v=45e4eb88">
+<link rel="stylesheet" href="../styles.css?v=74c43efa">
 <script defer src="/_vercel/insights/script.js"></script>
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
@@ -74,8 +74,8 @@
       <div class="outcome-stat"><p class="eyebrow">Outcome</p><div class="t-stat" data-flow>90.7%</div><p class="t-small">Library adoption, measured for the first time across 296 files</p></div>
     </div>
     <figure class="panel hero-panel wide demo" data-demo>
-      <div class="agent-win" role="img" aria-label="A looping window that re-enacts the design system audit agent: it reads 296 Figma files, counts the 2,304 button variants a designer cut to 321, flags unused components and lists 28 fixes.">
-        <div class="agent-bar"><span class="agent-dots"><i></i><i></i><i></i></span><span class="agent-title">figma-audit · claude code</span><span class="agent-status" data-demo-status>Report written</span></div>
+      <div class="agent-win" role="img" aria-label="The design system audit agent at work: it reads 296 Figma files, counts the 2,304 button variants a designer cut to 321, flags unused components and lists 28 fixes.">
+        <div class="agent-bar"><span class="agent-dots"><i></i><i></i><i></i></span><span class="agent-title">figma-audit</span><span class="agent-status" data-demo-status>Report written</span></div>
         <div class="agent-body">
           <ol class="agent-log" data-demo-log>
             <li>28 fixes, each with a deep link into Figma</li>
@@ -88,7 +88,6 @@
       </div>
       <button class="art-ctl" type="button" aria-pressed="false" aria-label="Pause the agent demo" hidden><svg class="i-pause" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="3.5" y="3" width="3" height="10" rx=".8"/><rect x="9.5" y="3" width="3" height="10" rx=".8"/></svg><svg class="i-play" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 3.2v9.6a.6.6 0 0 0 .9.5l7.4-4.8a.6.6 0 0 0 0-1L5.9 2.7a.6.6 0 0 0-.9.5Z"/></svg></button>
       <script type="application/json" data-demo-script>{"steps":[{"id":"brief","kind":"type","label":"Reading the brief","lines":["Audit every Best Egg Figma file against the library.","Count instances, flag what is unused or duplicated.","List the fixes. Leave the decisions to the team."],"hold_ms":1800},{"id":"connect","kind":"scan","label":"Connecting to Figma","lines":["Read-only Figma token accepted","8 teams registered","Archives and the library’s own file excluded","Brand Studio set aside, reported separately"],"hold_ms":1500},{"id":"crawl","kind":"scan","label":"Crawling 296 files","lines":["Opening every page and every instance","296 of 296 files reached"],"hold_ms":1900,"figure":{"value":"0","unit":"files read","to":"296"}},{"id":"count","kind":"count","label":"Counting instances","lines":["1,316 assets in the library","1.15 million instances read","Name-match heuristic removed from the formula"],"hold_ms":1800,"figure":{"value":"90.7%","unit":"library adoption"}},{"id":"flag-button","kind":"flag","label":"Flagging .Button","lines":[".Button: 7 properties multiplied together","Icons alone multiply the matrix by 4","Most variants unused, many near-identical"],"hold_ms":1700,"figure":{"value":"2,304","unit":"button variants"}},{"id":"decide","kind":"fix","label":"Designer decided","lines":["Kept: 141 Button, 120 Icon Button, 60 Link","Icons became a boolean and a swap","Agent wrote the usage guideline"],"hold_ms":1900,"figure":{"value":"2,304","unit":"button variants","to":"321"}},{"id":"flag-library","kind":"flag","label":"Flagging the library","lines":["770 components with zero instances","59 standalones flagged for deprecation","844,333 hand-set values, 229 variables unbound","266 of 491 standalones are illustrations"],"hold_ms":1800},{"id":"report","kind":"result","label":"Report written","lines":["28 fixes, each with a deep link into Figma","Specs and lists: agent. Library edits: designer.","Picker: 491 standalone to 166, a 66% cut","Next run: the first of the month"],"hold_ms":2400,"figure":{"value":"28","unit":"fixes"}}],"final_state":{"step":"report","caption":"The end of one run: 296 files read, 28 fixes listed, the decisions left to the team."}}</script>
-      <figcaption class="t-small">A scripted re-enactment of the agent’s run over Best Egg’s Figma library, using the audit’s real figures.</figcaption>
     </figure>
     <dl class="facts">
       <div><dt>Role</dt><dd>Director of Product Design</dd></div>
@@ -98,33 +97,7 @@
     </dl>
     <div class="provenance" data-reveal>
       <p class="eyebrow">Audit run by an agent, decisions by the team</p>
-      <p class="t-small">A Claude Code agent with a read-only token read all 296 Figma files, counted every instance and wrote the remediation guide. The rules it worked to, the direction and every edit to the library came from me and one senior product designer.</p>
-    </div>
-    <div class="zoom" data-zoom data-reveal>
-      <p class="eyebrow" id="zoom-label">Reading</p>
-      <div class="seg" role="group" aria-labelledby="zoom-label">
-        <button class="seg-tab" type="button" aria-pressed="true" data-zoom-key="full">Full</button>
-        <button class="seg-tab" type="button" aria-pressed="false" data-zoom-key="short">Short</button>
-        <button class="seg-tab" type="button" aria-pressed="false" data-zoom-key="line">One line</button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="section tight zoom-view short" aria-label="Short version">
-  <div class="wrap">
-    <div class="note" data-reveal>
-      <p class="t-body">Best Egg’s design system was measured for the first time: 90.7% adoption across 296 files and 1.15 million instances. The audit produced 28 fixes, split between a senior product designer and a Claude agent. It runs again on the first of every month.</p>      <p class="t-body">It started with one button: .Button held seven properties multiplied into 2,304 variants, most unused. Behind it sat 1,316 assets nobody had measured. One senior product designer’s agent cut the button to 321 variants across Button, Icon Button and Link.</p>      <p class="t-body">I built the Claude Code agent that audited the whole library, wrote the crawler’s rules and directed the remediation. The analysis narrowed decisions and people made them: 10px appeared 1,834 times and 12px 1,796, and the data could not pick one.</p>
-      <p class="t-small zoom-tag">A summary of the case study, drafted with Claude.</p>
-    </div>
-  </div>
-</section>
-
-<section class="section tight zoom-view line" aria-label="One-line version">
-  <div class="wrap">
-    <div class="note" data-reveal>
-      <p class="t-quote">An agent I built measured Best Egg’s whole design system for the first time: 90.7% adoption across 296 files, and 28 fixes now in progress.</p>
-      <p class="t-small zoom-tag">One line, drafted with Claude.</p>
+      <p class="t-small">An agent with a read-only token read all 296 Figma files, counted every instance and wrote the remediation guide. The rules it worked to, the direction and every edit to the library came from me and one senior product designer.</p>
     </div>
   </div>
 </section>
@@ -183,7 +156,7 @@
       <div class="row-copy">
         <p class="eyebrow">The design</p>
         <h3 class="t-title">The agent counted, the designer decided</h3>
-        <p class="t-lede">One senior product designer built an agent on Claude and ran it through every Figma file: it listed each variant, found every instance in the product files and flagged what was unused or duplicated. From its list they kept 321, split into Button, Icon Button and Link, and had the agent write the usage guideline.</p>
+        <p class="t-lede">One senior product designer built an agent and ran it through every Figma file: it listed each variant, found every instance in the product files and flagged what was unused or duplicated. From its list they kept 321, split into Button, Icon Button and Link, and had the agent write the usage guideline.</p>
       </div>
       <div class="cols">
         <div class="col">
@@ -221,20 +194,20 @@
       <div class="row-copy">
         <p class="eyebrow">The full audit</p>
         <h3 class="t-title">Then I measured the whole library</h3>
-        <p class="t-lede">I built a Claude Code agent and gave it a read-only Figma token, so it could open every file at Best Egg. It read every instance against the design system: what was used, what was not and where the system got in its own way. That list is what the remediation works from.</p>
+        <p class="t-lede">I built an agent and gave it a read-only Figma token, so it could open every file at Best Egg. It read every instance against the design system: what was used, what was not and where the system got in its own way. That list is what the remediation works from.</p>
       </div>
       <div class="cols">
         <div class="col">
           <div class="col-head"><svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="12" r="4.5"/><path d="M12.5 12h8"/><path class="ac" d="M17.5 12v3.5M20.5 12v2.5"/></svg><h4 class="t-subhead">Connect Figma</h4></div>
-          <p class="t-body">I generated a Figma token and gave it to Claude Code, so it could reach every page and every instance in the file.</p>
+          <p class="t-body">I generated a Figma token and gave it to the agent, so it could reach every page and every instance in the file.</p>
         </div>
         <div class="col">
           <div class="col-head"><svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="5.5" height="5.5" rx="1"/><rect x="10.5" y="3" width="5.5" height="5.5" rx="1"/><rect x="3" y="10.5" width="5.5" height="5.5" rx="1"/><circle class="ac" cx="15" cy="15" r="4.5"/><path class="ac" d="M18.3 18.3 21.5 21.5"/></svg><h4 class="t-subhead">Audit everything</h4></div>
-          <p class="t-body">Claude Code audited every file against the design system, so what needed fixing came from the counts, not a hunch.</p>
+          <p class="t-body">The agent audited every file against the design system, so what needed fixing came from the counts, not a hunch.</p>
         </div>
         <div class="col">
           <div class="col-head"><svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h12M9 12h12M9 18h12"/><path class="ac" d="m3 6 1.5 1.5L7 5"/><path class="ac" d="m3 12 1.5 1.5L7 11"/><circle cx="4.5" cy="18" r="1.5"/></svg><h4 class="t-subhead">Split the fixes</h4></div>
-          <p class="t-body">Claude then built an interactive remediation guide, split between what it could do itself and what I directed the team to do.</p>
+          <p class="t-body">It then built an interactive remediation guide, split between what it could do itself and what I directed the team to do.</p>
         </div>
       </div>
       <figure class="panel wide brief">
@@ -250,7 +223,6 @@
           <span class="brief-seg"><span class="brief-label">When to stop</span>Stop at the list: leave the decisions to the team, and run again on the first of every month.</span>
           </p>
         </div>
-        <figcaption class="t-small">The agent’s brief, reconstructed from what the case study says it did. It is a reconstruction until John replaces it with the brief as written.</figcaption>
       </figure>
     </article>
   </div>
@@ -264,7 +236,7 @@
     </header>
     <div class="ledger">
             <div class="ledger-row"><h3 class="t-heading">The full audit</h3><p class="t-body">I built the agent and ran the whole-library audit myself: generated the Figma token, wrote the crawler’s rules, registered the teams, excluded the archives and the library’s own file, took a name-match heuristic out of the adoption formula and reported Brand Studio separately, because marketing collateral does not instance a dropdown.</p></div>
-      <div class="ledger-row"><h3 class="t-heading">The direction</h3><p class="t-body">I directed the remediation. The plan divided at write access: specs and lists to a Claude agent, every edit to the library to a senior product designer, and the order set by who could act. The button portion was one senior product designer’s from start to finish, agent and remediation.</p></div>
+      <div class="ledger-row"><h3 class="t-heading">The direction</h3><p class="t-body">I directed the remediation. The plan divided at write access: specs and lists to the agent, every edit to the library to a senior product designer, and the order set by who could act. The button portion was one senior product designer’s from start to finish, agent and remediation.</p></div>
       <div class="ledger-row"><h3 class="t-heading">The line</h3><p class="t-body">The analysis narrowed decisions and people made them. 10px appeared 1,834 times and 12px 1,796, and the data could not pick one. The 92 dormant illustrations got a conversation with Brand Studio, not a deletion.</p></div>
     </div>
   </div>
@@ -290,7 +262,7 @@
       <div class="row-copy">
         <p class="eyebrow">The remediation</p>
         <h3 class="t-title">Twenty-eight fixes, split between the team and an agent</h3>
-        <p class="t-lede">The agent wrote the remediation guide: a deep link into Figma for every fix, with the exact change to paste or click through. One senior product designer works the library edits from it while a Claude agent takes the specs and lists. The audit runs again on the first of every month, so drift, new components and finished fixes show up in the next report.</p>
+        <p class="t-lede">The agent wrote the remediation guide: a deep link into Figma for every fix, with the exact change to paste or click through. One senior product designer works the library edits from it while the agent takes the specs and lists. The audit runs again on the first of every month, so drift, new components and finished fixes show up in the next report.</p>
       </div>
       <figure class="panel wide"><img decoding="async" width="1393" height="882" src="../assets/dsr-tracker.webp?v=a945ce45" alt="The remediation guide the agent wrote: 28 fixes with 8 done, filters for owner and risk, a running note of what has been applied and what is blocked, and the first card — its owner, its risk, its time estimate, deep links into Figma and two copy buttons" loading="lazy"></figure>
       <div class="proof">
@@ -348,6 +320,6 @@
   </div>
 </section>
 </main>
-<script src="../main.js?v=f30c7af7"></script>
+<script src="../main.js?v=089bb0a5"></script>
 </body>
 </html>

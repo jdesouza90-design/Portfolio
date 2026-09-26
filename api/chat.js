@@ -120,7 +120,6 @@ function textOf(html, url) {
 // the heading that follows, so a section is one piece with one anchor.
 // Comments go first: a parked row on the work index lives in one.
 function cut(main) {
-  main = main.replace(/<section\b[^>]*\bzoom-view\b[^>]*>[\s\S]*?<\/section>/gi, '');   // the reading control's summaries repeat the page; the model gets the page
   const re = /<section\b[^>]*>|<\/section\s*>|<h2\b[^>]*>/gi;
   const stack = [], pieces = [];
   let at = 0, anchor = '', m;

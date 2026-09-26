@@ -1350,7 +1350,6 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 .agent-fig { text-align: right; }
 .agent-fig b { display: block; font-family: var(--font-display); font-weight: 400; font-size: var(--t-stat); line-height: var(--lh-stat); letter-spacing: var(--ls-stat); color: var(--accent-ink); font-variant-numeric: lining-nums tabular-nums; }
 .agent-fig span { display: block; margin-top: 6px; font-size: var(--t-micro); letter-spacing: var(--ls-micro); text-transform: uppercase; color: var(--ink-3); }
-.hero-panel.demo figcaption { margin-top: var(--sp-4); text-align: center; max-width: 60ch; margin-inline: auto; }
 @media (max-width: 640px) {
   .agent-body { grid-template-columns: minmax(0, 1fr); align-items: start; }
   .agent-fig { text-align: left; }
@@ -1362,17 +1361,20 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 }
 
 /* The brief (after wattenberger.com's prompt anatomy): the agent's
-   instructions set as one paragraph, each clause carrying the question it
-   answers as a small mono label above it. Two tints alternate so the
-   clauses read apart; the label is real text, so the meaning never rests
-   on the tint. */
+   instructions, one clause a line, each carrying the question it answers as
+   a small mono label above it. Two tints alternate so the clauses read
+   apart; the label is real text, so the meaning never rests on the tint.
+   Each clause here runs a full sentence, not a short phrase, so the block
+   sits as its own row rather than flowing inline: an absolutely positioned
+   label inside a `display: inline` span that wraps across several lines is
+   placed against the union of all its line boxes, not the line it is
+   actually on, and drifts off whichever edge that union reaches. */
 .brief-sheet { width: 100%; max-width: 880px; margin-inline: auto; padding: clamp(24px, 3.5vw, 40px); background: var(--surface); border: 1px solid var(--hair); border-radius: 12px; box-shadow: var(--shadow-screen); }
-.brief-text { margin: var(--sp-5) 0 0; font-family: var(--font-display); font-size: var(--t-subhead); line-height: 2.35; color: var(--ink); max-width: none; text-wrap: pretty; }
-.brief-seg { position: relative; display: inline; padding: .12em .28em; border-radius: 4px; background: var(--seg, var(--paper-2)); -webkit-box-decoration-break: clone; box-decoration-break: clone; margin-right: .1em; }
+.brief-text { margin: var(--sp-5) 0 0; display: grid; gap: var(--sp-5); max-width: none; }
+.brief-seg { position: relative; padding: var(--sp-4); border-radius: 10px; background: var(--seg, var(--paper-2)); font-family: var(--font-display); font-size: var(--t-subhead); line-height: var(--lh-subhead); color: var(--ink); text-wrap: pretty; }
 .brief-seg:nth-child(even) { --seg: var(--glow); }
-.brief-label { position: absolute; left: .1em; top: -1.15em; font-family: var(--font-mono); font-size: var(--t-micro); line-height: 1; letter-spacing: var(--ls-micro); text-transform: uppercase; font-weight: 500; color: var(--ink-3); white-space: nowrap; }
+.brief-label { display: block; margin-bottom: var(--sp-2); font-family: var(--font-mono); font-size: var(--t-micro); line-height: 1; letter-spacing: var(--ls-micro); text-transform: uppercase; font-weight: 500; color: var(--ink-3); }
 .panel.brief { flex-direction: column; align-items: stretch; }
-.panel.brief figcaption { margin-top: var(--sp-4); text-align: center; }
 
 /* Cut and kept (after emilkowal.ski's wrong-and-right pairs): the two ways
    a button could carry its icon, built as tiny live components rather than
@@ -1407,18 +1409,6 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 .provenance { margin-top: var(--sp-5); padding-top: var(--sp-5); border-top: 1px solid var(--hair); max-width: 72ch; }
 .provenance .eyebrow { margin-bottom: var(--sp-2); }
 
-/* Reading control (after wattenberger.com's fish-eye): three lengths of one
-   case study. Full is the page; Short and One line are summaries the page
-   carries (.zoom-view) that main.js (initZoom) swaps in for the story,
-   keeping the hero and the next-case band. The choice holds for the next
-   case study. */
-.zoom { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-3) var(--sp-5); margin-top: clamp(24px, 3vw, 36px); }
-.zoom-view { display: none; }
-.zoom-view .wrap > * { max-width: var(--prose); margin-inline: auto; }
-.zoom-view .t-body + .t-body { margin-top: var(--sp-4); }
-.zoom-tag { margin-top: var(--sp-5); color: var(--ink-3); }
-body[data-zoom="short"] main > .cs-section, body[data-zoom="line"] main > .cs-section { display: none; }
-body[data-zoom="short"] .zoom-view.short, body[data-zoom="line"] .zoom-view.line { display: block; }
 
 /* --------------------------------------------------------------------------
    8. Password gate

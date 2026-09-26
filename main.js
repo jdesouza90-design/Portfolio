@@ -2170,33 +2170,6 @@ const CONFIG = {
     afterReveal(fig, () => { started = true; sync(); });
   });
 
-  /* ---- Reading control ----
-     After wattenberger.com's fish-eye. Three lengths of a case study: Full
-     is the page, Short and One line are the summaries the page carries.
-     The body takes data-zoom and styles.css swaps the story for the
-     summary, keeping the hero and the next-case band; the choice holds
-     across case studies. Where the browser can, the swap is a view
-     transition. */
-  const initZoom = () => $$("[data-zoom]").forEach((ctl) => {
-    const tabs = $$(".seg-tab", ctl);
-    if (!tabs.length) return;
-    const keys = ["full", "short", "line"];
-    const set = (key) => {
-      tabs.forEach((t) => t.setAttribute("aria-pressed", String(t.dataset.zoomKey === key)));
-      if (key === "full") delete document.body.dataset.zoom; else document.body.dataset.zoom = key;
-    };
-    const apply = (key, animate) => {
-      if (!keys.includes(key)) key = "full";
-      try { localStorage.setItem("zoom", key); } catch (e) { /* private mode */ }
-      if (animate && !reduced && document.startViewTransition) document.startViewTransition(() => set(key));
-      else set(key);
-    };
-    tabs.forEach((t) => t.addEventListener("click", () => apply(t.dataset.zoomKey, true)));
-    let saved = "full";
-    try { saved = localStorage.getItem("zoom") || "full"; } catch (e) { /* private mode */ }
-    if (saved !== "full") apply(saved, false);
-  });
-
   /* ---- The palette ----
      After the ⌘K menus on vercel.com and docs.stripe.com. ⌘K (Ctrl+K), or
      the Search row the bar gets here, opens a dialog with one field: type,
@@ -2915,6 +2888,6 @@ const CONFIG = {
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { if (current() === "system") document.dispatchEvent(new CustomEvent("themechange")); });
   };
 
-  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initMatrix, initConfig, initFlows, initTicker, initStrips, initTableWraps, initPortrait, initClock, initArcade, initCases, initLens, initSteps, initDemo, initZoom, initPalette, initPostList, initChat, initYear, initTheme]
+  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initMatrix, initConfig, initFlows, initTicker, initStrips, initTableWraps, initPortrait, initClock, initArcade, initCases, initLens, initSteps, initDemo, initPalette, initPostList, initChat, initYear, initTheme]
     .forEach((init) => { try { init(); } catch (err) { console.error(`main.js: ${init.name} failed`, err); } });
 })();
