@@ -468,11 +468,8 @@ def render_post(p, nxt):
     <p class="eyebrow" data-rise style="--i:0">{pillar_label}</p>
     <h1 class="t-display" data-rise style="--i:1">{html.escape(p["title"])}</h1>
     <p class="t-lede" data-rise style="--i:2">{p["lede"]}</p>
-    <p class="byline t-small"><span class="byline-mark" aria-hidden="true">JD</span>Written by {AUTHOR}</p>
     <p class="post-meta t-small">
       <span>Published on <time datetime="{p["date"]}">{pretty_date(p["date"])}</time></span>
-      <span class="dot" aria-hidden="true">·</span>
-      <span>in {pillar_label}</span>
       <span class="dot" aria-hidden="true">·</span>
       <span>{p["minutes"]} min read</span>
     </p>

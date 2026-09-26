@@ -1311,11 +1311,9 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 .seg-tab:hover { color: var(--ink); }
 .seg-tab[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
 /* The lens (after the audience prompts on axoworks.com): the control above
-   the work list re-sorts the rows for the reader's role and says in a line
-   what the order is. main.js (initLens) keeps the choice for the next visit
+   the work list re-sorts the rows for the reader's role. main.js (initLens) keeps the choice for the next visit
    and, where the browser can, moves the rows in a view transition. */
 .lens { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-3) var(--sp-5); margin-bottom: clamp(24px, 3vw, 36px); }
-.lens-note { flex: 1 1 24ch; min-width: 0; color: var(--ink-3); max-width: none; }
 /* The phone's dropdown: a pill face showing the role (cycling until the
    reader picks) with a native <select> laid over it, so the tap opens the
    phone's own picker and a screen reader meets a plain select. */
@@ -1335,7 +1333,6 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
   .lens.has-pick .lens-label { text-align: center; }
   .lens.has-pick .seg { display: none; }   /* the dropdown stands in for the tabs */
   .lens-pick { display: flex; width: 100%; }
-  .lens-note { flex-basis: 100%; }
 }
 
 /* The agent window (after granola.ai and replicate.com): the audit case

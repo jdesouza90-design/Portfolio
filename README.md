@@ -297,7 +297,7 @@ Function, answers with Claude Haiku 4.5 by default.
   emerge settings still apply. Below 821px the screens go back to their rows.
 - **The lens** (`initLens`, `[data-lens]` above the list on the home page and
   the work index). Recruiter, Hiring manager, Product manager, Engineer
-  re-sort the rows and say in a line what the order is. The orders are fixed
+  re-sort the rows. The orders are fixed
   in `LENSES` in `main.js` (no model, nothing sent anywhere); the choice is
   kept in `localStorage` (`lens`); rows move in a view transition
   (`row-<slug>` names, section 9).

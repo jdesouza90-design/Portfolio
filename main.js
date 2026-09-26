@@ -1998,20 +1998,19 @@ const CONFIG = {
   /* ---- The lens ----
      After the audience prompts on axoworks.com and pramit's intent card. A
      segmented control above a work list re-sorts its rows for the reader's
-     role and says in a line what the order is. The orders are fixed here
+     role. The orders are fixed here
      (no model, nothing sent anywhere); the choice is kept in localStorage
      for the next page and the next visit. Rows move inside a view
      transition where the browser has one and the reader hasn't asked for
      less motion; otherwise they simply re-sort. */
   const LENSES = {
-    recruiter: { note: "Outcome first: the business result each piece of work is measured by, and the size of the team behind it.", order: ["system", "cross-sell", "verifications", "refi", "staking", "no-code"] },
-    hiring: { note: "How the work was run: who did what, at what size and what was handed to an agent.", order: ["system", "no-code", "cross-sell", "verifications", "refi", "staking"] },
-    pm: { note: "The funnel and its numbers: declines, offers and verifications, with the revenue behind each.", order: ["cross-sell", "refi", "verifications", "system", "staking", "no-code"] },
-    eng: { note: "The systems underneath: the agent and its rules, the design system and the on-chain product.", order: ["system", "staking", "no-code", "verifications", "refi", "cross-sell"] },
+    recruiter: { order: ["system", "cross-sell", "verifications", "refi", "staking", "no-code"] },
+    hiring: { order: ["system", "no-code", "cross-sell", "verifications", "refi", "staking"] },
+    pm: { order: ["cross-sell", "refi", "verifications", "system", "staking", "no-code"] },
+    eng: { order: ["system", "staking", "no-code", "verifications", "refi", "cross-sell"] },
   };
   const initLens = () => $$("[data-lens]").forEach((lens) => {
     const list = $(".cases", lens.parentNode);
-    const note = $(".lens-note", lens);
     const tabs = $$(".lens-tab", lens);
     if (!list || !tabs.length) return;
     const slugOf = (row) => (Array.from(row.classList).find((c) => c.startsWith("case-") && c !== "case-row") || "").slice(5);
@@ -2062,7 +2061,6 @@ const CONFIG = {
       select.value = key;
       if (chosen || reduced) face(key, false);
       tabs.forEach((t) => t.setAttribute("aria-pressed", String(t.dataset.lensKey === key)));
-      if (note) note.textContent = LENSES[key].note;
       try { localStorage.setItem("lens", key); } catch (e) { /* private mode */ }
       if (animate && !reduced && document.startViewTransition) document.startViewTransition(() => sort(key));
       else sort(key);
@@ -2071,7 +2069,7 @@ const CONFIG = {
     let saved = "recruiter";
     try { saved = localStorage.getItem("lens") || "recruiter"; } catch (e) { /* private mode */ }
     face("recruiter", false);
-    if (saved !== "recruiter") { apply(saved, false); chosen = true; pick.classList.add("picked"); }   // a choice from before is a value, not a hint
+    if (saved !== "recruiter" && !phone.matches) apply(saved, false);   // on a phone every visit starts on the hint; a choice holds for the page it was made on
     cycleAt = Math.max(0, names.findIndex(([k]) => k === current));
     cycle();
   });
@@ -2911,7 +2909,7 @@ const CONFIG = {
     if (!foot) return;
     const box = document.createElement("div");
     box.className = "theme";
-    box.innerHTML = `<span class="t-small" id="theme-label">Theme</span><div class="seg" role="group" aria-labelledby="theme-label">${
+    box.innerHTML = `<div class="seg" role="group" aria-label="Theme">${
       [["system", "System"], ["light", "Light"], ["dark", "Dark"]].map(([k, l]) => `<button class="seg-tab" type="button" data-theme-key="${k}" aria-pressed="false">${l}</button>`).join("")}</div>`;
     foot.append(box);
     const tabs = $$(".seg-tab", box);
