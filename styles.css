@@ -39,6 +39,8 @@
   --scrim: rgba(20, 16, 12, .55);
   --plate-ink: #5C564E;    /* text on a panel ground, which stays paper in both registers */
   --plate-ink-2: #6F675D;
+  --plate-ink-0: #14100C;
+  --plate-surface: #FFFFFF;
 
   /* panel ground: the warm sand every screenshot sits on. Each case study
      overrides these from its own subject matter (section 10). */
@@ -753,7 +755,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
    The caption keeps a band at the bottom (the extra padding). */
 .fig-panel { --fig-pad: clamp(20px, 2.6vw, 32px); container-type: size; display: grid; place-items: center; padding: var(--fig-pad) var(--fig-pad) calc(var(--fig-pad) + 60px); border-radius: var(--radius-sm); }
 .fig-nest { position: relative; width: min(100%, 460px); width: min(100cqw, 100cqh, 460px); aspect-ratio: 1; }
-.nest { position: absolute; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--ink) 34%, transparent); transition: border-color var(--dur-ui), box-shadow var(--dur-ui), background var(--dur-ui); }
+.nest { position: absolute; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--plate-ink-0) 34%, transparent); transition: border-color var(--dur-ui), box-shadow var(--dur-ui), background var(--dur-ui); }
 .nest[data-ring="2"] { inset: 0; transform-origin: 50% 80%; --from: .4; }
 .nest[data-ring="1"] { left: 13%; top: 26%; width: 74%; height: 74%; transform-origin: 50% 73%; --from: .54; }
 .nest[data-ring="0"] { left: 30%; top: 60%; width: 40%; height: 40%; transform-origin: 50% 50%; --from: .5; }
@@ -764,12 +766,14 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .nest[data-ring="2"] .nlbl { top: 22%; }
 .nest[data-ring="1"] .nlbl { top: 35.8%; }
 .nest[data-ring="0"] .nlbl { top: 50%; transform: translate(-50%, -50%); white-space: normal; width: 8ch; }
-.nest .t-subhead { color: var(--ink-2); transition: color var(--dur-ui); }
-.nest.hover, .nest.hover .t-subhead { border-color: var(--ink); color: var(--ink); }   /* the ring under the pointer; main.js hit-tests the circle */
+.nest .t-subhead { color: var(--plate-ink); transition: color var(--dur-ui); }   /* the figure sits on a plate, so its inks are the plate's in both registers */
+.nest.hover, .nest.hover .t-subhead { border-color: var(--plate-ink-0); color: var(--plate-ink-0); }   /* the ring under the pointer; main.js hit-tests the circle */
 .nest.on { border-color: var(--accent); box-shadow: 0 0 0 8px var(--glow);
-  background: color-mix(in srgb, var(--surface) 72%, transparent); }   /* the picked ring lifts to a lighter disc so it reads off the ground and the two it shares */
-.nest.on .t-subhead { color: var(--ink); }
+  background: color-mix(in srgb, var(--plate-surface) 72%, transparent); }   /* the picked ring lifts to a lighter disc so it reads off the ground and the two it shares */
+.nest.on .t-subhead { color: var(--plate-ink-0); }
 .fig-cap { position: absolute; left: var(--fig-pad); bottom: var(--fig-pad); display: flex; flex-direction: column; gap: 2px; }
+.fig-cap .eyebrow { color: var(--plate-ink-2); }
+.fig-cap .t-small { color: var(--plate-ink); }
 /* As the card arrives, Figure A draws itself from the centre: the inner disc
    lands first, then each ring grows out of it (its transform origin is the
    inner disc's centre and its first size, --from, the disc's own), and each
@@ -1235,6 +1239,7 @@ details.data { margin-top: 14px; }
 details.data summary { cursor: pointer; }
 details.data table { min-width: 0; margin-top: 10px; }
 details.data th, details.data td { white-space: normal; padding-inline: 10px; }   /* wraps rather than clips at 320px */
+@media (max-width: 400px) { main table { width: 100%; table-layout: fixed; } }   /* the columns share the width and wrap, so no table widens the page */
 /* Gauge: a half dial for capacity. The ring is the pool, filled left to right
    along a 408-unit arc over 2.4s as the block reveals (the in-out: it starts
    and ends on screen); a white slot with a green bar
@@ -1311,6 +1316,7 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 .lens-note { flex: 1 1 24ch; min-width: 0; color: var(--ink-3); max-width: none; }
 @media (max-width: 640px) {
   .lens { align-items: flex-start; }
+  .lens .seg { flex-wrap: wrap; overflow: visible; border-radius: 22px; }   /* four names in two rows, none cut */
   .lens-note { flex-basis: 100%; }
 }
 
@@ -1394,6 +1400,7 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 .pair-item .t-body { margin: 0; }
 .pair-note { margin-top: var(--sp-4); color: var(--ink-3); max-width: 62ch; }
 @media (max-width: 640px) { .pair { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 360px) { .pair-grid { grid-template-columns: repeat(3, auto); gap: 5px 6px; } }
 
 /* Provenance: one line under the facts saying what the agent did and what
    people did, so the split is stated before the story starts. */
@@ -2410,7 +2417,7 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
      covers a line of text; its name stays for screen readers. It goes with the
      bar while the menu sheet is open. */
   .chat-launch {
-    top: calc((var(--nav-h) - 40px) / 2); bottom: auto; right: calc(var(--gutter) + 38px + 10px); z-index: 51;
+    top: calc((var(--nav-h) - 40px) / 2); bottom: auto; right: calc(var(--gutter) + 64px); z-index: 51;   /* past the toggle (42px) and the 12px gap the bar keeps after it */
     width: 40px; height: 40px; padding: 0; justify-content: center; border-radius: 50%; box-shadow: none;
   }
   html.nav-locked .chat-launch.is-in { opacity: 0; visibility: hidden; transition-delay: 0s, 0s, var(--dur-ui), 0s, 0s, 0s; }
