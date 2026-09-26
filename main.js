@@ -1934,8 +1934,7 @@ const CONFIG = {
     const fine = window.matchMedia("(hover: hover) and (pointer: fine)");
     const stage = document.createElement("div");
     stage.className = "cases-stage";
-    stage.addEventListener("pointerenter", () => { onStage = true; });
-    stage.addEventListener("pointerleave", (e) => { onStage = false; const back = rows.find((r) => r.contains(e.relatedTarget)); hover = back || null; pick(); });
+    stage.addEventListener("pointerleave", (e) => { hover = rows.find((r) => r.contains(e.relatedTarget)) || null; pick(); });
     const media = new Map(rows.map((r) => [r, $(".case-media", r)]));
     const slot = new Map(rows.map((r) => {
       const s = document.createElement("a");   // the screen is a link to its case study too, out of the tab order (the row is the stop)
@@ -1956,8 +1955,7 @@ const CONFIG = {
       rows.forEach((r) => { const b = r.getBoundingClientRect(); const gap = Math.abs((b.top + b.bottom) / 2 - mid); if (gap < d) { d = gap; best = r; } });
       return best;
     };
-    let onStage = false;
-    const pick = () => { if (staged && !onStage) show(hover || focus || nearest()); };   // over the screen, it holds the row it shows
+    const pick = () => { if (staged) show(hover || focus || nearest()); };
     const mount = () => {
       if (staged) return;
       staged = true;
@@ -1980,17 +1978,20 @@ const CONFIG = {
     sync();
     rows.forEach((r) => {
       r.addEventListener("pointerenter", () => { if (fine.matches) { hover = r; pick(); } });
-      r.addEventListener("pointerleave", (e) => { if (staged && stage.contains(e.relatedTarget)) { onStage = true; return; } hover = null; pick(); });   // across to the screen: keep showing this row
-      r.addEventListener("focusin", () => { focus = r; pick(); });
+      r.addEventListener("pointerleave", (e) => { if (staged && stage.contains(e.relatedTarget)) return; hover = null; pick(); });   // across to the screen: it keeps showing this row until the page scrolls
+      r.addEventListener("focusin", () => { if (r.matches(":focus-visible")) { focus = r; pick(); } });   // keyboard focus only; a click leaves no hold behind
       r.addEventListener("focusout", () => { focus = null; pick(); });
     });
-    let tick = false;
+    let tick = false, px = -1, py = -1;
+    document.addEventListener("pointermove", (e) => { if (e.pointerType === "mouse") { px = e.clientX; py = e.clientY; } }, { passive: true });
     const onScroll = () => {
+      if (staged && px >= 0) hover = rows.find((r) => r.contains(document.elementFromPoint(px, py))) || null;   // scrolling moves the rows under a resting pointer: follow what is under it now
       if (!staged || tick || hover || focus) return;
       tick = true;
       requestAnimationFrame(() => { tick = false; pick(); });
     };
     window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("pageshow", (e) => { if (e.persisted) { hover = null; focus = null; pick(); } });   // back from a case study: start from the page, not the row clicked
     list.addEventListener("lens", pick);   // re-sorted: show the row now nearest
   });
 
