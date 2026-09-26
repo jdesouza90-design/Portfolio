@@ -241,7 +241,11 @@ function serveStatic(pathname, res, cookies = []) {
   if (file !== root && !file.startsWith(root + path.sep)) { res.writeHead(404); res.end('Not found'); return; }   // no ../ out of the site
   if (pathname.endsWith('/')) file = path.join(file, 'index.html');
   if (!fs.existsSync(file) && fs.existsSync(file + '.html')) file += '.html';
-  if (!fs.existsSync(file) || fs.statSync(file).isDirectory()) { res.writeHead(404); res.end('Not found'); return; }
+  if (!fs.existsSync(file) || fs.statSync(file).isDirectory()) {   // as on Vercel: the site's own 404 page
+    res.writeHead(404, { 'Content-Type': TYPES['.html'], 'Cache-Control': 'no-store' });
+    fs.createReadStream(path.join(root, '404.html')).pipe(res);
+    return;
+  }
   res.writeHead(200, { 'Content-Type': TYPES[path.extname(file)] || 'application/octet-stream', 'Cache-Control': 'no-store', ...(cookies.length ? { 'set-cookie': cookies } : {}) });
   fs.createReadStream(file).pipe(res);
 }

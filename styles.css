@@ -37,8 +37,8 @@
   --contact-ground: linear-gradient(155deg, #241D17 0%, #14100C 58%, #100D0A 100%);   /* the contact block's ground and rings, inverted in the dark register */
   --contact-rings: rgba(246, 244, 240, .07);
   --scrim: rgba(20, 16, 12, .55);
-  --plate-ink: #5C564E;    /* text on a panel ground, which stays paper in both registers */
-  --plate-ink-2: #6F675D;
+  --plate-ink: #4A443D;    /* text on a panel ground, which stays paper in both registers; dark enough for the ruled and tinted grounds */
+  --plate-ink-2: #5C564E;
   --plate-ink-0: #14100C;
   --plate-surface: #FFFFFF;
   --plate-paper: #F6F4F0;
@@ -478,7 +478,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .nav {
   position: fixed; inset: 0 0 auto 0; z-index: 50; height: var(--nav-h);
   display: flex; align-items: center;
-  background: color-mix(in srgb, var(--paper) 72%, transparent);
+  background: color-mix(in srgb, var(--paper) 86%, transparent);
   -webkit-backdrop-filter: blur(18px) saturate(1.5); backdrop-filter: blur(18px) saturate(1.5);
   border-bottom: 1px solid transparent;
   transition: border-color var(--dur-hover), background var(--dur-hover);
@@ -743,6 +743,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .lead-art-panel.live img { visibility: hidden; }
 .art-ctl { position: absolute; right: 12px; bottom: 12px; width: 36px; height: 36px; padding: 0; border: 1px solid var(--hair-2); border-radius: 999px; background: color-mix(in srgb, var(--surface) 55%, transparent); color: var(--ink); cursor: pointer; display: grid; place-items: center; transition: border-color var(--dur-hover), color var(--dur-hover); }
 .art-ctl:hover { border-color: var(--accent); color: var(--accent-ink); }
+.panel .art-ctl, .lead-art-panel .art-ctl { background: color-mix(in srgb, var(--plate-surface) 55%, transparent); border-color: var(--plate-hair-2); color: var(--plate-ink-0); }   /* on a plate, which stays paper in both registers */
 .art-ctl svg { width: 14px; height: 14px; }
 .art-ctl .i-pause, .art-ctl[aria-pressed="true"] .i-play { display: block; }
 .art-ctl .i-play, .art-ctl[aria-pressed="true"] .i-pause { display: none; }
@@ -920,7 +921,8 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .exp-label img[alt="Auth0"] { height: 29px; }
 .exp-label img[alt="Charm Solutions"] { width: min(226px, 100%); height: auto; }
 .exp-item .t-body { margin-top: var(--sp-2); }
-@media (min-width: 701px) { .exp-item .t-subhead { min-height: calc(2em * var(--lh-subhead)); } }   /* a title that wraps doesn't push its column's lines below the others' */
+@media (min-width: 701px) { .exp-item .t-subhead { min-height: calc(2em * var(--lh-subhead)); } }
+@media (min-width: 701px) and (max-width: 900px) { .exp-item .t-subhead { min-height: calc(3em * var(--lh-subhead)); } }   /* a title that wraps doesn't push its column's lines below the others' */
 .exp-dates { margin-top: auto; padding-top: var(--sp-5); }
 .exp-dates time { white-space: nowrap; }
 /* Senior-leader and peer quotes under the experience track: the case-study
@@ -963,7 +965,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .contact .t-title { color: var(--paper); max-width: 20ch; }
 .contact .t-lede { max-width: 50ch; }
 .contact-actions { display: flex; flex-direction: column; gap: 10px; align-items: stretch; }
-.contact-actions .btn { justify-content: center; }
+.contact-actions .btn { justify-content: center; text-align: center; }
 .contact .btn-primary { background: var(--paper); color: var(--ink); }
 .contact .btn-primary:hover { background: var(--surface); color: var(--ink); box-shadow: none; }
 .contact .btn-ghost { border-color: var(--hair-2); color: var(--paper); background: transparent; }
@@ -1078,6 +1080,7 @@ footer a:hover { color: var(--ink); }
 
 /* Sections and rows */
 .cs-section { padding-top: var(--section); scroll-margin-top: calc(var(--nav-h) + 24px); }
+.section[id] { scroll-margin-top: calc(var(--nav-h) - var(--section) + var(--sp-5)); }   /* a jump lands with the section's eyebrow clear of the bar, whatever its padding */
 .cs-section .row + .row { margin-top: var(--row); }
 
 /* A row: copy beside a visual panel, the panel a fixed height so every row in
@@ -1201,8 +1204,8 @@ footer a:hover { color: var(--ink); }
 .walk img { width: 100%; height: auto; display: block; }
 /* A scrim marks the poster as a video still, so the control reads as "play" */
 .walk::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 1; background: linear-gradient(180deg, rgba(20, 16, 12, .12), rgba(20, 16, 12, .34)); transition: opacity var(--dur-ui) var(--ease); }
-.walk .play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 2; display: inline-flex; align-items: center; gap: 9px; padding: 12px 20px 12px 17px; border: 0; border-radius: 999px; white-space: nowrap; background: var(--surface); color: var(--ink); box-shadow: 0 10px 34px rgba(20, 16, 12, .34); transition: transform var(--dur-press) var(--ease), background var(--dur-hover), box-shadow var(--dur-hover), opacity var(--dur-ui) var(--ease); }
-.walk .play:hover { background: var(--surface); box-shadow: 0 14px 40px rgba(20, 16, 12, .42); }
+.walk .play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 2; display: inline-flex; align-items: center; gap: 9px; padding: 12px 20px 12px 17px; border: 0; border-radius: 999px; white-space: nowrap; background: var(--plate-surface); color: var(--plate-ink-0); box-shadow: 0 10px 34px rgba(20, 16, 12, .34); transition: transform var(--dur-press) var(--ease), background var(--dur-hover), box-shadow var(--dur-hover), opacity var(--dur-ui) var(--ease); }
+.walk .play:hover { background: var(--plate-surface); box-shadow: 0 14px 40px rgba(20, 16, 12, .42); }
 .walk .play:focus-visible { outline-color: var(--surface); }
 .walk.loading .play { cursor: progress; }
 .walk.loading .play svg { animation: walk-spin .7s linear infinite; transform-origin: 50% 50%; }
@@ -1224,6 +1227,7 @@ footer a:hover { color: var(--ink); }
 .proof .tensions { margin-top: 0; }
 .proof .tensions li { grid-template-columns: minmax(0, 11rem) minmax(0, 1fr); }
 .proof .table-wrap ~ .tensions li { padding-inline: 16px; }   /* the table's cell inset, so the labels line up with its rows */
+@media (max-width: 560px) { .proof .tensions li { grid-template-columns: minmax(0, 1fr); gap: 4px; } }   /* after the rule above, which it has to outlast */
 /* Chart: a line over a soft area, drawn by main.js in the pixels of its box.
    The grid sits under a clipped layer that main.js sweeps open; the pill
    holds the closing value at the right edge; a marker, a dot and a card
@@ -1293,7 +1297,7 @@ details.data { margin-top: 14px; }
 details.data summary { cursor: pointer; }
 details.data table { min-width: 0; margin-top: 10px; }
 details.data th, details.data td { white-space: normal; padding-inline: 10px; }   /* wraps rather than clips at 320px */
-@media (max-width: 400px) { main table { width: 100%; table-layout: fixed; } }   /* the columns share the width and wrap, so no table widens the page */
+@media (max-width: 400px) { main table { width: 100%; table-layout: fixed; } main table :is(th, td) { white-space: normal; overflow-wrap: anywhere; } }   /* the columns share the width and wrap, so no table widens the page */
 /* Gauge: a half dial for capacity. The ring is the pool, filled left to right
    along a 408-unit arc over 2.4s as the block reveals (the in-out: it starts
    and ends on screen); a white slot with a green bar
@@ -1478,6 +1482,7 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 .mini-toggle i::after { content: ""; position: absolute; top: 2px; left: 2px; width: 11px; height: 11px; border-radius: 50%; background: var(--surface); }
 .mini-toggle.on i { background: var(--accent); }
 .mini-toggle.on i::after { left: 13px; }
+.mini-toggle:not(.on) i::after { background: var(--ink-3); }
 .pair-verdict { color: var(--ink-3); }
 .pair-item.right .pair-verdict { color: var(--accent-ink); }
 @media (max-width: 640px) { .pair { grid-template-columns: minmax(0, 1fr); } }
@@ -1770,7 +1775,7 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
   .lead-solo-intro { padding: 24px 20px 20px; }
   .lead-points > div { padding: 24px 20px 28px; }
   /* the tab strip scrolls instead of wrapping onto a broken second line */
-  .layer-tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .layer-tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent); }
   .layer-tabs::-webkit-scrollbar { display: none; }
   .layer-tab { flex: 0 0 auto; }
   .layer-head { padding: 22px 20px; }
@@ -2499,7 +2504,7 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
 .chat-msg .chat-source:hover { border-color: var(--accent); }
 .chat-msg .chat-source:active { transform: scale(.98); }
 .chat-msg .chat-source:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
-.chat-source-thumb { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 6px; background: var(--paper-2); }
+.chat-source-thumb { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 6px; background-color: var(--panel-base); background-image: var(--grain), var(--panel); background-size: var(--grain-size), auto; background-blend-mode: multiply, normal; }   /* a page without a cover gets the panel ground */
 .chat-source-thumb[hidden] { display: none; }
 .chat-source-title { font-family: var(--font-display); font-size: 1rem; line-height: 1.25; color: var(--ink); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .chat-source-label { margin-top: auto; font-family: var(--font-mono); font-size: var(--t-micro); line-height: var(--lh-micro); letter-spacing: var(--ls-micro); text-transform: uppercase; font-weight: 500; color: var(--ink-3); }   /* the micro role */
@@ -2561,7 +2566,7 @@ html.palette-open { overflow: hidden; }
 .palette {
   position: fixed; inset: 10vh auto auto 50%; transform: translateX(-50%);
   width: min(640px, calc(100vw - 2 * var(--gutter))); max-width: none; max-height: 78vh; max-height: 78dvh; margin: 0; padding: 0;
-  display: none; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden;
+  display: none; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden;
   border: 1px solid var(--hair); border-radius: var(--radius); background: var(--surface); color: var(--ink); box-shadow: var(--shadow-lift);
 }
 .palette[open] { display: grid; animation: palette-in var(--dur-ui) var(--ease); }
