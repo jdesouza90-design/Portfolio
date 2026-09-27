@@ -118,6 +118,10 @@
   /* layout */
   --radius: 18px;
   --radius-sm: 10px;
+  /* Nested corners run parallel: where a rounded box sits in another's corner
+     with the same gap on both sides, the outer radius is the inner radius plus
+     that gap (padding and border), so the two curves share a center. Where the
+     gaps differ, the outer keeps its own radius. */
   --max: 1240px;
   --gutter: clamp(20px, 5vw, 56px);
   --nav-h: 82px;
@@ -428,6 +432,7 @@ main, .nav { position: relative; z-index: 1; }
 .panel img, .case-media img { width: auto; max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 14px; box-shadow: var(--shadow-screen); }
 .panel.wide img { border-radius: 10px; }
 .row.full > .panel.wide > img { width: 100%; }   /* its width attributes then reserve the height before it loads */
+.row.full > .panel.wide:has(> img) { border-radius: calc(10px + var(--panel-pad)); }   /* the screen fills it a panel-pad in on every side */
 .panel.flat img { box-shadow: none; }   /* an illustration: keeps the 14px radius of every panel image, drops the screen shadow */
 .panel > .gallery { width: 100%; }
 
@@ -657,6 +662,9 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .case-staking .case-media.emerge { --x: 14%; --y: 12%; --w: 140%; }
 .case-audit .case-media.emerge { --x: 10%; --y: 12%; --w: 124%; }
 .case-system .case-media.emerge { --x: 6%; --y: 8%; --w: 230%; }   /* the sheet's top-left corner at reading size, still running off the ground */
+/* On the 4:3 ground (561px to 820px) 6% of the width and 8% of the height are
+   the same gap, so the ground's corner is the sheet's 10px plus it on each axis. */
+@media (min-width: 561px) and (max-width: 820px) { .case-system .case-media.emerge { border-radius: calc(10px + var(--x)) / calc(10px + var(--y)); } }
 /* Fade: where a screen runs off the ground (.emerge, .bleed) the ground reasserts
    itself over the last stretch before each edge, so the screen dissolves into it
    instead of stopping at a hard line. The overlay is the ground itself (base, art
@@ -771,6 +779,10 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
   .lead-solo { grid-template-columns: minmax(0, 1fr); }
   .lead-art-panel { order: -1; min-height: 0; aspect-ratio: 16 / 10; }
 }
+/* The art and the figure fill a corner of their card a card-pad (and the 1px
+   border) in, at one column or two. Below 561px the card's inset is 24px by
+   20px, so the gaps differ and the card keeps --radius. */
+@media (min-width: 561px) { .card.lead-art, .card.lead-fig { border-radius: calc(var(--radius-sm) + var(--card-pad) + 1px); } }
 @media (max-width: 760px) { .lead-points { grid-template-columns: 1fr; } .lead-points .point-icon { margin: 0 auto 20px 0; } }
 
 /* Three layers of design tracking: one card like the AI card, mirrored. Figure A
@@ -1105,7 +1117,7 @@ footer a:hover { color: var(--ink); }
 .row-copy > :first-child { margin-top: 0; }   /* those margins are the gap under an eyebrow or heading; whatever opens the block owns no gap. Last so it wins on equal specificity: the problem row opens on its body. */
 .row .panel { height: var(--panel-h); }
 .row .panel img { max-height: 100%; }
-.row .panel.crop { padding: var(--panel-pad) 0 0 var(--panel-pad); align-items: flex-start; justify-content: flex-start; }
+.row .panel.crop { padding: var(--panel-pad) 0 0 var(--panel-pad); align-items: flex-start; justify-content: flex-start; border-radius: calc(10px + var(--panel-pad)); }   /* around the screen's 10px corner */
 .row .panel.crop img { width: 100%; height: 100%; max-width: none; object-fit: cover; object-position: var(--crop-pos, 0 0); border-radius: 10px 0 0 0; }
 /* .panel.dock: a tall phone screen whose top sits inside the ground and whose
    rest runs off the bottom edge, so it reads as the phone continuing past the
@@ -1245,10 +1257,10 @@ footer a:hover { color: var(--ink); }
    script, or under reduced motion, both lanes sit finished. */
 .flow-ba { display: grid; gap: var(--sp-5); margin: 0 0 var(--sp-6); }
 .ba-lane { position: relative; display: grid; grid-template-columns: minmax(0, 10rem) minmax(0, 1fr); align-items: center; gap: var(--sp-5);
-  padding: clamp(20px, 3vw, 32px); border-radius: 16px;
+  --lane-pad: clamp(20px, 3vw, 32px); padding: var(--lane-pad); border-radius: calc(12px + var(--lane-pad));   /* a step's 12px corner, a lane-pad in */
   transition: transform .8s var(--ease-soft), opacity .6s linear; }
 .ba-before { background: var(--paper-2); }
-.ba-after { background: var(--surface); border: 1px solid var(--hair); box-shadow: var(--shadow-lift); }
+.ba-after { background: var(--surface); border: 1px solid var(--hair); box-shadow: var(--shadow-lift); border-radius: calc(13px + var(--lane-pad)); }   /* and its 1px border */
 .ba-label { display: flex; flex-direction: column; gap: var(--sp-1); }
 .ba-name { font-family: var(--font-display); font-size: var(--t-heading); line-height: var(--lh-heading); letter-spacing: var(--ls-heading); color: var(--ink); }
 .ba-after .ba-label .eyebrow { color: var(--accent-ink); }
@@ -1475,8 +1487,9 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 /* The window is a screen on the panel, so it takes the plate's inks and
    stays paper in both registers, as the screenshots do. main.js holds it
    at its tallest step's height for the current width. */
-.hero-panel.demo { flex-direction: column; align-items: stretch; padding: clamp(20px, 3.5vw, 40px); }
+.hero-panel.demo { --demo-pad: clamp(20px, 3.5vw, 40px); flex-direction: column; align-items: stretch; padding: var(--demo-pad); }
 @media (max-width: 1100px) { .hero-panel.demo { padding-bottom: 60px; } }   /* where the window fills the panel, its pause sits under it, not on its corner */
+@media (max-width: 820px) { .hero-panel.demo { border-radius: calc(12px + var(--demo-pad)); } }   /* from here down the window spans the panel, its 12px top corners a demo-pad in */
 .agent-win {
   position: relative; width: 100%; max-width: 880px; margin-inline: auto; min-height: clamp(240px, 26vw, 330px);
   display: grid; grid-template-rows: auto 1fr; overflow: hidden;
@@ -1519,16 +1532,16 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
    label inside a `display: inline` span that wraps across several lines is
    placed against the union of all its line boxes, not the line it is
    actually on, and drifts off whichever edge that union reaches. */
-.brief-sheet { width: 100%; max-width: 680px; margin-inline: auto; padding: clamp(24px, 3.5vw, 40px); background: var(--plate-surface); color: var(--plate-ink); border: 1px solid var(--plate-hair); border-radius: 12px; box-shadow: var(--shadow-screen); }   /* a clause runs about 60 characters, the site's measure */
+.brief-sheet { width: 100%; max-width: 680px; margin-inline: auto; padding: var(--sheet-pad); background: var(--plate-surface); color: var(--plate-ink); border: 1px solid var(--plate-hair); border-radius: calc(10px + var(--sheet-pad) + 1px); box-shadow: var(--shadow-screen); }   /* a clause runs about 60 characters, the site's measure */
 .brief-sheet :is(.eyebrow, .t-small) { color: var(--plate-ink-2); }
 .brief-text { margin: var(--sp-5) 0 0; display: grid; gap: var(--sp-5); max-width: none; }
 .brief-seg { position: relative; padding: var(--sp-4); border-radius: 10px; background: var(--seg, var(--plate-paper-2)); font-family: var(--font-display); font-size: var(--t-subhead); line-height: var(--lh-subhead); color: var(--plate-ink-0); text-wrap: pretty; }
 .brief-seg:nth-child(even) { --seg: var(--plate-glow); }
 .brief-label { display: block; margin-bottom: var(--sp-2); font-family: var(--font-mono); font-size: var(--t-micro); line-height: 1; letter-spacing: var(--ls-micro); text-transform: uppercase; font-weight: 500; color: var(--plate-ink-2); }
-.panel.brief { flex-direction: column; align-items: stretch; }
+.panel.brief { --sheet-pad: clamp(24px, 3.5vw, 40px); flex-direction: column; align-items: stretch; }   /* the sheet's radius is the last clause's 10px plus its inset and border */
+@media (max-width: 820px) { .panel.brief { border-radius: calc(10px + var(--sheet-pad) + 1px + var(--panel-pad)); } }   /* from here down the sheet fills the ground, its corners a panel-pad in */
 @media (max-width: 560px) {   /* four nested insets left a clause 158px at 320 */
-  .row.full .panel.brief { padding: 12px; }
-  .brief-sheet { padding: var(--sp-4); }
+  .row.full .panel.brief { --sheet-pad: var(--sp-4); padding: 12px; border-radius: calc(10px + var(--sheet-pad) + 1px + 12px); }
   .brief-seg { padding: var(--sp-3); }
 }
 
@@ -1537,7 +1550,7 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
    described, with the verdict as a label and the reason in a line. */
 .pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-5); margin-top: var(--sp-5); }
 .pair + .panel { margin-top: var(--sp-5); }   /* as far below the pair as the pair is below the columns */
-.pair-item { display: flex; flex-direction: column; padding: var(--sp-5); border: 1px solid var(--hair); border-radius: var(--radius); background: var(--surface); }
+.pair-item { display: flex; flex-direction: column; padding: var(--sp-5); border: 1px solid var(--hair); border-radius: calc(12px + var(--sp-5) + 1px); background: var(--surface); }   /* the demo's 12px, its inset and the border */
 .pair-demo { margin-bottom: var(--sp-5); }
 .pair-item.right { border-color: color-mix(in srgb, var(--accent) 45%, var(--hair)); }
 .pair-demo { display: grid; place-items: center; min-height: 128px; padding: var(--sp-4); border-radius: 12px; background: var(--paper-2); }
@@ -1882,10 +1895,11 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
      squeezed into a landscape box. Cropped desktop screens keep the box. */
   .row .panel { height: auto; aspect-ratio: auto; padding: 24px 20px; }
   .row .panel img { max-height: min(520px, 68vh); }
-  .row .panel.crop { aspect-ratio: 4 / 3; padding: 20px 0 0 20px; }
+  .row .panel.crop { aspect-ratio: 4 / 3; padding: 20px 0 0 20px; border-radius: 30px; }
   .row .panel.dock { aspect-ratio: 1; padding: 24px 0 0; justify-content: center; }
   .row .panel.dock img { --dock-w: 82%; }
   .row.full .panel { padding: 20px; }
+  .row.full > .panel.wide:has(> img) { border-radius: 30px; }
   .tensions { margin-top: 24px; }
 
   /* Testimonials: the mark drops under the name */
@@ -2232,7 +2246,7 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
 
 
 /* The latest three, on their own ground */
-.featured { background: var(--paper-2); border: 1px solid var(--hair); border-radius: var(--radius); padding: clamp(24px, 3.4vw, 48px); }
+.featured { --featured-pad: clamp(24px, 3.4vw, 48px); background: var(--paper-2); border: 1px solid var(--hair); border-radius: calc(var(--radius-sm) + var(--featured-pad) + 1px); padding: var(--featured-pad); }   /* the cards' bottom corners sit its inset and border in */
 .featured-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--sp-5); flex-wrap: wrap; margin-bottom: clamp(24px, 3vw, 36px); }
 .featured-title { font-style: italic; max-width: none; }
 
@@ -2687,6 +2701,7 @@ html.palette-open { overflow: hidden; }
   .palette-desc { grid-row: 3; }
   .palette { inset: var(--sp-3) auto auto 50%; width: calc(100vw - 2 * var(--sp-3)); max-height: calc(100dvh - 2 * var(--sp-3)); }
   .palette-foot { display: none; }
+  .palette { border-radius: calc(var(--radius-sm) + var(--sp-2) + 1px); }   /* with the foot gone, the last row's corners sit the list's inset and the border in */
   .palette-close { width: 42px; height: 42px; }
 }
 @media (prefers-reduced-motion: reduce) { .palette[open] { animation: none; } }
