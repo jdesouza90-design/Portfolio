@@ -490,6 +490,12 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .nav.scrolled { border-color: var(--hair); }
 .nav .wrap { display: flex; align-items: center; gap: 28px; width: 100%; }
 .brand { display: flex; align-items: center; gap: 11px; text-decoration: none; white-space: nowrap; }
+/* The tally: four capital I's from Crimson Pro, a fifth stroke across them and a double
+   rule under the count. This is the text cut of brand/tally-small.svg, sized to the name.
+   The count takes the ink and the stroke the accent, so it follows the tokens. */
+.brand-mark { height: 1.1em; width: .9em; flex: none; }
+.brand-mark path { fill: currentColor; }
+.brand-mark path + path { fill: var(--accent); }
 .nav-links { margin-left: auto; }
 .nav-links ul { display: flex; gap: 28px; list-style: none; padding: 0; margin: 0; }
 .nav-links ul a { text-decoration: none; transition: color var(--dur-hover); }   /* the rows; the phone foot holds plain .btns */
