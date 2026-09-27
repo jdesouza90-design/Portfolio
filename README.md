@@ -57,6 +57,9 @@ bot-check.mjs                   Checks middleware.js's bot list against real use
 ai-process-art.mjs              Draws assets/ai-process.svg, the abstract on the AI card
 assets/                         Mockups, logos, walkthrough recordings exported from the deck
 og-image.png                    Social preview image used when the link is shared
+favicon.svg                     The tally on a paper tile, drawn on a 32-unit grid
+favicon.ico, apple-touch-icon.png  The tally rendered for tabs (a hand-cut 16, then 32 and 48) and the home screen (180)
+brand/                          The tally for use off the site: color, one ink, reversed, and the small cut
 ```
 
 ## Deploying
@@ -490,6 +493,36 @@ points at the sitemap and keeps crawlers out of the two gated areas.
    Empty values hide their buttons, so nothing looks broken while they're blank.
 2. **Check the colleague names.** Team details use first names, roles and
    locations from the deck. Remove anyone who would rather not be listed.
+
+## The mark
+
+The mark is a tally: four capital I's from Crimson Pro, a fifth stroke across them
+in the accent, and a double rule under the count, the ledger's rule under a total.
+The I's are Crimson Pro's own outline at weight 200, narrowed to 62% width so four
+of them fit in a square. It signs each surface once: the nav, the browser tab, the
+home-screen icon and the link preview.
+
+It comes in three cuts, like a typeface's optical sizes:
+
+- **Display** (`brand/tally.svg`): hairline rules and a thin stroke, for anything
+  larger than about 80px, such as a slide or a printed page.
+- **Small** (`brand/tally-small.svg`): heavier rules and stroke that hold at 20 to
+  40px. The nav carries this cut inline as `.brand-mark` (styles.css section 5),
+  1.1em tall beside the name; the count takes `currentColor` and the stroke
+  `--accent`, so it follows the theme. The same `<svg>` sits in every page's nav,
+  in `blog.py`'s nav, in the case-study template and in the gate in
+  `middleware.js`. Change one, change all. `apple-touch-icon.png` (180, on paper,
+  because iOS fills transparency with black) and the mark in `og-image.png` are
+  this cut too.
+- **Tab** (`favicon.svg`): redrawn on a 32-unit grid with 2-unit stems, 1-unit slab
+  serifs and 1-unit rules, so every edge lands on a pixel on a retina tab.
+  `favicon.ico` holds a separate 16px cut (1px stems, no serifs, one rule) plus the
+  32 and 48 from the grid drawing.
+
+Where the stroke crosses an I, the I is cut away on both sides of it. The cuts are
+holes in the same path (even-odd fill), not a mask, so the mark stays two plain
+paths. `.vercelignore` keeps `brand/` off the deployment. After changing any of the
+icons, run `stamp.py`.
 
 ## Type system
 
