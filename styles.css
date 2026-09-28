@@ -1427,70 +1427,86 @@ footer a:hover { color: var(--ink); }
 .proof .tensions li { grid-template-columns: minmax(0, 11rem) minmax(0, 1fr); }
 .proof .table-wrap ~ .tensions li { padding-inline: 16px; }   /* the table's cell inset, so the labels line up with its rows */
 @media (max-width: 560px) { .proof .tensions li { grid-template-columns: minmax(0, 1fr); gap: 4px; } }   /* after the rule above, which it has to outlast */
-/* Before and after (No-code tools): two lanes of four steps. main.js stages it:
-   the before lane plays alone in the middle of the frame (a dot walks the steps,
-   stalls at the engineering queue, and Deploy fills), then it rises and steps
-   back while the after lane comes in and runs straight to Publish. Without the
-   script, or under reduced motion, both lanes sit finished. */
+/* Before and after (No-code tools): two lanes of four steps, drawn in the AI
+   card's language (Sep 28, 2026): each step a small app card with a numbered
+   title bar, a spinner while the work is on it and a check once it has moved
+   on, dotted wires between them and a dot carrying the work. main.js stages
+   it: the before lane plays alone in the middle of the frame, its steps waking
+   out of a slight tilt as the dot reaches them, stalls at the engineering
+   queue, and Deploy ticks; then it rises and steps back while the after lane
+   comes in and runs straight to Publish. Without the script, or under reduced
+   motion, both lanes sit finished. */
 .flow-ba { display: grid; gap: var(--sp-5); margin: 0 0 var(--sp-6); }
 .ba-lane { position: relative; display: grid; grid-template-columns: minmax(0, 10rem) minmax(0, 1fr); align-items: center; gap: var(--sp-5);
-  padding: clamp(20px, 3vw, 32px); border-radius: 16px;
+  padding: clamp(20px, 3vw, 32px); border-radius: 16px; background: var(--paper-2); border: 1px solid var(--hair);
   transition: transform .8s var(--ease-soft), opacity .6s linear; }
-.ba-before { background: var(--paper-2); }
-.ba-after { background: var(--surface); border: 1px solid var(--hair); box-shadow: var(--shadow-lift); }
 .ba-label { display: flex; flex-direction: column; gap: var(--sp-1); }
 .ba-name { font-family: var(--font-display); font-size: var(--t-heading); line-height: var(--lh-heading); letter-spacing: var(--ls-heading); color: var(--ink); }
 .ba-after .ba-label .eyebrow { color: var(--accent-ink); }
-.ba-steps { list-style: none; margin: 0; padding: 0; position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(16px, 3vw, 40px); }
-.ba-steps::before { content: ""; position: absolute; left: 12.5%; right: 12.5%; top: 50%; height: 2px; margin-top: -1px;
-  background: repeating-linear-gradient(90deg, var(--hair-2) 0 10px, transparent 10px 18px); }
-.ba-after .ba-steps::before { background: var(--accent); opacity: .28; }
-.ba-steps li { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 5.5rem;
-  padding: var(--sp-3); background: var(--surface); border: 1px solid var(--hair); border-radius: 12px; text-align: center;
-  font-size: var(--t-body); line-height: var(--lh-small); color: var(--ink-2);
-  transition: box-shadow .3s var(--ease), background-color .3s var(--ease), color .3s var(--ease); }
-.ba-after .ba-steps li { color: var(--ink); }
-.ba-steps li.is-reached { box-shadow: inset 0 0 0 2px var(--ink-3); }
-.ba-after .ba-steps li.is-reached { box-shadow: inset 0 0 0 2px var(--accent); }
-.ba-steps li.is-waiting { background: var(--wait); color: var(--wait-text, var(--ink-2)); box-shadow: inset 0 0 0 2px var(--wait-edge); }
-.ba-steps li.is-done { background: var(--ink-2); color: var(--paper); box-shadow: inset 0 0 0 2px var(--ink-2); }
-.ba-after .ba-steps li.is-done { background: var(--accent); color: var(--surface); box-shadow: inset 0 0 0 2px var(--accent); }
-.ba-wait { display: block; max-height: 0; opacity: 0; overflow: hidden; font-size: var(--t-small); color: var(--wait-ink);
-  transition: max-height .4s var(--ease), opacity .3s var(--ease), padding .4s var(--ease); }
-.ba-steps li.is-waiting .ba-wait { max-height: 3em; opacity: 1; padding-top: 4px; }
-/* The dot: main.js moves it along the rail; across it, it holds the lane's middle, where
-   the rail runs, so it stays on the rail when the waiting note makes the queue box taller.
-   A hop is HOP in main.js, on the plain in-out rather than the token's quart: only the gap
-   between two boxes shows the dot, and the quart spends its speed there. */
-.ba-dot { position: absolute; left: 0; top: 50%; z-index: 0; width: 20px; height: 20px; margin: -10px 0 0 -10px; border-radius: 50%;
-  background: var(--ink-3); opacity: 0; pointer-events: none; transform: translateX(var(--x, 0));
+.ba-steps { list-style: none; margin: 0; padding: 0; position: relative; z-index: 1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(20px, 3vw, 40px); perspective: 1200px; }   /* a layer of its own over the dot: the perspective would otherwise paint the dot over the cards */
+/* the wire: round dots, behind the cards, so only the gaps show it */
+.ba-steps::before { content: ""; position: absolute; left: 12.5%; right: 12.5%; top: 50%; height: 4px; margin-top: -2px;
+  background: radial-gradient(circle, color-mix(in srgb, var(--ink) 38%, transparent) 1.3px, transparent 1.8px) left center / 10px 4px repeat-x; }
+.ba-after .ba-steps::before { background-image: radial-gradient(circle, color-mix(in srgb, var(--accent) 60%, transparent) 1.3px, transparent 1.8px); }
+.ba-steps li { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 6px; min-height: 5.25rem; padding: 0 14px 14px;
+  background: var(--surface); border: 1px solid var(--hair); border-radius: 10px; color: var(--ink);
+  box-shadow: 0 1px 1px rgba(20, 16, 12, .04), 0 2px 4px rgba(20, 16, 12, .04), 0 12px 24px -14px rgba(20, 16, 12, .24);
+  transition: opacity .6s cubic-bezier(.16, 1, .3, 1), transform .75s cubic-bezier(.16, 1, .3, 1), filter .5s cubic-bezier(.16, 1, .3, 1),
+    background-color .4s var(--ease), border-color .4s var(--ease), box-shadow .4s var(--ease), color .4s var(--ease); }
+.ba-head { display: flex; align-items: center; justify-content: space-between; height: 32px; margin: 0 -14px 4px; padding: 0 10px 0 14px;
+  border-bottom: 1px solid var(--hair); border-radius: 10px 10px 0 0; background: color-mix(in srgb, var(--paper-2) 45%, var(--surface));
+  font-family: var(--font-mono); font-size: var(--t-micro); letter-spacing: var(--ls-micro); font-weight: 500; color: var(--ink-3); }
+.ba-title { font-family: var(--font-display); font-size: var(--t-subhead); line-height: var(--lh-subhead); color: var(--ink); text-wrap: balance; }
+/* the step's state: nothing yet, a spinner while the work is on it, a check once it has moved on */
+.ba-state { width: 14px; height: 14px; border-radius: 50%; flex: none; }
+.ba-steps li.is-reached .ba-state { border: 1.5px solid var(--hair-2); border-top-color: var(--ink); animation: st-spin 900ms linear infinite; }
+.ba-steps li.is-reached:has(~ li.is-reached) .ba-state, .ba-steps li.is-done .ba-state { border: 0; animation: none;
+  background: var(--ink-3) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 6.3l2 2 4-4.3'/%3E%3C/svg%3E") center / 10px no-repeat; }
+.ba-after .ba-steps li.is-reached:has(~ li.is-reached) .ba-state, .ba-after .ba-steps li.is-done .ba-state { background-color: var(--accent); }
+.ba-steps li.is-reached:not(:has(~ li.is-reached)):not(.is-done) { border-color: color-mix(in srgb, var(--ink) 30%, transparent); }
+.ba-after .ba-steps li.is-reached:not(:has(~ li.is-reached)):not(.is-done) { border-color: var(--accent); }
+.ba-after .ba-steps li.is-done { border-color: var(--accent); box-shadow: 0 0 0 4px var(--glow), 0 12px 24px -14px rgba(20, 16, 12, .24); }
+/* the stall: the queue card goes amber and says why, its spinner slowed to a crawl */
+.ba-steps li.is-waiting { background: var(--wait); border-color: var(--wait-edge); }
+.ba-steps li.is-waiting .ba-head { background: transparent; border-color: color-mix(in srgb, var(--wait-edge) 40%, transparent); color: var(--wait-ink); }
+.ba-steps li.is-waiting .ba-title { color: var(--wait-text, var(--ink)); }
+.ba-steps li.is-waiting .ba-state { border-color: color-mix(in srgb, var(--wait-edge) 35%, transparent); border-top-color: var(--wait-edge); animation-duration: 2.4s; }
+.ba-wait { display: block; max-height: 0; opacity: 0; overflow: hidden; font-size: var(--t-small); line-height: var(--lh-small); color: var(--wait-ink);
+  transition: max-height .4s var(--ease), opacity .3s var(--ease); }
+.ba-steps li.is-waiting .ba-wait { max-height: 3em; opacity: 1; }
+/* The dot: main.js moves it along the wire; across it, it holds the lane's middle, where
+   the wire runs, so it stays on the wire when the waiting note makes the queue card taller.
+   A hop is HOP in main.js, on the plain in-out: only the gap between two cards shows the dot. */
+.ba-dot { position: absolute; left: 0; top: 50%; z-index: 0; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%;
+  background: var(--ink); box-shadow: 0 0 0 4px color-mix(in srgb, var(--ink) 10%, transparent); opacity: 0; pointer-events: none; transform: translateX(var(--x, 0));
   transition: transform .9s ease-in-out, opacity .3s var(--ease); }
-.ba-after .ba-dot { background: var(--accent); box-shadow: 0 0 0 6px var(--glow); }
+.ba-after .ba-dot { background: var(--accent); box-shadow: 0 0 0 4px var(--glow); }
 .ba-dot.is-on { opacity: 1; }
-/* Staged: the before lane waits in the middle of the frame, the after lane below and out of sight */
+/* Staged: a step the dot has not reached waits dimmed and tilted back; the before lane
+   sits in the middle of the frame, the after lane below and out of sight */
+.flow-ba.is-staged .ba-steps li:not(.is-reached) { transform: translate3d(0, 8px, 0) rotateX(12deg) scale(.96); box-shadow: none; background: color-mix(in srgb, var(--paper-2) 55%, var(--surface)); }
+.flow-ba.is-staged .ba-steps li:not(.is-reached) > * { opacity: .4; filter: saturate(0) blur(1.5px); }   /* the card stays solid, so the wire never shows through it; only what is on it waits */
+.ba-head, .ba-title { transition: opacity .6s cubic-bezier(.16, 1, .3, 1), filter .5s cubic-bezier(.16, 1, .3, 1), color .4s var(--ease), background-color .4s var(--ease); }
 .flow-ba.is-staged .ba-before { transform: translateY(calc(50% + var(--sp-5) / 2)); }
 .flow-ba.is-staged .ba-after { opacity: 0; transform: translateY(var(--sp-5)); }
-/* Both on screen: the before lane rises and fades back. The boxes, the rail and the
-   dark Deploy fill melt into the lane's ground; the words drop to --ink-3, which
-   still clears 4.5:1 on paper-2, so the fade is in the chrome, not the reading. */
+/* Both on screen: the before lane rises and steps back. The cards melt into the
+   lane's ground and stop spinning; the words drop to --ink-3, which still clears
+   4.5:1 on paper-2, so the fade is in the chrome, not the reading. */
 .flow-ba.is-two .ba-before { transform: none; }
 .flow-ba.is-two .ba-before .ba-steps::before { opacity: .45; transition: opacity .6s linear; }
-.flow-ba.is-two .ba-before .ba-steps li,
-.flow-ba.is-two .ba-before .ba-steps li.is-reached,
-.flow-ba.is-two .ba-before .ba-steps li.is-done { background: var(--paper-2); border-color: var(--hair-2); box-shadow: none; color: var(--ink-3);
-  transition: box-shadow .6s var(--ease), background-color .6s var(--ease), color .6s var(--ease), border-color .6s var(--ease); }
-.flow-ba.is-two .ba-before .ba-name, .flow-ba.is-two .ba-before .eyebrow { color: var(--ink-3); transition: color .6s var(--ease); }
+.flow-ba.is-two .ba-before .ba-steps li { background: var(--paper-2); border-color: var(--hair-2); box-shadow: none; }
+.flow-ba.is-two .ba-before :is(.ba-title, .ba-head, .ba-name, .eyebrow) { color: var(--ink-3); background: transparent; transition: color .6s var(--ease); }
+.flow-ba.is-two .ba-before .ba-state { animation: none; border: 0; background-color: var(--hair-2); }
 .flow-ba.is-two .ba-after { opacity: 1; transform: none; }
 @media (max-width: 640px) {
   .ba-lane { grid-template-columns: minmax(0, 1fr); }
   .ba-steps { grid-template-columns: minmax(0, 1fr); gap: var(--sp-6); }   /* room for the dot to wait between steps */
-  .ba-steps::before { left: 50%; right: auto; top: 12.5%; bottom: 12.5%; width: 2px; height: auto; margin: 0 0 0 -1px;
-    background: repeating-linear-gradient(180deg, var(--hair-2) 0 10px, transparent 10px 18px); }
-  .ba-steps li { min-height: 3.5rem; }
-  .ba-dot { left: 50%; top: 0; transform: translateY(var(--y, 0)); }   /* the rail runs down the lane's middle */
+  .ba-steps::before { left: 50%; right: auto; top: 12.5%; bottom: 12.5%; width: 4px; height: auto; margin: 0 0 0 -2px; background-position: center top; background-size: 4px 10px; background-repeat: repeat-y; }
+  .ba-steps li { min-height: 0; }
+  .ba-dot { left: 50%; top: 0; transform: translateY(var(--y, 0)); }   /* the wire runs down the lane's middle */
   .flow-ba.is-staged .ba-before { transform: none; }   /* a stacked lane is too tall to centre: it waits at the top, under the lede */
 }
-@media (prefers-reduced-motion: reduce) { .ba-lane, .ba-steps li, .ba-wait, .ba-dot { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .ba-lane, .ba-steps li, .ba-wait, .ba-dot { transition: none; } .ba-state { animation: none !important; } }
 /* What shipped, under the lanes: the two phases and what was kept, as chips */
 .ba-phases { list-style: none; margin: 0; padding: 0; gap: var(--sp-3); }
 .ba-phases .chip { display: inline-flex; align-items: baseline; gap: var(--sp-2); padding: 10px 18px; border-radius: 999px; background: var(--surface); color: var(--ink); white-space: normal; }
