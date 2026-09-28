@@ -741,13 +741,31 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .lead-solo { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(28px, 5vw, 72px); padding: var(--card-pad); align-items: start; }
 .lead-solo-copy .t-body { max-width: 58ch; }
 .point-icon { width: 22px; height: 22px; display: block; margin: 0 0 14px; color: var(--accent); }
-/* Coaching: intro on top, then a 2x2 ledger of cells sharing hairlines.
-   The 1px gap lets the card's hair color show through as the rules. */
-.lead-grid { display: block; padding: 0; overflow: hidden; }
-.lead-solo-intro { padding: var(--card-pad) var(--card-pad) clamp(24px, 4vw, 40px); }
-.lead-points { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--hair); border-top: 1px solid var(--hair); }
-.lead-points > div { background: var(--surface); padding: clamp(24px, 3vw, 36px) var(--card-pad) clamp(32px, 4.5vw, 56px); }   /* the intro's inset, so the card has one left edge */
-.lead-points .point-icon { width: 44px; height: 44px; margin: 0 auto clamp(20px, 2.5vw, 32px) 0; }
+/* Coaching, after granola.ai's "How it works": the heading, then four cards
+   in a 2x2 grid. Each card is a clay model of its point in a well on the
+   panel ground (which stays paper in both registers, like the AI card's art),
+   then the point and its paragraph. The renders were color-matched to the
+   panel ground, and their edges fade into it so no seam shows. */
+.lead-coach > .t-heading { margin: 0 0 clamp(20px, 2.5vw, 32px); }
+.lead-coach + .lead-solo { margin-top: var(--row); }
+.coach-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(16px, 2vw, 24px); }
+.coach-card { padding: 0; overflow: hidden; display: flex; flex-direction: column; transition: border-color var(--dur-hover); }
+.coach-art { position: relative; overflow: hidden; aspect-ratio: 16 / 9; background: var(--panel); border-bottom: 1px solid var(--hair); }
+.coach-art img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  -webkit-mask-image: radial-gradient(75% 80% at 50% 50%, #000 62%, transparent 100%);
+  mask-image: radial-gradient(75% 80% at 50% 50%, #000 62%, transparent 100%);
+  transform: translate(var(--px, 0px), var(--py, 0px)) scale(var(--ps, 1));
+  transition: transform .9s var(--ease-soft);
+}
+.coach-copy { padding: clamp(22px, 2.6vw, 32px) clamp(22px, 2.8vw, 36px) clamp(28px, 3.4vw, 40px); }
+.coach-copy .t-body { max-width: 52ch; }
+/* Hover, where there is a pointer: the card's rule darkens and the model leans
+   away from the cursor (main.js sets --px/--py), a parallax on the render. */
+@media (hover: hover) and (pointer: fine) {
+  .coach-card:hover { border-color: var(--hair-2); }
+  .coach-card:hover .coach-art img { --ps: 1.05; }
+}
 .tools { list-style: none; display: flex; flex-wrap: wrap; gap: clamp(18px, 2.4vw, 32px); padding: 0; margin: 26px 0 0; }
 .tools li { display: flex; align-items: center; gap: 10px; }
 .tools img { width: 28px; height: 28px; object-fit: contain; }
@@ -786,7 +804,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
   .lead-solo { grid-template-columns: minmax(0, 1fr); }
   .lead-art-panel { order: -1; min-height: 0; aspect-ratio: 16 / 10; }
 }
-@media (max-width: 760px) { .lead-points { grid-template-columns: 1fr; } .lead-points .point-icon { margin: 0 auto 20px 0; } }
+@media (max-width: 760px) { .coach-grid { grid-template-columns: minmax(0, 1fr); } }
 
 /* Three layers of design tracking: one card like the AI card, mirrored. Figure A
    on the left, three nested rings on the panel ground; on the right the copy,
@@ -1732,6 +1750,18 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
 .anim [data-reveal] .cols > .col:nth-child(3) { --col-i: 2; }
 .anim [data-reveal] .cols > .col:nth-child(4) { --col-i: 3; }
 .anim [data-reveal].in .cols > .col { opacity: 1; transform: none; transition-delay: calc(120ms + var(--col-i, 0) * 100ms); }   /* the wait only on the way in, so hiding at load is instant; a fourth column lands by 920ms */
+/* The coaching cards enter one after another like the columns, and each
+   model is set down in its well a beat later: it drops the last few pixels
+   and settles from a slight zoom, so the objects land on the table in turn. */
+.anim [data-reveal] .coach-card { opacity: 0; transform: translateY(24px); transition: opacity .5s linear, transform .7s var(--ease-soft), border-color var(--dur-hover); }
+.anim [data-reveal] .coach-card:nth-child(2) { --col-i: 1; }
+.anim [data-reveal] .coach-card:nth-child(3) { --col-i: 2; }
+.anim [data-reveal] .coach-card:nth-child(4) { --col-i: 3; }
+.anim [data-reveal].in .coach-card { opacity: 1; transform: none; transition-delay: calc(80ms + var(--col-i, 0) * 110ms), calc(80ms + var(--col-i, 0) * 110ms), 0s; }
+.anim [data-reveal] .coach-art img { transition: opacity .6s linear, transform 1.1s var(--ease-soft); }
+.anim [data-reveal]:not(.in) .coach-art img { opacity: 0; --py: -18px; --ps: 1.1; }
+.anim [data-reveal].in .coach-art img { transition-delay: calc(260ms + var(--col-i, 0) * 110ms); }
+.anim [data-reveal].in .coach-card.settled .coach-art img { transition: transform .6s var(--ease-soft); }   /* landed (main.js): the lean follows the pointer at once */
 [data-rise] { animation: rise .6s var(--ease) both; animation-delay: calc(var(--i, 0) * 70ms); }
 @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 /* The hero hands off (after granola.ai): where the browser can drive an
@@ -1746,7 +1776,8 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .hero .field { animation: none; }
-  .anim [data-reveal], [data-rise], .anim [data-reveal] .cols > .col { opacity: 1; transform: none; transition: none; animation: none; }
+  .anim [data-reveal], [data-rise], .anim [data-reveal] .cols > .col, .anim [data-reveal] .coach-card { opacity: 1; transform: none; transition: none; animation: none; }
+  .coach-art img, .anim [data-reveal] .coach-art img { opacity: 1; transform: none; transition: none; }
   .opener-body > * { opacity: 1; }                          /* the opener shows still, then goes */
   .opener-seam { transform: none; }
   .gauge .fill, .gauge .needle { animation: none !important; }
@@ -1907,9 +1938,7 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
 
   /* Leadership */
   .lead-solo { padding: 24px 20px; }
-  .lead-grid { padding: 0; }
-  .lead-solo-intro { padding: 24px 20px 20px; }
-  .lead-points > div { padding: 24px 20px 28px; }
+  .coach-copy { padding: 20px 20px 28px; }
   /* the tab strip scrolls instead of wrapping onto a broken second line */
   .layer-tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent); }
   .layer-tabs::-webkit-scrollbar { display: none; }
