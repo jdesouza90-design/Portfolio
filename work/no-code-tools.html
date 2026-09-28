@@ -85,10 +85,29 @@
   </div>
 </section>
 
+<section class="cs-section" id="story">
+  <div class="wrap">
+    <header class="section-intro">
+      <h2 class="t-title">The problem</h2>
+    </header>
+    <article class="row" id="problem">
+      <div class="row-copy">
+        <p class="t-body">Only an engineer could set up or change a login flow, so every branding tweak and every new step went into a queue.</p>
+        <ul class="tensions">
+          <li><strong>Access</strong><span>Anyone on a customer’s team should be able to build a login flow.</span></li>
+          <li><strong>Confidence</strong><span>A first-time user had to get somewhere useful in minutes without feeling lost.</span></li>
+          <li><strong>Control</strong><span>Developers who wanted the code path had to keep all of it.</span></li>
+        </ul>
+      </div>
+      <figure class="panel flat"><img decoding="async" width="1176" height="1056" src="../assets/nocode-illustration.webp?v=9f88dfde" alt="Illustration of a person arranging login, verify ID and trigger blocks on a canvas" loading="lazy"></figure>
+    </article>
+  </div>
+</section>
+
 <section class="cs-section" id="role">
   <div class="wrap">
     <header class="section-intro">
-      <h2 class="t-title">My role</h2>
+      <h2 class="t-title">How I led it</h2>
     </header>
     <div class="ledger">
       <div class="ledger-row"><h3 class="t-heading">The case for it</h3><p class="t-body">I made the case to Auth0 leadership that no-code was a strategic gap, and got buy-in for a phased delivery with design leading the non-technical user’s side of it.</p></div>
@@ -98,11 +117,38 @@
   </div>
 </section>
 
+<section class="cs-section" id="key-decisions">
+  <div class="wrap">
+    <header class="section-intro">
+      <h2 class="t-title">Key decisions</h2>
+    </header>
+    <article class="row flip" id="customize">
+      <div class="row-copy">
+        <h3 class="t-heading">Phase 1: a live preview</h3>
+        <p class="t-body">The first phase: a customization panel where styles, fonts and colors update a live preview of every login screen as you change them.</p>
+      </div>
+      <figure class="panel wide crop" style="--crop-pos: 100% 0"><img decoding="async" width="1800" height="839" src="../assets/nocode-customization.webp?v=d1c33af3" alt="The colors panel beside a live preview of the secure-account screen" loading="lazy"></figure>
+    </article>
+    <article class="row full" id="design">
+      <div class="row-copy">
+        <h3 class="t-title">Phase 2: a flow builder</h3>
+        <p class="t-lede">A visual flow builder where a login journey is assembled from actions, tested and published, with the code path still available throughout.</p>
+      </div>
+      <div>
+        <div class="walk">
+          <img decoding="async" width="923" height="548" src="../assets/nocode-walkthrough-poster.jpg?v=c28811db" data-anim="../assets/nocode-walkthrough.webp?v=0d5369c7" alt="Walkthrough of building a new authentication flow in the visual editor" loading="lazy">
+          <button class="btn btn-sm play" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M18.8906 12.846C18.5371 14.189 16.8667 15.138 13.5257 17.0361C10.296 18.8709 8.6812 19.7884 7.37983 19.4196C6.8418 19.2671 6.35159 18.9776 5.95624 18.5787C5 17.6139 5 15.7426 5 12C5 8.2574 5 6.3861 5.95624 5.42132C6.35159 5.02245 6.8418 4.73288 7.37983 4.58042C8.6812 4.21165 10.296 5.12907 13.5257 6.96393C16.8667 8.86197 18.5371 9.811 18.8906 11.154C19.0365 11.7084 19.0365 12.2916 18.8906 12.846Z"/></svg> <span>Play walkthrough</span></button>
+        </div>
+        <p class="walk-note t-small">Screen recording of the flow builder: start node, actions, test and publish.</p>
+      </div>
+    </article>
+  </div>
+</section>
+
 <section class="cs-section" id="results">
   <div class="wrap">
     <header class="section-intro">
       <h2 class="t-title">Results</h2>
-      <p class="t-lede">Implementing Auth0 meant writing code, so only an engineer could set up or change a login flow. We shipped a visual customization panel with a live preview, then a flow builder for assembling, testing and publishing a login journey.</p>
     </header>
     <figure class="flow-ba" data-flow-ba aria-label="Before and after: who could change a login flow">
       <div class="ba-lane ba-before">
@@ -132,49 +178,6 @@
       <li class="chip"><span class="eyebrow">Phase 2</span>Flow builder</li>
       <li class="chip"><span class="eyebrow">Kept</span>Code path for developers</li>
     </ul>
-  </div>
-</section>
-
-<section class="cs-section" id="story">
-  <div class="wrap">
-    <header class="section-intro">
-      <h2 class="t-title">The problem</h2>
-    </header>
-
-    <article class="row" id="problem">
-      <div class="row-copy">
-        <p class="t-body">Only an engineer could set up or change a login flow, so every branding tweak and every new step went into a queue.</p>
-        <ul class="tensions">
-          <li><strong>Access</strong><span>Anyone on a customer’s team should be able to build a login flow.</span></li>
-          <li><strong>Confidence</strong><span>A first-time user had to get somewhere useful in minutes without feeling lost.</span></li>
-          <li><strong>Control</strong><span>Developers who wanted the code path had to keep all of it.</span></li>
-        </ul>
-      </div>
-      <figure class="panel flat"><img decoding="async" width="1176" height="1056" src="../assets/nocode-illustration.webp?v=9f88dfde" alt="Illustration of a person arranging login, verify ID and trigger blocks on a canvas" loading="lazy"></figure>
-    </article>
-
-    <article class="row full" id="design">
-      <div class="row-copy">
-        <h3 class="t-title">The design</h3>
-        <p class="t-lede">A visual flow builder where a login journey is assembled from actions, tested and published, with the code path still available throughout.</p>
-      </div>
-      <div>
-        <div class="walk">
-          <img decoding="async" width="923" height="548" src="../assets/nocode-walkthrough-poster.jpg?v=c28811db" data-anim="../assets/nocode-walkthrough.webp?v=0d5369c7" alt="Walkthrough of building a new authentication flow in the visual editor" loading="lazy">
-          <button class="btn btn-sm play" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M18.8906 12.846C18.5371 14.189 16.8667 15.138 13.5257 17.0361C10.296 18.8709 8.6812 19.7884 7.37983 19.4196C6.8418 19.2671 6.35159 18.9776 5.95624 18.5787C5 17.6139 5 15.7426 5 12C5 8.2574 5 6.3861 5.95624 5.42132C6.35159 5.02245 6.8418 4.73288 7.37983 4.58042C8.6812 4.21165 10.296 5.12907 13.5257 6.96393C16.8667 8.86197 18.5371 9.811 18.8906 11.154C19.0365 11.7084 19.0365 12.2916 18.8906 12.846Z"/></svg> <span>Play walkthrough</span></button>
-        </div>
-        <p class="walk-note t-small">Screen recording of the flow builder: start node, actions, test and publish.</p>
-      </div>
-    </article>
-
-    <article class="row flip" id="customize">
-      <div class="row-copy">
-        <h3 class="t-heading">Live preview</h3>
-        <p class="t-body">The first phase: a customization panel where styles, fonts and colors update a live preview of every login screen as you change them.</p>
-      </div>
-      <figure class="panel wide crop" style="--crop-pos: 100% 0"><img decoding="async" width="1800" height="839" src="../assets/nocode-customization.webp?v=d1c33af3" alt="The colors panel beside a live preview of the secure-account screen" loading="lazy"></figure>
-    </article>
-
   </div>
 </section>
 

@@ -10,7 +10,7 @@ Contents
 2. Hero
 3. Results and the proof variants
 4. The story: row types and their contents
-5. My role
+5. How I led it
 6. What I'd do differently
 7. Next
 
@@ -19,7 +19,7 @@ Contents
 ## 1. Conventions that apply everywhere
 
 - **No eyebrow over a heading.** A section or row heading names the section itself (The
-  problem, My role, Results, Design decisions); `.eyebrow` is only for a chart's, figure's
+  problem, How I led it, Key decisions, Results); `.eyebrow` is only for a chart's, figure's
   or stat's label (Outcome, Monthly originations · USD) and the Next case study band.
 - **Type roles.** Every heading and paragraph carries its role as a class: `.eyebrow`,
   `.t-display` (the h1), `.t-title` (section title), `.t-lede`, `.t-heading` (row or ledger
@@ -45,8 +45,9 @@ Contents
   under "Unlocked". So the `h1` is the case study's name as plain text, no markup inside,
   and a name over about 40 characters wraps to three lines on the sheet at desktop. The
   sheet's copy is the same on every page; nothing per case study is written for it.
-- **Section ids** are stable across pages: `results`, `story`, `problem`, `design`,
-  `decisions`, `research`, `role`, `retro`. Extra rows take a short id of their own
+- **Section order and ids** are the same on every page: hero, `story` (The problem: the
+  `problem` row, then `research`), `role` (How I led it), `key-decisions` (`design`,
+  `decisions` and any other rows), `results`, `reception`, `retro`, then Next. Extra rows take a short id of their own
   (`feeds`, `community`, `customize`).
 - **Inline styles** are only allowed for `--i` and `--crop-pos` (html-validate enforces it).
 - **Icons** all come from Hugeicons' free set, inline SVG on a 24-unit viewBox, 1.5 stroke,
@@ -240,17 +241,20 @@ published usage metrics for this project, so the outcome is qualitative" or equi
 </section>
 ```
 
-The story opens on the problem. Its section intro is the Title "The problem"; the problem row underneath carries the body and the
-tensions list and has no heading of its own. There is no separate "How we got there"
-header with an arc title ("From a dead end to a second offer"): it used to sit above the
-problem and mostly restated it, so it was removed from every page in September 2026.
+The problem section (`#story`) holds the problem row and, where there is one, the research
+row that proves it (`.row.full#research`, the quotes carousel with a lede saying where they
+came from). Its section intro is the Title "The problem"; the problem row carries the body
+and the tensions list and has no heading of its own.
 
-Rows alternate. The pattern the pages use, in order: problem (`.row`), design (`.row.full`),
-then any of decisions (`.row.full`), a second surface (`.row.flip`), research (`.row.flip`),
-community (`.row.full`). Two rows minimum (problem and design); five is the most any page
-has. Each row has one heading, which names the row ("The design", "Design decisions",
-"Research"), and at most one short paragraph before its list or visual. Split rows (`.row`, `.row.flip`) take `t-heading` + `t-body`; full-width rows
-(`.row.full`) take `t-title` + `t-lede`.
+Every other row lives in `#key-decisions`, after How I led it, under the Title "Key
+decisions". In order: the design (`.row.full`), then any of decisions (`.row.full`), a
+second surface (`.row.flip`), a second deliverable (`.row.full`). Each row has one heading,
+and it is the decision itself, under eight words: "Only the card changed", "A checklist
+replaced the progress bar", "Phase 1: a live preview". Never a label like "The design" or
+"Design decisions". At most one short paragraph follows before the list or visual. Split rows
+(`.row`, `.row.flip`) take `t-heading` + `t-body`; full-width rows (`.row.full`) take
+`t-title` + `t-lede`. Public reaction after launch is not a row: it is the `#reception`
+section after Results.
 
 **Row types**
 
@@ -408,7 +412,7 @@ reaction" (public posts; use the `.quotes` grid in a `.row.full` instead, as Sta
 
 ---
 
-## 5. My role
+## 5. How I led it
 
 Three hairline ledger rows. The optional `t-lede` gives org context. Headings are the
 labels from the interview; bodies are one to three sentences with "I" and "we" used
@@ -417,7 +421,7 @@ precisely.
 <section class="cs-section" id="role">
   <div class="wrap">
     <header class="section-intro">
-      <h2 class="t-title">My role</h2>
+      <h2 class="t-title">How I led it</h2>
       <!-- optional: <p class="t-lede">{{ROLE_LEDE}}</p> -->
     </header>
     <div class="ledger">

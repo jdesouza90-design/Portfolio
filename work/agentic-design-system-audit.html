@@ -99,55 +99,11 @@
   </div>
 </section>
 
-<section class="cs-section" id="role">
-  <div class="wrap">
-    <header class="section-intro">
-      <h2 class="t-title">My role</h2>
-    </header>
-    <div class="ledger">
-            <div class="ledger-row"><h3 class="t-heading">The full audit</h3><p class="t-body">I built the agent and ran the whole-library audit myself: generated the Figma token, wrote the crawler’s rules, registered the teams, excluded the archives and the library’s own file, took a name-match heuristic out of the adoption formula and reported Brand Studio separately, because marketing collateral does not instance a dropdown.</p></div>
-      <div class="ledger-row"><h3 class="t-heading">The direction</h3><p class="t-body">I directed the remediation. The plan divided at write access: specs and lists to the agent, every edit to the library to a senior product designer, and the order set by who could act. The button portion was one senior product designer’s from start to finish, agent and remediation.</p></div>
-      <div class="ledger-row"><h3 class="t-heading">The line</h3><p class="t-body">The analysis narrowed decisions and people made them. The data could not pick between 10px, used 1,834 times, and 12px, used 1,796. The 92 dormant illustrations went to Brand Studio for a conversation instead of being deleted.</p></div>
-    </div>
-  </div>
-</section>
-
-<section class="cs-section" id="results">
-  <div class="wrap">
-    <header class="section-intro">
-      <h2 class="t-title">Results</h2>
-      <p class="t-lede">The old .Button held seven properties multiplied into 2,304 variants, most unused. One senior product designer built an agent to audit it, and the set came down to 321 variants across three components: Button, Icon Button and Link. The full audit that followed found the same pattern across 1,316 assets, with more cuts still to come.</p>
-    </header>
-    <div class="proof matrix" data-matrix data-total="2304" data-groups='[{"label":"Button","n":141},{"label":"Icon Button","n":120},{"label":"Link","n":60}]'>
-      <div class="proof-head">
-        <div><div class="t-stat" data-flow>321</div><small>variants across three components, down from 2,304 in one</small></div>
-        <span class="eyebrow matrix-legend"><span><i class="dot" aria-hidden="true"></i>Button · 141</span><span><i class="dot m2" aria-hidden="true"></i>Icon Button · 120</span><span><i class="dot m3" aria-hidden="true"></i>Link · 60</span></span>
-      </div>
-      <div class="matrix-plot" role="img" aria-label="2,304 dots, one per variant of the old .Button, thinning to the 321 that remain: 141 Button, 120 Icon Button and 60 Link"><canvas aria-hidden="true"></canvas></div>
-      <details class="data">
-        <summary>View as a table</summary>
-        <table>
-          <thead><tr><th scope="col">Metric</th><th scope="col">Old .Button</th><th scope="col" class="hl">New system</th></tr></thead>
-          <tbody>
-            <tr><th scope="row">Components</th><td>1</td><td class="hl">3: Button, Icon Button, Link</td></tr>
-            <tr><th scope="row">Variants</th><td>2,304</td><td class="hl">321</td></tr>
-            <tr><th scope="row">Properties that multiply</th><td>7</td><td class="hl">4</td></tr>
-            <tr><th scope="row">Icons</th><td>A variant, 4× the matrix</td><td class="hl">A boolean and a swap, no multiplier</td></tr>
-            <tr><th scope="row">Fixed width</th><td>A variant, 2× the matrix</td><td class="hl">Handled inside the component</td></tr>
-            <tr><th scope="row">Disabled state</th><td>One per color</td><td class="hl">Danger, Brand and Action reuse Primary’s</td></tr>
-          </tbody>
-        </table>
-      </details>
-    </div>
-  </div>
-</section>
-
 <section class="cs-section" id="story">
   <div class="wrap">
     <header class="section-intro">
       <h2 class="t-title">The problem</h2>
     </header>
-
     <article class="row" id="problem">
       <div class="row-copy">
         <p class="t-body">One component, .Button, held seven properties: style, color, size, icon, fixed width, state and theme. Multiplied out, that was 2,304 variants, most unused and many near-identical. Behind it sat a library of 1,316 assets across 8 teams that nobody had ever measured.</p>
@@ -159,10 +115,30 @@
       </div>
       <figure class="panel wide crop" style="--crop-pos: 0 0"><img decoding="async" width="1000" height="560" src="../assets/btn-sheet-close.webp?v=78251215" alt="A corner of the old .Button sheet at full size: near-identical Primary buttons in default, hover, active and disabled, solid, ghost and borderless, with and without icons" loading="lazy"></figure>
     </article>
+  </div>
+</section>
 
+<section class="cs-section" id="role">
+  <div class="wrap">
+    <header class="section-intro">
+      <h2 class="t-title">How I led it</h2>
+    </header>
+    <div class="ledger">
+            <div class="ledger-row"><h3 class="t-heading">The full audit</h3><p class="t-body">I built the agent and ran the whole-library audit myself: generated the Figma token, wrote the crawler’s rules, registered the teams, excluded the archives and the library’s own file, took a name-match heuristic out of the adoption formula and reported Brand Studio separately, because marketing collateral does not instance a dropdown.</p></div>
+      <div class="ledger-row"><h3 class="t-heading">The direction</h3><p class="t-body">I directed the remediation. The plan divided at write access: specs and lists to the agent, every edit to the library to a senior product designer, and the order set by who could act. The button portion was one senior product designer’s from start to finish, agent and remediation.</p></div>
+      <div class="ledger-row"><h3 class="t-heading">The line</h3><p class="t-body">The analysis narrowed decisions and people made them. The data could not pick between 10px, used 1,834 times, and 12px, used 1,796. The 92 dormant illustrations went to Brand Studio for a conversation instead of being deleted.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="cs-section" id="key-decisions">
+  <div class="wrap">
+    <header class="section-intro">
+      <h2 class="t-title">Key decisions</h2>
+    </header>
     <article class="row full" id="design">
       <div class="row-copy">
-        <h3 class="t-title">The design</h3>
+        <h3 class="t-title">Three components instead of one</h3>
         <p class="t-lede">One senior product designer built an agent and ran it through every Figma file: it listed each variant, found every instance in the product files and flagged what was unused or duplicated. From its list they kept 321, split into Button, Icon Button and Link, and had the agent write the usage guideline.</p>
       </div>
       <div class="cols">
@@ -195,10 +171,9 @@
       </div>
       <figure class="panel wide"><img decoding="async" width="1800" height="866" src="../assets/btn-sheet-after.webp?v=63fac1b2" alt="The three new components side by side: the Button sheet, the Icon Button sheet and the Link sheet, every style, state and size on one page" loading="lazy"></figure>
     </article>
-
     <article class="row full" id="index">
       <div class="row-copy">
-        <h3 class="t-title">The full audit</h3>
+        <h3 class="t-title">An audit of every file</h3>
         <p class="t-lede">I built an agent and gave it a read-only Figma token, so it could open every file at Best Egg. It read every instance against the design system: what was used, what was not and where the system got in its own way. That list is what the remediation works from.</p>
       </div>
       <div class="cols">
@@ -272,7 +247,6 @@
         <button class="art-ctl" type="button" aria-pressed="false" aria-label="Pause animation" hidden><svg class="i-pause" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 7C4 5.58579 4 4.87868 4.43934 4.43934C4.87868 4 5.58579 4 7 4C8.41421 4 9.12132 4 9.56066 4.43934C10 4.87868 10 5.58579 10 7V17C10 18.4142 10 19.1213 9.56066 19.5607C9.12132 20 8.41421 20 7 20C5.58579 20 4.87868 20 4.43934 19.5607C4 19.1213 4 18.4142 4 17V7Z"/><path d="M14 7C14 5.58579 14 4.87868 14.4393 4.43934C14.8787 4 15.5858 4 17 4C18.4142 4 19.1213 4 19.5607 4.43934C20 4.87868 20 5.58579 20 7V17C20 18.4142 20 19.1213 19.5607 19.5607C19.1213 20 18.4142 20 17 20C15.5858 20 14.8787 20 14.4393 19.5607C14 19.1213 14 18.4142 14 17V7Z"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M18.8906 12.846C18.5371 14.189 16.8667 15.138 13.5257 17.0361C10.296 18.8709 8.6812 19.7884 7.37983 19.4196C6.8418 19.2671 6.35159 18.9776 5.95624 18.5787C5 17.6139 5 15.7426 5 12C5 8.2574 5 6.3861 5.95624 5.42132C6.35159 5.02245 6.8418 4.73288 7.37983 4.58042C8.6812 4.21165 10.296 5.12907 13.5257 6.96393C16.8667 8.86197 18.5371 9.811 18.8906 11.154C19.0365 11.7084 19.0365 12.2916 18.8906 12.846Z"/></svg></button>
       </figure>
     </article>
-
     <article class="row flip media-first" id="findings">
       <div class="row-copy">
         <h3 class="t-heading">What the index showed</h3>
@@ -285,10 +259,9 @@
       </div>
       <figure class="panel wide crop" style="--crop-pos: 0 0"><img decoding="async" width="1247" height="720" src="../assets/dsr-colors-full.webp?v=940548d0" alt="A corner of the color sheets: Primitive colors, ramps of 50 to 900 for base, grayscale, navy and five brand hues" loading="lazy"></figure>
     </article>
-
     <article class="row full" id="plan">
       <div class="row-copy">
-        <h3 class="t-title">The remediation</h3>
+        <h3 class="t-title">A guide for every fix</h3>
         <p class="t-lede">The agent wrote the remediation guide: a deep link into Figma for every fix, with the exact change to paste or click through. One senior product designer works the library edits from it while the agent takes the specs and lists. The audit runs again on the first of every month, so drift, new components and finished fixes show up in the next report.</p>
       </div>
       <figure class="panel wide"><img decoding="async" width="1393" height="882" src="../assets/dsr-tracker.webp?v=a945ce45" alt="The remediation guide the agent wrote: 28 fixes with 8 done, filters for owner and risk, a running note of what has been applied and what is blocked, and the first card — its owner, its risk, its time estimate, deep links into Figma and two copy buttons" loading="lazy"></figure>
@@ -315,10 +288,9 @@
         </section>
       </div>
     </article>
-
     <article class="row full" id="library">
       <div class="row-copy">
-        <h3 class="t-title">The library</h3>
+        <h3 class="t-title">A site that rebuilds every week</h3>
         <p class="t-lede">With the set settled, the same agent built an internal design system site: every component rendered live, with its props, code and tokens on one page. It reads the component library in Figma and updates every week, so the site matches the file.</p>
       </div>
       <div>
@@ -329,6 +301,36 @@
         <p class="walk-note t-small">Screen recording of the internal design system site: the Button page, its props changed live, with anatomy, guidelines, code and tokens alongside.</p>
       </div>
     </article>
+  </div>
+</section>
+
+<section class="cs-section" id="results">
+  <div class="wrap">
+    <header class="section-intro">
+      <h2 class="t-title">Results</h2>
+      <p class="t-lede">The button set came down to 321 variants across Button, Icon Button and Link. The full audit found the same pattern across 1,316 assets, with more cuts still to come.</p>
+    </header>
+    <div class="proof matrix" data-matrix data-total="2304" data-groups='[{"label":"Button","n":141},{"label":"Icon Button","n":120},{"label":"Link","n":60}]'>
+      <div class="proof-head">
+        <div><div class="t-stat" data-flow>321</div><small>variants across three components, down from 2,304 in one</small></div>
+        <span class="eyebrow matrix-legend"><span><i class="dot" aria-hidden="true"></i>Button · 141</span><span><i class="dot m2" aria-hidden="true"></i>Icon Button · 120</span><span><i class="dot m3" aria-hidden="true"></i>Link · 60</span></span>
+      </div>
+      <div class="matrix-plot" role="img" aria-label="2,304 dots, one per variant of the old .Button, thinning to the 321 that remain: 141 Button, 120 Icon Button and 60 Link"><canvas aria-hidden="true"></canvas></div>
+      <details class="data">
+        <summary>View as a table</summary>
+        <table>
+          <thead><tr><th scope="col">Metric</th><th scope="col">Old .Button</th><th scope="col" class="hl">New system</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Components</th><td>1</td><td class="hl">3: Button, Icon Button, Link</td></tr>
+            <tr><th scope="row">Variants</th><td>2,304</td><td class="hl">321</td></tr>
+            <tr><th scope="row">Properties that multiply</th><td>7</td><td class="hl">4</td></tr>
+            <tr><th scope="row">Icons</th><td>A variant, 4× the matrix</td><td class="hl">A boolean and a swap, no multiplier</td></tr>
+            <tr><th scope="row">Fixed width</th><td>A variant, 2× the matrix</td><td class="hl">Handled inside the component</td></tr>
+            <tr><th scope="row">Disabled state</th><td>One per color</td><td class="hl">Danger, Brand and Action reuse Primary’s</td></tr>
+          </tbody>
+        </table>
+      </details>
+    </div>
   </div>
 </section>
 
