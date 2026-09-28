@@ -39,7 +39,8 @@ main.js                         CONFIG links, then one function per feature: nav
                                 walkthroughs, AI strands, fields (hero dots, contact rings), chart, number flow, before and after,
                                 swipe strips, table frames, About portrait height, the Nine holes arcade, the work
                                 list's stage, the home page's featured stack, the lens, steps, the agent window, the
-                                reading control, the palette, the chat panel, the theme switch, the LinkedIn button
+                                rebuild, the reading control, the palette, the chat panel, the theme switch, the
+                                LinkedIn button
 admin/index.html                Dashboard, Activity page: who is on the site, live (its own password); tabs lead to the other two
 admin/dash.js                   Its script: polls the feed, builds sessions, draws the charts and the map; ?visitor= follows one person
 admin/game.html, golf.js        Dashboard, Nine holes page: the leaderboard (delete, clear), banned words, the game's settings
@@ -55,6 +56,8 @@ stamp.py                        Re-stamps every ?v= cache hash; run it before co
 dev.mjs                         Local stand-in for the edge: the gates, the chat and the dashboard without deploying
 bot-check.mjs                   Checks middleware.js's bot list against real user agents; run it after changing that list
 ai-process-art.mjs              Draws assets/ai-process.svg, the abstract on the AI card
+btn-sheet-rebuild.py            Measures the two .Button sheets and writes assets/btn-sheet-rebuild.json, the
+                                rebuild's wires (needs Pillow, numpy and scipy)
 assets/                         Mockups, logos, walkthrough recordings exported from the deck
 og-image.png                    Social preview image used when the link is shared
 favicon.svg                     The tally on a paper tile, drawn on a 32-unit grid
@@ -330,8 +333,23 @@ Function, answers with Claude Haiku 4.5 by default.
   each clause with the question it answers as a mono label above it (after
   wattenberger.com). It is a reconstruction from the page until John replaces
   it with the brief as written.
-- **Cut and kept** (`.pair`): the two ways a button could carry its icon,
-  built as tiny live components with the verdict as a label.
+- **The rebuild** (`initRebuild`, the audit case study's design row, after
+  the blueprint-animation method). A figure marked `data-rebuild`, the width
+  of the content column with no panel: the old .Button sheet turns into a line drawing, changes
+  in three steps (the icon rows fold away, the rest splits into Button, Icon
+  Button and Link, Danger, Brand and Action drop their own disabled cells)
+  and comes back as the new sheets, in one loop of about 36 seconds. The
+  three decision columns under it (`data-rebuild-steps`) are its captions: the
+  step playing is marked and each heading jumps to it. Every wire is the rect
+  of one element, measured from `assets/btn-sheet-before.webp` and
+  `btn-sheet-after.webp` by `btn-sheet-rebuild.py` into
+  `assets/btn-sheet-rebuild.json` (`data-wires`); re-run it after replacing
+  either sheet. The sheets are drawn as they are; the drawing takes the page's
+  inks, so it follows the theme, and each part turns its component's color
+  from the proof's plot as it lands. It loads when its block reveals, starts
+  on the after sheet (drawn exactly as the still `<img>` shows it), runs only
+  on screen, holds while the page scrolls and stops behind its button. Under
+  reduced motion or without JavaScript the still after sheet stays.
 
 ## The palette
 
@@ -354,7 +372,7 @@ footer's switch (`initTheme`) stamps `data-theme` and keeps it in
 `localStorage` (`theme`); a one-line script in every head, the gate's and
 the blog template's included, reads it before first paint so a dark page
 never flashes paper. System removes the stamp. The canvases (dots, rings,
-strands, the matrix, Nine holes) read their inks from the tokens through a
+strands, the matrix, the rebuild, Nine holes) read their inks from the tokens through a
 small cache that `themechange` empties, and redraw. Wordmarks go to one light
 tone in the dark register; the contact block inverts to paper; the panel
 grounds and the covers stay as they are, plates the screens were drawn for.
