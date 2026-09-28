@@ -54,6 +54,7 @@ vercel.json                     Cache and security headers; bundles the pages wi
 stamp.py                        Re-stamps every ?v= cache hash; run it before committing
 dev.mjs                         Local stand-in for the edge: the gates, the chat and the dashboard without deploying
 bot-check.mjs                   Checks middleware.js's bot list against real user agents; run it after changing that list
+hugeicon.mjs                    Prints a Hugeicons icon as the site's inline SVG (see Icons)
 ai-process-art.mjs              Draws assets/ai-process.svg, the abstract on the AI card
 assets/                         Mockups, logos, walkthrough recordings exported from the deck
 og-image.png                    Social preview image used when the link is shared
@@ -585,6 +586,19 @@ sets them itself. Layout spacing follows the `--sp-*` scale (4 to 128) and
 three rhythm tokens: `--section` between sections, `--row` between rows,
 `--panel-h` for a visual beside copy.
 
+## Icons
+
+Every icon on the site comes from Hugeicons' free set (stroke rounded, MIT),
+pasted in as inline SVG: 24-unit, 1.5 stroke, `currentColor`, so an icon takes
+the ink of whatever it sits in. `node hugeicon.mjs Mail01` prints one in the
+site's markup; `--find chart` searches the names and `--parts` numbers an
+icon's elements. A case study's decision icons stay ink with one green accent
+detail: `--ac 1` puts `class="ac"` (an accent stroke) on element 1 and
+`--ac-fill 3` puts `ac-fill` (a tinted shape) on element 3. The two icons
+drawn in CSS, the search field's clear button and the dashboard's select
+chevron, are Hugeicons paths used as masks. The tally, the company logos and
+the tool logos on the AI card are marks, not icons, and keep their own drawing.
+
 ## Case study skeleton
 
 All six case studies are the same document, in this order:
@@ -628,9 +642,6 @@ All six case studies are the same document, in this order:
 6. **Next**: the closing band: the next case study's title as a link, then
    "Previous case study" as a text link with a left arrow under it, then All
    work as a text link with a grid icon beside the Contact me button.
-
-Icons are inline SVG, 24-unit, 1.5 stroke, ink with one green accent detail
-(`class="ac"` for an accent stroke, `ac-fill` for a tinted shape).
 
 ### On a phone
 

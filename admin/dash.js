@@ -29,6 +29,8 @@
     [/(^|\.)ashbyhq\.com$/, 'Ashby'],
   ];
   const named = (host) => (SOURCES.find(([re]) => re.test(host)) || [])[1] || '';
+  // Hugeicons' cancel-01: the followed-visitor chip's way back to everyone
+  const CANCEL = '<svg class="dash-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6L6.00081 17.9992M17.9992 18L6 6.00085"/></svg>';
   // `from:x` is the tag on a shared link (middleware.js), which is how a click
   // out of Slack is known at all: it sends no referrer.
   const tagName = (t) => (SOURCES.find(([, label]) => label.toLowerCase() === t) || [])[1]
@@ -545,7 +547,7 @@
       chip.hidden = !followed;
       const b = chip.firstElementChild;
       b.replaceChildren();
-      if (followed) { const h = document.createElement('span'); h.className = 'dash-hash'; h.textContent = shortHash(followed); b.append('Visitor ', h, ' ×'); }
+      if (followed) { const h = document.createElement('span'); h.className = 'dash-hash'; h.textContent = shortHash(followed); b.append('Visitor ', h); b.insertAdjacentHTML('beforeend', CANCEL); }
       b.setAttribute('aria-label', followed ? `Following visitor ${followed}` : '');
     }
     for (const b of document.querySelectorAll('.dash-visitor')) {

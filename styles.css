@@ -593,8 +593,8 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
   /* Two lines become a cross while the menu is open: each turns 45° about its
      own centre as it moves to the middle. */
   .nav-toggle path { transform-box: view-box; transform-origin: 12px 12px; transition: transform var(--dur-ui) var(--ease); }
-  .nav.open .nav-toggle path:nth-child(1) { transform: rotate(45deg) translateY(3px); }
-  .nav.open .nav-toggle path:nth-child(2) { transform: rotate(-45deg) translateY(-3px); }
+  .nav.open .nav-toggle path:nth-child(1) { transform: rotate(45deg) translateY(3.5px); }   /* Hugeicons' menu-09 draws its lines at 8.5 and 15.5 */
+  .nav.open .nav-toggle path:nth-child(2) { transform: rotate(-45deg) translateY(-3.5px); }
   .nav-actions { display: none; }   /* its one button is at the sheet's foot here, so the toggle sits on the gutter */
 }
 /* A narrow phone: the foot's two buttons stack rather than wrap their words */
@@ -2047,9 +2047,10 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
   padding: 10px 36px 10px 16px; max-width: 30ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer;
   transition: background var(--dur-hover), border-color var(--dur-hover), color var(--dur-hover);
 }
-.dash-filter::after {   /* the chevron: a bordered corner, turned */
-  content: ""; position: absolute; right: 16px; top: calc(50% - 5px); width: 7px; height: 7px; pointer-events: none;
-  border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg);
+.dash-filter::after {   /* the chevron: Hugeicons' arrow-down-01, cut from currentColor */
+  content: ""; position: absolute; right: 12px; top: calc(50% - 8px); width: 16px; height: 16px; pointer-events: none; background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 9.00005C18 9.00005 13.5811 15 12 15C10.4188 15 6 9 6 9'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 9.00005C18 9.00005 13.5811 15 12 15C10.4188 15 6 9 6 9'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 .dash-filter-plain::after { content: none; }                    /* a switch, with no menu behind it: no chevron, and not the room for one */
 .dash-filter-plain .dash-filter-btn { padding-right: 16px; }
@@ -2140,6 +2141,7 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
 .dash-filter-visitor::after { display: none; }   /* a chip, not a menu: no chevron */
 .dash-filter-visitor .dash-filter-btn { padding-right: 16px; }
 .dash-hash { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.dash-x { width: 12px; height: 12px; margin-left: 6px; vertical-align: -1px; }   /* the chip's cross, after the hash */
 .dash-kind, .dash-now { display: inline-block; padding: 3px 9px; border-radius: 20px; background: var(--surface-2); white-space: nowrap; }
 .dash-now, .dash-kind[data-kind="unlocked"] { background: var(--glow); color: var(--accent-ink); }
 .c-time .dash-now, .dash-tried .dash-kind { margin-left: 8px; }
@@ -2288,10 +2290,10 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
 .post-search svg { width: 15px; height: 15px; color: var(--ink-3); flex: none; }
 .post-search input { border: 0; background: none; outline: none; min-width: 170px; color: var(--ink); }
 .post-search:focus-within { border-color: var(--accent); }
-.post-search input::-webkit-search-cancel-button {   /* the browser's blue cross, in the site's ink */
+.post-search input::-webkit-search-cancel-button {   /* the browser's blue cross, as Hugeicons' cancel-01 in the site's ink */
   -webkit-appearance: none; appearance: none; width: 14px; height: 14px; cursor: pointer; background: var(--ink-3);
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6 6 18'/%3E%3C/svg%3E") center / contain no-repeat;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6 6 18'/%3E%3C/svg%3E") center / contain no-repeat;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6L6.00081 17.9992M17.9992 18L6 6.00085'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6L6.00081 17.9992M17.9992 18L6 6.00085'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 .view-toggle { display: flex; padding: 3px; gap: 2px; border: 1px solid var(--hair-2); border-radius: calc(var(--radius-btn) + 3px); background: var(--surface); }   /* concentric with its buttons, as .seg is */
 .view-toggle button { display: inline-flex; align-items: center; gap: 6px; padding: 7px 13px; border: 0; border-radius: var(--radius-btn); background: none; color: var(--ink-2); cursor: pointer; transition: background var(--dur-hover), color var(--dur-hover); }
