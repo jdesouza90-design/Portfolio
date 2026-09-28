@@ -3045,54 +3045,35 @@ const CONFIG = {
   };
 
   /* ---- Before and after ----
-     No-code tools' two lanes (data-flow-ba), run as a race: both start on the
-     same beat, and After has published before Before reaches the queue. After
-     snaps step to step along a rail that draws under its dot; Before walks,
-     stalls at the queue, deploys long after, then fades back. Reduced motion,
-     or a figure that settles without animating, shows both lanes finished.
-     Dots and rail are placed from the steps' own boxes, so they follow
+     No-code tools' two lanes (data-flow-ba). Staged the moment the script runs,
+     played once when the figure reveals: the before lane walks its steps and
+     stalls at the queue, then rises as the after lane runs straight through.
+     Reduced motion, or a figure that settles without animating, shows both
+     lanes finished. The dot is placed from the steps' own boxes, so it follows
      whichever layout the width gives (a row, or a column on a phone). */
   const initBeforeAfter = () => $$("[data-flow-ba]").forEach((fig) => {
     const [before, after] = $$(".ba-lane", fig);
     if (!before || !after) return;
     const steps = (lane) => $$(".ba-steps li", lane);
-    const fill = document.createElement("span");
-    fill.className = "ba-fill";
-    fill.setAttribute("aria-hidden", "true");
-    after.append(fill);
-    const centre = (lane, li) => {
-      const L = lane.getBoundingClientRect(), r = li.getBoundingClientRect();
-      return [r.left - L.left + r.width / 2, r.top - L.top + r.height / 2];
-    };
-    const lay = () => {   // the fill spans the first step's centre to the last's
-      const s = steps(after), [x0, y0] = centre(after, s[0]), [x1, y1] = centre(after, s[s.length - 1]);
-      const col = Math.abs(y1 - y0) > Math.abs(x1 - x0);
-      fill.classList.toggle("is-col", col);
-      fill.style.left = `${x0}px`; fill.style.top = `${y0}px`;
-      fill.style.width = col ? "" : `${x1 - x0}px`;
-      fill.style.height = col ? `${y1 - y0}px` : "";
-    };
-    const drawTo = (i) => fill.style.setProperty("--fill", i / (steps(after).length - 1));
     const finish = () => {
+      fig.classList.remove("is-staged");
       fig.classList.add("is-two");
       [before, after].forEach((lane) => {
         const s = steps(lane);
         s.forEach((li) => { li.classList.remove("is-waiting"); li.classList.add("is-reached"); });
         s[s.length - 1].classList.add("is-done");
       });
-      drawTo(steps(after).length - 1);
     };
-    lay();
     if (reduced) { finish(); return; }
-    drawTo(0);
+    fig.classList.add("is-staged");
 
-    const last = new Map();   // where each dot was last sent, to put it back after a resize
+    let last = null;   // where each dot was last sent, to put it back after a resize
     const place = (lane, i, short = false, glide = true) => {
-      const dot = $(".ba-dot", lane), s = steps(lane);
-      let [x, y] = centre(lane, s[i]);
+      const dot = $(".ba-dot", lane), s = steps(lane), L = lane.getBoundingClientRect(), r = s[i].getBoundingClientRect();
+      let x = r.left - L.left + r.width / 2, y = r.top - L.top + r.height / 2;
       if (short && i > 0) {   // stop on the rail just before the step, instead of on it
-        const [px, py] = centre(lane, s[i - 1]), r = s[i].getBoundingClientRect();
-        const dx = x - px, dy = y - py, d = Math.hypot(dx, dy) || 1;
+        const p = s[i - 1].getBoundingClientRect();
+        const dx = x - (p.left - L.left + p.width / 2), dy = y - (p.top - L.top + p.height / 2), d = Math.hypot(dx, dy) || 1;
         const reach = Math.abs(dx) > Math.abs(dy) ? r.width / 2 : r.height / 2;
         x -= (dx / d) * (reach + 18); y -= (dy / d) * (reach + 18);
       }
@@ -3101,40 +3082,36 @@ const CONFIG = {
       dot.style.setProperty("--y", `${y}px`);
       if (!glide) { void dot.offsetWidth; dot.style.transition = ""; }
       dot.classList.add("is-on");
-      last.set(lane, [i, short]);
+      last = [lane, i, short];
     };
-    window.addEventListener("resize", debounce(() => {   // re-lay the rail; move a dot, but never bring back one that has gone out
-      fill.style.transition = "none"; lay(); void fill.offsetWidth; fill.style.transition = "";
-      last.forEach(([i, short], lane) => { if ($(".ba-dot", lane).classList.contains("is-on")) place(lane, i, short, false); });
+    window.addEventListener("resize", debounce(() => {   // move the dot, but never bring back one that has gone out
+      if (last && $(".ba-dot", last[0]).classList.contains("is-on")) place(last[0], last[1], last[2], false);
     }, 120));
 
-    // On a phone the lanes stack taller than the screen, so the race waits for After to be in view.
-    const stacked = window.matchMedia("(max-width: 640px)").matches;
-    onceInView(stacked ? after : fig, 0.35, (animate) => {
+    onceInView(fig, 0.35, (animate) => {
       if (!animate) { finish(); return; }
-      fig.classList.add("is-live");
-      lay();
       const b = steps(before), a = steps(after);
       const at = (ms, fn) => setTimeout(fn, ms);
-      const reach = (li) => { li.classList.add("is-reached", "is-pop"); li.addEventListener("animationend", () => li.classList.remove("is-pop"), { once: true }); };
-      const out = (lane) => $(".ba-dot", lane).classList.remove("is-on", "is-idle");
-      // The start: both lanes light their first step together.
-      at(400,  () => { place(before, 0, false, false); reach(b[0]); place(after, 0, false, false); reach(a[0]); });
-      // After: a hop every 600ms, the rail drawing with the dot, and Publish rings.
-      [1, 2, 3].forEach((i) => {
-        at(400 + i * 600, () => { place(after, i); drawTo(i); });
-        at(400 + i * 600 + 380, () => reach(a[i]));
-      });
-      at(2700, () => { a[3].classList.add("is-done"); out(after); });
-      // Before: the same start, a slow walk, a long wait outside the queue, and Deploy much later.
-      at(1100, () => place(before, 1));
-      at(2200, () => reach(b[1]));
-      at(2600, () => place(before, 2, true));
-      at(3700, () => { reach(b[2]); b[2].classList.add("is-waiting"); $(".ba-dot", before).classList.add("is-idle"); });
-      at(7200, () => { b[2].classList.remove("is-waiting"); $(".ba-dot", before).classList.remove("is-idle"); place(before, 3); });
-      at(8300, () => reach(b[3]));
-      at(8600, () => { b[3].classList.add("is-done"); out(before); });
-      at(9400, () => { fig.classList.add("is-two"); fig.classList.remove("is-live"); });
+      const reach = (li) => li.classList.add("is-reached");
+      // Before: brand change, ticket, a long wait outside the queue, deploy.
+      at(600,   () => { place(before, 0, false, false); reach(b[0]); });
+      at(1400,  () => place(before, 1));
+      at(2100,  () => reach(b[1]));
+      at(2800,  () => place(before, 2, true));
+      at(3500,  () => { reach(b[2]); b[2].classList.add("is-waiting"); });
+      at(6000,  () => { b[2].classList.remove("is-waiting"); place(before, 3); });
+      at(6700,  () => reach(b[3]));
+      at(7000,  () => { b[3].classList.add("is-done"); $(".ba-dot", before).classList.remove("is-on"); });
+      // After: the lanes trade places, then every step in turn, with a beat on each.
+      at(8000,  () => fig.classList.add("is-two"));
+      at(8900,  () => { place(after, 0, false, false); reach(a[0]); });
+      at(9600,  () => place(after, 1));
+      at(10300, () => reach(a[1]));
+      at(11000, () => place(after, 2));
+      at(11700, () => reach(a[2]));
+      at(12400, () => place(after, 3));
+      at(13100, () => reach(a[3]));
+      at(13400, () => { a[3].classList.add("is-done"); fig.classList.remove("is-staged"); });
     });
   });
 

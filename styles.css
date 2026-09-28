@@ -153,6 +153,7 @@
   --surface-2: #1C1812;
   --ink: #F0EBE2;
   --ink-2: #BDB4A7;
+  --wait-text: var(--wait-ink);   /* --wait stays light in dark mode, so a step waiting on it takes the wait ink */
   --ink-3: #9C9387;   /* 5.8:1 on paper-2 */
   --hair: #2C261F;
   --hair-2: #3F382F;
@@ -178,6 +179,7 @@
   --surface-2: #1C1812;
   --ink: #F0EBE2;
   --ink-2: #BDB4A7;
+  --wait-text: var(--wait-ink);   /* --wait stays light in dark mode, so a step waiting on it takes the wait ink */
   --ink-3: #9C9387;   /* 5.8:1 on paper-2 */
   --hair: #2C261F;
   --hair-2: #3F382F;
@@ -800,19 +802,23 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
    panel's width and height is tighter, and the copy column sets the height.
    The caption keeps a band at the bottom (the extra padding). */
 .fig-panel { --fig-pad: clamp(20px, 2.6vw, 32px); container-type: size; display: grid; place-items: center; padding: var(--fig-pad) var(--fig-pad) calc(var(--fig-pad) + 60px); border-radius: var(--radius-sm); }
-.fig-nest { position: relative; width: min(100%, 460px); width: min(100cqw, 100cqh, 460px); aspect-ratio: 1; }
+.fig-nest { position: relative; width: min(100%, 460px); width: min(100cqw, 100cqh, 460px); aspect-ratio: 1; container-type: inline-size; }   /* its own container, so the ring names can size to it */
 .nest { position: absolute; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--plate-ink-0) 34%, transparent); transition: border-color var(--dur-ui), box-shadow var(--dur-ui), background var(--dur-ui); }
 .nest[data-ring="2"] { inset: 0; }
 .nest[data-ring="1"] { left: 13%; top: 26%; width: 74%; height: 74%; }
 .nest[data-ring="0"] { left: 30%; top: 60%; width: 40%; height: 40%; }
 /* each label sits in the lower half of its ring's band, where the chord is
    wide, with a clear 6% of the figure between it and the next ring below;
-   the innermost is centred in its disc */
-.nlbl { position: absolute; left: 50%; transform: translate(-50%, -100%); text-align: center; white-space: nowrap; }
+   the innermost is centred in its disc. The names are sized off the figure
+   (6cqw, never above their role or under 12px), so a figure that shrinks to
+   fit a shorter copy column still keeps them inside their rings with room
+   around them: a 267px figure sets them at 16px, a full 460px one at 20px. */
+.nlbl { position: absolute; left: 50%; transform: translate(-50%, -100%); text-align: center; white-space: nowrap;
+  font-size: clamp(12px, 6cqw, var(--t-subhead)); }
 .nest[data-ring="2"] .nlbl { top: 22%; }
 .nest[data-ring="1"] .nlbl { top: 35.8%; }
 .nest[data-ring="0"] .nlbl { top: 50%; transform: translate(-50%, -50%); white-space: normal; width: 8ch; }
-.nest .t-subhead { color: var(--plate-ink); transition: color var(--dur-ui); }   /* the figure sits on a plate, so its inks are the plate's in both registers */
+.nest .t-subhead { font-size: 1em; color: var(--plate-ink); transition: color var(--dur-ui); }   /* the figure sits on a plate, so its inks are the plate's in both registers */
 .nest.hover, .nest.hover .t-subhead { border-color: var(--plate-ink-0); color: var(--plate-ink-0); }   /* the ring under the pointer; main.js hit-tests the circle */
 .nest.on { border-color: var(--accent); box-shadow: 0 0 0 8px var(--glow);
   background: color-mix(in srgb, var(--plate-surface) 72%, transparent); }   /* the picked ring lifts to a lighter disc so it reads off the ground and the two it shares */
@@ -1245,15 +1251,15 @@ footer a:hover { color: var(--ink); }
 .proof .tensions li { grid-template-columns: minmax(0, 11rem) minmax(0, 1fr); }
 .proof .table-wrap ~ .tensions li { padding-inline: 16px; }   /* the table's cell inset, so the labels line up with its rows */
 @media (max-width: 560px) { .proof .tensions li { grid-template-columns: minmax(0, 1fr); gap: 4px; } }   /* after the rule above, which it has to outlast */
-/* Before and after (No-code tools): two lanes of four steps, run as a race.
-   main.js starts both lanes on the same beat. After snaps through its steps
-   along a green rail that draws under its dot, each step landing with a small
-   spring, and Publish fills with a ring. Before walks slowly, stalls at the
-   engineering queue with a shimmer, and deploys long after, then fades back.
-   Without the script, or under reduced motion, both lanes sit finished. */
+/* Before and after (No-code tools): two lanes of four steps. main.js stages it:
+   the before lane plays alone in the middle of the frame (a dot walks the steps,
+   stalls at the engineering queue, and Deploy fills), then it rises and steps
+   back while the after lane comes in and runs straight to Publish. Without the
+   script, or under reduced motion, both lanes sit finished. */
 .flow-ba { display: grid; gap: var(--sp-5); margin: 0 0 var(--sp-6); }
 .ba-lane { position: relative; display: grid; grid-template-columns: minmax(0, 10rem) minmax(0, 1fr); align-items: center; gap: var(--sp-5);
-  padding: clamp(20px, 3vw, 32px); border-radius: 16px; isolation: isolate; }   /* the fill sits under everything but the lane's ground */
+  padding: clamp(20px, 3vw, 32px); border-radius: 16px;
+  transition: transform .8s var(--ease-soft), opacity .6s linear; }
 .ba-before { background: var(--paper-2); }
 .ba-after { background: var(--surface); border: 1px solid var(--hair); box-shadow: var(--shadow-lift); }
 .ba-label { display: flex; flex-direction: column; gap: var(--sp-1); }
@@ -1270,50 +1276,40 @@ footer a:hover { color: var(--ink); }
 .ba-after .ba-steps li { color: var(--ink); }
 .ba-steps li.is-reached { box-shadow: inset 0 0 0 2px var(--ink-3); }
 .ba-after .ba-steps li.is-reached { box-shadow: inset 0 0 0 2px var(--accent); }
-.ba-steps li.is-waiting { background: var(--wait); color: var(--wait-ink); box-shadow: inset 0 0 0 2px var(--wait-edge); }   /* --wait stays light in dark mode, so the words take its ink */
+.ba-steps li.is-waiting { background: var(--wait); color: var(--wait-text, var(--ink-2)); box-shadow: inset 0 0 0 2px var(--wait-edge); }
 .ba-steps li.is-done { background: var(--ink-2); color: var(--paper); box-shadow: inset 0 0 0 2px var(--ink-2); }
 .ba-after .ba-steps li.is-done { background: var(--accent); color: var(--surface); box-shadow: inset 0 0 0 2px var(--accent); }
 .ba-wait { display: block; max-height: 0; opacity: 0; overflow: hidden; font-size: var(--t-small); color: var(--wait-ink);
   transition: max-height .4s var(--ease), opacity .3s var(--ease), padding .4s var(--ease); }
 .ba-steps li.is-waiting .ba-wait { max-height: 3em; opacity: 1; padding-top: 4px; }
-/* The dots. Before's walks, a slow in-out; After's snaps (out-quint) and rides the head of the fill */
 .ba-dot { position: absolute; left: 0; top: 0; z-index: 0; width: 20px; height: 20px; margin: -10px 0 0 -10px; border-radius: 50%;
   background: var(--ink-3); opacity: 0; pointer-events: none; transform: translate(var(--x, 0), var(--y, 0));
-  transition: transform 1.1s var(--ease-in-out), opacity .3s var(--ease); }
-.ba-after .ba-dot { background: var(--accent); box-shadow: 0 0 0 6px var(--glow); transition: transform .42s var(--ease), opacity .3s var(--ease); }
+  transition: transform .7s var(--ease-in-out), opacity .3s var(--ease); }
+.ba-after .ba-dot { background: var(--accent); box-shadow: 0 0 0 6px var(--glow); }
 .ba-dot.is-on { opacity: 1; }
-.ba-dot.is-idle { animation: ba-idle 1.4s var(--ease-in-out) infinite; }
-@keyframes ba-idle { 50% { box-shadow: 0 0 0 7px color-mix(in srgb, var(--ink-3) 18%, transparent); } }
-/* After's rail fill, laid from the first step's centre to the last's by main.js; --fill is how far it has drawn */
-.ba-fill { position: absolute; left: 0; top: 0; z-index: -1; height: 2px; margin-top: -1px; background: var(--accent); border-radius: 2px;
-  pointer-events: none; transform-origin: 0 50%; transform: scaleX(var(--fill, 1)); transition: transform .42s var(--ease); }
-.ba-fill.is-col { width: 2px; margin: 0 0 0 -1px; transform-origin: 50% 0; transform: scaleY(var(--fill, 1)); }
-/* Only while the race plays: a step lands with a small spring, the queue shimmers, Publish rings once */
-.flow-ba.is-live .ba-steps li.is-pop { animation: ba-pop .5s var(--ease-settle); }
-@keyframes ba-pop { 40% { transform: scale(1.05); } }
-.flow-ba.is-live .ba-steps li.is-waiting { background-image: linear-gradient(100deg, transparent 35%, rgba(255, 255, 255, .55) 50%, transparent 65%);
-  background-size: 250% 100%; animation: ba-shimmer 1.6s linear infinite; }
-@keyframes ba-shimmer { from { background-position: 100% 0; } to { background-position: -150% 0; } }
-.flow-ba.is-live .ba-after li.is-done::after { content: ""; position: absolute; inset: -1px; border-radius: 12px; pointer-events: none;
-  animation: ba-ring .9s var(--ease) forwards; }
-@keyframes ba-ring { from { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent); } to { box-shadow: 0 0 0 16px transparent; } }
-/* Race run: Before fades back. The boxes, the rail and the dark Deploy fill melt into
-   the lane's ground; the words drop to --ink-3, which still clears 4.5:1 on paper-2,
-   so the fade is in the chrome, not the reading. */
+/* Staged: the before lane waits in the middle of the frame, the after lane below and out of sight */
+.flow-ba.is-staged .ba-before { transform: translateY(calc(50% + var(--sp-5) / 2)); }
+.flow-ba.is-staged .ba-after { opacity: 0; transform: translateY(var(--sp-5)); }
+/* Both on screen: the before lane rises and fades back. The boxes, the rail and the
+   dark Deploy fill melt into the lane's ground; the words drop to --ink-3, which
+   still clears 4.5:1 on paper-2, so the fade is in the chrome, not the reading. */
+.flow-ba.is-two .ba-before { transform: none; }
 .flow-ba.is-two .ba-before .ba-steps::before { opacity: .45; transition: opacity .6s linear; }
 .flow-ba.is-two .ba-before .ba-steps li,
 .flow-ba.is-two .ba-before .ba-steps li.is-reached,
 .flow-ba.is-two .ba-before .ba-steps li.is-done { background: var(--paper-2); border-color: var(--hair-2); box-shadow: none; color: var(--ink-3);
   transition: box-shadow .6s var(--ease), background-color .6s var(--ease), color .6s var(--ease), border-color .6s var(--ease); }
 .flow-ba.is-two .ba-before .ba-name, .flow-ba.is-two .ba-before .eyebrow { color: var(--ink-3); transition: color .6s var(--ease); }
+.flow-ba.is-two .ba-after { opacity: 1; transform: none; }
 @media (max-width: 640px) {
   .ba-lane { grid-template-columns: minmax(0, 1fr); }
   .ba-steps { grid-template-columns: minmax(0, 1fr); gap: var(--sp-6); }   /* room for the dot to wait between steps */
   .ba-steps::before { left: 50%; right: auto; top: 12.5%; bottom: 12.5%; width: 2px; height: auto; margin: 0 0 0 -1px;
     background: repeating-linear-gradient(180deg, var(--hair-2) 0 10px, transparent 10px 18px); }
   .ba-steps li { min-height: 3.5rem; }
+  .flow-ba.is-staged .ba-before { transform: none; }   /* a stacked lane is too tall to centre: it waits at the top, under the lede */
 }
-@media (prefers-reduced-motion: reduce) { .ba-steps li, .ba-wait, .ba-dot, .ba-fill { transition: none; animation: none; } }
+@media (prefers-reduced-motion: reduce) { .ba-lane, .ba-steps li, .ba-wait, .ba-dot { transition: none; } }
 /* What shipped, under the lanes: the two phases and what was kept, as chips */
 .ba-phases { list-style: none; margin: 0; padding: 0; gap: var(--sp-3); }
 .ba-phases .chip { display: inline-flex; align-items: baseline; gap: var(--sp-2); padding: 10px 18px; border-radius: 999px; background: var(--surface); color: var(--ink); white-space: normal; }
@@ -1873,7 +1869,8 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
   .layer-head { padding: 22px 20px; }
   .lead-fig .layer-head { padding: 20px 0 0; }
   /* the ring names step down a role so they clear the rings on a narrow figure */
-  .nest .t-subhead { font-size: var(--t-small); line-height: var(--lh-small); }
+  .nest .nlbl { font-size: clamp(12px, 6cqw, var(--t-small)); }
+  .nest .t-subhead { line-height: var(--lh-small); }
   .nest[data-ring="0"] .nlbl { width: 7ch; }
 
   /* About */

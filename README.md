@@ -891,8 +891,10 @@ The rules that shape the code:
   a clicked layer sends it out or back in and the ring lights as it lands,
   with the layer's marker drawing on at the same moment. Keyboard moves just
   switch. Under 1100px the card is
-  one column with the figure as a cover, and on a phone the ring names step
-  down to the Small role.
+  one column with the figure as a cover. The ring names size off the figure
+  (`.fig-nest` is its own container, names at 6cqw, capped at the Subhead
+  role, the Small role on a phone, and never under 12px), so a figure that
+  shrinks to a shorter copy column keeps them inside their rings.
 - The abstract beside "AI in the process" on the homepage is drawn live by
   `main.js` on a canvas: the same strands in three dimensions, turning slowly,
   with a pause button in the corner. `assets/ai-process.svg` is the still it
