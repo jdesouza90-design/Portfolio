@@ -22,7 +22,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!-- A fresh unlock from the gate: hold the page until its opener is up (initUnlock in main.js). -->
 <script>if (/[?&]unlocked(?=&|$)/.test(location.search)) document.documentElement.classList.add("unlock");</script>
-<link rel="stylesheet" href="../styles.css?v=b2b1c17d">
+<link rel="stylesheet" href="../styles.css?v=942d68a7">
 <script defer src="/_vercel/insights/script.js"></script>
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
@@ -173,15 +173,15 @@
         <button class="art-ctl" type="button" aria-pressed="false" aria-label="Pause the rebuild" hidden><svg class="i-pause" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="3.5" y="3" width="3" height="10" rx=".8"/><rect x="9.5" y="3" width="3" height="10" rx=".8"/></svg><svg class="i-play" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 3.2v9.6a.6.6 0 0 0 .9.5l7.4-4.8a.6.6 0 0 0 0-1L5.9 2.7a.6.6 0 0 0-.9.5Z"/></svg></button>
       </figure>
       <div class="cols" data-rebuild-steps>
-        <div class="col">
+        <div class="col" data-problem="One icon property multiplied the whole .Button matrix by 4.">
           <div class="col-head"><svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="7" width="19" height="10" rx="5"/><circle class="ac-fill" cx="16" cy="12" r="3"/></svg><h4 class="t-subhead">Booleans over variants</h4></div>
           <p class="t-body">Left and right icons became toggles and the icon itself a swap, so they add nothing to the matrix.</p>
         </div>
-        <div class="col">
+        <div class="col" data-problem="Nobody could tell which button was right.">
           <div class="col-head"><svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="8" width="5.5" height="8" rx="1.5"/><rect x="9.25" y="8" width="5.5" height="8" rx="1.5"/><rect class="ac" x="16" y="8" width="5.5" height="8" rx="1.5"/></svg><h4 class="t-subhead">Split by purpose</h4></div>
           <p class="t-body">Button, Icon Button and Link each got their own component, so the name says what it is for.</p>
         </div>
-        <div class="col">
+        <div class="col" data-problem="One disabled state per color, the same look defined again and again.">
           <div class="col-head"><svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="3.5" width="7" height="4" rx="1.5"/><rect x="2.5" y="10" width="7" height="4" rx="1.5"/><rect x="2.5" y="16.5" width="7" height="4" rx="1.5"/><path d="M9.5 5.5h2c1.5 0 2 1.5 2.5 3M9.5 12h5M9.5 18.5h2c1.5 0 2-1.5 2.5-3"/><rect class="ac" x="15" y="9" width="6.5" height="6" rx="1.5"/></svg><h4 class="t-subhead">One disabled state</h4></div>
           <p class="t-body">Danger, Brand and Action reuse Primary’s disabled variant instead of defining their own.</p>
         </div>
@@ -297,6 +297,6 @@
   </div>
 </section>
 </main>
-<script src="../main.js?v=ae4f955c"></script>
+<script src="../main.js?v=dc95c93b"></script>
 </body>
 </html>

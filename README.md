@@ -313,7 +313,10 @@ Function, answers with Claude Haiku 4.5 by default.
   give the same order, on the work index or in the home page's three cards.
   On a desktop the choice is kept in `localStorage` (`lens`); a phone shows
   a dropdown whose face cycles the roles as a hint and starts every visit
-  there. Rows move in a view transition (`row-<slug>` names, section 9).
+  there. A choice re-sorts the rows in place and they rise into the new order
+  one after another (16ms apart, 200ms each; the home page's stack places its
+  own cards, so its deck fades in as one), so no row slides past another; the
+  `row-<slug>` names (section 9) still carry each row across a page change.
 - **Steps** (`initSteps`, after diabrowser.com). A decisions block marked
   `data-steps` whose columns each end in a `.shot` becomes, from 761px up, a
   numbered list beside one sticky panel showing the step under the reader.
@@ -335,21 +338,24 @@ Function, answers with Claude Haiku 4.5 by default.
   it with the brief as written.
 - **The rebuild** (`initRebuild`, the audit case study's design row, after
   the blueprint-animation method). A figure marked `data-rebuild`, the width
-  of the content column with no panel: the old .Button sheet turns into a line drawing, changes
-  in three steps (the icon rows fold away, the rest splits into Button, Icon
-  Button and Link, Danger, Brand and Action drop their own disabled cells)
-  and comes back as the new sheets, in one loop of about 36 seconds. The
-  three decision columns under it (`data-rebuild-steps`) are its captions: the
-  step playing is marked and each heading jumps to it. Every wire is the rect
-  of one element, measured from `assets/btn-sheet-before.webp` and
-  `btn-sheet-after.webp` by `btn-sheet-rebuild.py` into
-  `assets/btn-sheet-rebuild.json` (`data-wires`); re-run it after replacing
-  either sheet. The sheets are drawn as they are; the drawing takes the page's
-  inks, so it follows the theme, and each part turns its component's color
-  from the proof's plot as it lands. It loads when its block reveals, starts
-  on the after sheet (drawn exactly as the still `<img>` shows it), runs only
-  on screen, holds while the page scrolls and stops behind its button. Under
-  reduced motion or without JavaScript the still after sheet stays.
+  of the content column with no panel: the old .Button sheet turns into a
+  line drawing, changes in three steps (the icon rows fold away, the rest
+  splits into Button, Icon Button and Link, Danger, Brand and Action drop
+  their own disabled cells) and comes back as the new sheets, in one loop of
+  about 18 seconds. Under it a band says which step is playing, the problem
+  and, once the parts move, the fix; its numbers jump to a step and its
+  button pauses. The band is built from the three decision columns
+  (`data-rebuild-steps`, each with its problem in `data-problem`), which it
+  hides; without JavaScript or under reduced motion the columns and the still
+  after sheet stay. Every wire is the rect of one element, measured from
+  `assets/btn-sheet-before.webp` and `btn-sheet-after.webp` by
+  `btn-sheet-rebuild.py` into `assets/btn-sheet-rebuild.json` (`data-wires`);
+  re-run it after replacing either sheet. The sheets are drawn as they are;
+  the drawing takes the page's inks, so it follows the theme, and each part
+  turns its component's color from the proof's plot as it lands. It loads
+  when its block reveals, starts on the after sheet (drawn exactly as the
+  still `<img>` shows it), runs only on screen and holds while the page
+  scrolls.
 
 ## The palette
 

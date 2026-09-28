@@ -1605,21 +1605,31 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 /* The rebuild (main.js initRebuild, the audit's design row): the old .Button
    sheet turns into a line drawing and is rebuilt as Button, Icon Button and
    Link in three steps, the width of the content column with no panel under
-   it. The three decisions below are its captions: the step playing is marked,
-   and each heading jumps to its step. The drawing takes the page's inks, so it
-   follows the theme; the sheets are screenshots and stay as they are. Without
-   the script, or under reduced motion, the after sheet stands in its place. */
+   it. Under it the band says which step is playing, the problem and, once the
+   parts move, the fix; its numbers jump to a step and its button pauses. The
+   band stands in for the three decision columns, which show instead without
+   the script or under reduced motion, beside the still after sheet. The
+   drawing takes the page's inks, so it follows the theme; the sheets are
+   screenshots and stay as they are. */
 .rebuild { position: relative; margin: 0; }
 .rebuild-stage { position: relative; aspect-ratio: 1800 / 1000; }
 .rebuild-stage img { position: absolute; left: 0; top: 0; width: 100%; height: auto; max-width: none; }
 .rebuild-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; visibility: hidden; }
 .rebuild.on .rebuild-stage canvas { visibility: visible; }
 .rebuild.on .rebuild-stage img { visibility: hidden; }   /* the canvas draws the same sheet, pixel for pixel, before it takes over */
-.rebuild .art-ctl { right: 0; bottom: calc(-36px - var(--sp-2)); }   /* under the sheet, off the drawing */
-.step-jump { appearance: none; margin: 0; padding: 0; border: 0; background: none; font: inherit; letter-spacing: inherit; color: inherit; text-align: left; cursor: pointer; }
-@media (hover: hover) and (pointer: fine) { .step-jump:hover { color: var(--accent-ink); } }
-[data-rebuild-steps] .col :is(.t-subhead, .t-body, .col-icon) { transition: color var(--dur-ui); }
-[data-rebuild-steps].live .col:not([aria-current="step"]) :is(.t-subhead, .t-body, .col-icon) { color: var(--ink-3); }
+.rebuild-band { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1fr) minmax(0, 1fr); gap: var(--sp-4) clamp(24px, 4vw, 48px); align-items: start; padding-top: var(--sp-5); border-top: 1px solid var(--hair); text-align: left; }
+.rb-ctl { display: flex; align-items: center; gap: var(--sp-2); }
+.rb-ctl .art-ctl { position: static; flex: none; margin-right: var(--sp-2); }
+.rb-step { appearance: none; margin: 0; padding: 6px 2px 4px; border: 0; border-bottom: 2px solid transparent; background: none; color: var(--ink-3); cursor: pointer; transition: color var(--dur-hover), border-color var(--dur-hover); }
+.rb-step:hover, .rb-step[aria-current="true"] { color: var(--ink); }
+.rb-step[aria-current="true"] { border-bottom-color: var(--ink); }
+.rb-name { margin-top: var(--sp-3); }
+.rebuild-band .t-body { margin-top: var(--sp-2); }
+.rb-problem .eyebrow { color: var(--ink-3); }
+.rb-fix { opacity: 0; transition: opacity .3s var(--ease); }
+.rebuild-band.fixed .rb-fix { opacity: 1; }
+.rb-fix :is(.eyebrow, .t-body) { color: var(--accent-ink); }
+@media (max-width: 760px) { .rebuild-band { grid-template-columns: minmax(0, 1fr); } }
 
 
 /* --------------------------------------------------------------------------
@@ -1683,7 +1693,6 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 @view-transition { navigation: auto; }
 ::view-transition-old(root), ::view-transition-new(root) { animation-duration: .32s; }
 ::view-transition-group(*) { animation-duration: .42s; animation-timing-function: var(--ease); }
-html.vt-lens::view-transition-group(*) { animation-duration: var(--dur-ui); }   /* the lens's re-sort (initLens) is a control's answer, not a page change */
 .nav { view-transition-name: site-nav; }
 .chat-launch { view-transition-name: site-launch; }
 footer { view-transition-name: site-foot; }   /* one a page, at the foot of its last section */
