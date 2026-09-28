@@ -21,7 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=ffe6ad14">
+<link rel="stylesheet" href="styles.css?v=e601bc95">
 <script defer src="/_vercel/insights/script.js"></script>
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
@@ -157,28 +157,28 @@
       <h3 class="t-heading" data-reveal>Coaching and autonomy</h3>
       <div class="coach-grid" data-reveal data-coach>
         <article class="card coach-card">
-          <div class="coach-art"><img decoding="async" width="1200" height="900" src="assets/coach-boundaries.webp?v=da48fd7e" alt="" loading="lazy"></div>
+          <div class="coach-art" data-build="assets/coach-boundaries-build.mp4?v=020828d5"><img decoding="async" width="1200" height="900" src="assets/coach-boundaries.webp?v=da48fd7e" alt="" loading="lazy"></div>
           <div class="coach-copy">
             <h4 class="t-subhead">Strategy sets the boundaries</h4>
             <p class="t-body">I define the design strategy and the framework decisions get made against. Inside it, product designers decide without waiting on me. A team that has to route every call through its leader stops scaling at one person.</p>
           </div>
         </article>
         <article class="card coach-card">
-          <div class="coach-art"><img decoding="async" width="1200" height="900" src="assets/coach-feedback.webp?v=85615818" alt="" loading="lazy"></div>
+          <div class="coach-art" data-build="assets/coach-feedback-build.mp4?v=bb60154e"><img decoding="async" width="1200" height="900" src="assets/coach-feedback.webp?v=85615818" alt="" loading="lazy"></div>
           <div class="coach-copy">
             <h4 class="t-subhead">Feedback is the job</h4>
             <p class="t-body">Most of my week goes into feedback: weekly reviews, structured critique and time on specific work with specific people. Consistency matters more than volume, and it’s how strategy stays real.</p>
           </div>
         </article>
         <article class="card coach-card">
-          <div class="coach-art"><img decoding="async" width="1200" height="900" src="assets/coach-bar.webp?v=8b9e0129" alt="" loading="lazy"></div>
+          <div class="coach-art" data-build="assets/coach-bar-build.mp4?v=5829a199"><img decoding="async" width="1200" height="900" src="assets/coach-bar.webp?v=8b9e0129" alt="" loading="lazy"></div>
           <div class="coach-copy">
             <h4 class="t-subhead">I hold the quality bar</h4>
             <p class="t-body">I review against the standard rather than my own taste, which means the bar is something the team can apply themselves: spacing and layout, design system usage, color and contrast, accessibility.</p>
           </div>
         </article>
         <article class="card coach-card">
-          <div class="coach-art"><img decoding="async" width="1200" height="900" src="assets/coach-seat.webp?v=154f3905" alt="" loading="lazy"></div>
+          <div class="coach-art" data-build="assets/coach-seat-build.mp4?v=c8bf821c"><img decoding="async" width="1200" height="900" src="assets/coach-seat.webp?v=154f3905" alt="" loading="lazy"></div>
           <div class="coach-copy">
             <h4 class="t-subhead">A seat in product leadership</h4>
             <p class="t-body">I sit with product leadership to help define what the products are trying to achieve, so design is shaping the outcome rather than reacting to a roadmap it had no part in setting.</p>
@@ -208,44 +208,37 @@
       </figure>
     </div>
 
-    <!-- 3. Standards -->
-    <div class="card lead-solo lead-fig" data-reveal data-tabs>
-      <figure class="panel fig-panel">
-        <div class="fig-nest" role="img" aria-label="Three nested rings, read from the center out: design quality, then experience metrics, then the business outcome">
-          <div class="nest" data-ring="2"><span class="nlbl"><span class="t-subhead">Business outcome</span></span></div>
-          <div class="nest" data-ring="1"><span class="nlbl"><span class="t-subhead">Experience metrics</span></span></div>
-          <div class="nest on" data-ring="0"><span class="nlbl"><span class="t-subhead">Design quality</span></span></div>
-        </div>
-        <figcaption class="fig-cap"><span class="eyebrow">Figure A</span><span class="t-small">Each layer moves the one around it.</span></figcaption>
-      </figure>
-      <div class="lead-solo-copy">
+    <!-- 3. Standards: the three layers as cards, like the coaching block above -->
+    <div class="lead-coach">
+      <header class="lead-coach-head" data-reveal>
         <h3 class="t-heading">How I track design</h3>
         <p class="t-body">Design is accountable at three levels at once, and they feed each other. Craft moves behavior, behavior moves the number the business already reports. Any surface I own carries all three, so a decision can be traced end to end.</p>
-        <div class="layer-tabs" role="tablist" aria-label="The three layers">
-          <button class="layer-tab" type="button" role="tab" id="tab-quality" aria-controls="layer-quality" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M3.88884 9.66294C4.39329 10 5.09552 10 6.49998 10C7.90445 10 8.60668 10 9.11113 9.66294C9.32951 9.51702 9.51701 9.32952 9.66292 9.11114C9.99998 8.60669 9.99998 7.90446 9.99998 6.5C9.99998 5.09554 9.99998 4.39331 9.66292 3.88886C9.51701 3.67048 9.32951 3.48298 9.11113 3.33706C8.60668 3 7.90445 3 6.49998 3C5.09552 3 4.39329 3 3.88884 3.33706C3.67046 3.48298 3.48296 3.67048 3.33705 3.88886C2.99998 4.39331 2.99998 5.09554 2.99998 6.5C2.99998 7.90446 2.99998 8.60669 3.33705 9.11114C3.48296 9.32952 3.67046 9.51702 3.88884 9.66294Z"/><path d="M14.8888 9.66294C15.3933 10 16.0955 10 17.5 10C18.9044 10 19.6067 10 20.1111 9.66294C20.3295 9.51702 20.517 9.32952 20.6629 9.11114C21 8.60669 21 7.90446 21 6.5C21 5.09554 21 4.39331 20.6629 3.88886C20.517 3.67048 20.3295 3.48298 20.1111 3.33706C19.6067 3 18.9044 3 17.5 3C16.0955 3 15.3933 3 14.8888 3.33706C14.6705 3.48298 14.483 3.67048 14.337 3.88886C14 4.39331 14 5.09554 14 6.5C14 7.90446 14 8.60669 14.337 9.11114C14.483 9.32952 14.6705 9.51702 14.8888 9.66294Z"/><path d="M3.88884 20.6629C4.39329 21 5.09552 21 6.49998 21C7.90445 21 8.60668 21 9.11113 20.6629C9.32951 20.517 9.51701 20.3295 9.66292 20.1111C9.99998 19.6067 9.99998 18.9045 9.99998 17.5C9.99998 16.0955 9.99998 15.3933 9.66292 14.8889C9.51701 14.6705 9.32951 14.483 9.11113 14.3371C8.60668 14 7.90445 14 6.49998 14C5.09552 14 4.39329 14 3.88884 14.3371C3.67046 14.483 3.48296 14.6705 3.33705 14.8889C2.99998 15.3933 2.99998 16.0955 2.99998 17.5C2.99998 18.9045 2.99998 19.6067 3.33705 20.1111C3.48296 20.3295 3.67046 20.517 3.88884 20.6629Z"/><path d="M14.8888 20.6629C15.3933 21 16.0955 21 17.5 21C18.9044 21 19.6067 21 20.1111 20.6629C20.3295 20.517 20.517 20.3295 20.6629 20.1111C21 19.6067 21 18.9045 21 17.5C21 16.0955 21 15.3933 20.6629 14.8889C20.517 14.6705 20.3295 14.483 20.1111 14.3371C19.6067 14 18.9044 14 17.5 14C16.0955 14 15.3933 14 14.8888 14.3371C14.6705 14.483 14.483 14.6705 14.337 14.8889C14 15.3933 14 16.0955 14 17.5C14 18.9045 14 19.6067 14.337 20.1111C14.483 20.3295 14.6705 20.517 14.8888 20.6629Z"/></svg><span>Design quality</span></button>
-          <button class="layer-tab" type="button" role="tab" id="tab-experience" aria-controls="layer-experience" aria-selected="false" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M21 21H10C6.70017 21 5.05025 21 4.02513 19.9749C3 18.9497 3 17.2998 3 14V3"/><path d="M7.99707 16.999C11.5286 16.999 18.9122 15.5348 18.6979 6.43269M16.4886 8.04302L18.3721 6.14612C18.5656 5.95127 18.8798 5.94981 19.0751 6.14286L20.9971 8.04302" stroke-linejoin="round"/></svg><span>Experience metrics</span></button>
-          <button class="layer-tab" type="button" role="tab" id="tab-business" aria-controls="layer-business" aria-selected="false" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2Z"/><path d="M12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6Z"/><path d="M12 10C13.1046 10 14 10.8954 14 12C14 13.1046 13.1046 14 12 14C10.8954 14 10 13.1046 10 12C10 10.8954 10.8954 10 12 10Z"/></svg><span>Business outcome</span></button>
-        </div>
-        <div class="layer-stage">
-          <div class="layer active" id="layer-quality" role="tabpanel" aria-labelledby="tab-quality" tabindex="0">
-            <div class="layer-head">
-              <p class="t-body">Spacing and layout QA, design system component usage, color and contrast, accessibility violations. The diagnostics that keep quality from drifting once a team is moving fast.</p>
-              <p class="t-body">It shows up as <mark class="layer-mark">a design decision</mark></p>
-            </div>
+      </header>
+      <div class="coach-grid three" data-reveal data-coach>
+        <article class="card coach-card">
+          <div class="coach-art" data-build="assets/layer-quality-build.mp4?v=d16ef26e"><img decoding="async" width="1200" height="900" src="assets/layer-quality.webp?v=a3d9c3f1" alt="" loading="lazy"></div>
+          <div class="coach-copy">
+            <h4 class="t-subhead">Design quality</h4>
+            <p class="t-body">Spacing and layout QA, design system component usage, color and contrast, accessibility violations. The diagnostics that keep quality from drifting once a team is moving fast.</p>
+            <p class="t-body coach-shows">It shows up as <mark class="layer-mark">a design decision</mark></p>
           </div>
-          <div class="layer" id="layer-experience" role="tabpanel" aria-labelledby="tab-experience" tabindex="0">
-            <div class="layer-head">
-              <p class="t-body">Completion rate, time to decision, drop-off at each step. At least one has to be perceptual, like effort or confidence, or the layer only measures speed.</p>
-              <p class="t-body">It shows up as <mark class="layer-mark">a behavior change</mark></p>
-            </div>
+        </article>
+        <article class="card coach-card">
+          <div class="coach-art" data-build="assets/layer-experience-build.mp4?v=14e9db7a"><img decoding="async" width="1200" height="900" src="assets/layer-experience.webp?v=264b1733" alt="" loading="lazy"></div>
+          <div class="coach-copy">
+            <h4 class="t-subhead">Experience metrics</h4>
+            <p class="t-body">Completion rate, time to decision, drop-off at each step. At least one has to be perceptual, like effort or confidence, or the layer only measures speed.</p>
+            <p class="t-body coach-shows">It shows up as <mark class="layer-mark">a behavior change</mark></p>
           </div>
-          <div class="layer" id="layer-business" role="tabpanel" aria-labelledby="tab-business" tabindex="0">
-            <div class="layer-head">
-              <p class="t-body">Conversion, activation, retention. Design answers to the same number the business already reports, not a parallel one invented for design.</p>
-              <p class="t-body">It shows up as <mark class="layer-mark">a business result</mark></p>
-            </div>
+        </article>
+        <article class="card coach-card">
+          <div class="coach-art" data-build="assets/layer-business-build.mp4?v=f0b8647f"><img decoding="async" width="1200" height="900" src="assets/layer-business.webp?v=9ad47985" alt="" loading="lazy"></div>
+          <div class="coach-copy">
+            <h4 class="t-subhead">Business outcome</h4>
+            <p class="t-body">Conversion, activation, retention. Design answers to the same number the business already reports, not a parallel one invented for design.</p>
+            <p class="t-body coach-shows">It shows up as <mark class="layer-mark">a business result</mark></p>
           </div>
-        </div>
+        </article>
       </div>
     </div>
   </div>
@@ -389,6 +382,6 @@
 </section>
 
 </main>
-<script src="main.js?v=93a5de77"></script>
+<script src="main.js?v=35441360"></script>
 </body>
 </html>
