@@ -22,7 +22,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!-- A fresh unlock from the gate: hold the page until its opener is up (initUnlock in main.js). -->
 <script>if (/[?&]unlocked(?=&|$)/.test(location.search)) document.documentElement.classList.add("unlock");</script>
-<link rel="stylesheet" href="../styles.css?v=4b351c83">
+<link rel="stylesheet" href="../styles.css?v=536c3f88">
 <script defer src="/_vercel/insights/script.js"></script>
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
@@ -215,19 +215,61 @@
           <p class="t-body">It then built an interactive remediation guide, split between what it could do itself and what I directed the team to do.</p>
         </div>
       </div>
-      <figure class="panel wide brief">
-        <div class="brief-sheet">
-          <p class="eyebrow">The brief</p>
-          <p class="brief-text">
-          <span class="brief-seg"><span class="brief-label">What to crawl</span>Use the read-only Figma token to open every file at Best Egg across the 8 registered teams, and read every page and every instance in each one.</span>
-          <span class="brief-seg"><span class="brief-label">What to skip</span>Skip the archives and the design system library’s own file.</span>
-          <span class="brief-seg"><span class="brief-label">How to count</span>Count every instance against the design system, what is used and what is not, and give no adoption credit for a layer that only matches a component’s name.</span>
-          <span class="brief-seg"><span class="brief-label">What to report apart</span>Report Brand Studio’s files separately, because marketing collateral does not instance a dropdown.</span>
-          <span class="brief-seg"><span class="brief-label">What to flag</span>Flag every component with zero instances, every duplicate and every hand-set value that already has a published variable, and show the counts behind each flag.</span>
-          <span class="brief-seg"><span class="brief-label">What to write</span>Write a remediation guide with one card per fix, a deep link into Figma and the exact change to paste or click through, marked by whether you can make it yourself or it needs write access.</span>
-          <span class="brief-seg"><span class="brief-label">When to stop</span>Stop at the list: leave the decisions to the team, and run again on the first of every month.</span>
-          </p>
-        </div>
+      <!-- The brief as the run it sets up: six steps in order, the monthly rerun closing the loop.
+           main.js (initRun) plays it step by step; the markup is the whole diagram and its still. -->
+      <figure class="panel wide run-panel" data-brief-run>
+        <p class="eyebrow run-eyebrow">The brief, as the agent runs it</p>
+        <ol class="rn-flow">
+          <li class="rn-node" style="--at: 1">
+            <div class="rn-head"><span class="rn-no">01</span>Crawl<span class="rn-state" aria-hidden="true"></span></div>
+            <p class="rn-title">Open every file</p>
+            <p class="rn-sub">Every page and every instance, across the 8 registered teams, on a read-only Figma token.</p>
+            <div class="rn-meter"><span class="rn-num" data-to="296">296</span><span class="rn-unit">files read</span><span class="rn-bar" aria-hidden="true"><i></i></span></div>
+          </li>
+          <li class="rn-node" style="--at: 2">
+            <div class="rn-head"><span class="rn-no">02</span>Scope<span class="rn-state" aria-hidden="true"></span></div>
+            <p class="rn-title">Skip two, set one apart</p>
+            <ul class="rn-rows">
+              <li class="rn-skip"><span>Archives</span><span class="rn-tag">Skipped</span></li>
+              <li class="rn-skip"><span>The library’s own file</span><span class="rn-tag">Skipped</span></li>
+              <li><span>Brand Studio</span><span class="rn-tag alt">Reported apart</span></li>
+            </ul>
+            <p class="rn-sub">Marketing collateral does not instance a dropdown.</p>
+          </li>
+          <li class="rn-node" style="--at: 3">
+            <div class="rn-head"><span class="rn-no">03</span>Count<span class="rn-state" aria-hidden="true"></span></div>
+            <p class="rn-title">Count against the system</p>
+            <p class="rn-sub">1.15 million instances, used and unused. No credit for a layer that only matches a component’s name.</p>
+            <div class="rn-meter"><span class="rn-num" data-to="90.7" data-dp="1" data-suffix="%">90.7%</span><span class="rn-unit">library adoption</span><span class="rn-bar" aria-hidden="true"><i style="--w: .907"></i></span></div>
+          </li>
+          <li class="rn-node" style="--at: 4">
+            <div class="rn-head"><span class="rn-no">04</span>Flag<span class="rn-state" aria-hidden="true"></span></div>
+            <p class="rn-title">Flag it, with the counts</p>
+            <ul class="rn-rows">
+              <li><span>Components with zero instances</span><span class="rn-count" data-to="770">770</span></li>
+              <li><span>.Button variants, many near-identical</span><span class="rn-count" data-to="2304">2,304</span></li>
+              <li><span>Hand-set values with a published variable</span><span class="rn-count" data-to="844333">844,333</span></li>
+            </ul>
+          </li>
+          <li class="rn-node" style="--at: 5">
+            <div class="rn-head"><span class="rn-no">05</span>Write<span class="rn-state" aria-hidden="true"></span></div>
+            <p class="rn-title">One card per fix</p>
+            <div class="rn-fix">
+              <p><span class="rn-link">Open in Figma</span> and the exact change to paste or click through</p>
+              <p class="rn-tags"><span class="rn-tag">Agent can make it</span><span class="rn-tag alt">Needs write access</span></p>
+            </div>
+            <div class="rn-meter"><span class="rn-num" data-to="28">28</span><span class="rn-unit">fixes in the guide</span></div>
+          </li>
+          <li class="rn-node" style="--at: 6">
+            <div class="rn-head"><span class="rn-no">06</span>Stop<span class="rn-state" aria-hidden="true"></span></div>
+            <p class="rn-title">Stop at the list</p>
+            <p class="rn-sub">The decisions go to the team. The run starts again on the first of every month.</p>
+            <p class="rn-hand"><span class="rn-av" aria-hidden="true">DT</span>Design team decides</p>
+          </li>
+        </ol>
+        <svg class="rn-wires" aria-hidden="true"></svg>
+        <span class="rn-loop" aria-hidden="true">First of every month</span>
+        <button class="art-ctl" type="button" aria-pressed="false" aria-label="Pause animation" hidden><svg class="i-pause" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 7C4 5.58579 4 4.87868 4.43934 4.43934C4.87868 4 5.58579 4 7 4C8.41421 4 9.12132 4 9.56066 4.43934C10 4.87868 10 5.58579 10 7V17C10 18.4142 10 19.1213 9.56066 19.5607C9.12132 20 8.41421 20 7 20C5.58579 20 4.87868 20 4.43934 19.5607C4 19.1213 4 18.4142 4 17V7Z"/><path d="M14 7C14 5.58579 14 4.87868 14.4393 4.43934C14.8787 4 15.5858 4 17 4C18.4142 4 19.1213 4 19.5607 4.43934C20 4.87868 20 5.58579 20 7V17C20 18.4142 20 19.1213 19.5607 19.5607C19.1213 20 18.4142 20 17 20C15.5858 20 14.8787 20 14.4393 19.5607C14 19.1213 14 18.4142 14 17V7Z"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M18.8906 12.846C18.5371 14.189 16.8667 15.138 13.5257 17.0361C10.296 18.8709 8.6812 19.7884 7.37983 19.4196C6.8418 19.2671 6.35159 18.9776 5.95624 18.5787C5 17.6139 5 15.7426 5 12C5 8.2574 5 6.3861 5.95624 5.42132C6.35159 5.02245 6.8418 4.73288 7.37983 4.58042C8.6812 4.21165 10.296 5.12907 13.5257 6.96393C16.8667 8.86197 18.5371 9.811 18.8906 11.154C19.0365 11.7084 19.0365 12.2916 18.8906 12.846Z"/></svg></button>
       </figure>
     </article>
 
@@ -305,6 +347,6 @@
   </div>
 </section>
 </main>
-<script src="../main.js?v=d7292934"></script>
+<script src="../main.js?v=c3219a14"></script>
 </body>
 </html>
