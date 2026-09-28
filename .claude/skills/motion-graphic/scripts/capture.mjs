@@ -156,7 +156,7 @@ async function openScene(page) {
     const missing = (await m.ready) || [];
     return { width: m.width, height: m.height, duration: m.duration, fps: m.fps, beats: m.beats || [], missing };
   })()`);
-  if (info.missing.length) console.warn(`warning: fonts did not load (${info.missing.join("; ")}); frames will use fallbacks. Is the network up?`);
+  if (info.missing.length) console.warn(`warning: fonts did not load (${info.missing.join("; ")}); frames would use fallbacks. The scene's @font-face paths assume it sits at motion/<slug>/scene.html.`);
   await metrics(page, info.width, info.height, scale);
   await page.eval("new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => r(true))))");
   return { ...info, scale };
@@ -230,16 +230,24 @@ try {
     await sleep(300);
     const sel = opt.scroll || opt.click || opt.hover;
     if (sel) {
-      const box = await page.eval(`(() => {
+      // Every action brings its element to the middle of the screen first, so a click or a
+      // hover lands on it; for --scroll that move is the action itself. A click or hover
+      // then waits for the block to reveal (at the requested rate) before acting.
+      const where = () => page.eval(`(() => {
         const el = document.querySelector(${JSON.stringify(sel)});
         if (!el) throw new Error("no element matches " + ${JSON.stringify(sel)});
-        ${opt.scroll ? "window.scrollTo({ top: el.getBoundingClientRect().top + scrollY - innerHeight * .5, behavior: 'instant' });" : ""}
         const r = el.getBoundingClientRect();
-        return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+        return { x: r.left + r.width / 2, y: r.top + r.height / 2, top: r.top + scrollY, h: r.height };
       })()`);
-      if (opt.hover) await page.send("Input.dispatchMouseEvent", { type: "mouseMoved", x: box.x, y: box.y });
-      if (opt.click) {
-        for (const type of ["mouseMoved", "mousePressed", "mouseReleased"]) await page.send("Input.dispatchMouseEvent", { type, x: box.x, y: box.y, button: "left", clickCount: 1 });
+      const b = await where();
+      await page.eval(`window.scrollTo({ top: ${b.top} - Math.max(0, (innerHeight - ${b.h}) / 2), behavior: "instant" })`);
+      if (!opt.scroll) {
+        await sleep(Math.min(8000, 1200 / rate));
+        const box = await where();
+        if (opt.hover) await page.send("Input.dispatchMouseEvent", { type: "mouseMoved", x: box.x, y: box.y });
+        if (opt.click) {
+          for (const type of ["mouseMoved", "mousePressed", "mouseReleased"]) await page.send("Input.dispatchMouseEvent", { type, x: box.x, y: box.y, button: "left", clickCount: 1 });
+        }
       }
     }
     const t0 = performance.now();

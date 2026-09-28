@@ -152,6 +152,8 @@ the deck slides changed (or why none needed it).
 
 ## Files
 
+- `assets/fonts/`: Crimson Pro, DM Sans and DM Mono as the site serves them (latin and
+  latin-ext woff2, with their OFL licences), so a render needs no network.
 - `assets/scene.template.html`: the scene every rendered piece starts from: tokens, faces,
   the motion vocabulary as classes (`.rise .fade .leave .draw .wipe .grow`), `tween` and the
   site's eases for JS, the `window.__motion` contract, and a looping preview.

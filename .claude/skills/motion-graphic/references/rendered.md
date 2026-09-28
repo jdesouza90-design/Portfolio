@@ -75,10 +75,11 @@ jumping element:
   or re-run the simulation from 0 to `t` on each call if it is short.
 - **`<video>`, animated GIF or WebP inside a scene.** They play on their own clocks. Export the
   frames and draw them by index.
-- **Remote images or fonts that haven't arrived.** `ready` waits for the three faces and every
+- **Images or fonts that haven't arrived.** `ready` waits for the three faces and every
   `<img>` in the document; an image added later must be decoded before the scene seeks.
-  Fonts come from Google Fonts, so capture needs the network; the script warns when a face
-  fails and the frames would fall back.
+  The faces are files in `assets/fonts/` (the ones Google Fonts serves the site, OFL), not a
+  Google Fonts link: headless Chrome behind a proxy can fail to fetch them and would render
+  in fallback faces. The script warns when a face is missing.
 
 ## 4. Sizes, lengths and budgets per destination
 
@@ -159,7 +160,7 @@ No Artifact tool in the session: add `- <date> <commit>: <page>, <what changed>`
 | Symptom | Cause |
 |---|---|
 | `No Chrome found` | set `CHROME` to the executable |
-| `fonts did not load` | no network; Google Fonts serves the faces |
+| `fonts did not load` | the scene is not at `motion/<slug>/scene.html`, so the `@font-face` paths to the skill's `assets/fonts/` miss |
 | a frame is blank or unstyled | the scene seeks before `ready`, or an element starts hidden without a keyframe to show it |
 | one element never moves | it uses a CSS transition, or a clock instead of `t` |
 | everything is correct at beats but jumps between them | a value in `draw` depends on the previous call |
