@@ -748,6 +748,15 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
    panel ground, and their edges fade into it so no seam shows. */
 .lead-coach > .t-heading { margin: 0 0 clamp(20px, 2.5vw, 32px); }
 .lead-coach + .lead-solo { margin-top: var(--row); }
+.lead-solo + .lead-coach { margin-top: var(--row); }
+.lead-coach-head { margin: 0 0 clamp(20px, 2.5vw, 32px); }
+.lead-coach-head .t-body { max-width: 62ch; }
+/* Three layers: three across, as granola.ai lays out its cards. The copy
+   column fills the card so each "It shows up as" line sits on the same floor. */
+.coach-grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.coach-grid.three .coach-art { aspect-ratio: 16 / 10; }   /* narrower wells: a little more height so the flag clears the top edge */
+.coach-copy { flex: 1; display: flex; flex-direction: column; }
+.coach-copy .coach-shows { margin-top: auto; padding-top: var(--sp-4); }
 .coach-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(16px, 2vw, 24px); }
 .coach-card { padding: 0; overflow: hidden; display: flex; flex-direction: column; transition: border-color var(--dur-hover); }
 .coach-art { position: relative; overflow: hidden; aspect-ratio: 16 / 9; background: var(--panel); border-bottom: 1px solid var(--hair); }
@@ -804,6 +813,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
   .lead-solo { grid-template-columns: minmax(0, 1fr); }
   .lead-art-panel { order: -1; min-height: 0; aspect-ratio: 16 / 10; }
 }
+@media (max-width: 900px) { .coach-grid.three { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 760px) { .coach-grid { grid-template-columns: minmax(0, 1fr); } }
 
 /* Three layers of design tracking: one card like the AI card, mirrored. Figure A
