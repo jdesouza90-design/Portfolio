@@ -625,6 +625,9 @@ All six case studies are the same document, in this order:
    the accent), the project's screens on its own tinted panel, then four facts
    (role, team, timeline, launch) as a `.facts` stat strip: a small label
    above the value at heading size, cells divided by hairlines.
+   The hero's screens carry `fetchpriority="high"`: one of them is the
+   page's largest paint, so they load ahead of everything below (the
+   work index's first row does the same; the case-study template has it).
 2. **My role**: hairline ledger rows (`.ledger`), heading left and paragraph
    right, directly under the facts, so a design leader reads the leadership
    story before the work.
