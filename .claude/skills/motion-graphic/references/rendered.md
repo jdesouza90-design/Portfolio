@@ -89,11 +89,23 @@ jumping element:
 | Social, 1:1 | 1080 × 1080 | 1 | H.264 MP4, 30 fps | 6–15 s | plays once; holds the settled state 1.5 s or more |
 | Deck | the slide region it fills | as the deck's SKILL.md says | WebP (or MP4) + poster | as short as it can be | holds |
 
+**What the size depends on.** The encoder stores only the box of pixels that changed since
+the last frame, so the cost is how much of the frame moves, frame by frame, not the length
+or the resolution. A dense screenshot that changes everywhere at once (a crossfade, a
+whole-plate fade, tiles dropping across it) costs a full frame per frame; the same sheet
+standing still costs nothing. Measured on the button-variants piece (a 1398×1020 sheet,
+quality 80): its 15-frame crossfade 0.62 MB, a sweep across the sheet 1.39 MB for 60
+frames, the two 0.3 s loop fades 0.45 MB, and 1.25× instead of 1.5× saved only 13%. To get
+under budget: quality 70 first (no visible change on that piece), then shorter crossfades
+and fades or a change region that moves across the frame instead of covering it; a
+smaller scale helps least.
+
 **Site (`.walk`).** The box is 932px at most, rounded 16px, clipped, with a dark scrim over
 the poster and the Play button over its centre until it plays. So: keep content 32px or more
 from the edges, and make sure the poster still reads with a button over its middle. The
 poster is what a reader sees before Play and under reduced motion, so it is the settled state
-(the default, the last frame), and it carries the message on its own. Budget: under 2 MB
+and it carries the message on its own. The default is the last frame; a loop that fades to
+paper at its end needs `--poster-at` on a settled time instead. Budget: under 2 MB
 where possible; `add-case-study` asks the note under a walkthrough to give the size when it
 is over 3 MB. The existing walkthroughs are 1.5 to 8.2 MB. The markup (from
 `add-case-study/references/page-anatomy.md`):
@@ -146,11 +158,18 @@ When a rendered piece goes on a content page, the matching slide gets it in the 
 session; a piece made for the deck alone goes the same way.
 
 1. Artifact `list` with `scope: "files"` on the deck's url; `read` `project/deck.json`, the
-   slide you will change, and the deck's own `SKILL.md` (it sets how a slide holds media).
-2. Upload the file with `asset: true` to the deck's url and use the `url` the result returns.
-   If the deck's SKILL.md has no place for an animated file, use the poster.
+   slide you will change, the deck's own `SKILL.md` and `artifact-type/reference/images.md`
+   (it sets how a slide holds media). The slide that mirrors the page's block is the one
+   holding the image the piece replaced; search the `ads-`/`cs-`/… run for its alt text.
+2. The deck plays silent H.264 clips, so give it an MP4 even when the site got a WebP: encode
+   one from the same frames (`--mp4 motion/<slug>/out/<slug>.mp4`) and upload it with the
+   poster in one call (`asset: true`, `file_paths`). On the slide, the still carries the clip:
+   `<img src="/_blob/<poster>" data-video="/_blob/<clip>" data-video-start="click" alt="…">`.
+   `data-video-start="click"` holds the poster until the presenter clicks, as the site holds
+   it until Play; exports (PDF, PowerPoint) show the poster.
 3. Edit a copy of the slide at its deck path and publish it to the same url; name the slide
-   in the report.
+   in the report. The upload makes a new version, so a publish can be refused after it:
+   `read` the artifact (its url alone), then publish again.
 
 No Artifact tool in the session: add `- <date> <commit>: <page>, <what changed>` to
 `DECK-PENDING.md` and commit it with the change.

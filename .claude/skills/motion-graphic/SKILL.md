@@ -77,7 +77,11 @@ order, each with the options you'd suggest:
 
 1. Where it lives: which page and block, social (which network), the deck, or several.
 2. The one thing it says (usually one number, one before/after, one flow).
-3. The source: the page and element the words and numbers come from.
+3. The source: the page and element the words and numbers come from. Check that the
+   words are on the page the piece will sit on. A number can live only on a parked page
+   (`design-system-audit-agent.html` still says "86%"; the live audit page says "321 …
+   down from 2,304"), and the page may already animate it (a `data-flow` stat, the
+   matrix). Say either before the storyboard.
 4. Length, and whether it loops (site) or plays once and holds (social).
 5. For site motion: what starts it (load, the block's reveal, hover, click, scroll).
 
