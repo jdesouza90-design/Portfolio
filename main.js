@@ -471,9 +471,90 @@ const CONFIG = {
       // on a phone the strip scrolls, so the selected tab is brought into view
       if (list.scrollWidth > list.clientWidth) list.scrollTo({ left: t.offsetLeft - (list.clientWidth - t.offsetWidth) / 2, behavior: "smooth" });
     };
-    const select = (i, focus) => {
+    // Figure A's wave (see styles.css): a circle that takes each ring's shape in
+    // turn. Every ring is the outer one scaled about the point they share at the
+    // bottom, so a ring's shape is just its width over the figure's.
+    const nest = rings.length ? rings[0].parentElement : null;
+    const ring = (k) => rings.find((r) => Number(r.dataset.ring) === k);
+    const size = (k) => ring(k).offsetWidth / nest.offsetWidth;
+    const HOP = 300, SOFT = "cubic-bezier(.33, 1, .68, 1)", SETTLE = "cubic-bezier(.34, 1.56, .64, 1)";
+    let wave = null, timers = [];
+    if (nest && !reduced) {
+      nest.insertAdjacentHTML("beforeend", '<svg class="nest-wave" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><circle cx="50" cy="50" r="50" vector-effect="non-scaling-stroke"/></svg>');
+      wave = $(".nest-wave circle", nest);
+    }
+    const flex = (k, dir, delay = 0) => ring(k).animate(   // a ring gives a little the way the wave came
+      [{ transform: "none", transformOrigin: "50% 100%", easing: SOFT }, { transform: `scale(${1 + dir * 0.018})`, transformOrigin: "50% 100%", offset: 0.3 }, { transform: "none", transformOrigin: "50% 100%" }],
+      { duration: 560, delay });
+    // Send the wave from ring `from` to ring `to`, a hop per ring, each hop easing
+    // into its ring. `spill` carries it past the outer ring before it dissolves.
+    // Returns the rings it reaches and when it lands, in ms.
+    const travel = (from, to, spill = false, hop = HOP) => {
+      const dir = to >= from ? 1 : -1, stops = [];
+      for (let k = from; k !== to; k += dir) stops.push(k + dir);
+      const land = stops.length * hop, total = land + (spill ? 420 : 0);
+      const frames = [from, ...stops].map((k, n) => ({ transform: `scale(${size(k)})`, offset: land / total * n / stops.length, easing: SOFT }));
+      if (spill) frames.push({ transform: "scale(1.07)", offset: 1 });
+      wave.getAnimations().forEach((a) => a.cancel());
+      wave.animate(frames, { duration: total });
+      wave.animate([{ opacity: 0 }, { opacity: 1, offset: 0.12 }, { opacity: 1, offset: spill ? land / total : 0.8 }, { opacity: 0 }], { duration: total });
+      return { stops, land };
+    };
+    const light = (to) => rings.forEach((r) => r.classList.toggle("on", Number(r.dataset.ring) === to));
+    // A picked layer: the old ring lets go, the wave crosses any ring between,
+    // and the new one lights and flexes as it lands. A keyboard move (`jump`)
+    // just switches. Returns the landing time.
+    const move = (from, to, jump = false) => {
+      timers.forEach(clearTimeout);
+      timers = [];
+      rings.forEach((r) => r.classList.remove("pass"));
+      if (!wave || jump || from === to || nest.classList.contains("is-staged")) {
+        if (wave && jump && !nest.classList.contains("is-staged")) wave.getAnimations().forEach((a) => a.cancel());
+        light(to);
+        return 0;
+      }
+      light(-1);
+      const { stops, land } = travel(from, to), dir = to > from ? 1 : -1;
+      stops.forEach((k, n) => {
+        const at = (n + 1) * HOP;
+        flex(k, dir, at);
+        timers.push(setTimeout(() => {
+          if (k === to) { light(to); return; }
+          ring(k).classList.add("pass");
+          timers.push(setTimeout(() => ring(k).classList.remove("pass"), 160));
+        }, at));
+      });
+      return land;
+    };
+    // The entrance: the disc springs in, then the wave carries out to the edge,
+    // bringing each ring (and its name, rising) in as it arrives.
+    const enter = () => {
+      root.classList.add("is-played");
+      root.style.setProperty("--mark-delay", "380ms");
+      const lead = 320, hop = 400, { stops } = travel(0, 2, true, hop);   // a slower beat than a click's
+      wave.getAnimations().forEach((a) => { a.effect.updateTiming({ delay: lead, fill: "backwards" }); });
+      ring(0).animate([{ opacity: 0, transform: "scale(.6)", transformOrigin: "50% 50%", easing: SETTLE }, { opacity: 1, transform: "none", transformOrigin: "50% 50%" }], { duration: 560, fill: "backwards" });
+      stops.forEach((k, n) => {
+        const at = lead + (n + 1) * hop;
+        ring(k).animate([{ opacity: 0 }, { opacity: 1 }], { duration: 280, delay: at, fill: "backwards", easing: "linear" });
+        $(".nlbl", ring(k)).animate([{ translate: "0 8px" }, { translate: "0 0" }], { duration: 480, delay: at, fill: "backwards", easing: SOFT });
+        flex(k, 1, at);
+      });
+      nest.classList.remove("is-staged");
+    };
+    if (wave) {
+      nest.classList.add("is-staged");
+      onceInView(nest, 0.5, (animate) => {
+        if (animate) setTimeout(enter, 250); else nest.classList.remove("is-staged");
+      });
+    }
+
+    const select = (i, focus, first = false) => {
+      const was = current;
       current = i;
       root.classList.toggle("instant", Boolean(focus));   // keyboard moves repeat; they don't animate
+      const lands = move(was, i, first || Boolean(focus));
+      root.style.setProperty("--mark-delay", `${lands}ms`);   // the marker draws as the ring lights
       tabs.forEach((t, k) => {
         const on = k === i;
         t.setAttribute("aria-selected", String(on));
@@ -482,7 +563,6 @@ const CONFIG = {
         // means a quick Tab after an arrow key can't land on one mid-fade
         if (panels[k]) { panels[k].classList.toggle("active", on); panels[k].tabIndex = on ? 0 : -1; }
       });
-      rings.forEach((r) => r.classList.toggle("on", Number(r.dataset.ring) === i));
       place();
       if (focus) tabs[i].focus();
     };
@@ -500,7 +580,6 @@ const CONFIG = {
     // tab (the innermost ring wins where they overlap) and the ring under the
     // pointer darkens. The hit test is the circle, not its box, so the corner
     // of an inner ring's box never steals the band around it.
-    const nest = rings.length ? rings[0].parentElement : null;
     if (nest) {
       const ringAt = (e) => rings.filter((r) => {
         const b = r.getBoundingClientRect();
@@ -511,7 +590,7 @@ const CONFIG = {
       nest.addEventListener("pointerleave", () => hover(null));
       nest.addEventListener("click", (e) => { const r = ringAt(e); if (r) select(Number(r.dataset.ring)); });
     }
-    select(current);
+    select(current, false, true);
     window.addEventListener("resize", place, { passive: true });
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(place);
   });
@@ -2966,35 +3045,54 @@ const CONFIG = {
   };
 
   /* ---- Before and after ----
-     No-code tools' two lanes (data-flow-ba). Staged the moment the script runs,
-     played once when the figure reveals: the before lane walks its steps and
-     stalls at the queue, then rises as the after lane runs straight through.
-     Reduced motion, or a figure that settles without animating, shows both
-     lanes finished. The dot is placed from the steps' own boxes, so it follows
+     No-code tools' two lanes (data-flow-ba), run as a race: both start on the
+     same beat, and After has published before Before reaches the queue. After
+     snaps step to step along a rail that draws under its dot; Before walks,
+     stalls at the queue, deploys long after, then fades back. Reduced motion,
+     or a figure that settles without animating, shows both lanes finished.
+     Dots and rail are placed from the steps' own boxes, so they follow
      whichever layout the width gives (a row, or a column on a phone). */
   const initBeforeAfter = () => $$("[data-flow-ba]").forEach((fig) => {
     const [before, after] = $$(".ba-lane", fig);
     if (!before || !after) return;
     const steps = (lane) => $$(".ba-steps li", lane);
+    const fill = document.createElement("span");
+    fill.className = "ba-fill";
+    fill.setAttribute("aria-hidden", "true");
+    after.append(fill);
+    const centre = (lane, li) => {
+      const L = lane.getBoundingClientRect(), r = li.getBoundingClientRect();
+      return [r.left - L.left + r.width / 2, r.top - L.top + r.height / 2];
+    };
+    const lay = () => {   // the fill spans the first step's centre to the last's
+      const s = steps(after), [x0, y0] = centre(after, s[0]), [x1, y1] = centre(after, s[s.length - 1]);
+      const col = Math.abs(y1 - y0) > Math.abs(x1 - x0);
+      fill.classList.toggle("is-col", col);
+      fill.style.left = `${x0}px`; fill.style.top = `${y0}px`;
+      fill.style.width = col ? "" : `${x1 - x0}px`;
+      fill.style.height = col ? `${y1 - y0}px` : "";
+    };
+    const drawTo = (i) => fill.style.setProperty("--fill", i / (steps(after).length - 1));
     const finish = () => {
-      fig.classList.remove("is-staged");
       fig.classList.add("is-two");
       [before, after].forEach((lane) => {
         const s = steps(lane);
         s.forEach((li) => { li.classList.remove("is-waiting"); li.classList.add("is-reached"); });
         s[s.length - 1].classList.add("is-done");
       });
+      drawTo(steps(after).length - 1);
     };
+    lay();
     if (reduced) { finish(); return; }
-    fig.classList.add("is-staged");
+    drawTo(0);
 
-    let last = null;   // where each dot was last sent, to put it back after a resize
+    const last = new Map();   // where each dot was last sent, to put it back after a resize
     const place = (lane, i, short = false, glide = true) => {
-      const dot = $(".ba-dot", lane), s = steps(lane), L = lane.getBoundingClientRect(), r = s[i].getBoundingClientRect();
-      let x = r.left - L.left + r.width / 2, y = r.top - L.top + r.height / 2;
+      const dot = $(".ba-dot", lane), s = steps(lane);
+      let [x, y] = centre(lane, s[i]);
       if (short && i > 0) {   // stop on the rail just before the step, instead of on it
-        const p = s[i - 1].getBoundingClientRect();
-        const dx = x - (p.left - L.left + p.width / 2), dy = y - (p.top - L.top + p.height / 2), d = Math.hypot(dx, dy) || 1;
+        const [px, py] = centre(lane, s[i - 1]), r = s[i].getBoundingClientRect();
+        const dx = x - px, dy = y - py, d = Math.hypot(dx, dy) || 1;
         const reach = Math.abs(dx) > Math.abs(dy) ? r.width / 2 : r.height / 2;
         x -= (dx / d) * (reach + 18); y -= (dy / d) * (reach + 18);
       }
@@ -3003,36 +3101,40 @@ const CONFIG = {
       dot.style.setProperty("--y", `${y}px`);
       if (!glide) { void dot.offsetWidth; dot.style.transition = ""; }
       dot.classList.add("is-on");
-      last = [lane, i, short];
+      last.set(lane, [i, short]);
     };
-    window.addEventListener("resize", debounce(() => {   // move the dot, but never bring back one that has gone out
-      if (last && $(".ba-dot", last[0]).classList.contains("is-on")) place(last[0], last[1], last[2], false);
+    window.addEventListener("resize", debounce(() => {   // re-lay the rail; move a dot, but never bring back one that has gone out
+      fill.style.transition = "none"; lay(); void fill.offsetWidth; fill.style.transition = "";
+      last.forEach(([i, short], lane) => { if ($(".ba-dot", lane).classList.contains("is-on")) place(lane, i, short, false); });
     }, 120));
 
-    onceInView(fig, 0.35, (animate) => {
+    // On a phone the lanes stack taller than the screen, so the race waits for After to be in view.
+    const stacked = window.matchMedia("(max-width: 640px)").matches;
+    onceInView(stacked ? after : fig, 0.35, (animate) => {
       if (!animate) { finish(); return; }
+      fig.classList.add("is-live");
+      lay();
       const b = steps(before), a = steps(after);
       const at = (ms, fn) => setTimeout(fn, ms);
-      const reach = (li) => li.classList.add("is-reached");
-      // Before: brand change, ticket, a long wait outside the queue, deploy.
-      at(600,   () => { place(before, 0, false, false); reach(b[0]); });
-      at(1400,  () => place(before, 1));
-      at(2100,  () => reach(b[1]));
-      at(2800,  () => place(before, 2, true));
-      at(3500,  () => { reach(b[2]); b[2].classList.add("is-waiting"); });
-      at(6000,  () => { b[2].classList.remove("is-waiting"); place(before, 3); });
-      at(6700,  () => reach(b[3]));
-      at(7000,  () => { b[3].classList.add("is-done"); $(".ba-dot", before).classList.remove("is-on"); });
-      // After: the lanes trade places, then every step in turn, with a beat on each.
-      at(8000,  () => fig.classList.add("is-two"));
-      at(8900,  () => { place(after, 0, false, false); reach(a[0]); });
-      at(9600,  () => place(after, 1));
-      at(10300, () => reach(a[1]));
-      at(11000, () => place(after, 2));
-      at(11700, () => reach(a[2]));
-      at(12400, () => place(after, 3));
-      at(13100, () => reach(a[3]));
-      at(13400, () => { a[3].classList.add("is-done"); fig.classList.remove("is-staged"); });
+      const reach = (li) => { li.classList.add("is-reached", "is-pop"); li.addEventListener("animationend", () => li.classList.remove("is-pop"), { once: true }); };
+      const out = (lane) => $(".ba-dot", lane).classList.remove("is-on", "is-idle");
+      // The start: both lanes light their first step together.
+      at(400,  () => { place(before, 0, false, false); reach(b[0]); place(after, 0, false, false); reach(a[0]); });
+      // After: a hop every 600ms, the rail drawing with the dot, and Publish rings.
+      [1, 2, 3].forEach((i) => {
+        at(400 + i * 600, () => { place(after, i); drawTo(i); });
+        at(400 + i * 600 + 380, () => reach(a[i]));
+      });
+      at(2700, () => { a[3].classList.add("is-done"); out(after); });
+      // Before: the same start, a slow walk, a long wait outside the queue, and Deploy much later.
+      at(1100, () => place(before, 1));
+      at(2200, () => reach(b[1]));
+      at(2600, () => place(before, 2, true));
+      at(3700, () => { reach(b[2]); b[2].classList.add("is-waiting"); $(".ba-dot", before).classList.add("is-idle"); });
+      at(7200, () => { b[2].classList.remove("is-waiting"); $(".ba-dot", before).classList.remove("is-idle"); place(before, 3); });
+      at(8300, () => reach(b[3]));
+      at(8600, () => { b[3].classList.add("is-done"); out(before); });
+      at(9400, () => { fig.classList.add("is-two"); fig.classList.remove("is-live"); });
     });
   });
 
