@@ -1334,9 +1334,13 @@ footer a:hover { color: var(--ink); }
 .ba-wait { display: block; max-height: 0; opacity: 0; overflow: hidden; font-size: var(--t-small); color: var(--wait-ink);
   transition: max-height .4s var(--ease), opacity .3s var(--ease), padding .4s var(--ease); }
 .ba-steps li.is-waiting .ba-wait { max-height: 3em; opacity: 1; padding-top: 4px; }
-.ba-dot { position: absolute; left: 0; top: 0; z-index: 0; width: 20px; height: 20px; margin: -10px 0 0 -10px; border-radius: 50%;
-  background: var(--ink-3); opacity: 0; pointer-events: none; transform: translate(var(--x, 0), var(--y, 0));
-  transition: transform .7s var(--ease-in-out), opacity .3s var(--ease); }
+/* The dot: main.js moves it along the rail; across it, it holds the lane's middle, where
+   the rail runs, so it stays on the rail when the waiting note makes the queue box taller.
+   A hop is HOP in main.js, on the plain in-out rather than the token's quart: only the gap
+   between two boxes shows the dot, and the quart spends its speed there. */
+.ba-dot { position: absolute; left: 0; top: 50%; z-index: 0; width: 20px; height: 20px; margin: -10px 0 0 -10px; border-radius: 50%;
+  background: var(--ink-3); opacity: 0; pointer-events: none; transform: translateX(var(--x, 0));
+  transition: transform .9s ease-in-out, opacity .3s var(--ease); }
 .ba-after .ba-dot { background: var(--accent); box-shadow: 0 0 0 6px var(--glow); }
 .ba-dot.is-on { opacity: 1; }
 /* Staged: the before lane waits in the middle of the frame, the after lane below and out of sight */
@@ -1359,6 +1363,7 @@ footer a:hover { color: var(--ink); }
   .ba-steps::before { left: 50%; right: auto; top: 12.5%; bottom: 12.5%; width: 2px; height: auto; margin: 0 0 0 -1px;
     background: repeating-linear-gradient(180deg, var(--hair-2) 0 10px, transparent 10px 18px); }
   .ba-steps li { min-height: 3.5rem; }
+  .ba-dot { left: 50%; top: 0; transform: translateY(var(--y, 0)); }   /* the rail runs down the lane's middle */
   .flow-ba.is-staged .ba-before { transform: none; }   /* a stacked lane is too tall to centre: it waits at the top, under the lede */
 }
 @media (prefers-reduced-motion: reduce) { .ba-lane, .ba-steps li, .ba-wait, .ba-dot { transition: none; } }
@@ -1605,21 +1610,31 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 /* The rebuild (main.js initRebuild, the audit's design row): the old .Button
    sheet turns into a line drawing and is rebuilt as Button, Icon Button and
    Link in three steps, the width of the content column with no panel under
-   it. The three decisions below are its captions: the step playing is marked,
-   and each heading jumps to its step. The drawing takes the page's inks, so it
-   follows the theme; the sheets are screenshots and stay as they are. Without
-   the script, or under reduced motion, the after sheet stands in its place. */
+   it. Under it the band says which step is playing, the problem and, once the
+   parts move, the fix; its numbers jump to a step and its button pauses. The
+   band stands in for the three decision columns, which show instead without
+   the script or under reduced motion, beside the still after sheet. The
+   drawing takes the page's inks, so it follows the theme; the sheets are
+   screenshots and stay as they are. */
 .rebuild { position: relative; margin: 0; }
 .rebuild-stage { position: relative; aspect-ratio: 1800 / 1000; }
 .rebuild-stage img { position: absolute; left: 0; top: 0; width: 100%; height: auto; max-width: none; }
 .rebuild-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; visibility: hidden; }
 .rebuild.on .rebuild-stage canvas { visibility: visible; }
 .rebuild.on .rebuild-stage img { visibility: hidden; }   /* the canvas draws the same sheet, pixel for pixel, before it takes over */
-.rebuild .art-ctl { right: 0; bottom: calc(-36px - var(--sp-2)); }   /* under the sheet, off the drawing */
-.step-jump { appearance: none; margin: 0; padding: 0; border: 0; background: none; font: inherit; letter-spacing: inherit; color: inherit; text-align: left; cursor: pointer; }
-@media (hover: hover) and (pointer: fine) { .step-jump:hover { color: var(--accent-ink); } }
-[data-rebuild-steps] .col :is(.t-subhead, .t-body, .col-icon) { transition: color var(--dur-ui); }
-[data-rebuild-steps].live .col:not([aria-current="step"]) :is(.t-subhead, .t-body, .col-icon) { color: var(--ink-3); }
+.rebuild-band { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1fr) minmax(0, 1fr); gap: var(--sp-4) clamp(24px, 4vw, 48px); align-items: start; padding-top: var(--sp-5); border-top: 1px solid var(--hair); text-align: left; }
+.rb-ctl { display: flex; align-items: center; gap: var(--sp-2); }
+.rb-ctl .art-ctl { position: static; flex: none; margin-right: var(--sp-2); }
+.rb-step { appearance: none; margin: 0; padding: 6px 2px 4px; border: 0; border-bottom: 2px solid transparent; background: none; color: var(--ink-3); cursor: pointer; transition: color var(--dur-hover), border-color var(--dur-hover); }
+.rb-step:hover, .rb-step[aria-current="true"] { color: var(--ink); }
+.rb-step[aria-current="true"] { border-bottom-color: var(--ink); }
+.rb-name { margin-top: var(--sp-3); }
+.rebuild-band .t-body { margin-top: var(--sp-2); }
+.rb-problem .eyebrow { color: var(--ink-3); }
+.rb-fix { opacity: 0; transition: opacity .3s var(--ease); }
+.rebuild-band.fixed .rb-fix { opacity: 1; }
+.rb-fix :is(.eyebrow, .t-body) { color: var(--accent-ink); }
+@media (max-width: 760px) { .rebuild-band { grid-template-columns: minmax(0, 1fr); } }
 
 
 /* --------------------------------------------------------------------------
@@ -1683,7 +1698,6 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 @view-transition { navigation: auto; }
 ::view-transition-old(root), ::view-transition-new(root) { animation-duration: .32s; }
 ::view-transition-group(*) { animation-duration: .42s; animation-timing-function: var(--ease); }
-html.vt-lens::view-transition-group(*) { animation-duration: var(--dur-ui); }   /* the lens's re-sort (initLens) is a control's answer, not a page change */
 .nav { view-transition-name: site-nav; }
 .chat-launch { view-transition-name: site-launch; }
 footer { view-transition-name: site-foot; }   /* one a page, at the foot of its last section */
