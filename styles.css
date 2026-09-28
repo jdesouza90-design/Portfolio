@@ -1602,34 +1602,34 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
   .brief-seg { padding: var(--sp-3); }
 }
 
-/* The rebuild (main.js initRebuild, the audit's design row): the old .Button
-   sheet turns into a line drawing and is rebuilt as Button, Icon Button and
-   Link in three steps, the width of the content column with no panel under
-   it. Under it the band says which step is playing, the problem and, once the
-   parts move, the fix; its numbers jump to a step and its button pauses. The
-   band stands in for the three decision columns, which show instead without
-   the script or under reduced motion, beside the still after sheet. The
-   drawing takes the page's inks, so it follows the theme; the sheets are
-   screenshots and stay as they are. */
-.rebuild { position: relative; margin: 0; }
-.rebuild-stage { position: relative; aspect-ratio: 1800 / 1000; }
-.rebuild-stage img { position: absolute; left: 0; top: 0; width: 100%; height: auto; max-width: none; }
-.rebuild-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; visibility: hidden; }
-.rebuild.on .rebuild-stage canvas { visibility: visible; }
-.rebuild.on .rebuild-stage img { visibility: hidden; }   /* the canvas draws the same sheet, pixel for pixel, before it takes over */
-.rebuild-band { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1fr) minmax(0, 1fr); gap: var(--sp-4) clamp(24px, 4vw, 48px); align-items: start; padding-top: var(--sp-5); border-top: 1px solid var(--hair); text-align: left; }
-.rb-ctl { display: flex; align-items: center; gap: var(--sp-2); }
-.rb-ctl .art-ctl { position: static; flex: none; margin-right: var(--sp-2); }
-.rb-step { appearance: none; margin: 0; padding: 6px 2px 4px; border: 0; border-bottom: 2px solid transparent; background: none; color: var(--ink-3); cursor: pointer; transition: color var(--dur-hover), border-color var(--dur-hover); }
-.rb-step:hover, .rb-step[aria-current="true"] { color: var(--ink); }
-.rb-step[aria-current="true"] { border-bottom-color: var(--ink); }
-.rb-name { margin-top: var(--sp-3); }
-.rebuild-band .t-body { margin-top: var(--sp-2); }
-.rb-problem .eyebrow { color: var(--ink-3); }
-.rb-fix { opacity: 0; transition: opacity .3s var(--ease); }
-.rebuild-band.fixed .rb-fix { opacity: 1; }
-.rb-fix :is(.eyebrow, .t-body) { color: var(--accent-ink); }
-@media (max-width: 760px) { .rebuild-band { grid-template-columns: minmax(0, 1fr); } }
+/* Cut and kept (after emilkowal.ski's wrong-and-right pairs): the two ways
+   a button could carry its icon, built as tiny live components rather than
+   described, with the verdict as a label and the reason in a line. */
+.pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-5); margin-top: var(--sp-5); }
+.pair + .panel { margin-top: var(--sp-5); }   /* as far below the pair as the pair is below the columns */
+.pair-item { display: flex; flex-direction: column; padding: var(--sp-5); border: 1px solid var(--hair); border-radius: var(--radius); background: var(--surface); }
+.pair-demo { margin-bottom: var(--sp-5); }
+.pair-item.right { border-color: color-mix(in srgb, var(--accent) 45%, var(--hair)); }
+.pair-demo { display: grid; place-items: center; min-height: 128px; padding: var(--sp-4); border-radius: 12px; background: var(--paper-2); }
+.pair-grid { display: grid; grid-template-columns: repeat(4, auto); gap: 6px 8px; }
+.mini-btn { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 999px; background: var(--ink); color: var(--paper); font-family: var(--font-mono); font-size: 9px; line-height: 1; letter-spacing: .02em; }
+.mini-btn i { width: 7px; height: 7px; border-radius: 2px; background: var(--paper); opacity: .8; }
+.mini-btn.ghost { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1px var(--hair-2); }
+.mini-btn.ghost i { background: var(--ink); }
+.pair-one { display: flex; align-items: center; gap: var(--sp-5); }
+.pair-one .mini-btn { font-size: 12px; padding: 8px 14px; }
+.pair-one .mini-btn i { width: 10px; height: 10px; }
+.mini-toggles { display: grid; gap: 8px; }
+.mini-toggle { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: var(--t-micro); letter-spacing: var(--ls-micro); text-transform: uppercase; color: var(--ink-2); }
+.mini-toggle i { width: 26px; height: 15px; border-radius: 999px; background: var(--hair-2); position: relative; }
+.mini-toggle i::after { content: ""; position: absolute; top: 2px; left: 2px; width: 11px; height: 11px; border-radius: 50%; background: var(--surface); }
+.mini-toggle.on i { background: var(--accent); }
+.mini-toggle.on i::after { left: 13px; }
+.mini-toggle:not(.on) i::after { background: var(--ink-3); }
+.pair-verdict { color: var(--ink-3); }
+.pair-item.right .pair-verdict { color: var(--accent-ink); }
+@media (max-width: 640px) { .pair { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 360px) { .pair-grid { grid-template-columns: repeat(3, auto); gap: 5px 6px; } }
 
 
 /* --------------------------------------------------------------------------
