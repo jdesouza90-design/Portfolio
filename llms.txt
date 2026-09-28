@@ -18,6 +18,7 @@ Posts are John's own views. Every number in a post links to the primary source t
 
 ## Blog: Where product design is going
 
+- [Disclose the review, not the tool](https://john-desouza.com/blog/disclose-the-review-not-the-tool.html): Naming the tool is not a quality signal, because the same disclosure penalty lands on a master and a beginner. What a client can act on is the record of what was checked and what came back wrong, and no disclosure policy asks anyone to write that down.
 - [Prototypes that cannot fail are demos](https://john-desouza.com/blog/prototypes-that-cannot-fail-are-demos.html): The cost of a high fidelity prototype used to force a team to name the question before the build. Now that the cost is gone, the question has to be written down on purpose, or the prototype is just a demo with a review on the calendar.
 - [Your design system checks spelling, not judgment](https://john-desouza.com/blog/design-systems-check-spelling-not-judgment.html): Machine-readable design systems enforce the vocabulary and drop the judgment, and the judgment only gets written down if every rejected answer leaves a reason behind.
 - [Stop hiring for AI fluency](https://john-desouza.com/blog/stop-hiring-for-ai-fluency.html): AI fluency is a proxy with a shelf life. The durable skill is the ability to specify what good means and then say why the model’s answer missed it.
