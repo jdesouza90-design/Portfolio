@@ -2082,10 +2082,100 @@ const CONFIG = {
     list.addEventListener("lens", pick);   // re-sorted: show the row now nearest
   });
 
+  /* ---- The featured stack ----
+     After uselayouts.com's stack scroll reveal. The home page's three case
+     studies are cards in a deck that sticks in the middle of the screen
+     while its track scrolls past (styles.css, .stack.on). Each card but the
+     last peels up and back over its own stretch of the track, and the cards
+     behind step forward as it goes, so the deck reads one card at a time.
+     Keyboard focus on a card behind scrolls to where it is at the front.
+     Under reduced motion the script leaves the cards in their column. The
+     lens re-sorts the deck and says "lens"; the pile is redrawn in the new
+     order. */
+  const initStack = () => $$("[data-stack]").forEach((stack) => {
+    const track = $(".stack-track", stack), deck = $(".stack-deck", stack);
+    if (reduced || !track || !deck) return;
+    const PEEK = 18, TILT = 15;
+    const PEELS = [[0.1, 0.44], [0.56, 0.9]];   // each card's stretch of the track; the last card has none and stays
+    let cards = [];
+    stack.classList.add("on");
+    const clamp01 = (v) => Math.max(0, Math.min(1, v));
+    const measure = () => {
+      const r = track.getBoundingClientRect(), h = deck.offsetHeight;
+      return { r, h, top: parseFloat(getComputedStyle(deck).top) || 0 };
+    };
+    let raf = 0;
+    const draw = () => {
+      raf = 0;
+      const { r, h, top } = measure();
+      const p = clamp01((top - r.top) / Math.max(1, r.height - h));   // 0 as the deck sticks, 1 as it lets go
+      const lift = -(h + (window.innerWidth < 768 ? 140 : 220));
+      const peel = PEELS.map(([a, b]) => clamp01((p - a) / (b - a)));
+      cards.forEach((c, i) => {
+        let depth = i;
+        for (let k = 0; k < i && k < peel.length; k++) depth -= peel[k];   // how far back in the pile it sits
+        const scale = depth <= 1 ? 1 - 0.04 * depth : 0.96 - 0.03 * (depth - 1);
+        const t = i < cards.length - 1 && i < peel.length ? peel[i] : 0;
+        c.style.zIndex = String(cards.length - i);
+        c.style.transform = `translate3d(0, ${(PEEK * depth).toFixed(2)}px, 0) scale(${scale.toFixed(4)}) perspective(500px) translate3d(0, ${(t * lift).toFixed(1)}px, 0) rotateX(${(t * TILT).toFixed(2)}deg)`;
+        c.style.visibility = t >= 1 ? "hidden" : "";   // gone off the top: out of sight and out of the tab order
+      });
+    };
+    const request = () => { if (!raf) raf = requestAnimationFrame(draw); };
+    const order = () => {
+      cards = $$(".stack-card", deck);
+      cards.forEach((c, i) => { $(".stack-n", c).textContent = `${String(i + 1).padStart(2, "0")} / ${String(cards.length).padStart(2, "0")}`; });
+      draw();   // at once, so a lens transition captures the pile in its new order
+    };
+    deck.addEventListener("lens", order);
+    deck.addEventListener("focusin", (e) => {
+      const i = cards.indexOf(e.target.closest(".stack-card"));
+      if (i < 0) return;
+      const { r, h, top } = measure();
+      const at = i === 0 ? 0 : (PEELS[i - 1][1] + (PEELS[i] ? PEELS[i][0] : 1)) / 2;   // between its predecessor's peel and its own
+      window.scrollTo({ top: window.scrollY + r.top - top + at * (r.height - h), behavior: "instant" });   // not smooth: it follows the focus, which has already moved
+    });
+    window.addEventListener("scroll", request, { passive: true });
+    window.addEventListener("resize", request);
+    order();
+  });
+
+  /* ---- The LinkedIn button ----
+     After uselayouts.com's get in touch (styles.css, .talk). A pointer over
+     it, or keyboard focus on it, plays the meet: the label lifts away and
+     the portrait and the You circle turn in and meet in the middle; 460ms
+     later they overlap and "Let’s talk" writes in, the group kept centred.
+     Leaving puts the label back. A tap only follows the link. Under reduced
+     motion it goes straight to the last frame. */
+  const initTalk = () => $$(".talk").forEach((btn) => {
+    const face = $(".talk-face", btn), words = $(".talk-words", btn);
+    if (!face || !words) return;
+    let phase = "idle", timer = 0, hover = false, focus = false;
+    const place = () => {
+      const w = btn.clientWidth, f = face.offsetWidth;
+      const x = phase === "meet" ? (w - (2 * f + 34)) / 2 : phase === "talk" ? (w - (2 * f - 10 + 12 + words.scrollWidth)) / 2 : 0;   // the pair (and the words) centred in the button
+      btn.style.setProperty("--talk-x", `${Math.max(0, x - 5).toFixed(1)}px`);
+    };
+    const set = (p) => { phase = p; btn.dataset.phase = p; place(); };
+    const start = () => {
+      if (phase !== "idle") return;
+      clearTimeout(timer);
+      if (reduced) { set("talk"); return; }
+      set("meet");
+      timer = setTimeout(() => set("talk"), 460);
+    };
+    const end = () => { if (hover || focus) return; clearTimeout(timer); set("idle"); };
+    btn.addEventListener("pointerenter", (e) => { if (e.pointerType !== "mouse") return; hover = true; start(); });
+    btn.addEventListener("pointerleave", (e) => { if (e.pointerType !== "mouse") return; hover = false; end(); });
+    btn.addEventListener("focus", () => { if (!btn.matches(":focus-visible")) return; focus = true; start(); });
+    btn.addEventListener("blur", () => { focus = false; end(); });
+    set("idle");
+  });
+
   /* ---- The lens ----
      After the audience prompts on axoworks.com and pramit's intent card. A
-     segmented control above a work list re-sorts its rows for the reader's
-     role. The orders are fixed here
+     segmented control above a work list (or the home page's deck of cards)
+     re-sorts its rows for the reader's role. The orders are fixed here
      (no model, nothing sent anywhere); the choice is kept in localStorage
      for the next page and the next visit. Rows move inside a view
      transition where the browser has one and the reader hasn't asked for
@@ -2097,13 +2187,13 @@ const CONFIG = {
     eng: { order: ["staking", "system", "no-code", "verifications", "refi", "cross-sell"] },
   };
   const initLens = () => $$("[data-lens]").forEach((lens) => {
-    const list = $(".cases", lens.parentNode);
+    const list = $(".cases, .stack-deck", lens.parentNode);   // the work index's list, or the home page's deck
     const tabs = $$(".lens-tab", lens);
     if (!list || !tabs.length) return;
     const slugOf = (row) => (Array.from(row.classList).find((c) => c.startsWith("case-") && c !== "case-row") || "").slice(5);
     const sort = (key) => {
       const order = LENSES[key].order;
-      const rows = $$(".case-row", list).sort((a, b) => {
+      const rows = $$(".case-row, .stack-card", list).sort((a, b) => {
         const ia = order.indexOf(slugOf(a)), ib = order.indexOf(slugOf(b));
         return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
       });
@@ -3570,6 +3660,6 @@ const CONFIG = {
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { if (current() === "system") document.dispatchEvent(new CustomEvent("themechange")); });
   };
 
-  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initMatrix, initConfig, initFlows, initBeforeAfter, initStrips, initTableWraps, initPortrait, initClock, initArcade, initCases, initLens, initSteps, initDemo, initRebuild, initPalette, initPostList, initChat, initYear, initTheme]
+  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initMatrix, initConfig, initFlows, initBeforeAfter, initStrips, initTableWraps, initPortrait, initClock, initArcade, initCases, initStack, initLens, initSteps, initDemo, initRebuild, initPalette, initPostList, initChat, initYear, initTheme, initTalk]
     .forEach((init) => { try { init(); } catch (err) { console.error(`main.js: ${init.name} failed`, err); } });
 })();
