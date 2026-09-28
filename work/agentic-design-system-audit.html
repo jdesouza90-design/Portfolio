@@ -22,7 +22,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!-- A fresh unlock from the gate: hold the page until its opener is up (initUnlock in main.js). -->
 <script>if (/[?&]unlocked(?=&|$)/.test(location.search)) document.documentElement.classList.add("unlock");</script>
-<link rel="stylesheet" href="../styles.css?v=afd731bc">
+<link rel="stylesheet" href="../styles.css?v=bcb44329">
 <script defer src="/_vercel/insights/script.js"></script>
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
@@ -165,35 +165,27 @@
         <h3 class="t-title">The design</h3>
         <p class="t-lede">One senior product designer built an agent and ran it through every Figma file: it listed each variant, found every instance in the product files and flagged what was unused or duplicated. From its list they kept 321, split into Button, Icon Button and Link, and had the agent write the usage guideline.</p>
       </div>
-      <div class="cols">
-        <div class="col">
-          <div class="col-head"><svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="8" width="5.5" height="8" rx="1.5"/><rect x="9.25" y="8" width="5.5" height="8" rx="1.5"/><rect class="ac" x="16" y="8" width="5.5" height="8" rx="1.5"/></svg><h4 class="t-subhead">Split by purpose</h4></div>
-          <p class="t-body">Button, Icon Button and Link each got their own component, so the name says what it is for.</p>
+      <figure class="rebuild" data-rebuild data-wires="../assets/btn-sheet-rebuild.json?v=d9f4a37e" data-before="../assets/btn-sheet-before.webp?v=82ed5410">
+        <div class="rebuild-stage">
+          <img decoding="async" width="1800" height="866" src="../assets/btn-sheet-after.webp?v=63fac1b2" alt="The three new components side by side: the Button sheet, the Icon Button sheet and the Link sheet, every style, state and size on one page" loading="lazy">
+          <canvas role="img" aria-label="The old .Button sheet turns into a line drawing and is rebuilt in three steps: the left- and right-icon rows fold away, the rest splits into the Button, Icon Button and Link sheets, and Danger, Brand and Action drop their own disabled cells for Primary’s."></canvas>
         </div>
+        <button class="art-ctl" type="button" aria-pressed="false" aria-label="Pause the rebuild" hidden><svg class="i-pause" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="3.5" y="3" width="3" height="10" rx=".8"/><rect x="9.5" y="3" width="3" height="10" rx=".8"/></svg><svg class="i-play" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 3.2v9.6a.6.6 0 0 0 .9.5l7.4-4.8a.6.6 0 0 0 0-1L5.9 2.7a.6.6 0 0 0-.9.5Z"/></svg></button>
+      </figure>
+      <div class="cols" data-rebuild-steps>
         <div class="col">
           <div class="col-head"><svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="7" width="19" height="10" rx="5"/><circle class="ac-fill" cx="16" cy="12" r="3"/></svg><h4 class="t-subhead">Booleans over variants</h4></div>
           <p class="t-body">Left and right icons became toggles and the icon itself a swap, so they add nothing to the matrix.</p>
+        </div>
+        <div class="col">
+          <div class="col-head"><svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="8" width="5.5" height="8" rx="1.5"/><rect x="9.25" y="8" width="5.5" height="8" rx="1.5"/><rect class="ac" x="16" y="8" width="5.5" height="8" rx="1.5"/></svg><h4 class="t-subhead">Split by purpose</h4></div>
+          <p class="t-body">Button, Icon Button and Link each got their own component, so the name says what it is for.</p>
         </div>
         <div class="col">
           <div class="col-head"><svg class="col-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="3.5" width="7" height="4" rx="1.5"/><rect x="2.5" y="10" width="7" height="4" rx="1.5"/><rect x="2.5" y="16.5" width="7" height="4" rx="1.5"/><path d="M9.5 5.5h2c1.5 0 2 1.5 2.5 3M9.5 12h5M9.5 18.5h2c1.5 0 2-1.5 2.5-3"/><rect class="ac" x="15" y="9" width="6.5" height="6" rx="1.5"/></svg><h4 class="t-subhead">One disabled state</h4></div>
           <p class="t-body">Danger, Brand and Action reuse Primary’s disabled variant instead of defining their own.</p>
         </div>
       </div>
-      <div class="pair">
-        <div class="pair-item wrong">
-          <div class="pair-demo" aria-hidden="true"><div class="pair-grid"><span class="mini-btn">Button</span><span class="mini-btn ghost"><i></i>Button</span><span class="mini-btn">Button<i></i></span><span class="mini-btn ghost"><i></i>Button<i></i></span><span class="mini-btn">Button</span><span class="mini-btn ghost"><i></i>Button</span><span class="mini-btn">Button<i></i></span><span class="mini-btn ghost"><i></i>Button<i></i></span><span class="mini-btn">Button</span><span class="mini-btn ghost"><i></i>Button</span><span class="mini-btn">Button<i></i></span><span class="mini-btn ghost"><i></i>Button<i></i></span><span class="mini-btn">Button</span><span class="mini-btn ghost"><i></i>Button</span><span class="mini-btn">Button<i></i></span><span class="mini-btn ghost"><i></i>Button<i></i></span></div></div>
-          <p class="eyebrow pair-verdict">Cut</p>
-          <p class="t-subhead">Icon as a variant</p>
-          <p class="t-body">One icon property multiplied the whole .Button matrix by 4, and most of those variants were never used.</p>
-        </div>
-        <div class="pair-item right">
-          <div class="pair-demo" aria-hidden="true"><div class="pair-one"><span class="mini-btn"><i></i>Button</span><div class="mini-toggles"><span class="mini-toggle on"><i></i>Left icon</span><span class="mini-toggle"><i></i>Right icon</span></div></div></div>
-          <p class="eyebrow pair-verdict">Kept</p>
-          <p class="t-subhead">Icon as a boolean and a swap</p>
-          <p class="t-body">Left and right icons became toggles and the icon itself a swap, so they add nothing to the matrix.</p>
-        </div>
-      </div>
-      <figure class="panel wide"><img decoding="async" width="1800" height="866" src="../assets/btn-sheet-after.webp?v=63fac1b2" alt="The three new components side by side: the Button sheet, the Icon Button sheet and the Link sheet, every style, state and size on one page" loading="lazy"></figure>
     </article>
 
     <article class="row full" id="index">
@@ -305,6 +297,6 @@
   </div>
 </section>
 </main>
-<script src="../main.js?v=6fc51e26"></script>
+<script src="../main.js?v=636ac54a"></script>
 </body>
 </html>
