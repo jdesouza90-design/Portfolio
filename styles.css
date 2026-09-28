@@ -738,8 +738,8 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
   .stack-card { grid-template-columns: minmax(0, 1fr); gap: 4px; }
   .stack-card .case-media { order: -1; aspect-ratio: 4 / 3; }
   .stack-copy { padding: 12px 8px 8px; }
-  .stack.on .stack-card { grid-template-rows: 40% minmax(0, 1fr); }
-  .stack.on .stack-copy { justify-content: flex-start; gap: 12px; padding-bottom: 48px; }   /* the card's foot stays empty, so a card behind never shows through the peek */
+  .stack.on .stack-card { grid-template-rows: minmax(0, 1fr) auto; }   /* the copy takes its own height and the screen fills the rest, so a short summary leaves no empty card under it */
+  .stack.on .stack-copy { justify-content: flex-start; gap: 12px; padding-bottom: 28px; }   /* with the card's own padding the last 40px stay empty, so a card behind never shows through the 18px peek */
   .stack.on .stack-copy :is(.chips, .stack-n) { display: none; }
   .stack.on .stack-copy .t-body { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
 }
