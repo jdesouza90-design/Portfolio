@@ -3321,9 +3321,36 @@ const CONFIG = {
     const img = $(".coach-art img", card);
     if (!img) return;
     img.addEventListener("transitionend", (e) => { if (e.propertyName === "transform") card.classList.add("settled"); });
+    const art = img.parentElement;
+    let clip = null;
+    // The build clip: fetched as the card comes within a screen of view, shown
+    // on its first frame (the empty well) once it can play, and played once when
+    // half the card is on screen. It holds its last frame, the still. A clip
+    // not ready by then is dropped and the still stays, as it does under
+    // reduced motion.
+    if (art.dataset.build && !reduced && "IntersectionObserver" in window) {
+      let ready = false, seen = false;
+      const near = new IntersectionObserver((es) => {
+        if (!es[0].isIntersecting) return;
+        near.disconnect();
+        clip = document.createElement("video");
+        Object.assign(clip, { muted: true, playsInline: true, preload: "auto", src: art.dataset.build });
+        clip.setAttribute("aria-hidden", "true");
+        clip.addEventListener("loadeddata", () => { if (seen) return; ready = true; art.classList.add("has-build"); }, { once: true });
+        clip.addEventListener("error", () => { art.classList.remove("has-build"); clip.remove(); });
+        art.append(clip);
+      }, { rootMargin: "100% 0px" });
+      const view = new IntersectionObserver((es) => {
+        if (!es[0].isIntersecting) return;
+        view.disconnect();
+        seen = true;
+        if (ready) clip.play().catch(() => art.classList.remove("has-build"));
+      }, { threshold: 0.5 });
+      near.observe(card); view.observe(card);
+    }
     if (reduced || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
     let frame = 0;
-    const lean = (x, y) => { img.style.setProperty("--px", `${x * -12}px`); img.style.setProperty("--py", `${y * -9}px`); };
+    const lean = (x, y) => [img, clip].forEach((el) => { if (!el) return; el.style.setProperty("--px", `${x * -12}px`); el.style.setProperty("--py", `${y * -9}px`); });
     card.addEventListener("pointermove", (e) => {
       if (frame) return;
       frame = requestAnimationFrame(() => {
@@ -3332,7 +3359,7 @@ const CONFIG = {
         lean((e.clientX - r.left) / r.width * 2 - 1, (e.clientY - r.top) / r.height * 2 - 1);
       });
     });
-    card.addEventListener("pointerleave", () => { cancelAnimationFrame(frame); frame = 0; img.style.removeProperty("--px"); img.style.removeProperty("--py"); });
+    card.addEventListener("pointerleave", () => { cancelAnimationFrame(frame); frame = 0; [img, clip].forEach((el) => { if (el) { el.style.removeProperty("--px"); el.style.removeProperty("--py"); } }); });
   });
 
   /* ---- Footer year ---- */
