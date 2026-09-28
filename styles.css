@@ -670,31 +670,26 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
   .case-row:hover .case-media img { transform: translateY(-5px); }
 }
 .work-all { display: flex; justify-content: center; margin-top: clamp(32px, 4vw, 52px); }
-/* The list and the stage (after nelson.co): from 821px up main.js (initCases)
-   lifts every row's screen out into one panel that sits beside the list and
-   travels with it, showing the row under the pointer, the row with focus, or
-   else the row nearest the middle of the screen. The row it shows rises into
-   a soft pill. Below 821px each row keeps its screen. */
+/* The list as a pile (after harvey.ai's Get more done with agents): from
+   821px up each row is a card, copy beside its screen, and it sticks under
+   the bar while the page keeps scrolling; the next card rises over it after
+   a hold. Nothing stops the scroll: the hold is only the stretch between
+   two cards. On a short screen (under 700px tall) a card would not fit
+   under the bar, so the cards stay a plain column there. */
 @media (min-width: 821px) {
-  /* With scripts on (html.js, set in each page's head) the list takes the
-     staged layout from the first paint, screens held back, so mounting the
-     stage only fills the empty column and nothing already drawn moves. */
-  .cases.staged, .js .cases { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: clamp(28px, 4vw, 64px); align-items: start; border-top: 0; }
-  .js .cases:not(.staged) > .case-row > .case-media { display: none; }
-  .cases.staged .case-row, .js .cases > .case-row {
-    grid-column: 1; grid-template-columns: minmax(0, 1fr);
-    --pill-pad: clamp(20px, 2.4vw, 32px);
-    padding: clamp(28px, 3.4vw, 44px) var(--pill-pad); margin-inline: calc(-1 * var(--pill-pad)); border-bottom: 0; border-radius: var(--radius);
-    transition: background var(--dur-hover), box-shadow var(--dur-hover);
+  .cases { border-top: 0; }
+  .cases > .case-row {
+    gap: clamp(20px, 3vw, 40px); align-items: stretch;
+    padding: clamp(14px, 1.6vw, 20px); border: 1px solid var(--hair); border-radius: calc(var(--radius) + 6px);
+    background: var(--surface); box-shadow: var(--shadow-lift);
   }
-  .cases.staged .case-row.is-on { background: var(--surface); box-shadow: var(--shadow-pill); }
-  .cases-stage { grid-column: 2; position: sticky; top: calc(var(--nav-h) + var(--sp-5)); aspect-ratio: 16 / 10; transition: opacity var(--dur-reveal) linear; }
-  .anim .cases.staged:not(:has(> .case-row.in)) .cases-stage { opacity: 0; }   /* it rises with the list, not before it */
-  .cases-slot { position: absolute; inset: 0; opacity: 0; transition: opacity var(--dur-ui) var(--ease); }
-  .cases-slot.is-on { opacity: 1; }
-  .cases-slot { pointer-events: none; }
-  .cases-slot.is-on { pointer-events: auto; cursor: pointer; }
-  .cases-slot .case-media { position: absolute; inset: 0; aspect-ratio: auto; }
+  .cases > .case-row + .case-row { margin-top: clamp(20px, 3vw, 32px); }
+  .cases > .case-row > .case-copy { justify-content: center; padding: clamp(12px, 2vw, 28px); }
+  .cases > .case-row > .case-media { border-radius: var(--radius); aspect-ratio: auto; min-height: 380px; }   /* fills its cell; a ratio here would take its width from the card's height and run past the column */
+}
+@media (min-width: 821px) and (min-height: 700px) {
+  .cases > .case-row { position: sticky; top: calc(var(--nav-h) + var(--sp-5)); }
+  .cases > .case-row + .case-row { margin-top: 32vh; }   /* the hold: each card sits alone under the bar for this stretch, then the next rises over it */
 }
 @media (max-width: 820px) {
   .case-row { grid-template-columns: minmax(0, 1fr); gap: 24px; }
