@@ -661,7 +661,11 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 @media (hover: hover) and (pointer: fine) {
   .case-row:hover .case-media img { transform: translateY(-5px); }
 }
-.work-all { display: flex; justify-content: center; margin-top: clamp(32px, 4vw, 52px); }
+/* Under the featured stack: its pager (the same dots and arrows as the
+   testimonials, .testimonial-controls) with the link to the full index right
+   beneath it, close enough to read as the deck's own foot. */
+.work-all { display: flex; flex-direction: column; align-items: center; gap: var(--sp-5); margin-top: var(--sp-5); }
+.stack-controls { margin-top: 0; }
 /* The list as a pile (after harvey.ai's Get more done with agents): from
    821px up each row is a card, copy beside its screen, and it sticks under
    the bar while the page keeps scrolling; the next card rises over it after
@@ -1347,19 +1351,20 @@ footer a:hover { color: var(--ink); }
 .testimonial-foot cite { display: block; min-width: 0; font-style: normal; }
 .testimonial-foot cite b { display: block; }
 .testimonial-mark { margin-left: var(--sp-3); padding-left: var(--sp-4); border-left: 1px solid var(--hair-2); white-space: nowrap; }
-.testimonial-controls { display: flex; align-items: center; justify-content: center; gap: var(--sp-3); margin-top: var(--sp-5); }
-.testimonial-controls .dots { display: flex; margin-inline: var(--sp-1); }
+/* The pager: the testimonials' and the featured stack's (.stack-controls) */
+:is(.testimonial-controls, .stack-controls) { display: flex; align-items: center; justify-content: center; gap: var(--sp-3); margin-top: var(--sp-5); }
+:is(.testimonial-controls, .stack-controls) .dots { display: flex; margin-inline: var(--sp-1); }
 /* each dot is a 24px button (WCAG 2.2 target size) drawing an 8px mark; the current one stretches */
-.testimonial-controls .dot { position: relative; width: 24px; height: 24px; padding: 0; border: 0; background: none; cursor: pointer; transition: width var(--dur-ui) var(--ease), transform var(--dur-press) var(--ease); }
-.testimonial-controls .dot::before { content: ""; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 8px; height: 8px; border-radius: 2px; background: var(--hair-2); transition: width var(--dur-ui) var(--ease), background var(--dur-hover); }   /* a square mark, a bar when current: half of --radius-btn, which would round an 8px mark into a dot */
-.testimonial-controls .dot[aria-current="true"] { width: 40px; }
-.testimonial-controls .dot[aria-current="true"]::before { width: 24px; background: var(--ink); }
-.testimonial-controls .ctl { width: 40px; height: 40px; padding: 0; border: 1px solid var(--hair-2); border-radius: var(--radius-btn); background: transparent; color: var(--ink); cursor: pointer; display: grid; place-items: center; transition: transform var(--dur-press) var(--ease), border-color var(--dur-hover), color var(--dur-hover); }
-.testimonial-controls .ctl:hover { border-color: var(--accent); color: var(--accent-ink); }
-.testimonial-controls .ctl svg { width: 16px; height: 16px; }
+:is(.testimonial-controls, .stack-controls) .dot { position: relative; width: 24px; height: 24px; padding: 0; border: 0; background: none; cursor: pointer; transition: width var(--dur-ui) var(--ease), transform var(--dur-press) var(--ease); }
+:is(.testimonial-controls, .stack-controls) .dot::before { content: ""; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 8px; height: 8px; border-radius: 2px; background: var(--hair-2); transition: width var(--dur-ui) var(--ease), background var(--dur-hover); }   /* a square mark, a bar when current: half of --radius-btn, which would round an 8px mark into a dot */
+:is(.testimonial-controls, .stack-controls) .dot[aria-current="true"] { width: 40px; }
+:is(.testimonial-controls, .stack-controls) .dot[aria-current="true"]::before { width: 24px; background: var(--ink); }
+:is(.testimonial-controls, .stack-controls) .ctl { width: 40px; height: 40px; padding: 0; border: 1px solid var(--hair-2); border-radius: var(--radius-btn); background: transparent; color: var(--ink); cursor: pointer; display: grid; place-items: center; transition: transform var(--dur-press) var(--ease), border-color var(--dur-hover), color var(--dur-hover); }
+:is(.testimonial-controls, .stack-controls) .ctl:hover { border-color: var(--accent); color: var(--accent-ink); }
+:is(.testimonial-controls, .stack-controls) .ctl svg { width: 16px; height: 16px; }
 .testimonial-controls .pause { margin-left: var(--sp-2); }
 .testimonial-controls:has(> .pause)::before { content: ""; flex: none; width: 40px; margin-right: var(--sp-2); }   /* the pause's twin, empty, so the arrows and dots sit on the quote's axis */
-.testimonial-controls .ctl { flex: none; }   /* square at any width */
+:is(.testimonial-controls, .stack-controls) .ctl { flex: none; }   /* square at any width */
 @media (max-width: 560px) {   /* flush left here; the row tightens so it fits from 375px, and below that the pause wraps under it */
   .testimonial-controls:has(> .pause)::before { content: none; }
   .testimonial-controls { flex-wrap: wrap; gap: var(--sp-3) var(--sp-2); }
@@ -1370,7 +1375,7 @@ footer a:hover { color: var(--ink); }
 .testimonial-controls .pause .i-play, .testimonial-controls .pause[aria-pressed="true"] .i-pause { display: none; }
 /* Rotation keeps running for reduced-motion users too (the CSS above already drops the
    cross-fade); the pause button is the one stop, so it shouldn't itself be inert. */
-@media (prefers-reduced-motion: reduce) { .testimonial-controls .dot, .testimonial-controls .dot::before { transition: none; } }
+@media (prefers-reduced-motion: reduce) { :is(.testimonial-controls, .stack-controls) .dot, :is(.testimonial-controls, .stack-controls) .dot::before { transition: none; } }
 
 /* Shots: the exact piece of UI a decision refers to, cut from the real screen
    and set on the case study's panel ground so the three read as one set.
@@ -1418,6 +1423,7 @@ footer a:hover { color: var(--ink); }
 
 /* Proof blocks: the chart and the capacity gauge share one frame */
 .proof { background: var(--surface); border: 1px solid var(--hair); border-radius: 16px; padding: clamp(22px, 3vw, 32px); position: relative; }
+.proof + .proof { margin-top: clamp(28px, 4vw, 44px); }   /* two proofs stacked in one Results (the audit page): the full row's gap */
 .proof-head { display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; margin-bottom: var(--sp-5); }
 .proof-head small { display: block; max-width: 40ch; }
 /* The frame also hosts a comparison table (Verifications) or, where there is no

@@ -22,7 +22,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!-- A fresh unlock from the gate: hold the page until its opener is up (initUnlock in main.js). -->
 <script>if (/[?&]unlocked(?=&|$)/.test(location.search)) document.documentElement.classList.add("unlock");</script>
-<link rel="stylesheet" href="../styles.css?v=6e6ffc1a">
+<link rel="stylesheet" href="../styles.css?v=4b3c06cb">
 <script defer src="/_vercel/insights/script.js"></script>
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
@@ -265,28 +265,6 @@
         <p class="t-lede">The agent wrote the remediation guide: a deep link into Figma for every fix, with the exact change to paste or click through. One senior product designer works the library edits from it while the agent takes the specs and lists. The audit runs again on the first of every month, so drift, new components and finished fixes show up in the next report.</p>
       </div>
       <figure class="panel wide"><img decoding="async" width="1393" height="882" src="../assets/dsr-tracker.webp?v=a945ce45" alt="The remediation guide the agent wrote: 28 fixes with 8 done, filters for owner and risk, a running note of what has been applied and what is blocked, and the first card — its owner, its risk, its time estimate, deep links into Figma and two copy buttons" loading="lazy"></figure>
-      <div class="proof">
-        <div class="proof-head">
-          <div><div class="t-stat" data-flow>66%</div><small>fewer components in the picker once the plan runs: 491 standalone to 166</small></div>
-          <span class="eyebrow">Measured · After the plan</span>
-        </div>
-        <section class="table-wrap" aria-label="The library as measured against the after state the plan projects" tabindex="0">
-        <table>
-          <thead><tr><th scope="col">Metric</th><th scope="col">Measured</th><th scope="col" class="hl">After the plan</th></tr></thead>
-          <tbody>
-            <tr><th scope="row">Standalone components in the picker</th><td data-label="Measured">491</td><td class="hl" data-label="After the plan">166</td></tr>
-            <tr><th scope="row">Illustrations in the UI library</th><td data-label="Measured">266</td><td class="hl" data-label="After the plan">0, in their own library</td></tr>
-            <tr><th scope="row">Standalone components with zero instances</th><td data-label="Measured">59</td><td class="hl" data-label="After the plan">0</td></tr>
-            <tr><th scope="row">Hand-set values with a token already published</th><td data-label="Measured">844,333</td><td class="hl" data-label="After the plan">Bound to the 229 variables</td></tr>
-            <tr><th scope="row">Ways color is modeled</th><td data-label="Measured">2</td><td class="hl" data-label="After the plan">1</td></tr>
-            <tr><th scope="row">Ways type is modeled</th><td data-label="Measured">3</td><td class="hl" data-label="After the plan">1</td></tr>
-            <tr><th scope="row">Dead libraries still published</th><td data-label="Measured">2</td><td class="hl" data-label="After the plan">0</td></tr>
-            <tr><th scope="row">Component descriptions that mislead</th><td data-label="Measured">4</td><td class="hl" data-label="After the plan">0</td></tr>
-            <tr><th scope="row">Trend visibility</th><td data-label="Measured">One snapshot</td><td class="hl" data-label="After the plan">Monthly history</td></tr>
-          </tbody>
-        </table>
-        </section>
-      </div>
     </article>
     <article class="row full" id="library">
       <div class="row-copy">
@@ -330,6 +308,28 @@
           </tbody>
         </table>
       </details>
+    </div>
+    <div class="proof">
+      <div class="proof-head">
+        <div><div class="t-stat" data-flow>66%</div><small>fewer components in the picker once the plan runs: 491 standalone to 166</small></div>
+        <span class="eyebrow">Measured · After the plan</span>
+      </div>
+      <section class="table-wrap" aria-label="The library as measured against the after state the plan projects" tabindex="0">
+      <table>
+        <thead><tr><th scope="col">Metric</th><th scope="col">Measured</th><th scope="col" class="hl">After the plan</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Standalone components in the picker</th><td data-label="Measured">491</td><td class="hl" data-label="After the plan">166</td></tr>
+          <tr><th scope="row">Illustrations in the UI library</th><td data-label="Measured">266</td><td class="hl" data-label="After the plan">0, in their own library</td></tr>
+          <tr><th scope="row">Standalone components with zero instances</th><td data-label="Measured">59</td><td class="hl" data-label="After the plan">0</td></tr>
+          <tr><th scope="row">Hand-set values with a token already published</th><td data-label="Measured">844,333</td><td class="hl" data-label="After the plan">Bound to the 229 variables</td></tr>
+          <tr><th scope="row">Ways color is modeled</th><td data-label="Measured">2</td><td class="hl" data-label="After the plan">1</td></tr>
+          <tr><th scope="row">Ways type is modeled</th><td data-label="Measured">3</td><td class="hl" data-label="After the plan">1</td></tr>
+          <tr><th scope="row">Dead libraries still published</th><td data-label="Measured">2</td><td class="hl" data-label="After the plan">0</td></tr>
+          <tr><th scope="row">Component descriptions that mislead</th><td data-label="Measured">4</td><td class="hl" data-label="After the plan">0</td></tr>
+          <tr><th scope="row">Trend visibility</th><td data-label="Measured">One snapshot</td><td class="hl" data-label="After the plan">Monthly history</td></tr>
+        </tbody>
+      </table>
+      </section>
     </div>
   </div>
 </section>
