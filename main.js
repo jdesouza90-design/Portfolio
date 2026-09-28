@@ -2087,9 +2087,10 @@ const CONFIG = {
      segmented control above a work list re-sorts its rows for the reader's
      role. The orders are fixed here
      (no model, nothing sent anywhere); the choice is kept in localStorage
-     for the next page and the next visit. Rows move inside a view
-     transition where the browser has one and the reader hasn't asked for
-     less motion; otherwise they simply re-sort. */
+     for the next page and the next visit. A choice re-sorts the rows in
+     place and they rise into the new order one after another, the way the
+     page's blocks arrive, inside the time a control gets; no row slides
+     past another. Under reduced motion they simply re-sort. */
   const LENSES = {
     recruiter: { order: ["system", "cross-sell", "verifications", "refi", "staking", "no-code"] },
     hiring: { order: ["system", "no-code", "staking", "cross-sell", "verifications", "refi"] },
@@ -2129,7 +2130,7 @@ const CONFIG = {
       if (!roll) return;
       word.classList.remove("roll"); void word.offsetWidth; word.classList.add("roll");   // restart the rise
     };
-    let current = "recruiter", chosen = false, cycleAt = 0, timer = 0;
+    let current = "recruiter", chosen = false, cycleAt = 0, timer = 0, dealt = [];
     const phone = window.matchMedia("(max-width: 640px)");
     const cycle = () => {
       clearInterval(timer);
@@ -2150,11 +2151,15 @@ const CONFIG = {
       if (chosen || reduced) face(key, false);
       tabs.forEach((t) => t.setAttribute("aria-pressed", String(t.dataset.lensKey === key)));
       try { localStorage.setItem("lens", key); } catch (e) { /* private mode */ }
-      if (animate && !reduced && document.startViewTransition) {
-        const root = document.documentElement;
-        root.classList.add("vt-lens");   // styles.css times this transition as a control's answer, not a page change
-        document.startViewTransition(() => sort(key)).finished.finally(() => root.classList.remove("vt-lens"));
-      } else sort(key);
+      dealt.forEach((a) => a.cancel());
+      dealt = [];
+      sort(key);
+      if (animate && !reduced) {
+        const arrived = (r) => !document.documentElement.classList.contains("anim") || r.classList.contains("in");   // a row still waiting for its reveal keeps waiting
+        dealt = $$(".case-row", list).filter(arrived).map((r, i) => r.animate(
+          [{ opacity: 0, transform: "translateY(12px)" }, { opacity: 1, transform: "none" }],
+          { duration: 200, delay: i * 16, easing: EASE, fill: "backwards" }));   // the last row lands inside 300ms
+      }
     };
     tabs.forEach((t) => t.addEventListener("click", () => apply(t.dataset.lensKey, true)));
     let saved = "recruiter";

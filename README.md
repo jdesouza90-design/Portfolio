@@ -300,7 +300,9 @@ Function, answers with Claude Haiku 4.5 by default.
   give the same order, on the work index or in the home page's three rows.
   On a desktop the choice is kept in `localStorage` (`lens`); a phone shows
   a dropdown whose face cycles the roles as a hint and starts every visit
-  there. Rows move in a view transition (`row-<slug>` names, section 9).
+  there. A choice re-sorts the rows in place and they rise into the new order
+  one after another (16ms apart, 200ms each), so no row slides past another; the
+  `row-<slug>` names (section 9) still carry each row across a page change.
 - **Steps** (`initSteps`, after diabrowser.com). A decisions block marked
   `data-steps` whose columns each end in a `.shot` becomes, from 761px up, a
   numbered list beside one sticky panel showing the step under the reader.

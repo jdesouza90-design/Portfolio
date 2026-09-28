@@ -1641,7 +1641,6 @@ html.unlock [data-rise] { animation-play-state: paused; }   /* the hero's cascad
 @view-transition { navigation: auto; }
 ::view-transition-old(root), ::view-transition-new(root) { animation-duration: .32s; }
 ::view-transition-group(*) { animation-duration: .42s; animation-timing-function: var(--ease); }
-html.vt-lens::view-transition-group(*) { animation-duration: var(--dur-ui); }   /* the lens's re-sort (initLens) is a control's answer, not a page change */
 .nav { view-transition-name: site-nav; }
 .chat-launch { view-transition-name: site-launch; }
 footer { view-transition-name: site-foot; }   /* one a page, at the foot of its last section */
