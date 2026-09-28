@@ -102,6 +102,12 @@ const CONFIG = {
     document.addEventListener("unlock:open", go, { once: true });
     setTimeout(go, 6000);
   };
+  // A jump to a section of this page by a search result or a cited source;
+  // a link to one, or arriving with one in the address, is picked up where
+  // it matters (initStack). Anything the scroll would pass on the way can
+  // make itself small first. `to` is where it lands, null for the top.
+  const jumpTo = (to) => document.dispatchEvent(new CustomEvent("nav:jump", { detail: to }));
+  const hashTarget = (hash) => { try { return document.getElementById(decodeURIComponent(hash.slice(1))); } catch (_) { return null; } };
 
   // While the page is scrolling, the pieces that draw their own frames stand
   // still. A reveal happens during a scroll by definition, and the fields and
@@ -2022,24 +2028,33 @@ const CONFIG = {
      Keyboard focus on a card behind scrolls to where it is at the front.
      Under reduced motion the script leaves the cards in their column. The
      lens re-sorts the deck and says "lens"; the pile is redrawn in the new
-     order. */
+     order.
+     A jump to a section (the bar's Leadership and About, a search result, a
+     cited source, or another page's link arriving here) would scroll the
+     whole track and peel every card on the way, so the deck passes as one
+     block instead: for the length of the jump the track keeps only the deck
+     and whatever of its empty stretch is on screen (styles.css,
+     .stack.whole), the cards hold still, and the page moves by what was
+     taken out, so nothing on screen shifts. Once the scroll has settled
+     and the page has loaded, the track grows back the same way, as soon as
+     the deck is out of sight or would look no different. */
   const initStack = () => $$("[data-stack]").forEach((stack) => {
     const track = $(".stack-track", stack), deck = $(".stack-deck", stack);
     if (reduced || !track || !deck) return;
     const PEEK = 18, TILT = 15;
     const PEELS = [[0.1, 0.44], [0.56, 0.9]];   // each card's stretch of the track; the last card has none and stays
-    let cards = [];
+    let cards = [], whole = null;               // whole: while a jump passes, the progress the cards hold at
     stack.classList.add("on");
     const clamp01 = (v) => Math.max(0, Math.min(1, v));
     const measure = () => {
-      const r = track.getBoundingClientRect(), h = deck.offsetHeight;
+      const r = track.getBoundingClientRect(), h = deck.getBoundingClientRect().height;   // not offsetHeight: a deck sized in vh is a fraction of a pixel off whole
       return { r, h, top: parseFloat(getComputedStyle(deck).top) || 0 };
     };
     let raf = 0;
     const draw = () => {
       raf = 0;
       const { r, h, top } = measure();
-      const p = clamp01((top - r.top) / Math.max(1, r.height - h));   // 0 as the deck sticks, 1 as it lets go
+      const p = whole ? whole.p : clamp01((top - r.top) / Math.max(1, r.height - h));   // 0 as the deck sticks, 1 as it lets go
       const lift = -(h + (window.innerWidth < 768 ? 140 : 220));
       const peel = PEELS.map(([a, b]) => clamp01((p - a) / (b - a)));
       cards.forEach((c, i) => {
@@ -2058,17 +2073,107 @@ const CONFIG = {
       cards.forEach((c, i) => { $(".stack-n", c).textContent = `${String(i + 1).padStart(2, "0")} / ${String(cards.length).padStart(2, "0")}`; });
       draw();   // at once, so a lens transition captures the pile in its new order
     };
+    // How much of the track's empty stretch shows above and below the deck,
+    // with the track's top at t on screen, the deck's at d and its foot at b.
+    const room = (t, d, b, h) => {
+      const vh = window.innerHeight;
+      return { above: Math.max(0, Math.min(d, vh) - Math.max(t, 0)), below: Math.max(0, Math.min(b, vh) - Math.max(d + h, 0)) };
+    };
+    // The full track with its top at t on screen: how far the deck has come
+    // down it (where the sticky rule holds it) and what shows around it.
+    const full = (t, r, h, top) => {
+      const E = r.height - h, o = Math.max(0, Math.min(E, top - t));
+      return { p: E > 0 ? o / E : 0, ...room(t, t + o, t + r.height, h) };
+    };
+    const root = document.documentElement;
+    const anchorless = (fn) => {   // the browser's own scroll anchoring would move the page a second time
+      root.style.overflowAnchor = "none";
+      fn();
+      requestAnimationFrame(() => { root.style.overflowAnchor = ""; });
+    };
+    let settling = 0;
+    const later = () => { clearTimeout(settling); settling = setTimeout(() => settle(false), 200); };
+    const pass = (to) => {
+      if (whole) { later(); return; }
+      const vh = window.innerHeight, { r, h, top } = measure();
+      const land = to ? window.scrollY + to.getBoundingClientRect().top - (parseFloat(getComputedStyle(to).scrollMarginTop) || 0) : 0;
+      const t1 = r.top + window.scrollY - Math.max(0, Math.min(root.scrollHeight - vh, land));   // the track's top on screen where the jump lands
+      if (Math.max(r.top, t1) <= -r.height || Math.min(r.top, t1) >= vh) return;                // the jump never brings it on screen
+      const d = deck.getBoundingClientRect().top;
+      const now = r.bottom > 0 && r.top < vh, there = t1 < vh && t1 + r.height > 0;
+      // The block it passes as: the deck as it shows now, or else as it will
+      // show where the jump lands, or else at rest with its pile behind it.
+      const hold = now ? full(r.top, r, h, top) : there ? full(t1, r, h, top) : { p: 0, above: 0, below: 0 };
+      // The page scrolls in whole pixels, so the scroll that keeps the deck
+      // put and the height taken out must be whole too, or what shows would
+      // land a fraction off. The fractions stay in the track, at whichever
+      // end is off screen.
+      if (now && r.top < 0) { const dy = r.top + hold.above - d; hold.above += Math.ceil(dy) - dy; }
+      const cut = r.height - h - hold.above - hold.below, spare = cut - Math.floor(cut);
+      if ((!now && there ? t1 : r.top) + r.height > vh) hold.below += spare; else hold.above += spare;
+      anchorless(() => {
+        stack.style.setProperty("--whole-above", `${hold.above}px`);
+        stack.style.setProperty("--whole-below", `${hold.below}px`);
+        stack.classList.add("whole");
+        whole = { p: hold.p };
+        const c = track.getBoundingClientRect();   // its top has not moved: nothing above it changed
+        const dy = now ? c.top + hold.above - d : r.bottom <= 0 ? c.bottom - r.bottom : 0;   // the deck stays put, or else what follows the track does
+        if (dy) window.scrollTo({ top: window.scrollY + dy, behavior: "instant" });
+      });
+      draw();
+      later();
+    };
+    const settle = (force) => {
+      if (!whole) return;
+      if (!force && document.readyState !== "complete") { window.addEventListener("load", later, { once: true }); return; }
+      const vh = window.innerHeight, h = deck.getBoundingClientRect().height, was = whole.p;
+      const c = track.getBoundingClientRect(), d = deck.getBoundingClientRect().top;
+      const seen = room(c.top, d, c.bottom, h);
+      anchorless(() => {
+        stack.classList.remove("whole");
+        const { r, top } = measure(), E = r.height - h;   // r.top is c.top: nothing above it changed
+        // Where the full track's top goes: anywhere while it is below the
+        // screen, so that what follows it stays put while it is above, and
+        // so that the deck stays put while it shows.
+        const t = c.top >= vh ? c.top : c.bottom <= 0 ? c.bottom - r.height : d > top + 0.5 ? d : d < top - 0.5 ? d - E : top - was * E;
+        const f = full(t, r, h, top);
+        if (!force && c.top < vh && c.bottom > 0 && (Math.abs(f.above - seen.above) > 1 || Math.abs(f.below - seen.below) > 1 || Math.abs(f.p - was) > 0.001)) {
+          stack.classList.add("whole");   // growing back here would show: wait until the deck is off screen
+          return;
+        }
+        whole = null;
+        stack.style.removeProperty("--whole-above");
+        stack.style.removeProperty("--whole-below");
+        if (Math.abs(c.top - t) > 0.5) window.scrollTo({ top: window.scrollY + c.top - t, behavior: "instant" });
+      });
+      draw();
+    };
     deck.addEventListener("lens", order);
     deck.addEventListener("focusin", (e) => {
       const i = cards.indexOf(e.target.closest(".stack-card"));
       if (i < 0) return;
+      settle(true);   // a jump's single block grows back first, so the place below is there to scroll to
       const { r, h, top } = measure();
       const at = i === 0 ? 0 : (PEELS[i - 1][1] + (PEELS[i] ? PEELS[i][0] : 1)) / 2;   // between its predecessor's peel and its own
       window.scrollTo({ top: window.scrollY + r.top - top + at * (r.height - h), behavior: "instant" });   // not smooth: it follows the focus, which has already moved
     });
-    window.addEventListener("scroll", request, { passive: true });
+    window.addEventListener("scroll", () => { request(); if (whole) later(); }, { passive: true });
     window.addEventListener("resize", request);
+    document.addEventListener("click", (e) => {   // a link to a section of this page, before the browser scrolls to it
+      if (e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const a = e.target.closest && e.target.closest("a[href*='#']");
+      if (!a || (a.target && a.target !== "_self") || a.origin !== location.origin || a.pathname !== location.pathname || a.search !== location.search) return;
+      const to = a.hash ? hashTarget(a.hash) : null;
+      if (!a.hash || to) pass(to);
+    });
+    document.addEventListener("nav:jump", (e) => pass(e.detail));
     order();
+    // Arriving from another page with a section in the address, the browser
+    // scrolls there from the top once the page is in: one block then too.
+    // A reload or a step back puts the reader back where they were instead.
+    const arrival = performance.getEntriesByType ? performance.getEntriesByType("navigation")[0] : null;
+    const to = location.hash && hashTarget(location.hash);
+    if (to && !window.scrollY && (!arrival || arrival.type === "navigate")) pass(to);
   });
 
   /* ---- The LinkedIn button ----
@@ -2437,7 +2542,7 @@ const CONFIG = {
       const [path, hash] = r.url.split("#");
       if (path === location.pathname && hash) {
         const el = document.getElementById(hash);
-        if (el) { history.pushState(null, "", `#${hash}`); el.scrollIntoView({ behavior: reduced ? "auto" : "smooth" }); el.tabIndex = -1; el.focus({ preventScroll: true }); return; }
+        if (el) { history.pushState(null, "", `#${hash}`); jumpTo(el); el.scrollIntoView({ behavior: reduced ? "auto" : "smooth" }); el.tabIndex = -1; el.focus({ preventScroll: true }); return; }
       }
       if (r.url !== here) location.href = r.url;
     };
@@ -2703,6 +2808,7 @@ const CONFIG = {
       clearTimeout(ringing);
       $$(".chat-cited").forEach((el) => el.classList.remove("chat-cited"));
       box.classList.add("chat-cited");
+      jumpTo(box);
       box.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
       ringing = setTimeout(() => box.classList.remove("chat-cited"), 1700);
       return true;
@@ -3051,7 +3157,7 @@ const CONFIG = {
         e.preventDefault();
         if (phone.matches) close();
         if (at.hash) { if (ring(at.hash)) history.replaceState(null, "", at.hash); else location.hash = at.hash; }
-        else window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
+        else { jumpTo(null); window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" }); }
         return;
       }
       save(!phone.matches, src || undefined);        // on to another page: reopen there, except on a phone; a source rings its section on arrival
