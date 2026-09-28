@@ -14,7 +14,7 @@ The chrome (head, nav, closing band, footer) lives here, once. If the nav or the
 footer changes on the rest of the site, change it here and re-run, or the blog
 drifts away from the pages around it.
 """
-import json, re, sys, glob, os, html, datetime, hashlib
+import json, re, sys, glob, os, html, datetime, hashlib, subprocess
 
 SITE = "https://john-desouza.com"
 AUTHOR = "John DeSouza"
@@ -534,11 +534,27 @@ def card(p):
         </a>"""
 
 
+def last_changed(path):
+    """The day a page last changed: today while it has uncommitted edits (so the
+    sitemap written before a commit still matches after it), else the day of the
+    last commit that touched it. A run's own date made --check fail on any day
+    but the one the sitemap was written. Without git, today."""
+    try:
+        git = lambda *a: subprocess.run(["git", *a], capture_output=True, text=True, check=False).stdout.strip()
+        if not git("status", "--porcelain", "--", path):
+            day = git("log", "-1", "--format=%cs", "--", path)
+            if re.fullmatch(r"\d{4}-\d{2}-\d{2}", day):
+                return day
+    except OSError:
+        pass
+    return datetime.date.today().isoformat()
+
+
 def render_sitemap(posts):
     rows = []
     newest = posts[0]["date"] if posts else datetime.date.today().isoformat()
     for loc, pri in STATIC_PAGES:
-        lastmod = newest[:10] if loc == "/blog.html" else datetime.date.today().isoformat()
+        lastmod = newest[:10] if loc == "/blog.html" else last_changed("index.html" if loc == "/" else loc.lstrip("/"))
         rows.append((SITE + loc, lastmod, pri))
     for p in posts:
         rows.append(("%s/blog/%s.html" % (SITE, p["slug"]),

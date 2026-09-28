@@ -110,7 +110,7 @@ function page({ path, error, unconfigured, ref, admin }) {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/styles.css?v=ec767a76">
+<link rel="stylesheet" href="/styles.css?v=3fa0404e">
 </head>
 <body>
 <main class="gate-wrap"><div class="gate">
@@ -309,7 +309,7 @@ export async function logAccess(kind, request, url, salt, ref) {
       redis([
         ['LPUSH', FEED_KEY, JSON.stringify(entry)],
         ['LTRIM', FEED_KEY, 0, FEED_KEEP - 1],
-        ['INCR', COUNT_KEY],
+        ...(kind === 'viewed' ? [['INCR', COUNT_KEY]] : []),   // the all-time count is page views; a gate, an unlock or a wrong password is not one
       ]).catch((err) => console.error('access-log: store failed', err)),
     ];
     const inChat = url.pathname === '/api/chat';
@@ -561,9 +561,14 @@ async function editBlocklist(request) {
   let removed = 0;
   if (block) {
     const [raw] = await redis([['LRANGE', FEED_KEY, 0, -1]]);
-    const gone = (raw || []).filter((s) => { try { return hostBlocked(hostOf(JSON.parse(s).ref), [host]); } catch (_) { return false; } });
+    const gone = [];
+    let views = 0;                                     // only views were counted, so only views come off the count
+    for (const s of raw || []) {
+      let e; try { e = JSON.parse(s); } catch (_) { continue; }
+      if (hostBlocked(hostOf(e.ref), [host])) { gone.push(s); if (e.kind === 'viewed') views++; }
+    }
     removed = gone.length;
-    await redis([['SADD', BLOCK_KEY, host], ...gone.map((s) => ['LREM', FEED_KEY, 1, s]), ...(removed ? [['DECRBY', COUNT_KEY, removed]] : [])]);
+    await redis([['SADD', BLOCK_KEY, host], ...gone.map((s) => ['LREM', FEED_KEY, 1, s]), ...(views ? [['DECRBY', COUNT_KEY, views]] : [])]);
   } else {
     await redis([['SREM', BLOCK_KEY, host]]);
   }
@@ -673,8 +678,9 @@ export default async function middleware(request, context) {
     }
     if (isFeed || isSettings) {
       if (!signedIn) return json({ error: 'Sign in at /admin/ first' }, 401);
-      if (isSettings) return settingsRoute(request);
-      return request.method === 'POST' ? editBlocklist(request) : feed(url);
+      const failed = (err) => { console.error('dashboard: store failed', err); return json({ error: 'The store is not answering' }, 502); };   // as the board's routes do
+      if (isSettings) return settingsRoute(request).catch(failed);
+      return (request.method === 'POST' ? editBlocklist(request) : feed(url)).catch(failed);
     }
 
     if (request.method === 'GET' && url.searchParams.has('signout')) {
