@@ -715,9 +715,9 @@ const CONFIG = {
      through its steps, the team's review. Three flows take turns (the Figma
      library audit, a flow turned into a prototype, research synthesis), each on
      real facts: the site's own contrast fix and the Verifications usability
-     quote. It plays only after the card lands, while it is on screen and the
-     page is still; the button in the corner is the WCAG 2.2.2 stop, and under
-     reduced motion it holds on the audit, fixed. Replaced the strands canvas
+     quote. It plays once the card lands, while it stays on screen; the
+     button in the corner is the WCAG 2.2.2 stop, and under reduced motion
+     it holds on the audit, fixed. Replaced the strands canvas
      on Sep 28, 2026. */
   // Realistic app windows, after Harvey's product UI: a title bar with a breadcrumb,
   // the brief as a task, the agent's run as a step list that spins and ticks, then
@@ -836,23 +836,22 @@ const CONFIG = {
     if ("ResizeObserver" in window) new ResizeObserver(() => eng.size()).observe(fig);
     if (reduced) { eng.frame(STORY_REST); return; }
     // the clock only runs while playing, so a pause freezes the story and resume picks it up
-    let raf = 0, acc = 0, since = 0, playing = true, visible = null;
-    eng.frame(0);
+    // It starts once the card lands, without waiting for the scroll to settle,
+    // and the brief holds 2.5s before it hands off (John, Sep 28: the full 4.2s
+    // hold took too long to start; a 1s hold from first view ran it too fast).
+    let raf = 0, acc = STEP_END[0] - 2.5, since = 0, playing = true, landed = false;
+    eng.frame(acc);
     const tick = (now) => { eng.frame(acc + (now - since) / 1000); raf = requestAnimationFrame(tick); };
     const sync = () => {
-      const run = playing && visible && visible() && !isScrolling();
+      const run = playing && landed && visible();
       fig.classList.toggle("run", !!run);
       if (run && !raf) { since = performance.now(); raf = requestAnimationFrame(tick); }
       if (!run && raf) { cancelAnimationFrame(raf); raf = 0; acc += (performance.now() - since) / 1000; }
       setPaused(btn, playing, "animation");
     };
-    afterReveal(fig, () => {
-      eng.size();
-      if (btn) { btn.hidden = false; btn.addEventListener("click", () => { playing = !playing; sync(); }); }
-      visible = whileOnScreen(fig, .05, sync);
-      whileStill(sync);
-      sync();
-    });
+    if (btn) { btn.hidden = false; btn.addEventListener("click", () => { playing = !playing; sync(); }); }
+    const visible = whileOnScreen(fig, .25, sync);
+    afterReveal(fig, () => { eng.size(); landed = true; sync(); });
   });
 
   /* ---- Fields ----
