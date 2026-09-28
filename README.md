@@ -300,7 +300,12 @@ Function, answers with Claude Haiku 4.5 by default.
   the scroll the track keeps only the deck (`.stack.whole`) and the cards
   hold still, and the page moves by the height taken out (in whole pixels)
   so nothing on screen shifts. The track grows back once the scroll has
-  settled and the deck is out of sight. A wide screen grows, anchored at its top corner, until it
+  settled and the deck is out of sight. Back and Forward do the same: the
+  home page restores scroll places itself (`history.scrollRestoration` is
+  `manual` while the stack runs), each history entry keeping its own place
+  in `history.state.y`, noted as the scroll comes to rest, just before a
+  link jumps away and as the page is left. A reload, or a step back that
+  loads the page afresh, lands there at once. A wide screen grows, anchored at its top corner, until it
   runs off the ground's foot however tall the card is. Without the script,
   or under reduced motion, the cards sit in a column. Below 821px the
   screen sits above the copy.
