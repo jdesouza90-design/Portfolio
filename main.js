@@ -2013,7 +2013,8 @@ const CONFIG = {
      nearest the middle of the screen, and that row rises into a pill. Each
      screen keeps a wrapper carrying its project's class, so the ground and
      the emerge settings from styles.css still apply. Below 821px the screens
-     go back to their rows, so a phone sees the list it always did. */
+     go back to their rows, so a phone sees the list it always did. While
+     staged the scroll stops on each row (lockScroll). */
   const initCases = () => $$(".cases").forEach((list) => {
     const rows = $$(".case-row", list).filter((r) => $(".case-media", r));
     if (rows.length < 2) return;
@@ -2080,7 +2081,61 @@ const CONFIG = {
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("pageshow", (e) => { if (e.persisted) { hover = null; focus = null; pick(); } });   // back from a case study: start from the page, not the row clicked
     list.addEventListener("lens", pick);   // re-sorted: show the row now nearest
+    const pageTop = (el) => { let y = 0; for (let e = el; e; e = e.offsetParent) y += e.offsetTop; return y; };   // layout, not the box: a row still rising in its reveal would move under the lock
+    lockScroll(() => rows.map((r) => Math.round(pageTop(r) + r.offsetHeight / 2 - window.innerHeight * 0.45)).sort((a, b) => a - b), () => staged);   // each row where it comes on stage: its middle on the line nearest() reads
   });
+
+  /* ---- The scroll lock ----
+     A list that stops on each item. restsY() gives the scroll positions
+     where an item sits in place; a scroll that reaches one stops on it and
+     holds there until the wheel or the fling goes quiet, and a scroll that
+     stops between two rests finishes the move it started. So one scroll
+     moves one item, and the reader pauses before the next. Only the
+     reader's own wheel, touch or keys are held; a link or a script
+     scrolling past goes straight through, and outside the first and last
+     rest the page scrolls freely. active() switches it off (the work list
+     below 821px). CSS scroll snapping was tried first: a wheel tick is far
+     shorter than the gap between rests, so it always snapped back. */
+  const lockScroll = (restsY, active = () => true) => {
+    if (reduced) return;
+    const HOLD = 180, SETTLE = 140, NUDGE = 24;
+    let lastY = window.scrollY, lastInput = 0, holdTill = 0, held = -1, settleT = 0, auto = false, touching = false, dir = 0;
+    const input = () => { lastInput = performance.now(); };
+    window.addEventListener("wheel", input, { passive: true });
+    window.addEventListener("touchstart", () => { touching = true; input(); }, { passive: true });
+    window.addEventListener("touchmove", input, { passive: true });
+    window.addEventListener("keydown", (e) => { if (/^(Arrow(Up|Down)|Page(Up|Down)| |Spacebar)$/.test(e.key)) input(); });
+    const go = (y) => { auto = true; held = -1; lastY = y; window.scrollTo({ top: y, behavior: "smooth" }); };
+    const settle = () => {
+      settleT = 0;
+      if (auto || touching || performance.now() < holdTill || !active()) return;
+      const ys = restsY(), y = Math.round(window.scrollY);
+      if (y <= ys[0] || y >= ys[ys.length - 1] || ys.includes(y)) return;   // outside the list, or already at a rest
+      const next = dir > 0 ? ys.find((v) => v > y) : [...ys].reverse().find((v) => v < y);
+      const prev = dir > 0 ? [...ys].reverse().find((v) => v < y) : ys.find((v) => v > y);
+      go(Math.abs(y - prev) < NUDGE ? prev : next);   // a nudge falls back; anything more finishes the move
+    };
+    window.addEventListener("touchend", () => { touching = false; input(); clearTimeout(settleT); settleT = setTimeout(settle, SETTLE); }, { passive: true });
+    window.addEventListener("scroll", () => {
+      const y = window.scrollY, now = performance.now();
+      if (!active()) { lastY = y; return; }
+      if (auto) { if (Math.abs(y - lastY) < 2 || now - lastInput < 50) auto = false; else return; }   // our own smooth move, until it lands or the reader takes over
+      if (now - lastInput > 400) { lastY = y; return; }   // not the reader: a link or a script, let it through
+      const ys = restsY();
+      if (held >= 0 && now < holdTill) { holdTill = now + HOLD; if (y !== ys[held]) window.scrollTo({ top: ys[held], behavior: "instant" }); lastY = ys[held]; return; }   // still flinging: stay put
+      held = -1;
+      if (y !== lastY) dir = Math.sign(y - lastY);
+      const crossed = ys.map((v, i) => (((lastY < v && y >= v) || (lastY > v && y <= v)) ? i : -1)).filter((i) => i >= 0);
+      const cross = crossed.length ? (dir > 0 ? crossed[0] : crossed[crossed.length - 1]) : -1;   // the first rest in the direction of travel
+      if (cross >= 0 && !touching) {
+        held = cross; holdTill = now + Math.max(HOLD, 380);
+        window.scrollTo({ top: ys[cross], behavior: "instant" }); lastY = ys[cross];
+        return;
+      }
+      lastY = y;
+      clearTimeout(settleT); settleT = setTimeout(settle, SETTLE);
+    }, { passive: true });
+  };
 
   /* ---- The featured stack ----
      After uselayouts.com's stack scroll reveal. The home page's three case
@@ -2089,16 +2144,7 @@ const CONFIG = {
      last peels up and back over its own stretch of the track, and the cards
      behind step forward as it goes, so the deck reads one card at a time.
      Keyboard focus on a card behind scrolls to where it is at the front.
-     The deck locks on each card. A rest is where a card sits alone at the
-     front (the deck sticking, between the peels, the deck letting go). A
-     scroll that reaches a rest stops on it and holds there until the wheel
-     or the fling goes quiet, and a scroll that stops between two rests
-     finishes the move it started. So one scroll moves one card, and you
-     have to pause before the next one. Only the reader's own wheel, touch or
-     keys are held; a link or a script scrolling past the deck goes straight
-     through. CSS scroll snapping was tried first: a wheel tick is far
-     shorter than the gap between rests, so it always snapped back. Under
-     reduced motion the script leaves the cards in their column. The
+     Under reduced motion the script leaves the cards in their column. The
      lens re-sorts the deck and says "lens"; the pile is redrawn in the new
      order. */
   const initStack = () => $$("[data-stack]").forEach((stack) => {
@@ -2106,10 +2152,8 @@ const CONFIG = {
     if (reduced || !track || !deck) return;
     const PEEK = 18, TILT = 15;
     const PEELS = [[0.1, 0.44], [0.56, 0.9]];   // each card's stretch of the track; the last card has none and stays
-    const RESTS = [0, (PEELS[0][1] + PEELS[1][0]) / 2, 1];   // where a card sits alone at the front
     let cards = [];
     stack.classList.add("on");
-
     const clamp01 = (v) => Math.max(0, Math.min(1, v));
     const measure = () => {
       const r = track.getBoundingClientRect(), h = deck.offsetHeight;
@@ -2144,50 +2188,8 @@ const CONFIG = {
       if (i < 0) return;
       const { r, h, top } = measure();
       const at = i === 0 ? 0 : (PEELS[i - 1][1] + (PEELS[i] ? PEELS[i][0] : 1)) / 2;   // between its predecessor's peel and its own
-      auto = true; lastY = window.scrollY + r.top - top + at * (r.height - h);
-      window.scrollTo({ top: lastY, behavior: "instant" });   // not smooth: it follows the focus, which has already moved
-      setTimeout(() => { auto = false; }, 60);
+      window.scrollTo({ top: window.scrollY + r.top - top + at * (r.height - h), behavior: "instant" });   // not smooth: it follows the focus, which has already moved
     });
-    /* The lock (see above). */
-    const HOLD = 180, SETTLE = 140, NUDGE = 24;
-    let lastY = window.scrollY, lastInput = 0, holdTill = 0, held = -1, settleT = 0, auto = false, touching = false, dir = 0;
-    const restsY = () => { const { r, h, top } = measure(); const y0 = window.scrollY + r.top - top; return RESTS.map((a) => Math.round(y0 + a * (r.height - h))); };
-    const input = () => { lastInput = performance.now(); };
-    window.addEventListener("wheel", input, { passive: true });
-    window.addEventListener("touchstart", () => { touching = true; input(); }, { passive: true });
-    window.addEventListener("touchmove", input, { passive: true });
-    window.addEventListener("touchend", () => { touching = false; input(); }, { passive: true });
-    window.addEventListener("keydown", (e) => { if (/^(Arrow(Up|Down)|Page(Up|Down)| |Spacebar)$/.test(e.key)) input(); });
-    const go = (y) => { auto = true; held = -1; lastY = y; window.scrollTo({ top: y, behavior: "smooth" }); };
-    const settle = () => {
-      settleT = 0;
-      if (auto || touching || performance.now() < holdTill) return;
-      const ys = restsY(), y = window.scrollY;
-      if (y <= ys[0] || y >= ys[ys.length - 1] || ys.includes(Math.round(y))) return;   // outside the deck, or already at a rest
-      const next = dir > 0 ? ys.find((v) => v > y) : [...ys].reverse().find((v) => v < y);
-      const prev = dir > 0 ? [...ys].reverse().find((v) => v < y) : ys.find((v) => v > y);
-      go(Math.abs(y - prev) < NUDGE ? prev : next);   // a nudge falls back; anything more finishes the move
-    };
-    const lock = () => {
-      const y = window.scrollY, now = performance.now();
-      if (auto) { if (Math.abs(y - lastY) < 2 || now - lastInput < 50) auto = false; else return; }   // our own smooth move, until it lands or the reader takes over
-      if (now - lastInput > 400) { lastY = y; return; }   // not the reader: a link or a script, let it through
-      const ys = restsY();
-      if (held >= 0 && now < holdTill) { holdTill = now + HOLD; if (y !== ys[held]) window.scrollTo({ top: ys[held], behavior: "instant" }); lastY = ys[held]; return; }   // still flinging: stay on the card
-      held = -1;
-      if (y !== lastY) dir = Math.sign(y - lastY);
-      const hit = ys.findIndex((v) => (lastY < v && y >= v) || (lastY > v && y <= v));
-      const cross = dir > 0 ? hit : ys.map((v, i) => ((lastY > v && y <= v) ? i : -1)).filter((i) => i >= 0).pop() ?? -1;   // the first rest in the direction of travel
-      if (cross >= 0 && !touching) {
-        held = cross; holdTill = now + Math.max(HOLD, 380);
-        window.scrollTo({ top: ys[cross], behavior: "instant" }); lastY = ys[cross];
-        return;
-      }
-      lastY = y;
-      clearTimeout(settleT); settleT = setTimeout(settle, SETTLE);
-    };
-    window.addEventListener("scroll", lock, { passive: true });
-    window.addEventListener("touchend", () => { clearTimeout(settleT); settleT = setTimeout(settle, SETTLE); }, { passive: true });
     window.addEventListener("scroll", request, { passive: true });
     window.addEventListener("resize", request);
     order();
@@ -3204,7 +3206,10 @@ const CONFIG = {
      stalls at the queue, then rises as the after lane runs straight through.
      Reduced motion, or a figure that settles without animating, shows both
      lanes finished. The dot is placed from the steps' own boxes, so it follows
-     whichever layout the width gives (a row, or a column on a phone). */
+     whichever layout the width gives (a row, or a column on a phone). It runs
+     under the boxes, so only the gap between two steps shows it: a hop first
+     slips it, unseen, to the far edge of the box it is in, and spends the whole
+     hop crossing the gap, where it can be watched. */
   const initBeforeAfter = () => $$("[data-flow-ba]").forEach((fig) => {
     const [before, after] = $$(".ba-lane", fig);
     if (!before || !after) return;
@@ -3221,22 +3226,35 @@ const CONFIG = {
     if (reduced) { finish(); return; }
     fig.classList.add("is-staged");
 
+    const HOP = 900;   // one hop across a gap: the dot's transition in styles.css
+    const HIDE = 16;   // how far inside a box the dot is out of sight: its radius and glow
     let last = null;   // where each dot was last sent, to put it back after a resize
-    const place = (lane, i, short = false, glide = true) => {
-      const dot = $(".ba-dot", lane), s = steps(lane), L = lane.getBoundingClientRect(), r = s[i].getBoundingClientRect();
-      let x = r.left - L.left + r.width / 2, y = r.top - L.top + r.height / 2;
-      if (short && i > 0) {   // stop on the rail just before the step, instead of on it
-        const p = s[i - 1].getBoundingClientRect();
-        const dx = x - (p.left - L.left + p.width / 2), dy = y - (p.top - L.top + p.height / 2), d = Math.hypot(dx, dy) || 1;
-        const reach = Math.abs(dx) > Math.abs(dy) ? r.width / 2 : r.height / 2;
-        x -= (dx / d) * (reach + 18); y -= (dy / d) * (reach + 18);
-      }
+    // Where on the rail the dot goes for step i: "mid", the middle of its box; "in"
+    // and "out", just inside the edges it comes in and leaves by; "short", the
+    // middle of the gap before the box, where it waits in sight. Only the distance
+    // along the rail: across it, styles.css holds the dot on the lane's middle line.
+    const spot = (lane, i, at) => {
+      const s = steps(lane), L = lane.getBoundingClientRect(), r = s[i].getBoundingClientRect();
+      const p = s[0].getBoundingClientRect(), q = s[1].getBoundingClientRect();
+      const row = Math.abs(q.left - p.left) > Math.abs(q.top - p.top);   // a row, or a column on a phone
+      const half = (row ? r.width : r.height) / 2, gap = row ? q.left - p.right : q.top - p.bottom;
+      const d = { mid: 0, in: HIDE - half, out: half - HIDE, short: -half - gap / 2 }[at];
+      return row ? ["--x", r.left - L.left - lane.clientLeft + half + d] : ["--y", r.top - L.top - lane.clientTop + half + d];
+    };
+    const place = (lane, i, at = "mid", glide = true) => {
+      const dot = $(".ba-dot", lane), [axis, v] = spot(lane, i, at);
       if (!glide) { dot.style.transition = "none"; }
-      dot.style.setProperty("--x", `${x}px`);
-      dot.style.setProperty("--y", `${y}px`);
+      dot.style.setProperty(axis, `${v}px`);
       if (!glide) { void dot.offsetWidth; dot.style.transition = ""; }
       dot.classList.add("is-on");
-      last = [lane, i, short];
+      last = [lane, i, at];
+    };
+    // A hop to step i. From inside a box the dot slips to its far edge first, so
+    // the hop is all gap; the step lights as the dot goes half under it.
+    const hop = (lane, i, at = "in") => {
+      if (last[2] !== "short") place(lane, i - 1, "out", false);
+      place(lane, i, at);
+      if (at === "in") setTimeout(() => steps(lane)[i].classList.add("is-reached"), HOP * .7);
     };
     window.addEventListener("resize", debounce(() => {   // move the dot, but never bring back one that has gone out
       if (last && $(".ba-dot", last[0]).classList.contains("is-on")) place(last[0], last[1], last[2], false);
@@ -3245,27 +3263,24 @@ const CONFIG = {
     onceInView(fig, 0.35, (animate) => {
       if (!animate) { finish(); return; }
       const b = steps(before), a = steps(after);
-      const at = (ms, fn) => setTimeout(fn, ms);
+      let t = 0;
+      const then = (ms, fn) => setTimeout(fn, (t += ms));   // ms after the beat before it
       const reach = (li) => li.classList.add("is-reached");
-      // Before: brand change, ticket, a long wait outside the queue, deploy.
-      at(600,   () => { place(before, 0, false, false); reach(b[0]); });
-      at(1400,  () => place(before, 1));
-      at(2100,  () => reach(b[1]));
-      at(2800,  () => place(before, 2, true));
-      at(3500,  () => { reach(b[2]); b[2].classList.add("is-waiting"); });
-      at(6000,  () => { b[2].classList.remove("is-waiting"); place(before, 3); });
-      at(6700,  () => reach(b[3]));
-      at(7000,  () => { b[3].classList.add("is-done"); $(".ba-dot", before).classList.remove("is-on"); });
+      // Before: brand change, ticket, a long wait outside the queue, through it, deploy.
+      then(600,       () => { place(before, 0, "mid", false); reach(b[0]); });
+      then(800,       () => hop(before, 1));
+      then(HOP + 500, () => hop(before, 2, "short"));
+      then(HOP,       () => { reach(b[2]); b[2].classList.add("is-waiting"); });
+      then(2500,      () => { b[2].classList.remove("is-waiting"); hop(before, 2); });
+      then(HOP + 200, () => hop(before, 3));
+      then(HOP + 300, () => { b[3].classList.add("is-done"); $(".ba-dot", before).classList.remove("is-on"); });
       // After: the lanes trade places, then every step in turn, with a beat on each.
-      at(8000,  () => fig.classList.add("is-two"));
-      at(8900,  () => { place(after, 0, false, false); reach(a[0]); });
-      at(9600,  () => place(after, 1));
-      at(10300, () => reach(a[1]));
-      at(11000, () => place(after, 2));
-      at(11700, () => reach(a[2]));
-      at(12400, () => place(after, 3));
-      at(13100, () => reach(a[3]));
-      at(13400, () => { a[3].classList.add("is-done"); fig.classList.remove("is-staged"); });
+      then(1000,      () => fig.classList.add("is-two"));
+      then(900,       () => { place(after, 0, "mid", false); reach(a[0]); });
+      then(700,       () => hop(after, 1));
+      then(HOP + 500, () => hop(after, 2));
+      then(HOP + 500, () => hop(after, 3));
+      then(HOP + 300, () => { a[3].classList.add("is-done"); fig.classList.remove("is-staged"); });
     });
   });
 
