@@ -2333,7 +2333,7 @@ const CONFIG = {
       ax.drawImage(still, 0, 0);
       D.copies.forEach((c) => ax.drawImage(still, c.sx, c.sy, c.w, c.h, c.dx, c.sy, c.w, c.h));
       const SHEETS = [before, compact, copied, still];
-      const GROUND = [["#F1F3F4", AH], ["#F1F3F4", AH], ["#FFFFFF", 866], ["#FFFFFF", 866]];   // the old sheet's grey runs to the window's edge
+      const GROUND = [["#F1F3F4", AH], ["#F1F3F4", AH], ["#FFFFFF", 866], ["#FFFFFF", 866]];   // the old sheet's grey runs to the frame's edge
 
       let dpr = 1, VS = 1, LW = 1, LF = 12;
       const same = (A, B) => A[0] === B[0] && A[1] === B[1] && A[2] === B[2] && A[3] === B[3];
@@ -2576,6 +2576,7 @@ const CONFIG = {
           ctx.globalAlpha = ra;
           ctx.fillStyle = GROUND[idx][0]; ctx.fillRect(0, 0, AW, GROUND[idx][1]);
           ctx.drawImage(SHEETS[idx], 0, 0);
+          if (idx < 2) ctx.fillRect(1597, 0, AW - 1597, AH);   // the old sheet's last three columns are its export's crop edge: the grey carries on over them
           if (p && p.focus > 0.001) {   // everything but the part in question fades toward the page
             const F = D.focus[cur];
             ctx.fillStyle = PAPER(0.78 * p.focus);

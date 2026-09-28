@@ -321,8 +321,8 @@ Function, answers with Claude Haiku 4.5 by default.
   wattenberger.com). It is a reconstruction from the page until John replaces
   it with the brief as written.
 - **The rebuild** (`initRebuild`, the audit case study's design row, after
-  the blueprint-animation method). A figure marked `data-rebuild`, edge to
-  edge with no panel: the old .Button sheet turns into a line drawing, changes
+  the blueprint-animation method). A figure marked `data-rebuild`, the width
+  of the content column with no panel: the old .Button sheet turns into a line drawing, changes
   in three steps (the icon rows fold away, the rest splits into Button, Icon
   Button and Link, Danger, Brand and Action drop their own disabled cells)
   and comes back as the new sheets, in one loop of about 36 seconds. The

@@ -1543,18 +1543,18 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 
 /* The rebuild (main.js initRebuild, the audit's design row): the old .Button
    sheet turns into a line drawing and is rebuilt as Button, Icon Button and
-   Link in three steps, across the whole window with no panel under it. The
-   three decisions below are its captions: the step playing is marked, and each
-   heading jumps to its step. The drawing takes the page's inks, so it follows
-   the theme; the sheets are screenshots and stay as they are. Without the
-   script, or under reduced motion, the after sheet stands in its place. */
-.rebuild { position: relative; width: 100vw; margin: 0 0 0 calc(50% - 50vw); }
+   Link in three steps, the width of the content column with no panel under
+   it. The three decisions below are its captions: the step playing is marked,
+   and each heading jumps to its step. The drawing takes the page's inks, so it
+   follows the theme; the sheets are screenshots and stay as they are. Without
+   the script, or under reduced motion, the after sheet stands in its place. */
+.rebuild { position: relative; margin: 0; }
 .rebuild-stage { position: relative; aspect-ratio: 1800 / 1000; }
 .rebuild-stage img { position: absolute; left: 0; top: 0; width: 100%; height: auto; max-width: none; }
 .rebuild-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; visibility: hidden; }
 .rebuild.on .rebuild-stage canvas { visibility: visible; }
 .rebuild.on .rebuild-stage img { visibility: hidden; }   /* the canvas draws the same sheet, pixel for pixel, before it takes over */
-.rebuild .art-ctl { right: max(var(--gutter), calc((100% - var(--max)) / 2 + var(--gutter))); bottom: calc(-36px - var(--sp-2)); }   /* under the sheet, off the drawing, on the content column's edge */
+.rebuild .art-ctl { right: 0; bottom: calc(-36px - var(--sp-2)); }   /* under the sheet, off the drawing */
 .step-jump { appearance: none; margin: 0; padding: 0; border: 0; background: none; font: inherit; letter-spacing: inherit; color: inherit; text-align: left; cursor: pointer; }
 @media (hover: hover) and (pointer: fine) { .step-jump:hover { color: var(--accent-ink); } }
 [data-rebuild-steps] .col :is(.t-subhead, .t-body, .col-icon) { transition: color var(--dur-ui); }
