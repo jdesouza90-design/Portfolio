@@ -294,7 +294,13 @@ Function, answers with Claude Haiku 4.5 by default.
   stretch of the track (10–44% and 56–90%), the cards behind stepping
   forward as it goes. Keyboard focus on a card behind scrolls to where it
   is at the front, and a card that has peeled away is hidden, so it leaves
-  the tab order. A wide screen grows, anchored at its top corner, until it
+  the tab order. A jump to a section (the bar's Leadership and About, a
+  search result, a cited source, or another page's link arriving with a
+  section in the address) passes the deck as one block: for the length of
+  the scroll the track keeps only the deck (`.stack.whole`) and the cards
+  hold still, and the page moves by the height taken out (in whole pixels)
+  so nothing on screen shifts. The track grows back once the scroll has
+  settled and the deck is out of sight. A wide screen grows, anchored at its top corner, until it
   runs off the ground's foot however tall the card is. Without the script,
   or under reduced motion, the cards sit in a column. Below 821px the
   screen sits above the copy.
