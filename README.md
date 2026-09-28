@@ -627,7 +627,7 @@ keep their own drawing.
 
 ## Case study skeleton
 
-All six case studies are the same document, in this order:
+Every case study is the same document, in this order:
 
 1. **Hero**: a breadcrumb trail (Home / Work / this study, the current page
    in plain ink and not a link) and then the title and one-sentence
@@ -639,36 +639,35 @@ All six case studies are the same document, in this order:
    The hero's screens carry `fetchpriority="high"`: one of them is the
    page's largest paint, so they load ahead of everything below (the
    work index's first row does the same; the case-study template has it).
-2. **My role**: hairline ledger rows (`.ledger`), heading left and paragraph
-   right, directly under the facts, so a design leader reads the leadership
-   story before the work.
-3. **Results**: centred title and lede, then one `.proof` frame: the headline
-   stat top-left, a label top-right, and under it the evidence (chart,
-   capacity gauge, A/B table, or a hairline list of what shipped where there
-   are no published numbers or the number is too new to chart).
-4. **The story** (`#story`), which opens on the problem: the section intro
-   is the Title "The problem", and
-   the first row under it carries the problem copy (a short paragraph and a
-   tensions list beside an illustration or the old screen) with no heading
-   of its own. There is no separate "How we got there" header; it used to
-   sit above the problem and mostly restated it. Then, always in this order:
-   the design (a `.row.full` with one framed panel or walkthrough under
-   centred copy), any supporting rows (`.row.flip`), then the quotes last (a
-   `.row.full` with its heading and an intro line saying where they came
-   from; Verifications gives its quotes their own section between Results
-   and the story, as the research that shaped it). A full-width
-   row is centred and its headline takes the Title role with a Lede beneath,
-   the same as a section intro; a side-by-side row keeps the Heading role.
-   Each later row is one heading that names it, then one short paragraph.
-   No section or row heading has an eyebrow over it: the heading is the
-   label (The problem, My role, Results), as on harvey.ai. `.eyebrow` is
-   kept for chart, figure and stat labels and the Next case study band.
-5. **What I'd do differently**: one narrow note with run-in labels, where a
-   retro exists.
-   A second deliverable takes a `.row.full` of its own in the story, placed
-   where it happened (the agentic audit page's "The library", its walkthrough
-   between The design and Try it).
-6. **Next**: the closing band: the next case study's title as a link, then
+2. **The problem** (`#story`): the section intro is the Title "The
+   problem", and the first row under it carries the problem copy (a short
+   paragraph and a tensions list beside an illustration or the old screen)
+   with no heading of its own. Research that proves the problem (the
+   interview or usability quotes) follows as a `.row.full#research`. The
+   problem comes first because everything after it answers it (September 28,
+   2026: the pages used to open on My role and Results, so the answers came
+   before the question).
+3. **How I led it** (`#role`): hairline ledger rows (`.ledger`), heading left
+   and paragraph right, the leadership read as the response to the problem.
+4. **Key decisions** (`#key-decisions`): the design (a `.row.full` with one
+   framed panel or walkthrough under centred copy), then any supporting rows
+   (`.row.flip`, the decisions grid, a second deliverable such as the audit
+   page's "The library"). Every row heading is the decision itself, under
+   eight words (Only the card changed, A checklist replaced the progress
+   bar), never a label like "The design". A full-width row is centred and
+   its headline takes the Title role with a Lede beneath; a side-by-side row
+   keeps the Heading role. No section or row heading has an eyebrow over it.
+5. **Results** (`#results`): centred title and a lede that says only what
+   the rows above don't (where the number comes from, what launched when),
+   then one `.proof` frame: the headline stat top-left, a label top-right,
+   and under it the evidence (chart, capacity gauge, A/B table, or a
+   hairline list of what shipped where there are no published numbers).
+   **Reception** (`#reception`) follows where there is public reaction after
+   launch (Staking, Sign-in with Ethereum): its own section, an intro line
+   saying where the quotes came from, then the carousel.
+6. **What I'd do differently**: one narrow note with run-in labels, where a
+   retro exists. Never invented: a page without John's own retro has none.
+7. **Next**: the closing band: the next case study's title as a link, then
    "Previous case study" as a text link with a left arrow under it, then All
    work as a text link with a grid icon beside the Contact me button.
 

@@ -88,18 +88,8 @@
   </div>
 </section>
 
-<!-- 2. Results: title, lede, then the proof (chart, table, capacity bar or quotes; see page-anatomy.md §3) -->
-<section class="cs-section" id="results">
-  <div class="wrap">
-    <header class="section-intro">
-      <h2 class="t-title">Results</h2>
-      <p class="t-lede">{{RESULTS_LEDE}}</p>
-    </header>
-    {{PROOF}}
-  </div>
-</section>
-
-<!-- 3. The story: opens on the problem, then the design row, then optional rows (page-anatomy.md §4) -->
+<!-- 2. The problem: the question the rest of the page answers. The problem row, then any
+     research that proves it (page-anatomy.md §4) -->
 <section class="cs-section" id="story">
   <div class="wrap">
     <header class="section-intro">
@@ -118,26 +108,15 @@
       <figure class="panel"><img decoding="async" width="{{W}}" height="{{H}}" src="../assets/{{PREFIX}}-{{BEFORE}}.webp" alt="{{BEFORE_ALT}}" loading="lazy"></figure>
     </article>
 
-    <article class="row full" id="design">
-      <div class="row-copy">
-        <h3 class="t-title">The design</h3>
-        <p class="t-lede">{{DESIGN_BODY}}</p>
-      </div>
-      <!-- DESIGN_VISUAL: a .panel with a .gallery (Before:/After: captions if that is the story), or a walkthrough (page-anatomy.md §4) -->
-      {{DESIGN_VISUAL}}
-    </article>
-
-    <!-- OPTIONAL: Design decisions grid (page-anatomy.md §4, "Decisions row"). Delete if fewer than two decisions. -->
-    <!-- OPTIONAL: Second surface row (.row.flip with a cropped wide panel). -->
-    <!-- OPTIONAL: Research row (.row.flip with .quote-list and a screen), or Community reaction (.row.full with .quotes). -->
+    <!-- OPTIONAL: Research row (#research, .row.full with the quotes carousel): what people said before the work began. -->
   </div>
 </section>
 
-<!-- 4. My role: three ledger rows -->
+<!-- 3. How I led it: three ledger rows, read as the answer to the problem -->
 <section class="cs-section" id="role">
   <div class="wrap">
     <header class="section-intro">
-      <h2 class="t-title">My role</h2>
+      <h2 class="t-title">How I led it</h2>
     </header>
     <div class="ledger">
       <div class="ledger-row"><h3 class="t-heading">{{ROLE_1_LABEL}}</h3><p class="t-body">{{ROLE_1_BODY}}</p></div>
@@ -147,7 +126,44 @@
   </div>
 </section>
 
-<!-- 5. OPTIONAL: What I'd do differently. Delete the whole section if there is no honest retro. -->
+<!-- 4. Key decisions: each row's heading is the decision itself, under eight words
+     ("Only the card changed"), never a label like "The design" (page-anatomy.md §4) -->
+<section class="cs-section" id="key-decisions">
+  <div class="wrap">
+    <header class="section-intro">
+      <h2 class="t-title">Key decisions</h2>
+    </header>
+
+    <article class="row full" id="design">
+      <div class="row-copy">
+        <h3 class="t-title">{{DESIGN_DECISION}}</h3>
+        <p class="t-lede">{{DESIGN_BODY}}</p>
+      </div>
+      <!-- DESIGN_VISUAL: a .panel with a .gallery (Before:/After: captions if that is the story), or a walkthrough (page-anatomy.md §4) -->
+      {{DESIGN_VISUAL}}
+    </article>
+
+    <!-- OPTIONAL: Decisions grid (page-anatomy.md §4, "Decisions row"). Delete if fewer than two decisions. -->
+    <!-- OPTIONAL: Second surface row (.row.flip with a cropped wide panel). -->
+  </div>
+</section>
+
+<!-- 5. Results: the proof lands once the reader knows the stakes. The lede says only what the
+     rows above don't: where the number comes from, what launched when (page-anatomy.md §3) -->
+<section class="cs-section" id="results">
+  <div class="wrap">
+    <header class="section-intro">
+      <h2 class="t-title">Results</h2>
+      <p class="t-lede">{{RESULTS_LEDE}}</p>
+    </header>
+    {{PROOF}}
+  </div>
+</section>
+
+<!-- OPTIONAL: Reception (#reception): public reaction after launch, a section intro with a
+     lede saying where the quotes came from, then the quotes carousel. -->
+
+<!-- 6. OPTIONAL: What I'd do differently. Delete the whole section if there is no honest retro. -->
 <section class="cs-section" id="retro">
   <div class="wrap">
     <header class="section-intro">
@@ -161,7 +177,7 @@
   </div>
 </section>
 
-<!-- 6. Next: the ring (wiring.md §5). PREV_SLUG is the page before this one in the ring,
+<!-- 7. Next: the ring (wiring.md §5). PREV_SLUG is the page before this one in the ring,
      NEXT_SLUG and NEXT_NAME the page after; check.py fails on any slot left unfilled. -->
 <section class="cs-next">
   <div class="wrap">

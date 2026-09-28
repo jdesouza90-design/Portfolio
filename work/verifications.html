@@ -87,10 +87,73 @@
   </div>
 </section>
 
+<section class="cs-section" id="story">
+  <div class="wrap">
+    <header class="section-intro">
+      <h2 class="t-title">The problem</h2>
+    </header>
+    <article class="row" id="problem">
+      <div class="row-copy">
+        <p class="t-body">Once a file was sent, the dashboard went quiet, so applicants called to ask.</p>
+        <ul class="tensions">
+          <li><strong>Unclear status</strong><span>After submitting, applicants couldn’t tell what was pending, accepted or still needed.</span></li>
+          <li><strong>Ambiguous requirements</strong><span>The dashboard didn’t say which formats or alternatives were accepted.</span></li>
+          <li><strong>Progress bar confusion</strong><span>A multi-step progress bar implied steps that didn’t exist, right at the point of submission.</span></li>
+        </ul>
+      </div>
+      <figure class="panel"><img decoding="async" width="780" height="2000" src="../assets/ver-step1.webp?v=411d3474" alt="Application pending dashboard with Step 1: Action Required, asking a co-owner to sign a document" loading="lazy"></figure>
+    </article>
+    <article class="row full" id="research">
+      <div class="row-copy">
+        <h3 class="t-title">Research</h3>
+        <p class="t-lede">From the usability sessions on the current upload flow.</p>
+      </div>
+      <section class="testimonials" data-carousel aria-roledescription="carousel" aria-label="What customers told us">
+        <div class="testimonial-track" aria-live="off">
+          <div class="testimonial active" role="group" aria-roledescription="slide" aria-label="1 of 3">
+            <blockquote class="quote"><p class="t-quote">“If that ‘in review’ would’ve been maybe bigger or a different color, I would’ve noticed it earlier.”</p></blockquote>
+            <div class="testimonial-foot">
+              <span class="avatar glyph" aria-hidden="true">“</span>
+              <cite><b>Clear status badge</b>Usability session</cite>
+              <span class="testimonial-mark">Best Egg</span>
+            </div>
+          </div>
+          <div class="testimonial" role="group" aria-roledescription="slide" aria-label="2 of 3">
+            <blockquote class="quote"><p class="t-quote">“Maybe just telling me how I will hear from you would make me feel more confident and informed.”</p></blockquote>
+            <div class="testimonial-foot">
+              <span class="avatar glyph" aria-hidden="true">“</span>
+              <cite><b>Communication</b>Usability session</cite>
+              <span class="testimonial-mark">Best Egg</span>
+            </div>
+          </div>
+          <div class="testimonial" role="group" aria-roledescription="slide" aria-label="3 of 3">
+            <blockquote class="quote"><p class="t-quote">“Instead of that little circle, there could be a button called upload for each individual W2, pay stub, and ID.”</p></blockquote>
+            <div class="testimonial-foot">
+              <span class="avatar glyph" aria-hidden="true">“</span>
+              <cite><b>Visual cues</b>Usability session</cite>
+              <span class="testimonial-mark">Best Egg</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-controls">
+          <button class="ctl prev" type="button" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6C15 6 9.00001 10.4189 9 12C8.99999 13.5812 15 18 15 18"/></svg></button>
+          <div class="dots">
+            <button class="dot" type="button" aria-label="Show 1 of 3" aria-current="true"></button>
+            <button class="dot" type="button" aria-label="Show 2 of 3" aria-current="false"></button>
+            <button class="dot" type="button" aria-label="Show 3 of 3" aria-current="false"></button>
+          </div>
+          <button class="ctl next" type="button" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.00005 6C9.00005 6 15 10.4189 15 12C15 13.5812 9 18 9 18"/></svg></button>
+          <button class="ctl pause" type="button" aria-pressed="false" aria-label="Pause rotation"><svg class="i-pause" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 7C4 5.58579 4 4.87868 4.43934 4.43934C4.87868 4 5.58579 4 7 4C8.41421 4 9.12132 4 9.56066 4.43934C10 4.87868 10 5.58579 10 7V17C10 18.4142 10 19.1213 9.56066 19.5607C9.12132 20 8.41421 20 7 20C5.58579 20 4.87868 20 4.43934 19.5607C4 19.1213 4 18.4142 4 17V7Z"/><path d="M14 7C14 5.58579 14 4.87868 14.4393 4.43934C14.8787 4 15.5858 4 17 4C18.4142 4 19.1213 4 19.5607 4.43934C20 4.87868 20 5.58579 20 7V17C20 18.4142 20 19.1213 19.5607 19.5607C19.1213 20 18.4142 20 17 20C15.5858 20 14.8787 20 14.4393 19.5607C14 19.1213 14 18.4142 14 17V7Z"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M18.8906 12.846C18.5371 14.189 16.8667 15.138 13.5257 17.0361C10.296 18.8709 8.6812 19.7884 7.37983 19.4196C6.8418 19.2671 6.35159 18.9776 5.95624 18.5787C5 17.6139 5 15.7426 5 12C5 8.2574 5 6.3861 5.95624 5.42132C6.35159 5.02245 6.8418 4.73288 7.37983 4.58042C8.6812 4.21165 10.296 5.12907 13.5257 6.96393C16.8667 8.86197 18.5371 9.811 18.8906 11.154C19.0365 11.7084 19.0365 12.2916 18.8906 12.846Z"/></svg></button>
+        </div>
+      </section>
+    </article>
+  </div>
+</section>
+
 <section class="cs-section" id="role">
   <div class="wrap">
     <header class="section-intro">
-      <h2 class="t-title">My role</h2>
+      <h2 class="t-title">How I led it</h2>
     </header>
     <div class="ledger">
       <div class="ledger-row"><h3 class="t-heading">Requirements</h3><p class="t-body">I got product, engineering, compliance and operations to agree on requirements before design started, and kept the priorities from shifting once it had.</p></div>
@@ -100,11 +163,39 @@
   </div>
 </section>
 
+<section class="cs-section" id="key-decisions">
+  <div class="wrap">
+    <header class="section-intro">
+      <h2 class="t-title">Key decisions</h2>
+    </header>
+    <article class="row full" id="design">
+      <div class="row-copy">
+        <h3 class="t-title">A checklist replaced the progress bar</h3>
+        <p class="t-lede">Design B is a document-led checklist: one clear upload per document, explicit format guidance and a status the applicant can see the moment a file lands.</p>
+      </div>
+      <div class="panel">
+        <div class="gallery">
+          <figure><img decoding="async" width="780" height="2000" src="../assets/ver-upload-list.webp?v=ef093bf9" alt="Upload documents checklist: W-2, paystub, identification, 0 of 3 complete" loading="lazy"><figcaption>Document checklist</figcaption></figure>
+          <figure><img decoding="async" width="780" height="2000" src="../assets/ver-w2-empty.webp?v=24824093" alt="W-2 upload screen with guidance and an empty state" loading="lazy"><figcaption>Per-document upload</figcaption></figure>
+          <figure><img decoding="async" width="780" height="2000" src="../assets/ver-w2-submitted.webp?v=bd217d5b" alt="W-2 upload screen with a submitted file listed and a Done button" loading="lazy"><figcaption>Submitted state</figcaption></figure>
+        </div>
+      </div>
+    </article>
+    <article class="row flip" id="done">
+      <div class="row-copy">
+        <h3 class="t-heading">A clear end to the upload</h3>
+        <p class="t-body">We saw applicants stall after adding their documents: nothing told them they were done. We added an “I’m done” button that takes them back to the dashboard, and applicants stopped stalling.</p>
+      </div>
+      <figure class="panel cutout"><img decoding="async" width="718" height="708" src="../assets/ver-done-cta.webp?v=b436dbcf" alt="The uploaded files card: two documents marked In review, then an Upload another button and a filled I'm done button" loading="lazy"></figure>
+    </article>
+  </div>
+</section>
+
 <section class="cs-section" id="results">
   <div class="wrap">
     <header class="section-intro">
       <h2 class="t-title">Results</h2>
-      <p class="t-lede">After uploading documents, applicants had no way to confirm what was pending, accepted or still needed, and a misleading progress bar made it worse. We replaced it with a checklist per document, explicit format guidance and a status that appears the moment a file lands. The opportunity, 7,000 fewer support calls a month, was sized with product and operations before the work began.</p>
+      <p class="t-lede">The opportunity, 7,000 fewer support calls a month, was sized with product and operations before the work began.</p>
     </header>
     <div class="proof">
       <div class="proof-head">
@@ -127,95 +218,6 @@
         <li><strong>Rollout</strong><span>Design B shipped to production and is now live in an A/B test, ramped to 50% of applicants. As of September 28, 2026, its verification rate is 68%, against 58% for control.</span></li>
       </ul>
     </div>
-  </div>
-</section>
-
-<section class="cs-section" id="research">
-  <div class="wrap">
-    <header class="section-intro">
-      <h2 class="t-title">Research</h2>
-      <p class="t-lede">From the usability sessions on the current upload flow.</p>
-    </header>
-    <section class="testimonials" data-carousel aria-roledescription="carousel" aria-label="What customers told us">
-      <div class="testimonial-track" aria-live="off">
-        <div class="testimonial active" role="group" aria-roledescription="slide" aria-label="1 of 3">
-          <blockquote class="quote"><p class="t-quote">“If that ‘in review’ would’ve been maybe bigger or a different color, I would’ve noticed it earlier.”</p></blockquote>
-          <div class="testimonial-foot">
-            <span class="avatar glyph" aria-hidden="true">“</span>
-            <cite><b>Clear status badge</b>Usability session</cite>
-            <span class="testimonial-mark">Best Egg</span>
-          </div>
-        </div>
-        <div class="testimonial" role="group" aria-roledescription="slide" aria-label="2 of 3">
-          <blockquote class="quote"><p class="t-quote">“Maybe just telling me how I will hear from you would make me feel more confident and informed.”</p></blockquote>
-          <div class="testimonial-foot">
-            <span class="avatar glyph" aria-hidden="true">“</span>
-            <cite><b>Communication</b>Usability session</cite>
-            <span class="testimonial-mark">Best Egg</span>
-          </div>
-        </div>
-        <div class="testimonial" role="group" aria-roledescription="slide" aria-label="3 of 3">
-          <blockquote class="quote"><p class="t-quote">“Instead of that little circle, there could be a button called upload for each individual W2, pay stub, and ID.”</p></blockquote>
-          <div class="testimonial-foot">
-            <span class="avatar glyph" aria-hidden="true">“</span>
-            <cite><b>Visual cues</b>Usability session</cite>
-            <span class="testimonial-mark">Best Egg</span>
-          </div>
-        </div>
-      </div>
-      <div class="testimonial-controls">
-        <button class="ctl prev" type="button" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6C15 6 9.00001 10.4189 9 12C8.99999 13.5812 15 18 15 18"/></svg></button>
-        <div class="dots">
-          <button class="dot" type="button" aria-label="Show 1 of 3" aria-current="true"></button>
-          <button class="dot" type="button" aria-label="Show 2 of 3" aria-current="false"></button>
-          <button class="dot" type="button" aria-label="Show 3 of 3" aria-current="false"></button>
-        </div>
-        <button class="ctl next" type="button" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.00005 6C9.00005 6 15 10.4189 15 12C15 13.5812 9 18 9 18"/></svg></button>
-        <button class="ctl pause" type="button" aria-pressed="false" aria-label="Pause rotation"><svg class="i-pause" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 7C4 5.58579 4 4.87868 4.43934 4.43934C4.87868 4 5.58579 4 7 4C8.41421 4 9.12132 4 9.56066 4.43934C10 4.87868 10 5.58579 10 7V17C10 18.4142 10 19.1213 9.56066 19.5607C9.12132 20 8.41421 20 7 20C5.58579 20 4.87868 20 4.43934 19.5607C4 19.1213 4 18.4142 4 17V7Z"/><path d="M14 7C14 5.58579 14 4.87868 14.4393 4.43934C14.8787 4 15.5858 4 17 4C18.4142 4 19.1213 4 19.5607 4.43934C20 4.87868 20 5.58579 20 7V17C20 18.4142 20 19.1213 19.5607 19.5607C19.1213 20 18.4142 20 17 20C15.5858 20 14.8787 20 14.4393 19.5607C14 19.1213 14 18.4142 14 17V7Z"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M18.8906 12.846C18.5371 14.189 16.8667 15.138 13.5257 17.0361C10.296 18.8709 8.6812 19.7884 7.37983 19.4196C6.8418 19.2671 6.35159 18.9776 5.95624 18.5787C5 17.6139 5 15.7426 5 12C5 8.2574 5 6.3861 5.95624 5.42132C6.35159 5.02245 6.8418 4.73288 7.37983 4.58042C8.6812 4.21165 10.296 5.12907 13.5257 6.96393C16.8667 8.86197 18.5371 9.811 18.8906 11.154C19.0365 11.7084 19.0365 12.2916 18.8906 12.846Z"/></svg></button>
-      </div>
-    </section>
-  </div>
-</section>
-
-<section class="cs-section" id="story">
-  <div class="wrap">
-    <header class="section-intro">
-      <h2 class="t-title">The problem</h2>
-    </header>
-
-    <article class="row" id="problem">
-      <div class="row-copy">
-        <p class="t-body">Once a file was sent, the dashboard went quiet, so applicants called to ask.</p>
-        <ul class="tensions">
-          <li><strong>Unclear status</strong><span>After submitting, applicants couldn’t tell what was pending, accepted or still needed.</span></li>
-          <li><strong>Ambiguous requirements</strong><span>The dashboard didn’t say which formats or alternatives were accepted.</span></li>
-          <li><strong>Progress bar confusion</strong><span>A multi-step progress bar implied steps that didn’t exist, right at the point of submission.</span></li>
-        </ul>
-      </div>
-      <figure class="panel"><img decoding="async" width="780" height="2000" src="../assets/ver-step1.webp?v=411d3474" alt="Application pending dashboard with Step 1: Action Required, asking a co-owner to sign a document" loading="lazy"></figure>
-    </article>
-
-    <article class="row full" id="design">
-      <div class="row-copy">
-        <h3 class="t-title">The design</h3>
-        <p class="t-lede">Design B replaces the progress bar with a document-led checklist: one clear upload per document, explicit format guidance and a status the applicant can see the moment a file lands.</p>
-      </div>
-      <div class="panel">
-        <div class="gallery">
-          <figure><img decoding="async" width="780" height="2000" src="../assets/ver-upload-list.webp?v=ef093bf9" alt="Upload documents checklist: W-2, paystub, identification, 0 of 3 complete" loading="lazy"><figcaption>Document checklist</figcaption></figure>
-          <figure><img decoding="async" width="780" height="2000" src="../assets/ver-w2-empty.webp?v=24824093" alt="W-2 upload screen with guidance and an empty state" loading="lazy"><figcaption>Per-document upload</figcaption></figure>
-          <figure><img decoding="async" width="780" height="2000" src="../assets/ver-w2-submitted.webp?v=bd217d5b" alt="W-2 upload screen with a submitted file listed and a Done button" loading="lazy"><figcaption>Submitted state</figcaption></figure>
-        </div>
-      </div>
-    </article>
-
-    <article class="row flip" id="done">
-      <div class="row-copy">
-        <h3 class="t-heading">What we fixed</h3>
-        <p class="t-body">We saw applicants stall after adding their documents: nothing told them they were done. We added an “I’m done” button that takes them back to the dashboard, and applicants stopped stalling.</p>
-      </div>
-      <figure class="panel cutout"><img decoding="async" width="718" height="708" src="../assets/ver-done-cta.webp?v=b436dbcf" alt="The uploaded files card: two documents marked In review, then an Upload another button and a filled I'm done button" loading="lazy"></figure>
-    </article>
   </div>
 </section>
 

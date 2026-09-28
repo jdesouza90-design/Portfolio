@@ -88,10 +88,29 @@
   </div>
 </section>
 
+<section class="cs-section" id="story">
+  <div class="wrap">
+    <header class="section-intro">
+      <h2 class="t-title">The problem</h2>
+    </header>
+    <article class="row" id="problem">
+      <div class="row-copy">
+        <p class="t-body">The existing pattern spoke in seed phrases and signatures. For anyone outside web3, it read as a different product, not a login.</p>
+        <ul class="tensions">
+          <li><strong>Autonomy</strong><span>People should hold their own identity data and decide how it’s used.</span></li>
+          <li><strong>Safety</strong><span>The key never leaves the wallet: the user signs a message and the server only verifies the signature.</span></li>
+          <li><strong>Adoption</strong><span>It had to look and behave like the login people already know.</span></li>
+        </ul>
+      </div>
+      <figure class="panel flat"><img decoding="async" width="1187" height="768" src="../assets/siwe-illustration.webp?v=32c57c62" alt="Abstract illustration of a glowing hexagonal circuit, representing Ethereum-based identity" loading="lazy"></figure>
+    </article>
+  </div>
+</section>
+
 <section class="cs-section" id="role">
   <div class="wrap">
     <header class="section-intro">
-      <h2 class="t-title">My role</h2>
+      <h2 class="t-title">How I led it</h2>
     </header>
     <div class="ledger">
       <div class="ledger-row"><h3 class="t-heading">Design direction</h3><p class="t-body">I led design, engineering and identity product through the core tension: wallet-based identity with no friction for people who’d never used a wallet. The consumer and developer-facing teams shipped one consistent experience.</p></div>
@@ -101,11 +120,32 @@
   </div>
 </section>
 
+<section class="cs-section" id="key-decisions">
+  <div class="wrap">
+    <header class="section-intro">
+      <h2 class="t-title">Key decisions</h2>
+    </header>
+    <article class="row full" id="design">
+      <div class="row-copy">
+        <h3 class="t-title">An ordinary login page</h3>
+        <p class="t-lede">The flow keeps the familiar shape of a login page. No seed phrases, no new vocabulary, and the profile metadata developers need arrives with the session.</p>
+      </div>
+      <div>
+        <div class="walk">
+          <img decoding="async" width="900" height="720" src="../assets/siwe-walkthrough-poster.jpg?v=0e74c331" data-anim="../assets/siwe-walkthrough.webp?v=d833be0e" alt="Walkthrough of logging in with an Ethereum wallet" loading="lazy">
+          <button class="btn btn-sm play" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M18.8906 12.846C18.5371 14.189 16.8667 15.138 13.5257 17.0361C10.296 18.8709 8.6812 19.7884 7.37983 19.4196C6.8418 19.2671 6.35159 18.9776 5.95624 18.5787C5 17.6139 5 15.7426 5 12C5 8.2574 5 6.3861 5.95624 5.42132C6.35159 5.02245 6.8418 4.73288 7.37983 4.58042C8.6812 4.21165 10.296 5.12907 13.5257 6.96393C16.8667 8.86197 18.5371 9.811 18.8906 11.154C19.0365 11.7084 19.0365 12.2916 18.8906 12.846Z"/></svg> <span>Play walkthrough</span></button>
+        </div>
+        <p class="walk-note t-small">Screen recording of the Login with Ethereum flow (about 5 MB, loads on play).</p>
+      </div>
+    </article>
+  </div>
+</section>
+
 <section class="cs-section" id="results">
   <div class="wrap">
     <header class="section-intro">
       <h2 class="t-title">Results</h2>
-      <p class="t-lede">Wallet login was a pattern built for people already in web3. We kept the shape of an ordinary login page instead: one button, a wallet prompt, a signed message. There are no published usage metrics, so the outcome is qualitative.</p>
+      <p class="t-lede">There are no published usage metrics, so the outcome is qualitative.</p>
     </header>
     <div class="proof">
       <div class="proof-head">
@@ -121,82 +161,50 @@
   </div>
 </section>
 
-<section class="cs-section" id="story">
+<section class="cs-section" id="reception">
   <div class="wrap">
     <header class="section-intro">
-      <h2 class="t-title">The problem</h2>
+      <h2 class="t-title">Reception</h2>
+      <p class="t-lede">Public posts from December 2021, the week it launched.</p>
     </header>
-
-    <article class="row" id="problem">
-      <div class="row-copy">
-        <p class="t-body">The existing pattern spoke in seed phrases and signatures. For anyone outside web3, it read as a different product, not a login.</p>
-        <ul class="tensions">
-          <li><strong>Autonomy</strong><span>People should hold their own identity data and decide how it’s used.</span></li>
-          <li><strong>Safety</strong><span>The key never leaves the wallet: the user signs a message and the server only verifies the signature.</span></li>
-          <li><strong>Adoption</strong><span>It had to look and behave like the login people already know.</span></li>
-        </ul>
-      </div>
-      <figure class="panel flat"><img decoding="async" width="1187" height="768" src="../assets/siwe-illustration.webp?v=32c57c62" alt="Abstract illustration of a glowing hexagonal circuit, representing Ethereum-based identity" loading="lazy"></figure>
-    </article>
-
-    <article class="row full" id="design">
-      <div class="row-copy">
-        <h3 class="t-title">The design</h3>
-        <p class="t-lede">The flow keeps the familiar shape of a login page. No seed phrases, no new vocabulary, and the profile metadata developers need arrives with the session.</p>
-      </div>
-      <div>
-        <div class="walk">
-          <img decoding="async" width="900" height="720" src="../assets/siwe-walkthrough-poster.jpg?v=0e74c331" data-anim="../assets/siwe-walkthrough.webp?v=d833be0e" alt="Walkthrough of logging in with an Ethereum wallet" loading="lazy">
-          <button class="btn btn-sm play" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M18.8906 12.846C18.5371 14.189 16.8667 15.138 13.5257 17.0361C10.296 18.8709 8.6812 19.7884 7.37983 19.4196C6.8418 19.2671 6.35159 18.9776 5.95624 18.5787C5 17.6139 5 15.7426 5 12C5 8.2574 5 6.3861 5.95624 5.42132C6.35159 5.02245 6.8418 4.73288 7.37983 4.58042C8.6812 4.21165 10.296 5.12907 13.5257 6.96393C16.8667 8.86197 18.5371 9.811 18.8906 11.154C19.0365 11.7084 19.0365 12.2916 18.8906 12.846Z"/></svg> <span>Play walkthrough</span></button>
-        </div>
-        <p class="walk-note t-small">Screen recording of the Login with Ethereum flow (about 5 MB, loads on play).</p>
-      </div>
-    </article>
-
-    <article class="row full" id="reaction">
-      <div class="row-copy">
-        <h3 class="t-title">Reception</h3>
-        <p class="t-lede">Public posts from December 2021, the week it launched.</p>
-      </div>
-      <section class="testimonials" data-carousel aria-roledescription="carousel" aria-label="What customers told us">
-        <div class="testimonial-track" aria-live="off">
-          <div class="testimonial active" role="group" aria-roledescription="slide" aria-label="1 of 3">
-            <blockquote class="quote"><p class="t-quote">“The profile meta is very handy, reduces complexity for developers and most likely better performance.”</p></blockquote>
-            <div class="testimonial-foot">
-              <span class="avatar" aria-hidden="true">MW</span>
-              <cite><b>Martin Walsh</b>@martin64k · Dec 10, 2021</cite>
-              <span class="testimonial-mark">Auth0</span>
-            </div>
-          </div>
-          <div class="testimonial" role="group" aria-roledescription="slide" aria-label="2 of 3">
-            <blockquote class="quote"><p class="t-quote">“Sleek! You’ve done well pulling all relevant metadata quickly too.”</p></blockquote>
-            <div class="testimonial-foot">
-              <span class="avatar" aria-hidden="true">D</span>
-              <cite><b>daws.eth</b>@DawsonBotsford · Dec 9, 2021</cite>
-              <span class="testimonial-mark">Auth0</span>
-            </div>
-          </div>
-          <div class="testimonial" role="group" aria-roledescription="slide" aria-label="3 of 3">
-            <blockquote class="quote"><p class="t-quote">“Wow this is huge, it would be amazing if all authentication can be done with wallets instead of passwords.”</p></blockquote>
-            <div class="testimonial-foot">
-              <span class="avatar" aria-hidden="true">O</span>
-              <cite><b>Oliver</b>@OliverIngle · Dec 9, 2021</cite>
-              <span class="testimonial-mark">Auth0</span>
-            </div>
+    <section class="testimonials" data-carousel aria-roledescription="carousel" aria-label="What customers told us">
+      <div class="testimonial-track" aria-live="off">
+        <div class="testimonial active" role="group" aria-roledescription="slide" aria-label="1 of 3">
+          <blockquote class="quote"><p class="t-quote">“The profile meta is very handy, reduces complexity for developers and most likely better performance.”</p></blockquote>
+          <div class="testimonial-foot">
+            <span class="avatar" aria-hidden="true">MW</span>
+            <cite><b>Martin Walsh</b>@martin64k · Dec 10, 2021</cite>
+            <span class="testimonial-mark">Auth0</span>
           </div>
         </div>
-      <div class="testimonial-controls">
-        <button class="ctl prev" type="button" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6C15 6 9.00001 10.4189 9 12C8.99999 13.5812 15 18 15 18"/></svg></button>
-        <div class="dots">
-          <button class="dot" type="button" aria-label="Show 1 of 3" aria-current="true"></button>
-          <button class="dot" type="button" aria-label="Show 2 of 3" aria-current="false"></button>
-          <button class="dot" type="button" aria-label="Show 3 of 3" aria-current="false"></button>
+        <div class="testimonial" role="group" aria-roledescription="slide" aria-label="2 of 3">
+          <blockquote class="quote"><p class="t-quote">“Sleek! You’ve done well pulling all relevant metadata quickly too.”</p></blockquote>
+          <div class="testimonial-foot">
+            <span class="avatar" aria-hidden="true">D</span>
+            <cite><b>daws.eth</b>@DawsonBotsford · Dec 9, 2021</cite>
+            <span class="testimonial-mark">Auth0</span>
+          </div>
         </div>
-        <button class="ctl next" type="button" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.00005 6C9.00005 6 15 10.4189 15 12C15 13.5812 9 18 9 18"/></svg></button>
-        <button class="ctl pause" type="button" aria-pressed="false" aria-label="Pause rotation"><svg class="i-pause" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 7C4 5.58579 4 4.87868 4.43934 4.43934C4.87868 4 5.58579 4 7 4C8.41421 4 9.12132 4 9.56066 4.43934C10 4.87868 10 5.58579 10 7V17C10 18.4142 10 19.1213 9.56066 19.5607C9.12132 20 8.41421 20 7 20C5.58579 20 4.87868 20 4.43934 19.5607C4 19.1213 4 18.4142 4 17V7Z"/><path d="M14 7C14 5.58579 14 4.87868 14.4393 4.43934C14.8787 4 15.5858 4 17 4C18.4142 4 19.1213 4 19.5607 4.43934C20 4.87868 20 5.58579 20 7V17C20 18.4142 20 19.1213 19.5607 19.5607C19.1213 20 18.4142 20 17 20C15.5858 20 14.8787 20 14.4393 19.5607C14 19.1213 14 18.4142 14 17V7Z"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M18.8906 12.846C18.5371 14.189 16.8667 15.138 13.5257 17.0361C10.296 18.8709 8.6812 19.7884 7.37983 19.4196C6.8418 19.2671 6.35159 18.9776 5.95624 18.5787C5 17.6139 5 15.7426 5 12C5 8.2574 5 6.3861 5.95624 5.42132C6.35159 5.02245 6.8418 4.73288 7.37983 4.58042C8.6812 4.21165 10.296 5.12907 13.5257 6.96393C16.8667 8.86197 18.5371 9.811 18.8906 11.154C19.0365 11.7084 19.0365 12.2916 18.8906 12.846Z"/></svg></button>
+        <div class="testimonial" role="group" aria-roledescription="slide" aria-label="3 of 3">
+          <blockquote class="quote"><p class="t-quote">“Wow this is huge, it would be amazing if all authentication can be done with wallets instead of passwords.”</p></blockquote>
+          <div class="testimonial-foot">
+            <span class="avatar" aria-hidden="true">O</span>
+            <cite><b>Oliver</b>@OliverIngle · Dec 9, 2021</cite>
+            <span class="testimonial-mark">Auth0</span>
+          </div>
+        </div>
       </div>
-      </section>
-    </article>
+    <div class="testimonial-controls">
+      <button class="ctl prev" type="button" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6C15 6 9.00001 10.4189 9 12C8.99999 13.5812 15 18 15 18"/></svg></button>
+      <div class="dots">
+        <button class="dot" type="button" aria-label="Show 1 of 3" aria-current="true"></button>
+        <button class="dot" type="button" aria-label="Show 2 of 3" aria-current="false"></button>
+        <button class="dot" type="button" aria-label="Show 3 of 3" aria-current="false"></button>
+      </div>
+      <button class="ctl next" type="button" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.00005 6C9.00005 6 15 10.4189 15 12C15 13.5812 9 18 9 18"/></svg></button>
+      <button class="ctl pause" type="button" aria-pressed="false" aria-label="Pause rotation"><svg class="i-pause" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 7C4 5.58579 4 4.87868 4.43934 4.43934C4.87868 4 5.58579 4 7 4C8.41421 4 9.12132 4 9.56066 4.43934C10 4.87868 10 5.58579 10 7V17C10 18.4142 10 19.1213 9.56066 19.5607C9.12132 20 8.41421 20 7 20C5.58579 20 4.87868 20 4.43934 19.5607C4 19.1213 4 18.4142 4 17V7Z"/><path d="M14 7C14 5.58579 14 4.87868 14.4393 4.43934C14.8787 4 15.5858 4 17 4C18.4142 4 19.1213 4 19.5607 4.43934C20 4.87868 20 5.58579 20 7V17C20 18.4142 20 19.1213 19.5607 19.5607C19.1213 20 18.4142 20 17 20C15.5858 20 14.8787 20 14.4393 19.5607C14 19.1213 14 18.4142 14 17V7Z"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M18.8906 12.846C18.5371 14.189 16.8667 15.138 13.5257 17.0361C10.296 18.8709 8.6812 19.7884 7.37983 19.4196C6.8418 19.2671 6.35159 18.9776 5.95624 18.5787C5 17.6139 5 15.7426 5 12C5 8.2574 5 6.3861 5.95624 5.42132C6.35159 5.02245 6.8418 4.73288 7.37983 4.58042C8.6812 4.21165 10.296 5.12907 13.5257 6.96393C16.8667 8.86197 18.5371 9.811 18.8906 11.154C19.0365 11.7084 19.0365 12.2916 18.8906 12.846Z"/></svg></button>
+    </div>
+    </section>
   </div>
 </section>
 
