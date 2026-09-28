@@ -794,10 +794,8 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
    the art moves above the copy as a short cover so the copy stays near the top. */
 .lead-art { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); align-items: stretch; }
 .lead-art-panel { position: relative; overflow: hidden; margin: 0; border-radius: var(--radius-sm); min-height: 300px; background: linear-gradient(135deg, #F4EFE5, #E4DAC6); }
-.lead-art-panel img, .lead-art-panel canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.lead-art-panel img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 /* the still SVG is the ground truth; the canvas takes over once main.js is running the strands */
-.lead-art-panel canvas { display: none; }
-.lead-art-panel.live canvas { display: block; }
 .lead-art-panel.live img { visibility: hidden; }
 .art-ctl { position: absolute; right: 12px; bottom: 12px; width: 36px; height: 36px; padding: 0; border: 1px solid var(--hair-2); border-radius: var(--radius-btn); background: color-mix(in srgb, var(--surface) 55%, transparent); color: var(--ink); cursor: pointer; display: grid; place-items: center; transition: border-color var(--dur-hover), color var(--dur-hover); }
 .art-ctl:hover { border-color: var(--accent); color: var(--accent-ink); }
@@ -805,6 +803,102 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .art-ctl svg { width: 14px; height: 14px; }
 .art-ctl .i-pause, .art-ctl[aria-pressed="true"] .i-play { display: block; }
 .art-ctl .i-play, .art-ctl[aria-pressed="true"] .i-pause { display: none; }
+/* ---- AI in the process: the card's copy as a process, after ramp.com's feature cards.
+   One step on screen at a time: the brief the agent picks up, the agent's work
+   on a real object, the team's review. Between steps the view travels along a
+   dotted line that stays behind, so the steps read as one flow. The scene is
+   a fixed size, scaled to fit the room the pause button leaves. Plate colors
+   only: the panel stays sand in both registers. ---- */
+.story { position: absolute; inset: 0; overflow: hidden; font-family: var(--font-body); color: #14100C; }
+.st-scene { position: absolute; transform-origin: 0 0; }
+.story[data-layout="tall"] .st-scene { width: 340px; height: 300px; }
+.story[data-layout="wide"] .st-scene { width: 340px; height: 250px; }
+.st-ex { position: absolute; inset: 0; opacity: 0; transition: opacity 900ms cubic-bezier(.16, 1, .3, 1); perspective: 1200px; }
+.st-ex.on { opacity: 1; }
+.st-track { position: absolute; left: 0; top: 0; transition: transform 1500ms cubic-bezier(.65, 0, .25, 1); }
+
+/* the dotted line: round dots, drawn in as the view moves on */
+.st-line { position: absolute; transform-origin: 0 0; transition: transform 1500ms cubic-bezier(.65, 0, .25, 1); }
+.story[data-layout="tall"] .st-line { width: 4px; margin-left: -2px; background: radial-gradient(circle, rgba(20, 16, 12, .38) 1.3px, transparent 1.8px) center top / 4px 10px repeat-y; transform: scaleY(0); }
+.story[data-layout="wide"] .st-line { height: 4px; margin-top: -2px; background: radial-gradient(circle, rgba(20, 16, 12, .38) 1.3px, transparent 1.8px) left center / 10px 4px repeat-x; transform: scaleX(0); }
+.story[data-layout="tall"] .st-line.on { transform: scaleY(1); }
+.story[data-layout="wide"] .st-line.on { transform: scaleX(1); }
+.st-line.stub { transform: none !important; }
+.story[data-layout="tall"] .st-line.stub { -webkit-mask: linear-gradient(var(--dir, 180deg), transparent, #000); mask: linear-gradient(var(--dir, 180deg), transparent, #000); }
+.story[data-layout="wide"] .st-line.stub { -webkit-mask: linear-gradient(var(--dir, 90deg), transparent, #000); mask: linear-gradient(var(--dir, 90deg), transparent, #000); }
+/* the work passing along the line */
+.st-pkt { position: absolute; width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 50%; background: #14100C; opacity: 0; box-shadow: 0 0 0 4px rgba(20, 16, 12, .08); }
+.st-pkt.go { animation: st-pkt 1500ms cubic-bezier(.65, 0, .25, 1) both; }
+.story[data-layout="tall"] .st-pkt.go { --dx: 0px; --dy: var(--gap); }
+.story[data-layout="wide"] .st-pkt.go { --dx: var(--gap); --dy: 0px; }
+@keyframes st-pkt { 0% { opacity: 0; transform: none; } 15%, 80% { opacity: 1; } 100% { opacity: 0; transform: translate(var(--dx), var(--dy)); } }
+
+/* a step: alone in the frame, arriving out of a slight tilt and blur */
+.st-step { position: absolute; width: max-content; transform: translate(-50%, -50%); }   /* its own width, so the -50% centers it in every browser */
+.st-card { opacity: 0; transform: translate3d(0, 18px, 0) rotateX(14deg) scale(.95); filter: blur(6px);
+  transition: opacity 1050ms cubic-bezier(.16, 1, .3, 1), transform 1350ms cubic-bezier(.16, 1, .3, 1), filter 900ms cubic-bezier(.16, 1, .3, 1); }
+.st-step.on .st-card { opacity: 1; transform: none; filter: blur(0); transition-delay: 525ms; }
+.st-step.past .st-card { opacity: 0; transform: translate3d(0, -14px, 0) scale(.97); filter: blur(4px); transition-duration: 750ms; transition-delay: 0ms; }
+.story[data-layout="wide"] .st-step.past .st-card { transform: translate3d(-14px, 0, 0) scale(.97); }
+
+.st-card { background: #FFFFFF; border-radius: 10px; border: 1px solid rgba(20, 16, 12, .1);
+  box-shadow: 0 1px 1px rgba(20, 16, 12, .04), 0 2px 4px rgba(20, 16, 12, .04), 0 10px 20px -12px rgba(20, 16, 12, .22); }   /* crisp, not puffy: a tight contact shadow and a short drop */
+/* ---- Realistic app windows, after Harvey's product UI (title bar, breadcrumb, an agent run as a
+   step list with spinners and checks), Mercury's white space and Robinhood's crisp states. ---- */
+.st-app { width: 324px; background: #FFFFFF; border-radius: 10px; border: 1px solid rgba(20, 16, 12, .1); overflow: hidden; font-size: 12.5px; line-height: 1.4; color: #14100C;
+  box-shadow: 0 1px 1px rgba(20, 16, 12, .04), 0 2px 4px rgba(20, 16, 12, .04), 0 12px 24px -14px rgba(20, 16, 12, .24); }
+.st-tb { display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 12px; border-bottom: 1px solid #EFEBE4; background: #FBFAF8; color: #6F675D; font-size: 11.5px; white-space: nowrap; }
+.st-tb .lg { width: 16px; height: 16px; border-radius: 4px; background: #14100C; display: grid; place-items: center; flex: none; }
+.st-tb .lg svg { width: 10px; height: 10px; color: #F6F4F0; }
+.st-tb b { color: #14100C; font-weight: 500; }
+.st-tb .sep { color: #CFC9BF; }
+.st-tb .rt { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; }
+.st-bd { padding: 14px 14px 12px; }
+.st-lbl { font-size: 11px; color: #6F675D; margin-bottom: 4px; }
+.st-txt { font-size: 13.5px; font-weight: 500; letter-spacing: -.005em; line-height: 1.35; }
+.st-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
+.st-chip { display: inline-flex; align-items: center; gap: 5px; height: 22px; padding: 0 8px; border-radius: 6px; border: 1px solid #E6E1D8; background: #FFFFFF; font-size: 11.5px; color: #3E3831; }
+.st-chip svg { width: 11px; height: 11px; color: #6F675D; }
+.st-ft { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-top: 1px solid #EFEBE4; font-size: 12px; color: #5C564E; }
+.st-av { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-size: 9.5px; font-weight: 600; flex: none; background: #14100C; color: #F6F4F0; }
+.st-av.lt { background: #E9E4DB; color: #14100C; }
+.st-btn { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 6px; font-size: 12px; font-weight: 500; background: #14100C; color: #F6F4F0; }
+.st-btn.gh { margin-left: auto; background: #FFFFFF; color: #14100C; border: 1px solid #E0DAD0; }
+.st-btn.gh + .st-btn { margin-left: 0; }
+.st-btn.ok { background: #3B6B44; }
+.st-kbd { font-family: var(--font-mono); font-size: 10px; padding: 1px 4px; border-radius: 3px; background: rgba(246, 244, 240, .18); }
+/* the run: status in the title bar, then a list of steps */
+.st-state { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; color: #14100C; }
+.st-spin { width: 11px; height: 11px; border-radius: 50%; border: 1.5px solid #D9D3C9; border-top-color: #14100C; animation: st-spin 900ms linear infinite; }
+@keyframes st-spin { to { transform: rotate(360deg); } }
+.st-okdot { width: 11px; height: 11px; border-radius: 50%; background: #3B6B44; display: none; }
+.done .st-state .st-spin { display: none; }
+.done .st-state .st-okdot { display: inline-block; }
+.st-steps { list-style: none; margin: 0; padding: 6px 0; }
+.st-steps li { display: flex; align-items: center; gap: 10px; padding: 6px 14px; color: #A39B90; transition: color 300ms; }
+.st-steps li .ic { width: 14px; height: 14px; flex: none; position: relative; }
+.st-steps li .ic::before { content: ""; position: absolute; inset: 1px; border-radius: 50%; border: 1.5px solid #D9D3C9; }
+.st-steps li.act { color: #14100C; }
+.st-steps li.act .ic::before { border-color: #D9D3C9; border-top-color: #14100C; animation: st-spin 900ms linear infinite; }
+.st-steps li.ok { color: #14100C; }
+.st-steps li.ok .ic::before { border: 0; background: #3B6B44 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 6.3l2 2 4-4.3'/%3E%3C/svg%3E") center / 10px no-repeat; }
+.st-steps li .m { margin-left: auto; font-family: var(--font-mono); font-size: 11px; color: #A39B90; }
+.st-steps li.ok .m.bad { color: #9A4430; }
+/* what the run produced: arrives when it is done */
+.st-out { margin: 0 14px 12px; border-radius: 8px; border: 1px solid #EFEBE4; overflow: hidden; opacity: .35; filter: saturate(0); transition: opacity 600ms, filter 600ms; }
+.done .st-out { opacity: 1; filter: none; }
+.st-diff { font-family: var(--font-mono); font-size: 11px; line-height: 1.7; }
+.st-diff div { padding: 1px 10px; white-space: nowrap; }
+.st-diff .dl { background: #FBEFEA; color: #8A3B28; }
+.st-diff .ad { background: #EAF2EA; color: #2B5233; }
+.st-meta { display: flex; align-items: center; gap: 8px; padding: 7px 10px; background: #FBFAF8; border-top: 1px solid #EFEBE4; font-size: 11.5px; color: #5C564E; }
+.st-tag2 { margin-left: auto; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 999px; background: #E3EDE3; color: #2B5233; }
+.st-theme2 { padding: 9px 10px; font-size: 12.5px; font-weight: 500; }
+.st-quote { margin-top: 10px; padding: 9px 11px; border-left: 2px solid #3B6B44; background: #F8F6F1; border-radius: 0 6px 6px 0; font-size: 12px; color: #3E3831; line-height: 1.45; }
+.st-quote span { display: block; margin-top: 4px; font-size: 11px; color: #6F675D; }
+/* a pause, or scrolling past, stops the spinners where they are */
+.lead-art-panel:not(.run) .story * { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .story * { transition: none !important; animation: none !important; } }
 /* Wordmarks are drawn in their brands' inks for paper; in the dark register
    they go to one light tone so they stay legible on the ground. The tool
    icons keep their own colours (Cursor's is a tile, Figma's is in colour),
