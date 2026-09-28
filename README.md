@@ -654,9 +654,9 @@ Every case study is the same document, in this order:
    (`.row.flip`, the decisions grid, a second deliverable such as the audit
    page's "The library"). Every row heading is the decision itself, under
    eight words (Only the card changed, A checklist replaced the progress
-   bar), never a label like "The design". A full-width row is centred and
-   its headline takes the Title role with a Lede beneath; a side-by-side row
-   keeps the Heading role. No section or row heading has an eyebrow over it.
+   bar), never a label like "The design". Every row headline takes the Heading
+   role, full-width (centred, with a Lede beneath) or side by side, so it sits
+   under its section's Title instead of competing with it. No section or row heading has an eyebrow over it.
 5. **Results** (`#results`): centred title and a lede that says only what
    the rows above don't (where the number comes from, what launched when),
    then one `.proof` frame: the headline stat top-left, a label top-right,

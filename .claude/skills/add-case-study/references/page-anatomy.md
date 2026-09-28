@@ -251,9 +251,10 @@ decisions". In order: the design (`.row.full`), then any of decisions (`.row.ful
 second surface (`.row.flip`), a second deliverable (`.row.full`). Each row has one heading,
 and it is the decision itself, under eight words: "Only the card changed", "A checklist
 replaced the progress bar", "Phase 1: a live preview". Never a label like "The design" or
-"Design decisions". At most one short paragraph follows before the list or visual. Split rows
-(`.row`, `.row.flip`) take `t-heading` + `t-body`; full-width rows (`.row.full`) take
-`t-title` + `t-lede`. Public reaction after launch is not a row: it is the `#reception`
+"Design decisions". At most one short paragraph follows before the list or visual. Every row
+heading takes `t-heading`, never `t-title`: the section heading above it is the Title, and
+two Titles stacked compete. Split rows (`.row`, `.row.flip`) take `t-heading` + `t-body`;
+full-width rows (`.row.full`) take `t-heading` + `t-lede`. Public reaction after launch is not a row: it is the `#reception`
 section after Results.
 
 **Row types**
@@ -289,7 +290,7 @@ floating on the ground with a drop shadow that follows the alpha.
 ```html
 <article class="row full" id="design">
   <div class="row-copy">
-    <h3 class="t-title">The design</h3>
+    <h3 class="t-heading">The design</h3>
     <p class="t-lede">{{DESIGN_BODY}}</p>
   </div>
   <div class="panel">
@@ -334,7 +335,7 @@ place the icon-over-heading grid appears on a case study; don't reuse it for rol
 ```html
 <article class="row full" id="decisions">
   <div class="row-copy">
-    <h3 class="t-title">Design decisions</h3>
+    <h3 class="t-heading">Design decisions</h3>
   </div>
   <div class="cols">
     <div class="col">
