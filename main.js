@@ -2238,8 +2238,7 @@ const CONFIG = {
      past another. The home page's stack places its own cards, so its deck
      fades in as one. Under reduced motion they simply re-sort. */
   const LENSES = {
-    recruiter: { order: ["system", "cross-sell", "verifications", "refi", "staking", "no-code"] },
-    hiring: { order: ["system", "no-code", "staking", "cross-sell", "verifications", "refi"] },
+    hiring: { order: ["system", "cross-sell", "verifications", "refi", "staking", "no-code"] },   // the page's own order, the default
     pm: { order: ["cross-sell", "refi", "verifications", "system", "staking", "no-code"] },
     eng: { order: ["staking", "system", "no-code", "verifications", "refi", "cross-sell"] },
   };
@@ -2276,7 +2275,7 @@ const CONFIG = {
       if (!roll) return;
       word.classList.remove("roll"); void word.offsetWidth; word.classList.add("roll");   // restart the rise
     };
-    let current = "recruiter", chosen = false, cycleAt = 0, timer = 0, dealt = [];
+    let current = "hiring", chosen = false, cycleAt = 0, timer = 0, dealt = [];
     const phone = window.matchMedia("(max-width: 640px)");
     const cycle = () => {
       clearInterval(timer);
@@ -2290,8 +2289,8 @@ const CONFIG = {
     select.addEventListener("change", () => { stop(); pick.classList.add("picked"); apply(select.value, true); });   // a real choice: the face goes from hint to value
     phone.addEventListener("change", cycle);
     const apply = (key, animate) => {
-      if (key === "leader") key = "hiring";   // the name it had before the recruiter joined
-      if (!LENSES[key]) key = "recruiter";
+      if (key === "leader" || key === "recruiter") key = "hiring";   // older names: a saved Recruiter view folds into Design leader
+      if (!LENSES[key]) key = "hiring";
       current = key;
       select.value = key;
       if (chosen || reduced) face(key, false);
@@ -2313,10 +2312,10 @@ const CONFIG = {
       }
     };
     tabs.forEach((t) => t.addEventListener("click", () => apply(t.dataset.lensKey, true)));
-    let saved = "recruiter";
-    try { saved = localStorage.getItem("lens") || "recruiter"; } catch (e) { /* private mode */ }
-    face("recruiter", false);
-    if (saved !== "recruiter" && !phone.matches) apply(saved, false);   // on a phone every visit starts on the hint; a choice holds for the page it was made on
+    let saved = "hiring";
+    try { saved = localStorage.getItem("lens") || "hiring"; } catch (e) { /* private mode */ }
+    face("hiring", false);
+    if (saved !== "hiring" && !phone.matches) apply(saved, false);   // on a phone every visit starts on the hint; a choice holds for the page it was made on
     cycleAt = Math.max(0, names.findIndex(([k]) => k === current));
     select.value = current;   // the browser may restore an old choice into the select; the list is in this order
     window.addEventListener("pageshow", () => { select.value = current; });
