@@ -1898,11 +1898,11 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
   .testimonial-mark { flex-basis: 100%; margin-left: 0; padding-left: 0; border-left: 0; }
   .testimonial-controls { justify-content: flex-start; }
 
-  /* Work index: the phone screens get a taller ground so they stay legible;
-     desktop screens keep a wide one so the ground does not swallow them */
+  /* Work index: every screen on the same 4:3 ground (the home cards' ratio
+     at this width), phone screens and desktop screens alike, so the list
+     reads as one set; each screen's own crop (emerge, bleed) fills it */
   .case-row { gap: 20px; }
-  .case-media { aspect-ratio: 4 / 5; }
-  .case-media.wide, .case-media.cutout:not(.bleed) { aspect-ratio: 16 / 10; }
+  .case-media, .case-media.wide, .case-media.cutout { aspect-ratio: 4 / 3; }
   .case-media.cutout.bleed img { left: 5%; width: 90%; max-width: none; }
   .case-media img { max-width: 44%; }
   .case-logo { height: 24px; }
