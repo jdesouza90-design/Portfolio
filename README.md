@@ -590,7 +590,7 @@ three rhythm tokens: `--section` between sections, `--row` between rows,
 All six case studies are the same document, in this order:
 
 1. **Hero**: a breadcrumb trail (Home / Work / this study, the current page
-   in plain ink and not a link) and then the eyebrow, title and one-sentence
+   in plain ink and not a link) and then the title and one-sentence
    lede with the outcome stat beside
    them (`data-flow`: it rolls into place digit by digit, lit from above with
    the accent), the project's screens on its own tinted panel, then four facts
@@ -604,19 +604,22 @@ All six case studies are the same document, in this order:
    capacity gauge, A/B table, or a hairline list of what shipped where there
    are no published numbers or the number is too new to chart).
 4. **The story** (`#story`), which opens on the problem: the section intro
-   is the eyebrow "The problem" and the problem's heading as the Title, and
+   is the Title "The problem", and
    the first row under it carries the problem copy (a short paragraph and a
    tensions list beside an illustration or the old screen) with no heading
    of its own. There is no separate "How we got there" header; it used to
    sit above the problem and mostly restated it. Then, always in this order:
    the design (a `.row.full` with one framed panel or walkthrough under
    centred copy), any supporting rows (`.row.flip`), then the quotes last (a
-   `.row.full` with an eyebrow and an intro line saying where they came
+   `.row.full` with its heading and an intro line saying where they came
    from; Verifications gives its quotes their own section between Results
    and the story, as the research that shaped it). A full-width
    row is centred and its headline takes the Title role with a Lede beneath,
    the same as a section intro; a side-by-side row keeps the Heading role.
-   Each later row is one eyebrow, one heading, one short paragraph.
+   Each later row is one heading that names it, then one short paragraph.
+   No section or row heading has an eyebrow over it: the heading is the
+   label (The problem, My role, Results), as on harvey.ai. `.eyebrow` is
+   kept for chart, figure and stat labels and the Next case study band.
 5. **What I'd do differently**: one narrow note with run-in labels, where a
    retro exists.
    A second deliverable takes a `.row.full` of its own in the story, placed
@@ -722,8 +725,9 @@ scrolls to it, and every page gets it the same way:
   the unit: children carrying it rise on their own and their parent is left
   alone (the case rows on the homepage and work index, the portrait and
   text of About). Nothing nests: a block inside a block would travel twice.
-- **The hero's copy has its own cascade** on load: eyebrow, `h1` and lede
-  carry `data-rise style="--i:N"` (N = 0, 1, 2), a 12px rise at 70ms steps
+- **The hero's copy has its own cascade** on load: the `h1` and lede (after
+  a blog post's topic eyebrow, where there is one) carry
+  `data-rise style="--i:N"` (N = 0, 1, 2), a 12px rise at 70ms steps
   on top of the block's own reveal. Nothing else animates by attribute.
 - **A fresh unlock opens behind a sheet** (`initUnlock` in `main.js`,
   section 8b of `styles.css`). The gate's redirect carries `?unlocked`; a

@@ -63,9 +63,9 @@ answer fills, so nothing is asked for its own sake. The shape of the interview m
 
 ## Draft the copy, then stop
 
-Before touching HTML, write the whole page as copy, slot by slot, in one message: eyebrow,
-title, lede, outcome stat and its caption, the four facts, results title and lede, every row's
-eyebrow, heading and body, tensions, decisions, quotes with attributions, the three ledger rows,
+Before touching HTML, write the whole page as copy, slot by slot, in one message: title,
+lede, outcome stat and its caption, the four facts, the results lede, every row's heading
+(it names the row: The design, Design decisions, Research) and body, tensions, decisions, quotes with attributions, the three ledger rows,
 the retro items, the meta description, the work-index blurb and chips, and the alt text for
 every image. Label each slot so John can reply with "change the lede and the second tension".
 

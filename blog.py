@@ -247,22 +247,21 @@ def nav(current, section=None):
 """
 
 
-def foot(note, *, heading="", css=""):
-    """The end of a page: the contact band when it has a heading, then the
-    footer and the script. Posts pass no heading and just end."""
+def foot(note, *, contact=False, css=""):
+    """The end of a page: the contact band when asked for, then the footer
+    and the script. Posts leave it out and just end."""
     band = f"""
     <div class="contact" data-reveal data-field="rings">
       <canvas class="field" aria-hidden="true"></canvas>
       <div>
-        <p class="eyebrow">Get in touch</p>
-        <h2 class="t-title">{heading}</h2>
+        <h2 class="t-title">Get in touch</h2>
       </div>
       <div class="contact-actions">
         <a class="btn btn-primary" data-link="linkedin" href="#"><span class="icon-swap">{LINKEDIN_SVG}{EXTLINK_SVG}</span>Message me on LinkedIn</a>
         <a class="btn btn-ghost" data-link="email" href="#"><span class="icon-swap">{MAIL_SVG}{SEND_SVG}</span>Email me</a>
         <a class="btn btn-ghost" data-link="resume" href="#"><span class="icon-swap">{DOWN_SVG}{CHECK_SVG}</span>Download resume</a>
       </div>
-    </div>""" if heading else ""
+    </div>""" if contact else ""
     return f"""
 <section class="section tight">
   <div class="wrap">{band}
@@ -515,7 +514,7 @@ def render_index(posts):
   </div>
 </section>
 """
-    out += foot("Posts are my own views.", heading="Building or rebuilding a design org? Let’s talk.")
+    out += foot("Posts are my own views.", contact=True)
     return out
 
 
@@ -628,12 +627,10 @@ def render_search(posts):
     for m in re.finditer(r'<section[^>]*\sid="([a-z-]+)"[^>]*>(.*?)</section>', home, re.S):
         sid, body = m.group(1), m.group(2)
         h = re.search(r'<h2 class="t-title[^"]*">(.*?)</h2>', body, re.S)
-        lede = re.search(r'<p class="t-lede">(.*?)</p>', body, re.S)
-        eyebrow = re.search(r'<p class="eyebrow">(.*?)</p>', body, re.S)
+        lede = re.search(r'<p class="t-lede">(.*?)</p>', body, re.S) or re.search(r'<p class="t-body">(.*?)</p>', body, re.S)   # About has no lede: its first paragraph, John's current title, stands in
         if not h or sid in ("top", "work"):
             continue
-        title = strip_tags(eyebrow.group(1)) if eyebrow else strip_tags(h.group(1))
-        entries.append({"t": title, "d": strip_tags(h.group(1)) if eyebrow else (strip_tags(lede.group(1)) if lede else ""), "u": "/#" + sid, "k": "Section"})
+        entries.append({"t": strip_tags(h.group(1)), "d": strip_tags(lede.group(1)) if lede else "", "u": "/#" + sid, "k": "Section"})
     work = open("work.html", encoding="utf-8").read()
     work = re.sub(r"<!--.*?-->", "", work, flags=re.S)
     for m in re.finditer(r'<a class="case-row[^"]*" href="(work/[a-z-]+\.html)"[^>]*>(.*?)</a>\s*\n', work, re.S):

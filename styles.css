@@ -882,10 +882,10 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
   .fig-nest { width: min(100cqw, 460px); }
 }
 
-/* About: portrait beside a single statement. The portrait stands exactly as tall
+/* About: portrait beside the heading and the name. The portrait stands exactly as tall
    as the text: main.js measures the text and sets --portrait-w at the photo's own
    ratio; without it the portrait takes 5 of 24 parts. Items align to the top so
-   the photo's edges meet the eyebrow and the last line. */
+   the photo's edges meet the heading and the last line. */
 .about-grid { display: grid; grid-template-columns: var(--portrait-w, minmax(0, 5fr)) minmax(0, 19fr); gap: clamp(32px, 6vw, 88px); align-items: start; }
 .portrait { margin: 0; border-radius: 14px; overflow: hidden; background: #DFD9CD; }
 .portrait img { width: 100%; height: auto; display: block; }
@@ -1093,7 +1093,7 @@ footer a:hover { color: var(--ink); }
 
 /* Sections and rows */
 .cs-section { padding-top: var(--section); scroll-margin-top: calc(var(--nav-h) + 24px); }
-.section[id] { scroll-margin-top: calc(var(--nav-h) - var(--section) + var(--sp-5)); }   /* a jump lands with the section's eyebrow clear of the bar, whatever its padding */
+.section[id] { scroll-margin-top: calc(var(--nav-h) - var(--section) + var(--sp-5)); }   /* a jump lands with the section's heading clear of the bar, whatever its padding */
 .cs-section .row + .row { margin-top: var(--row); }
 
 /* A row: copy beside a visual panel, the panel a fixed height so every row in
