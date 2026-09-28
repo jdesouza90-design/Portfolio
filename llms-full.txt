@@ -10,15 +10,15 @@
 - Author: John DeSouza
 - Published: 2026-09-28
 - Topic: Where product design is going
-- Claim: Naming the tool is not a quality signal, because the same disclosure penalty lands on a master and a beginner. What a client can act on is the record of what was checked and what came back wrong, and no disclosure policy asks anyone to write that down.
+- Claim: Naming the tool isn’t a quality signal, because the same disclosure penalty lands on a master and a beginner. What a client can act on is the record of what was checked and what came back wrong, and no disclosure policy asks anyone to write that down.
 
 Fifty-eight percent of creative professionals have used AI on client work without telling the client. The industry reads that as a discipline problem and is busy writing better rules for when to say the word. The word was never the part worth having.
 
 Nielsen Norman Group published a framework last week for deciding when to tell people AI was involved in your work. Taylor Dykes calls it [PACED](https://www.nngroup.com/articles/disclose-ai-paced/): policy, audience, context, expectations and degree of use.
 
-It is careful work and it names the awkward part honestly. People say they want disclosure and then think less of the person who gives it.
+It’s careful work and it names the awkward part honestly. People say they want disclosure and then think less of the person who gives it.
 
-I would use that framework tomorrow. I also think the question underneath it is set up wrong, and a good framework built on a bad question inherits the problem.
+I’d use that framework tomorrow. I also think the question underneath it’s set up wrong, and a good framework built on a bad question inherits the problem.
 
 “AI was used here” is a fact about a tool. Nobody on the receiving end is asking about the tool.
 
@@ -26,51 +26,51 @@ I would use that framework tomorrow. I also think the question underneath it is 
 
 Envato surveyed 1,780 creative professionals for [Beyond Adoption](https://elements.envato.com/learn/ai-trend-report). Fifty-eight percent have used AI on client work without telling the client. Only 31% always disclose.
 
-The number worth sitting with is the reason. Of the people who said nothing, 48% said they do not see why they should have to disclose every tool. That gets read as a rationalization. It is half right.
+The more interesting number is the reason. Of the people who said nothing, 48% said they don’t see why they should have to disclose every tool. That gets read as a rationalization. It’s half right.
 
-Nobody itemizes Figma. Nobody discloses the stock license, the plugin or the Slack thread where the idea actually came from. A tool name has never told a client whether the work is any good.
+Nobody itemizes Figma, the stock license, the plugin or the Slack thread where the idea actually came from. A tool name has never told a client whether the work is any good.
 
 And the penalty for saying this particular tool name is measurable. Dykes cites the studies: ratings drop as the disclosed share of AI involvement goes up. The research Florida International University [wrote up](https://news.fiu.edu/2026/artists-and-writers-are-often-hesitant-to-disclose-theyve-collaborated-with-ai-and-those-fears-may-be-justified) from Joel Carnevale, Anand Benegal and Lynne Vincent is the part that should stop people. Listeners marked a composition down when they were told AI was involved, and the hit landed whether they believed the piece came from Hans Zimmer or from a first-year music student.
 
-Read that twice. The same penalty fell on a master and a beginner.
+The same penalty fell on a master and a beginner.
 
-A signal that cannot tell those two apart is not carrying information about the work. It is carrying a reaction to a category, and we are building policy on top of it.
+A signal that can’t tell those two apart isn’t carrying information about the work. It’s carrying a reaction to a category, and we’re building policy on top of it.
 
 ## Provenance is not review
 
-[Article 50](https://artificialintelligenceact.eu/article/50/) of the EU AI Act became applicable on 2 August 2026. Synthetic audio, image, video and text have to be marked in a machine-readable format and detectable as artificially generated. Deepfakes get disclosed. A chatbot has to say what it is.
+[Article 50](https://artificialintelligenceact.eu/article/50/) of the EU AI Act became applicable on August 2, 2026. Synthetic audio, image, video and text have to be marked in a machine-readable format and detectable as artificially generated. Deepfakes get disclosed. A chatbot has to say what it is.
 
-That is provenance and it is worth having. It answers whether a machine made the pixels, which is a real question for a voice in an ad or a face in a video.
+That’s provenance and it’s worth having. It answers whether a machine made the pixels, which is a real question for a voice in an ad or a face in a video.
 
-It does not answer the question a client, a reviewer or a design lead is actually asking. That question is whether anyone competent looked at this, and what they were looking for.
+It doesn’t answer the question a client, a reviewer or a design lead is actually asking. That question is whether anyone competent looked at this, and what they were looking for.
 
 ## The review is happening off the books
 
-In [AI in Design 2026](https://stateofaidesign.com/chapters/craft), the survey Designer Fund and Foundation Capital ran with 900 designers across 60 countries, 80% say they rely on their own quality judgment over the model’s. Half have pushed AI-generated code to production. Forty percent claim full ownership of AI-assisted work and another 43% say it is mostly theirs.
+In [AI in Design 2026](https://stateofaidesign.com/chapters/craft), the survey Designer Fund and Foundation Capital ran with 900 designers across 60 countries, 80% say they rely on their own quality judgment over the model’s. Half have pushed AI-generated code to production. Forty percent claim full ownership of AI-assisted work and another 43% say it’s mostly theirs.
 
 So the review exists. It happens in one person’s head, it takes real skill, and it leaves nothing behind that anybody else can inspect.
 
-Patrick Neeman got close to this in [Craft Still Matters](https://aiforux.substack.com/p/craft-still-matters-but-its-not-about), arguing that you describe your standards and keep humans reviewing. What I would add is that the describing has to land somewhere a reader can find it. A standard nobody wrote down is a preference with good posture.
+Patrick Neeman got close to this in [Craft Still Matters](https://aiforux.substack.com/p/craft-still-matters-but-its-not-about), arguing that you describe your standards and keep humans reviewing. What I’d add is that the describing has to land somewhere a reader can find it.
 
-## The rule I hold
+## What I write instead
 
 Nothing I hand over carries the words “AI-assisted”. The line I write instead says what I checked and what came back wrong.
 
-Three sentences, at the top, before the work: here is what I checked this against, here is where it failed, here is what I changed. If I cannot write those three sentences, naming the tool does not rescue the handoff, and naming the tool is the only thing most disclosure policies ask me for.
+Three sentences, at the top, before the work: here’s what I checked this against, here’s where it failed, here’s what I changed. If I can’t write those three sentences, naming the tool doesn’t rescue the handoff, and naming the tool is the only thing most disclosure policies ask me for.
 
 I ran a whole-library audit at Best Egg and wrote the crawler’s rules myself. The rules are the reason anyone could argue with the output. A flag was checkable because the rule behind it was on paper, which meant the interesting conversation was about the rule and not about the crawler.
 
-In an interview I ask for one piece of work and the thing the model got wrong on it. Not whether they use the tools. What the first answer was, why they threw it out and what they held it up against. A candidate who cannot answer that has been shipping unreviewed work, and no disclosure label would have told me.
+In an interview I ask for one piece of work and the thing the model got wrong on it. Not whether they use the tools. What the first answer was, why they threw it out and what they held it up against. A candidate who can’t answer that has been shipping unreviewed work, and no disclosure label would have told me.
 
 ## Who stays quiet, and why
 
-Dykes is right that being caught out hurts more than telling people yourself, and that is a good reason to disclose when policy is pointed at you. It is also why disclosure gets heard as a confession. A confession is a bad container for a claim about quality.
+Dykes is right that being caught out hurts more than telling people yourself, and that’s a good reason to disclose when policy is pointed at you. It’s also why disclosure gets heard as a confession. A confession is a bad container for a claim about quality.
 
 The Envato rates break along exposure. Agency and studio owners disclose least at 28%, behind freelancers at 31% and in-house designers at 35%. Europe is highest at 39% and the Middle East and Africa lowest at 22%.
 
-The people with the most staff and the most to lose say the least. That is what a label looks like when it carries risk and no upside.
+The people with the most staff and the most to lose say the least. That’s what a label looks like when it carries risk and no upside.
 
-You do not fix that with a better decision tree about when to say the word. You fix it by changing what gets said, from a fact about the tool to a record of the judgment. A record gets more useful as the tools spread. The tool name is heading for describing everything, and a label that describes everything sorts nothing.
+You don’t fix that with a better decision tree about when to say the word. You fix it by changing what gets said, from a fact about the tool to a record of the judgment. A record gets more useful as the tools spread. The tool name is heading for describing everything, and a label that describes everything sorts nothing.
 
 Fifty-eight percent are already not saying it. Arguing them into compliance is a smaller win than it looks. What a client can act on is the check, and not one of the frameworks in this argument asks anyone to write the check down.
 
@@ -91,7 +91,7 @@ Sources:
 - Author: John DeSouza
 - Published: 2026-09-27
 - Topic: Fintech, web3 and trust
-- Claim: A payee name check answers one narrow question, and the screen reporting it is where a bank quietly answers a much bigger one on the payer’s behalf.
+- Claim: A payee name check answers one narrow question, and the screen reporting it’s where a bank quietly answers a much bigger one on the payer’s behalf.
 
 Payee name checking is now running on almost every instant payment in Britain and every euro credit transfer in Europe. The rulebooks specify the message down to the response code. What the person reads is left to whoever writes the strings.
 
@@ -103,27 +103,27 @@ The shared position is reasonable: checking the name on the account is fraud pre
 
 ## The check does what it says
 
-Uptake is not in question. Over 320 payment service providers offer the check in the UK, more than 99% of firms initiating a Faster Payment now offer it, and over 2 million checks complete every day.
+Uptake isn’t in question. Over 320 payment service providers offer the check in the UK, more than 99% of firms initiating a Faster Payment now offer it, and over 2 million checks complete every day.
 
 It works. Pay.UK found a 59% drop in claims for payments sent to the wrong account, and losses down between 20% and 40% for some types of fraud. The regulator adds that a transaction where the name doesn’t match is 25 times more likely to be fraudulent.
 
-A mismatch is one of the strongest single signals in retail payments. The check surfaces it before the money moves, which is why I am not arguing against it.
+A mismatch is one of the strongest single signals in retail payments. The check surfaces it before the money moves, which is why I’m not arguing against it.
 
 ## What a match cannot tell you
 
 The PSR’s own account of the rule is careful about the distinction. Confirmation of Payee “was introduced to stop misdirected payments”. Then: “There was also an expectation that it would reduce the number of authorised push payment (APP) scams.”
 
-The first happened. The second has not shown up in the totals. [UK Finance reported](https://www.ukfinance.org.uk/news-and-insight/press-release/fraud-report-2026-press-release) £576.4 million lost to authorized push payment fraud in 2025, up 19%, across 248,070 cases. Banks reimbursed £354.3 million of it, about 61%.
+The first happened. The second hasn’t shown up in the totals. [UK Finance reported](https://www.ukfinance.org.uk/news-and-insight/press-release/fraud-report-2026-press-release) £576.4 million lost to authorized push payment fraud in 2025, up 19%, across 248,070 cases. Banks reimbursed £354.3 million of it, about 61%.
 
-No causal claim there. The reason the check cannot reach those scams is in the mechanism, not the rollout.
+No causal claim there. The reason the check can’t reach those scams is in the mechanism, not the rollout.
 
 The check compares the name the payer typed with the name on the account. When someone is being talked into a payment, the same person supplies both. The fake seller gives you the name on the real account they control. The invoice arrives with new details on a letterhead you know. Both sides of the comparison come from the fraudster, so the check agrees with them.
 
-The Federal Reserve is careful about this in its own marketing copy. Its service “may help to reduce the occurrences of Authorized Push Payment fraud where an imposter is impersonating an individual”. May help. Impersonating an individual. That is one scam, not the category.
+The Federal Reserve is careful about this in its own marketing copy. Its service “may help to reduce the occurrences of Authorized Push Payment fraud where an imposter is impersonating an individual”. May help. Impersonating an individual. That’s one scam, not the category.
 
 ## The rulebook stops at the screen
 
-The European rulebook runs to 68 pages and it is precise where it needs to be. A responding provider returns one of five outcomes: match, no match, close match with the counterparty’s actual name, identification code not supported or verification not possible.
+The European rulebook runs to 68 pages and it’s precise where it needs to be. A responding provider returns one of five outcomes: match, no match, close match with the counterparty’s actual name, identification code not supported or verification not possible.
 
 Then it says this about the person: “It should be noted that the way the Requester is informed and the content of the notification messages are left to the discretion of the Requesting PSP.”
 
@@ -131,23 +131,23 @@ So the machine-to-machine part is specified to the field. The part a human reads
 
 ## The wording carries the liability
 
-This is not a copy quibble, because the European regulation already attached money to that screen. On a mismatch the payer’s provider must say that authorizing the transfer “might lead to transferring the funds to a payment account not held by the payee indicated by the payer”.
+This isn’t a copy quibble, because the European regulation already attached money to that screen. On a mismatch the payer’s provider must say that authorizing the transfer “might lead to transferring the funds to a payment account not held by the payee indicated by the payer”.
 
 The provider also may not stop the payer going ahead. And it has to explain “the implications for PSP liability and PSU refund rights resulting from a decision by PSUs to ignore a notification”.
 
-Read that in order. The bank warns you, cannot stop you, and your refund rights change if you continue. The sentence deciding all of that is being written by whoever owns the string file.
+Read that in order. The bank warns you, can’t stop you, and your refund rights change if you continue. The sentence deciding all of that’s being written by whoever owns the string file.
 
 ## Two things I would hold the screen to
 
-The first is a labeling rule. A check gets named for what it checked, so “this account is in the name you typed” is true and boring. “Payee verified” is a claim about the payment, and it is the screen a fraudster wants glowing behind their phone call. A name check is a fact about an account, not a judgment about a person.
+The first is a labeling rule. A check gets named for what it checked, so “this account is in the name you typed” is true and boring. “Payee verified” is a claim about the payment, and it’s the screen a fraudster wants glowing behind their phone call. A name check is a fact about an account, not a judgment about a person.
 
 The second is the no-match state, which needs something to do. Today, in [RedCompass Labs’ summary](https://www.linkedin.com/pulse/verification-payee-arrivesin-europe-6-big-lessons-redcompass-swnqe) of European go-live, the payer “can either proceed, amend, or stop the payment altogether”. Three doors and no help choosing between them, at the exact moment somebody may be on the phone explaining which one to pick.
 
-My question in review is always the same. What can this person do in the next 10 seconds, and does the screen still work if they are being coached while they read it?
+My question in review is always the same. What can this person do in the next 10 seconds, and does the screen still work if they’re being coached while they read it?
 
 I got that from the expensive end. At Best Egg I redesigned document verification so an applicant sees a status the moment a file lands, and the opportunity we sized was 7,000 fewer support calls a month. A status that doesn’t say what happens next produces a phone call. On a payment screen it produces a payment.
 
-At Auth0 the same lesson arrived in a different vocabulary. A check that returns true is an engineering result. Turning it into “verified” is a product decision, and it is usually made by nobody in particular.
+At Auth0 the same lesson arrived in a different vocabulary. A check that returns true is an engineering result. Turning it into “verified” is a product decision, and it’s usually made by nobody in particular.
 
 Europe will run this check on every euro credit transfer. Britain looks set to keep its version for good, and the Fed is selling one by the transaction. None of the three specifies what the payer reads. That leaves the most load-bearing word in the flow to whoever writes it, which today is a designer working without a rulebook.
 
@@ -180,7 +180,7 @@ In the same survey, 56% named a lack of resourcing or staffing as their biggest 
 
 The field’s answer is to get better at the business case. Figma’s [new business case for design systems](https://www.figma.com/blog/the-new-business-case-for-design-systems/), published in January, argues that systems “have evolved from static libraries to key drivers of business revenue, customer loyalty, and product strategy”. It comes with receipts. Freshworks cut customer service costs 28%. Grammarly saved its design and development teams 25% of a work week.
 
-That is a fair position. I would rather a design system lead walked into a budget review talking about revenue than about component counts.
+That’s a fair position. I’d rather a design system lead walked into a budget review talking about revenue than about component counts.
 
 The trouble is sitting in the other half of the zeroheight report. Only 5% of teams measure return on investment at all. Just 41% track adoption. The field is being told to argue from evidence most of it has never collected.
 
@@ -196,9 +196,9 @@ And when a team does go and measure, the first number they reach for is the one 
 
 ## Adoption rate is a flattering number
 
-Adoption answers one question: are people using our components. That is the number a system team hopes to see, which is most of the reason it gets picked.
+Adoption answers one question: are people using our components. That’s the number a system team hopes to see, which is most of the reason it gets picked.
 
-It is also the number the tools hand you. The report found measurement scattered across Figma analytics, surveys, code repository tracking and spreadsheets, with 37% of teams using Figma analytics. Adoption is what comes out of the box, so adoption is what gets reported.
+It’s also the number the tools hand you. The report found measurement scattered across Figma analytics, surveys, code repository tracking and spreadsheets, with 37% of teams using Figma analytics. Adoption is what comes out of the box, so adoption is what gets reported.
 
 When I [measured our library at Best Egg](https://john-desouza.com/work/agentic-design-system-audit.html), adoption came back at 90.7% across 1.15 million instances in 296 files. Read on its own, that number says the work is finished.
 
@@ -208,31 +208,31 @@ Adoption was 90.7% and the library still cost the team something every day. One 
 
 ## Count the drift
 
-Drift is what the system failed to prevent. It is countable, and it is the only design system number I have watched change a staffing conversation.
+Drift is what the system failed to prevent. It’s countable, and it’s the only design system number I have watched change a staffing conversation.
 
 - **Hand-set values that already have a token.** Every one is a decision the system was supposed to have made for somebody.
-- **Components with no instances.** Maintenance you pay for and nobody uses.
+- **Components with no instances.** Maintenance you pay for that sits unused.
 - **Ties the data can’t break.** The value 10px appeared 1,834 times in our files and 12px 1,796. Nothing in the counts picks one. A person has to, and that person costs money.
 
 A number like 844,333 does something an adoption rate can’t. It hands the person holding the budget a quantity they can multiply by a cost, and it names the work that would bring it down.
 
 ## Make the number harder to like
 
-The rule I hold is that the measurement has to be able to embarrass me.
+My test for a measurement is whether it can embarrass me.
 
-Ours nearly wasn’t. The adoption formula had a name-match heuristic in it, counting a layer as on-system when its name looked close enough to a real component. I took it out. I excluded the archives and the library’s own file, and reported Brand Studio separately, because marketing collateral does not instance a dropdown.
+Ours nearly wasn’t. The adoption formula had a name-match heuristic in it, counting a layer as on-system when its name looked close enough to a real component. I took it out. I excluded the archives and the library’s own file, and reported Brand Studio separately, because marketing collateral doesn’t instance a dropdown.
 
-Every one of those choices pushed my own number down. That is the point. An adoption rate that only ever goes up is a marketing asset, and the people reading it can tell.
+Every one of those choices pushed my own number down. That’s the point. An adoption rate that only ever goes up is a marketing asset, and the people reading it can tell.
 
-The other half of the rule is the calendar. The audit runs again on the first of every month, so drift has a trend and not a snapshot. One reading is a claim. Twelve of them is a line on a chart, and a line is what survives a budget review where nobody in the room designs anything.
+The other half of the test is the calendar. The audit runs again on the first of every month, so drift has a trend and not a snapshot. One reading is a claim. Twelve of them is a line on a chart, and a line is what survives a budget review full of people who don’t design.
 
 ## Where the 56% comes from
 
 Put the two findings next to each other. Resourcing is the top challenge, named by 56% of teams. Return on investment is measured by 5%.
 
-Those are the same fact. Design system teams are asking for headcount in a currency they never minted. The business case advice isn’t wrong. It’s out of order. Instrument the thing, find out what it is failing to prevent, and the case is yours instead of borrowed.
+Those are the same fact. Design system teams are asking for headcount in a currency they never minted. The business case advice isn’t wrong. It’s out of order. Instrument the thing, find out what it’s failing to prevent, and the case is yours instead of borrowed.
 
-Seven percent of the teams in that survey report full adoption. Another 22% say the system reaches few teams. Somewhere in the gap between those two lines is a number with a dollar sign on it, and almost nobody has gone and counted it.
+Seven percent of the teams in that survey report full adoption. Another 22% say the system reaches few teams. Somewhere in the gap between those two lines is a number with a dollar sign on it, and only about one team in 20 has gone and counted it.
 
 Sources:
 
@@ -277,27 +277,27 @@ Ninety-two people were shown AI-generated and human-made prototypes without bein
 
 Nielsen Norman Group ran their own version, rebuilding one of their training pages with three kinds of prompt. The detailed prompts got close to the human original. The outputs still [missed visual hierarchy, color contrast and consistent margins](https://www.nngroup.com/articles/ai-prototyping/), which is why they land on these tools being better for ideation than for production.
 
-So the thing showing up in your review is competent, conventional and finished-looking. All three at once is very hard to argue with. That is the problem, not the achievement. In Figma’s [State of the Designer 2026](https://www.figma.com/blog/state-of-the-designer-2026/), 58% of designers define craft as visual polish, ahead of thoughtful problem solving at 47%. Polish is the part that just became free.
+So the thing showing up in your review is competent, conventional and finished-looking. All three at once is very hard to argue with. That’s the problem, not the achievement. In Figma’s [State of the Designer 2026](https://www.figma.com/blog/state-of-the-designer-2026/), 58% of designers define craft as visual polish, ahead of thoughtful problem solving at 47%. Polish is the part that just became free.
 
-## The rule I hold
+## One line at the top
 
 Nothing goes into a design review without one line at the top of it: the belief this is built to kill, and what we would be looking at if that belief were wrong.
 
-I want that line before the build, not in the deck afterward. If nobody on the team can write it, we are building a demo, and I would rather we call it a demo and put it on the calendar as one. Demos are useful. They are just not evidence.
+I want that line before the build, not in the deck afterward. If nobody on the team can write it, we’re building a demo, and I’d rather we call it a demo and put it on the calendar as one. Demos are useful. They’re just not evidence.
 
-The first question in the review is the same question. What would this look like if we were wrong? If the honest answer is “about the same”, the prototype tested nothing and the next 40 minutes are a conversation about taste. Sometimes that is the meeting you needed. It should not be the meeting you thought you were having.
+The first question in the review is the same question. What would this look like if we were wrong? If the honest answer is “about the same”, the prototype tested nothing and the next 40 minutes are a conversation about taste. Sometimes that’s the meeting you needed. It shouldn’t be the meeting you thought you were having.
 
 At Best Egg, applicants uploaded their documents and then the dashboard went quiet. What we were testing was whether telling them the status after the upload changed how many finished, not whether the screen looked better. That version of the question has a result. It went through an A/B test before rollout and came back with one.
 
 ## The forcing function has to come from a person now
 
-Eighty percent of designers say they still rely on their own quality meter over the model’s. I believe them, and I do not think a quality meter is the thing under threat here. Judgment about whether a screen is good survives cheap production fine.
+Eighty percent of designers say they still rely on their own quality meter over the model’s. I believe them, and I don’t think a quality meter is the thing under threat here. Judgment about whether a screen is good survives cheap production fine.
 
-What does not survive is the part of the process that used to happen on its own because building was expensive. Somebody named the uncertainty. The team agreed ahead of time on what a bad result would look like. And before anyone opened a tool, everyone knew which of the plausible directions the build was there to rule out.
+What doesn’t survive is the part of the process that used to happen on its own because building was expensive. Somebody named the uncertainty. The team agreed ahead of time on what a bad result would look like. And before anyone opened a tool, everyone knew which of the plausible directions the build was there to rule out.
 
-None of that was ever a method. It was a side effect of the price, and the price is gone. Which means it is now somebody’s job, in writing, or it does not happen.
+None of that was ever a method. It was a side effect of the price, and the price is gone. Which means it’s now somebody’s job, in writing, or it doesn’t happen.
 
-The teams that get this wrong are not going to look slow. They are going to look extremely fast, and they are going to ship a lot of usable, conventional, well-spaced work that nobody in the building ever had the standing to question.
+The teams that get this wrong aren’t going to look slow. They’re going to look extremely fast, and they’re going to ship a lot of usable, conventional, well-spaced work that nobody in the building ever had the standing to question.
 
 Sources:
 
@@ -326,17 +326,17 @@ I’m with Neeman on the hire. I think both of them have the training wrong.
 
 ## Hiring them is the easy half
 
-The hiring numbers are not subtle. In [Figma’s 2026 hiring study](https://www.figma.com/blog/why-demand-for-designers-is-on-the-rise/), 56% of hiring managers reported rising demand for senior designers. Only 25% were hiring for junior roles. A [working paper from two Harvard researchers](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5425555) tracked 62 million workers at 285,000 American firms through their résumés. Junior employment fell sharply at companies that adopted generative AI, while senior employment barely moved. The drop came from slower hiring, not from people being let go.
+The hiring numbers aren’t subtle. In [Figma’s 2026 hiring study](https://www.figma.com/blog/why-demand-for-designers-is-on-the-rise/), 56% of hiring managers reported rising demand for senior designers. Only 25% were hiring for junior roles. A [working paper from two Harvard researchers](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5425555) tracked 62 million workers at 285,000 American firms through their résumés. Junior employment fell sharply at companies that adopted generative AI, while senior employment barely moved. The drop came from slower hiring, not from people being let go.
 
-Nobody announced the end of junior hiring. The requisitions just stopped getting opened. Neeman’s answer is to open the requisition anyway, and he is right. Nobody gets to senior without first being junior somewhere.
+Nobody announced the end of junior hiring. The requisitions just stopped getting opened. Neeman’s answer is to open the requisition anyway, and he is right. Every senior designer was a junior somewhere first.
 
 The weak part of his argument is the reason he gives for why now is a good time. He cites the Brynjolfsson, Li and Raymond study of support agents, where novices with an AI assistant improved 34% and the most experienced barely changed. His conclusion is that the tools compress the time it takes a new person to become useful.
 
 ## Useful is not the same as trained
 
-Look at what [that study](https://www.nber.org/papers/w31161) measured: issues resolved per hour. It is an output number. The authors’ own explanation is that the model “disseminates the best practices of more able workers” to the new ones. The novices got faster because they were carrying someone else’s practice, not because they had formed their own.
+Look at what [that study](https://www.nber.org/papers/w31161) measured: issues resolved per hour. It’s an output number. The authors’ own explanation is that the model “disseminates the best practices of more able workers” to the new ones. The novices got faster because they were carrying someone else’s practice, not because they had formed their own.
 
-That is fine in a support queue. In a design team it switches off the oldest signal a lead has. A junior who needed help used to show it in the work: the muddled hierarchy, the empty state nobody drew, the flow that fell apart on the third screen. Weak output was the alarm.
+That’s fine in a support queue. In a design team it switches off the oldest signal a lead has. A junior who needed help used to show it in the work: the muddled hierarchy, the empty state nobody drew, the flow that fell apart on the third screen. Weak output was the alarm.
 
 Now a junior with a good model hands in a competent screen in their first week. It looks like progress. It might be. Or the model did the part that used to teach them, and they approved it.
 
@@ -346,22 +346,22 @@ Cheney Hamilton of the research firm Bloor named the gap in the same CNBC piece.
 
 The standard answer is that seniors will teach the judgment on purpose. The org chart is moving the other way. In May [Coinbase cut about 14% of its staff](https://www.coinbase.com/blog/building-a-leaner-and-faster-coinbase) and capped the company at five layers below the chief executive and chief operating officer. Leaders would carry as many as 15 or more direct reports. There are no pure managers left. Every leader is also meant to be an active individual contributor.
 
-A player-coach with 15 reports and their own work to ship cannot sit beside a junior and critique every frame. A [small interview study of software engineers in South Korea](https://arxiv.org/abs/2607.17067) gave the pattern a name: absorption. Entry-level work gets pulled into senior workflows running on AI, and juniors skip the struggle that used to build expertise. The seniors and juniors it interviewed did not even see the problem the same way.
+A player-coach with 15 reports and their own work to ship can’t sit beside a junior and critique every frame. A [small interview study of software engineers in South Korea](https://arxiv.org/abs/2607.17067) gave the pattern a name: absorption. Entry-level work gets pulled into senior workflows running on AI, and juniors skip the struggle that used to build expertise. The seniors and juniors it interviewed didn’t even see the problem the same way.
 
 So the training has to happen somewhere cheaper than a screen-by-screen review. And it has to leave a trace a busy lead can read.
 
 ## What I review instead
 
-The rule I hold is that a junior’s work comes to review with what they threw away. The options the model gave them that they killed, and one line on why each one died, written against the team’s standard.
+In my reviews, a junior’s work comes with what they threw away. The options the model gave them that they killed, and one line on why each one died, written against the team’s standard.
 
 I read the reasons before I look at the screen. The order matters, because it separates two juniors who hand in the same competent work.
 
-- **Right reasons, rough screen.** That is a craft gap. It closes with practice, and the tools help.
-- **Polished screen, thin reasons.** The model got it right and the junior agreed. That is where my time goes, because nothing in the output would have told me.
+- **Right reasons, rough screen.** That’s a craft gap. It closes with practice, and the tools help.
+- **Polished screen, thin reasons.** The model got it right and the junior agreed. That’s where my time goes, because nothing in the output would have told me.
 
-None of this works unless the standard is written down. A junior can’t explain why an option fails a bar nobody has stated, and a lead can’t check the explanation against a mood. Adam Elman made a related case about AI products at [Nielsen Norman Group in June](https://www.nngroup.com/articles/ai-era-critique/): the designer’s job shifts toward defining what good does and doesn’t look like.
+None of this works unless the standard is written down. A junior can’t explain why an option fails an unstated bar, and a lead can’t check the explanation against a mood. Adam Elman made a related case about AI products at [Nielsen Norman Group in June](https://www.nngroup.com/articles/ai-era-critique/): the designer’s job shifts toward defining what good does and doesn’t look like.
 
-The rejection notes also test the standard. Where it has gaps, they show up as reasons nobody on the team can give.
+The rejection notes also test the standard. Where it has gaps, they show up as reasons the team can’t give.
 
 And it gives the review a unit a player-coach can afford. A paragraph of reasons can be read between meetings. A file full of frames can’t.
 
@@ -371,7 +371,7 @@ Green is right that nobody should keep juniors on busywork for its own sake. He 
 
 A model rarely tells a junior no. It hands them another option. The only person left to say no is the junior, and the only way to know whether they can is to have them do it in writing, where someone will read it.
 
-So hire the junior. Then review what they reject.
+So hire the junior, and review what they reject.
 
 Sources:
 
@@ -400,29 +400,29 @@ The design system is now the thing the model reads. In a [July survey of 21 open
 
 The position behind all of this is reasonable. Give the agent your system and it builds on your system. The components and tokens become the guardrail, and on-brand output follows.
 
-I think that gets the guardrail half right and quietly drops the half that matters.
+I think that gets the guardrail half right and drops the half that matters.
 
 ## What the machine-readable half enforces
 
 The same survey catalogs 165 techniques teams use to keep models on their real components and tokens. The biggest groups are validation loops (31), prohibitions like “never invent components” (28), tool-gating that makes a fake component impossible to produce (22) and token enforcement that fails the build on a raw hex value (15).
 
-That is serious engineering, and it works. It also has a clear shape. Most of them answer one question: is this a real part of the system, used the way its API allows?
+That’s serious engineering, and it works. It also has a clear shape. Most of them answer one question: is this a real part of the system, used the way its API allows?
 
-That is spelling. An agent can pass all of it and still put a primary button in every row of a table, because every one of those buttons is a real button with a real token.
+That’s spelling. An agent can pass all of it and still put a primary button in every row of a table, because every one of those buttons is a real button with a real token.
 
 ## The part that got cut first
 
 Atlassian tested Google’s DESIGN.md format against its own MCP server and skills and wrote up what happened. To fit the design system into one portable file, the team says it [“had to remove much of the usage guidance from our 50+ components”](https://www.atlassian.com/blog/how-we-build/atlassians-design-md-is-here-what-we-learned-testing-portable-design-context-in-practice). Agents given the file then went digging through component code to find the guidance that was missing.
 
-Usage guidance is where the judgment lives. It is the paragraph that says when not to use the thing. Nord, one of the systems in the survey, ships it to agents in exactly that form: [“Don’t use a primary button in every row of a table.”](https://nordhealth.design/.well-known/skills/nord/references/components/button.md) No linter catches that sentence being ignored. It is also what went first when Atlassian needed the file smaller.
+Usage guidance is where the judgment lives. It’s the paragraph that says when not to use the thing. Nord, one of the systems in the survey, ships it to agents in exactly that form: [“Don’t use a primary button in every row of a table.”](https://nordhealth.design/.well-known/skills/nord/references/components/button.md) No linter catches that sentence being ignored. It’s also what went first when Atlassian needed the file smaller.
 
-Tokens are cheap to write down. They are values with names. The reasons behind the choices are expensive, and the reasons are the part a designer was actually hired to supply.
+Tokens are cheap to write down. They’re values with names. The reasons behind the choices are expensive, and the reasons are the part a designer was actually hired to supply.
 
 ## Frequency is not a standard
 
-When an agent has no reason to go on, it falls back on what is common. Figma says its agent [“uses your most frequently and recently used components as a starting point”](https://www.figma.com/blog/the-figma-agent-is-here/). That is a sensible default for a tool and a poor definition of good.
+When an agent has no reason to go on, it falls back on what’s common. Figma says its agent [“uses your most frequently and recently used components as a starting point”](https://www.figma.com/blog/the-figma-agent-is-here/). That’s a sensible default for a tool and a poor definition of good.
 
-I have seen why. When I ran an agent audit across a whole design library, I wrote the crawler’s rules, and it counted every value we had. It could not tell me which of two established values was right. Somebody had to decide, and the decision was nowhere in the data.
+I have seen why. When I ran an agent audit across a whole design library, I wrote the crawler’s rules, and it counted every value we had. It couldn’t tell me which of two established values was right. Somebody had to decide, and the decision was nowhere in the data.
 
 Nurkhon Akhmedov puts the failure mode well in [a July post on this](https://nurxmedov.substack.com/p/your-design-systems-real-job-in-2026): five screens in a hundred ship off-system, and “the next agent reads those five as if they were the library.” A system that learns from its own output drifts toward whatever it did most, right or wrong.
 
@@ -434,21 +434,19 @@ So the mechanical half is gated and the judgment half is trusted. Akhmedov’s v
 
 ## Where the missing half comes from
 
-Akhmedov argues the rubric is now the deliverable. I agree, and I would go one step further on where it comes from.
+Akhmedov argues the rubric is now the deliverable. I agree, and I’d go one step further on where it comes from.
 
 Nobody writes good usage guidance in the abstract. Try to list every wrong way to use a button in advance and you get a style guide nobody reads. The useful rules show up one at a time, when someone looks at a screen an agent built and says no.
 
-That moment is the raw material, and it is easy to lose. The rejection happens in a review, the agent gets a new prompt, the screen gets fixed and the reason lives in one person’s head until they leave.
+That moment is the raw material, and it’s easy to lose. The rejection happens in a review, the agent gets a new prompt, the screen gets fixed and the reason lives in one person’s head until they leave.
 
-The rule I hold is simple. A rejection without a written reason is wasted. The reason goes into the system the agent reads, in the form Nord already uses: the choice that was wrong, the one that was right and why. Written that way, the next agent can be held to it and so can the next designer.
+A rejection without a written reason is wasted. The reason goes into the system the agent reads, in the form Nord already uses: the choice that was wrong, the one that was right and why. Written that way, the next agent can be held to it and so can the next designer.
 
 ## What the design system team is for now
 
 For years the visible output of a design system team was the library. This year the industry made that library readable and enforceable for agents. That work was worth doing.
 
 It was also the easy half. A system that only knows its own vocabulary will produce fluent, valid, wrong screens at whatever speed you let it. The half that decides whether a screen is right is still mostly sitting in people’s heads, and in at least one case it was trimmed out on purpose to make a file fit.
-
-An agent can read every token you have. It cannot read a reason nobody wrote down.
 
 Sources:
 
@@ -475,7 +473,7 @@ On September 15 the Senate failed to advance the Clarity Act, [49 to 50](https:/
 
 Within three days, two Substack writers read the same failure in opposite directions. [Anndy Lian](https://anndy.substack.com/p/clarity-act-diesstablecoin-yields) headlined that stablecoin yields survive. [Andrew Dresner](https://paymentsinfull.substack.com/p/how-does-claritys-failure-impact) argued the failure counts as a win for banks, because the tighter GENIUS Act restrictions now govern.
 
-Both sides share one assumption, and it is a fair one: what a person earns for holding a stablecoin decides whether they move money into it. I agree with it. It is still the wrong screen to fight over.
+Both sides share one assumption, and it’s a fair one: what a person earns for holding a stablecoin decides whether they move money into it. I agree with it. It’s still the wrong screen to fight over.
 
 ## The bad day is already written down
 
@@ -483,7 +481,7 @@ The GENIUS Act already bans issuers from paying holders [any form of interest or
 
 The Office of the Comptroller of the Currency (OCC) proposed its rule in March. [Its section 15.12](https://www.federalregister.gov/documents/2026/03/02/2026-04089/implementing-the-guiding-and-establishing-national-innovation-for-us-stablecoins-act-for-the) puts timely at two business days. Then it defines the bad day. If redemption requests pass 10% of an issuer’s outstanding issuance in a single 24-hour period, the window becomes seven calendar days. That applies to every request already in line and every one after it. Only the OCC can shorten it, and the OCC can also extend it further.
 
-The rule is defensible. Regulators need some way to slow a run, and compliance is not the problem here.
+The rule is defensible. Regulators need some way to slow a run, and compliance isn’t the problem here.
 
 The problem is what the person sees. Section 15.12 has the issuer notify the OCC within 24 hours. What it asks the issuer to tell holders is a statement in the redemption policy explaining when the period can stretch. So the one moment a stablecoin behaves least like a dollar is covered by a paragraph on a policy page.
 
@@ -493,7 +491,7 @@ The disclosures the law does require are real and useful. Once the law takes eff
 
 That report is for analysts. A person holding stablecoins in an app has one question on the bad day: when does my money land, and what would make it later? A reserve breakdown answers a different question, and putting it on the screen is how the industry keeps exposing its machinery and calling it transparency.
 
-It gets harder, because a person holding a stablecoin in an exchange app may never deal with the issuer at all. As [Liam Wright wrote in CryptoSlate](https://cryptoslate.com/proposed-stablecoin-rules-might-guarantee-your-dollar-while-making-you-wait-a-week-to-spend-it/) on the day of the vote, a faster exit depends on the service converting the coin, which has to pay out before the issuer pays it. So the wait a person feels is set by whoever sits between them and the issuer. That is the same kind of platform whose rewards the Senate just fought over.
+It gets harder, because a person holding a stablecoin in an exchange app may never deal with the issuer at all. As [Liam Wright wrote in CryptoSlate](https://cryptoslate.com/proposed-stablecoin-rules-might-guarantee-your-dollar-while-making-you-wait-a-week-to-spend-it/) on the day of the vote, a faster exit depends on the service converting the coin, which has to pay out before the issuer pays it. So the wait a person feels is set by whoever sits between them and the issuer. That’s the same kind of platform whose rewards the Senate just fought over.
 
 ## The states a balance can be in
 
@@ -510,15 +508,15 @@ The extended state is the one that should worry product teams. Nothing the perso
 
 At Best Egg, loan applicants uploaded their documents and then the dashboard went quiet. Nothing said whether a file was pending, accepted or still needed, so they called to ask. We replaced it with a [status for every document](https://john-desouza.com/work/verifications.html), sized at 7,000 fewer support calls a month.
 
-Stablecoin redemption is that screen with the person’s own money behind it. A silent “processing” on day four of a seven-day extension does not read as a rule working as designed. It reads as a freeze. [Jayson Derrick](https://crypto-compass-daily.beehiiv.com/p/the-redemption-cliff-how-the-occ-s-10-percent-trigger-turns-a-routine-withdrawal-wave-into-a-seven-d) wrote about the trigger in May and pictured retail holders opening their apps on a Sunday night to find “a locked gate.” That is the screen to draw first.
+Stablecoin redemption is that screen with the person’s own money behind it. A silent “processing” on day four of a seven-day extension doesn’t read as a rule working as designed. It reads as a freeze. [Jayson Derrick](https://crypto-compass-daily.beehiiv.com/p/the-redemption-cliff-how-the-occ-s-10-percent-trigger-turns-a-routine-withdrawal-wave-into-a-seven-d) wrote about the trigger in May and pictured retail holders opening their apps on a Sunday night to find “a locked gate.” That’s the screen to draw first.
 
 ## The screen I ask for first
 
-Put a stablecoin product in front of me and the first screen I would ask for is the balance on day four of an extended redemption. What does it say happened, what does it say happens next and on what date?
+Put a stablecoin product in front of me and the first screen I’d ask for is the balance on day four of an extended redemption. What does it say happened, what does it say happens next and on what date?
 
 If the team shows me the rewards rate instead, the product has been designed for the day money arrives and not for the day it tries to leave.
 
-Comptroller Jonathan Gould said in August that the OCC wants [a final rule out by November](https://www.theblock.co/news/regulation/2026-08-19-occ-races-to-finalize-genius-act-stablecoin-rules-by-november-412240). Under section 20 the law takes effect no later than January 18, 2027. The rewards fight, American Banker reports, starts over in the next Congress. The redemption screen gets built before then either way, and almost nobody in this month’s fight is talking about it.
+Comptroller Jonathan Gould said in August that the OCC wants [a final rule out by November](https://www.theblock.co/news/regulation/2026-08-19-occ-races-to-finalize-genius-act-stablecoin-rules-by-november-412240). Under section 20 the law takes effect no later than January 18, 2027. The rewards fight, American Banker reports, starts over in the next Congress. The redemption screen gets built before then either way.
 
 Sources:
 
@@ -540,13 +538,13 @@ Sources:
 - Author: John DeSouza
 - Published: 2026-09-24
 - Topic: Fintech, web3 and trust
-- Claim: Once every data pull has a price, how often an app checks a bank account stops being a back-end setting. It is a consent decision, and it belongs on the consent screen instead of an invoice.
+- Claim: Once every data pull has a price, how often an app checks a bank account stops being a back-end setting. It’s a consent decision, and it belongs on the consent screen instead of an invoice.
 
-JPMorgan Chase already bills aggregators for every data request, and the rewrite of the open banking rule is expected to let other banks follow. The argument is about who pays. Almost nobody is designing where a person finds out how often an app looks at their account.
+JPMorgan Chase already bills aggregators for every data request, and the rewrite of the open banking rule is expected to let other banks follow. The argument is about who pays. The screen where a person finds out how often an app looks at their account has barely been designed.
 
 JPMorgan Chase now charges data aggregators like Plaid for the requests its systems answer. The fee applies to each call rather than a monthly total, a JPMorgan managing director [told a panel in December](https://www.paymentsdive.com/news/open-banking-fees-fintechs-fuel-debate-cfpb-apps/808114/). The Consumer Financial Protection Bureau’s rewrite of the Section 1033 open banking rule [went to the White House for review in August](https://www.consumerfinancemonitor.com/2026/08/06/cfpb-sends-new-section-1033-open-banking-proposal-to-oira-for-review/), and it is [expected to let banks charge](https://www.americanbanker.com/news/what-we-know-about-the-cfpbs-forthcoming-open-banking-rule) for access the 2024 version made free.
 
-The fight is being argued as a question of who pays. The Financial Technology Association [says](https://www.ftassociation.org/looking-ahead-to-the-open-banking-rule-protecting-americans-right-to-securely-access-and-share-their-financial-data-without-fees/) the costs “will be passed directly on to American consumers and small businesses,” and that data access is a legal entitlement, “not a conditional right contingent upon paying access fees.” That is a serious argument about competition. This post doesn’t argue the price.
+The fight is being argued as a question of who pays. The Financial Technology Association [says](https://www.ftassociation.org/looking-ahead-to-the-open-banking-rule-protecting-americans-right-to-securely-access-and-share-their-financial-data-without-fees/) the costs “will be passed directly on to American consumers and small businesses,” and that data access is a legal entitlement, “not a conditional right contingent upon paying access fees.” That’s a serious argument about competition. This post doesn’t argue the price.
 
 It argues about the screen, because a price changes what the screen is for.
 
@@ -556,7 +554,7 @@ Listen to what each side says about volume and they land in the same place. On t
 
 PNC put the bank case more bluntly in its comment letter to the bureau, [as quoted by Payments Dive](https://www.paymentsdive.com/news/open-banking-fees-fintechs-fuel-debate-cfpb-apps/808114/): “When third party access to consumer data is free and unlimited, third parties have little incentive to minimize cadence, scope, or retention of data they do not need and will not use.”
 
-One side calls the volume waste. The other calls it the product working. Both are saying that how often an app looks at a bank account is a product decision. Neither has said where the person whose account it is gets to see that decision.
+One side calls the volume waste. The other calls it the product working. Both are saying that how often an app looks at a bank account is a product decision. Neither has said where the person whose account it’s gets to see that decision.
 
 ## Frequency was never on the screen
 
@@ -570,29 +568,29 @@ That rule isn’t in force either. A federal court in Kentucky [has blocked enfo
 
 Today the answer to “how often” lives on a signup screen nobody reads twice. CNBC reported an internal JPMorgan memo complaining that aggregators access data “multiple times daily, even when the customer is not actively using the app.” Plaid’s [answer](https://www.cnbc.com/2025/07/28/jpmorgan-fintech-middlemen-plaid-data-requests-taxing-systems.html) was that all of that activity begins with the permission a customer grants at signup, and that background calls are how people get “critical alerts for overdraft fees or suspicious activity.”
 
-Plaid is right that those alerts matter. That is the problem. The pull that catches an overdraft is the same kind of pull a bank now bills for, and the person who wanted the alert agreed to it with one tap that never mentioned it.
+Plaid is right that those alerts matter. That’s the problem. The pull that catches an overdraft is the same kind of pull a bank now bills for, and the person who wanted the alert agreed to it with one tap that never mentioned it.
 
 So far the meter has stayed out of sight. When Plaid and JPMorgan renewed their agreement, Plaid told clients that [current contracts and customer fees remain unchanged](https://finovate.com/jpmorgans-data-access-agreement-from-plaids-perspective/). The cost sits in a contract between two companies, and JPMorgan says the trimming has started there: once it announced fees, Prochaska said, “people are more judicious and thoughtful about it.”
 
-If a balance that used to refresh in the background starts refreshing only when the app opens, the overdraft warning arrives after the overdraft. Nobody chose that on a screen. It got chosen in a contract. That is the failure state worth worrying about, and it isn’t a breach. It’s a downgrade the person never agreed to and has no way to see.
+If a balance that used to refresh in the background starts refreshing only when the app opens, the overdraft warning arrives after the overdraft. Nobody chose that on a screen. It got chosen in a contract. That’s the failure state worth worrying about, and it isn’t a breach. It’s a downgrade the person never agreed to and has no way to see.
 
 ## Identity already has a word for this
 
-OpenID Connect, the identity layer under most modern login flows, treats access while you’re away as its own grant. The spec defines an [offline_access scope](https://openid.net/specs/openid-connect-core-1_0.html) and says the provider “MUST always obtain consent” before issuing the token that allows it. It adds that “a previously saved user consent is not always sufficient,” because access when the user is not present poses greater privacy risk.
+OpenID Connect, the identity layer under most modern login flows, treats access while you’re away as its own grant. The spec defines an [offline_access scope](https://openid.net/specs/openid-connect-core-1_0.html) and says the provider “MUST always obtain consent” before issuing the token that allows it. It adds that “a previously saved user consent is not always sufficient,” because access when the user isn’t present poses greater privacy risk.
 
 At Auth0 I worked inside that model, where consent is granted scope by scope and each scope has a name. Open banking consent still bundles “while I’m using the app” and “while I’m asleep” into a single tap. Identity split those two apart years ago, and a price per pull is a good reason for open banking to do the same.
 
 ## What the screen should say
 
-The lazy version of this screen is a number. “This app may request your data up to 12 times a day” is accurate, and it is a mechanism dressed as a disclosure. Nobody can make a decision with it.
+The lazy version of this screen is a number. “This app may request your data up to 12 times a day” is accurate, and it’s a mechanism dressed as a disclosure. You can’t make a decision with it.
 
 The version a person can decide on names what the looking buys them and what stops if they say no. Check my balance in the background so you can warn me before an overdraft. Or only update when I open the app. Two choices, each with its consequence, and the app lives with whichever one the person picks.
 
 That forces the product team to do what the price is already forcing on the business side: say which pulls are the product and which are habit. A pull that can’t be explained on that screen in one plain sentence is a pull the app should stop making.
 
-The question I would put to any background access in a design review is simple. What does the person get from us looking while they’re not here? If the team can’t answer in a sentence the person would recognize, the access goes, not the sentence.
+The question I’d put to any background access in a design review is simple. What does the person get from us looking while they’re not here? If the team can’t answer in a sentence the person would recognize, the access goes, not the sentence.
 
-Whatever the bureau publishes, the meter is already running at the largest bank in the country. Where the decision about how often gets made is still open. It can be made on the consent screen, where the person sees it, or in a contract they will never read.
+Whatever the bureau publishes, the meter is already running at the largest bank in the country. Where the decision about how often gets made is still open. It can be made on the consent screen, where the person sees it, or in a contract they’ll never read.
 
 Sources:
 
@@ -615,23 +613,23 @@ Sources:
 - Author: John DeSouza
 - Published: 2026-09-22
 - Topic: Design leadership
-- Claim: You are no longer the fastest source of useful knowledge on your team, and trying to win that back is the most expensive mistake available to you right now.
+- Claim: You’re no longer the fastest source of useful knowledge on your team, and trying to win that back is the most expensive mistake available to you right now.
 
-In one year, the number of designers learning from each other went from a quarter to more than two thirds. Over the same year, the number taking recommendations from their leadership fell by half. Both of those are the same event.
+In one year, the number of designers learning from each other went from a quarter to more than two thirds. Over the same year, the number taking recommendations from their leadership fell by half. Both numbers describe the same shift.
 
 Here are two numbers from [a survey](https://stateofaidesign.com/chapters/teams) of more than 900 designers. Peer learning went from 24% to 70% in a year. The share of designers taking recommendations from their leadership went from 32% to 16%.
 
-The first number gets quoted constantly, usually as a feel-good line about community. The second one barely gets quoted at all, and it is the one that should be keeping design leaders up.
+The first number gets quoted constantly, usually as a feel-good line about community. The second one barely gets quoted at all, and it’s the one that should be keeping design leaders up.
 
 ## The comfortable reading is wrong
 
 The comfortable reading is that this is a culture problem. Teams got scattered, people stopped looking up, leaders need to communicate better and be more present.
 
-I do not think that is what happened. I think the method started turning over faster than any management chain can carry it.
+I don’t think that’s what happened. I think the method started turning over faster than any management chain can carry it.
 
-The average designer’s toolstack went from three tools to seven in 12 months. When the useful knowledge has a shelf life measured in weeks, the person three levels up is structurally the last to hear it. Not because they are disengaged. Because that is what a hierarchy does to information that expires: it delays it.
+The average designer’s toolstack went from three tools to seven in 12 months. When the useful knowledge has a shelf life measured in weeks, the person three levels up is structurally the last to hear it. Not because they’re disengaged. Because that’s what a hierarchy does to information that expires: it delays it.
 
-Your team did not lose respect for you. They found a faster path, and they were right to take it.
+Your team didn’t lose respect for you. They found a faster path, and they were right to take it.
 
 ## The expensive mistake
 
@@ -639,39 +637,39 @@ The expensive mistake is trying to win method authority back.
 
 It looks reasonable from the inside. You block time, you learn the tools, you show up to the design review with a working prototype you built yourself. And it does buy you something real, which is that you stop being illegible to your own team.
 
-But you cannot win that race. There are eight of them and one of you, they are in the tools all day, and whatever you learn this quarter is half wrong by the next. Meanwhile the thing only you can do is sitting there not getting done.
+But you can’t win that race. There are eight of them and one of you, they’re in the tools all day, and whatever you learn this quarter is half wrong by the next. Meanwhile the thing only you can do is sitting there not getting done.
 
-I watch leaders spend their scarce hours becoming the fourth-best prototyper on a team of six. It is the most sympathetic failure mode I know and it is still a failure mode.
+I watch leaders spend their scarce hours becoming the fourth-best prototyper on a team of six. It’s the most sympathetic failure mode I know and it’s still a failure mode.
 
 ## Make the trade explicit
 
 The trade I have settled on is that the team owns the method and I own the standard and the decision.
 
-Owning the standard means I am accountable for writing down what good means here, precisely enough that someone who was not in the room can hold work to it. Not a mood, not a principle poster. The actual bar, in words, that a person or a model can be measured against.
+Owning the standard means I’m accountable for writing down what good means here, precisely enough that someone who wasn’t in the room can hold work to it. Not a mood, not a principle poster. The actual bar, in words, that a person or a model can be measured against.
 
-Owning the decision means the calls that need a name on them stay with me. Which of two entrenched options we standardize on. What we deprecate when the data is genuinely tied. Anything where somebody’s work is on the other end of the answer.
+Owning the decision means the calls that need a name on them stay with me. Which of two entrenched options we standardize on. What we deprecate when the data is tied. Anything where somebody’s work is on the other end of the answer.
 
-When I audited our design library this year, the analysis came back saying one spacing value appeared 1,834 times and the competing one 1,796. Nothing in the data was ever going to break that tie. Somebody had to pick, say so out loud, and then go make the other one wrong. That is not a job you can delegate downward or automate, and it is the job.
+When I audited our design library this year, the analysis came back saying one spacing value appeared 1,834 times and the competing one 1,796. Nothing in the data was ever going to break that tie. Somebody had to pick, say so out loud, and then go make the other one wrong. That isn’t a job you can delegate downward or automate, and it’s the job.
 
-What I do not do any more is pretend I know the best way to get from a brief to a prototype this month. They know. I ask.
+What I don’t do any more is pretend I know the best way to get from a brief to a prototype this month. They know. I ask.
 
 ## What this looks like on a calendar
 
 Three things I actually changed, in case the principle is too tidy to be useful.
 
-- **I ask what changed in your method, every one-on-one.** Not as a check-in, as intake. It is how I find out what the team knows before the quarter is over. Half of what I now believe about working with agents came off that question.
+- **I ask what changed in your method, every one-on-one.** Not as a check-in, as intake. It’s how I find out what the team knows before the quarter is over. Half of what I now believe about working with agents came off that question.
 - **Whoever found the better way presents it, not me.** The moment a leader relays somebody else’s discovery, two things break: the credit and the accuracy.
-- **I write the standard down before anyone touches a tool.** If the team cannot say in a paragraph what a correct component looks like, no amount of tooling discovers it. It averages whatever is already there and hands it back with confidence.
+- **I write the standard down before anyone touches a tool.** If the team can’t say in a paragraph what a correct component looks like, no amount of tooling discovers it. It averages whatever is already there and hands it back with confidence.
 
-## The part almost nobody has done
+## The part few leaders have done
 
 The [same survey](https://designerfund.com/blog/ai-in-design-2026) found that only 28% of leaders made any formal change to evaluation, pay or hiring. Just 8% changed performance metrics and 4% touched compensation.
 
-So the work changed, who people learn from changed, and what we reward stayed exactly where it was. That gap is where good designers quietly decide their leadership is not paying attention, and it is a gap leaders can close without permission from anyone.
+So the work changed, who people learn from changed, and what we reward stayed exactly where it was. That gap is where good designers quietly decide their leadership isn’t paying attention, and it’s a gap leaders can close without permission from anyone.
 
-Start with the review template. If it still rewards volume of screens, it is measuring the part of the job that got cheap.
+Start with the review template. If it still rewards volume of screens, it’s measuring the part of the job that got cheap.
 
-There is one number in that report I find genuinely reassuring: 80% of designers still trust their own quality judgment over the model’s. Taste did not go anywhere. What went is the assumption that it flows downhill from the person with the biggest title.
+The same report has 80% of designers still trusting their own quality judgment over the model’s. Taste didn’t go anywhere. What went is the assumption that it flows downhill from the person with the biggest title.
 
 Sources:
 
@@ -689,11 +687,11 @@ Sources:
 - Topic: Where product design is going
 - Claim: AI fluency is a proxy with a shelf life. The durable skill is the ability to specify what good means and then say why the model’s answer missed it.
 
-Half of design leaders now put more weight on AI fluency when they hire. The tools those candidates are fluent in more than doubled in number in a single year. We are testing for the most perishable thing in the room.
+Half of design leaders now put more weight on AI fluency when they hire. The tools those candidates are fluent in more than doubled in number in a single year. We’re testing for the most perishable thing in the room.
 
 Fifty percent of design leaders now emphasize AI fluency when they hire, according to [AI in Design 2026](https://stateofaidesign.com/chapters/teams), a survey of more than 900 designers. Systems thinking and strategic skills come right behind it. I understand the instinct completely and I think the practice is close to useless.
 
-Over the same year, the average designer’s toolstack [went from three tools to seven](https://stateofaidesign.com/chapters/tools). Ninety-one percent of designers now use AI weekly. A habit that 91% of the field already has, in tools that keep turning over, is not a filter. It is a coin flip wearing a rubric.
+Over the same year, the average designer’s toolstack [went from three tools to seven](https://stateofaidesign.com/chapters/tools). Ninety-one percent of designers now use AI weekly. A habit that 91% of the field already has, in tools that keep turning over, isn’t a filter. It’s a coin flip wearing a rubric.
 
 ## What the screen actually selects for
 
@@ -701,9 +699,9 @@ When you screen for AI fluency, the candidate who wins is the one who most recen
 
 That correlates with some things you do want, like curiosity. It correlates with some things you should be careful about, like having been between jobs, or having worked somewhere with slack in the schedule, or simply being young enough that nobody at home needed them on a Saturday.
 
-It does not correlate with judgment, and judgment is the entire reason you are hiring a designer rather than buying a seat.
+It doesn’t correlate with judgment, and judgment is the entire reason you’re hiring a designer rather than buying a seat.
 
-There is a version of the screen that works, and it is not “which tools do you use”. It is “show me something the model gave you that you threw away, and tell me why”. That question cannot be studied for. It has no right answer available on a podcast. And it goes directly at the thing you actually need to know.
+There’s a version of the screen that works, and it isn’t “which tools do you use”. It is “show me something the model gave you that you threw away, and tell me why”. That question can’t be studied for. It has no right answer available on a podcast. And it goes directly at the thing you actually need to know.
 
 ## The job got wider, not deeper
 
@@ -711,9 +709,9 @@ Sixty-five percent of designers report taking on more product or engineering res
 
 Read those together and the shape is clear. The boundaries around the discipline dissolved in both directions. Designers are writing production code and specifying systems. Everybody else is making design decisions, because the tools let them and nobody stopped them.
 
-The common read is that this is design losing ground. I think that is exactly backwards, and it misses what actually got scarce.
+The common read is that this is design losing ground. I think that’s exactly backwards, and it misses what actually got scarce.
 
-When anyone can generate a competent screen, the constraint moves from production to specification. Somebody has to say which of the 40 plausible things is the right one, and say it precisely enough that it holds when they leave the room. That job did not exist as a distinct skill when producing the option was itself the hard part. It was bundled inside the craft, invisible, and a lot of people were doing it without a name for it.
+When anyone can generate a competent screen, the constraint moves from production to specification. Somebody has to say which of the 40 plausible things is the right one, and say it precisely enough that it holds when they leave the room. That job didn’t exist as a distinct skill when producing the option was itself the hard part. It was bundled inside the craft, invisible, and a lot of people were doing it without a name for it.
 
 It has a name now, because the bundle came apart.
 
@@ -723,17 +721,17 @@ Three things, in this order.
 
 **Can they write a standard down.** I ask for something they have written that another person had to work from: a component spec, a critique doc, a definition of done. Then I read it for whether a stranger could apply it without asking a follow-up question. Most portfolios contain no such artifact, which is itself information.
 
-**Can they say why they rejected something.** Not what they chose. What they killed, and on what grounds. Katie Dill at Stripe frames the check as asking whether you would be happy with this if it had taken you a week to make. A designer who cannot articulate the rejection is a designer who will approve the model’s first answer.
+**Can they say why they rejected something.** Not what they chose. What they killed, and on what grounds. Katie Dill at Stripe frames the check as asking whether you would be happy with this if it had taken you a week to make. A designer who can’t articulate the rejection is a designer who will approve the model’s first answer.
 
-**Can they be specific about what was theirs.** Forty percent of designers say they feel full ownership of AI-assisted work and 9% say it is genuinely difficult to separate their contribution from the model’s. That is not a moral failing, it is a new and confusing condition. But a candidate who can walk me through which decisions were theirs is telling me they were paying attention to their own judgment while they worked. That is the whole signal.
+**Can they be specific about what was theirs.** Forty percent of designers say they feel full ownership of AI-assisted work and 9% say it’s genuinely difficult to separate their contribution from the model’s. That isn’t a moral failing, it’s a new and confusing condition. But a candidate who can walk me through which decisions were theirs is telling me they were paying attention to their own judgment while they worked. That’s the whole signal.
 
 ## The thing I would not do
 
-I would not test tool proficiency in an interview loop. Not because it is unmeasurable, but because it is the cheapest thing on the list to teach after someone starts.
+I wouldn’t test tool proficiency in an interview loop. Not because it’s unmeasurable, but because it’s the cheapest thing on the list to teach after someone starts.
 
-Hire someone with judgment and no Cursor experience and they are productive in two weeks. Hire someone fluent in every tool on the market who cannot tell you why one option is better than another, and you have bought a very fast way to produce work nobody can defend in a review.
+Hire someone with judgment and no Cursor experience and they’re productive in two weeks. Hire someone fluent in every tool on the market who can’t tell you why one option is better than another, and you have bought a very fast way to produce work nobody can defend in a review.
 
-Eighty percent of designers still trust their own quality judgment over the model’s, and [their most common complaint](https://designerfund.com/blog/ai-in-design-2026) about AI is unreliable output quality. Only 5% of leaders say they are placing less emphasis on execution craft. Those numbers are the profession telling you where its value sits. The hiring process should probably catch up to it.
+Eighty percent of designers still trust their own quality judgment over the model’s, and [their most common complaint](https://designerfund.com/blog/ai-in-design-2026) about AI is unreliable output quality. Only 5% of leaders say they’re placing less emphasis on execution craft. That’s where designers think their value sits, and hiring should catch up to it.
 
 Sources:
 
@@ -748,9 +746,9 @@ Sources:
 - Author: John DeSouza
 - Published: 2026-09-22
 - Topic: Fintech, web3 and trust
-- Claim: Liability follows authorization. That makes the consent screen the most consequential surface in agentic commerce, and it is currently the least designed.
+- Claim: Liability follows authorization. That makes the consent screen the most consequential surface in agentic commerce, and it’s currently the least designed.
 
-The rails for agents that spend money got built this year. The screen where a person decides what their agent is allowed to do, and finds out when it got that wrong, mostly did not.
+The rails for agents that spend money got built this year. The screen where a person decides what their agent is allowed to do, and finds out when it got that wrong, mostly didn’t.
 
 In June, Mastercard [launched Agent Pay for Machines](https://www.biia.com/mastercard-launches-agent-pay-for-machines-to-unlock-super-fast-always-on-payments/) with more than 30 partners, credentialing agents through what it calls Verifiable Intent, across both cards and stablecoins. Visa’s [Trusted Agent Protocol](https://usa.visa.com/about-visa/newsroom/press-releases.releaseId.21716.html) lets merchants recognize the AI agents shopping on a person’s behalf. The IMF published [a note](https://www.elibrary.imf.org/view/journals/068/2026/004/article-A001-en.xml) on how this reshapes payments.
 
@@ -760,9 +758,9 @@ The infrastructure question is being answered quickly and competently. The desig
 
 The [IMF note](https://www.elibrary.imf.org/view/journals/068/2026/004/article-A001-en.xml) says liability in a dispute depends on whether the agent acted within its authority, and admits the legal lines are still unclear. If the agent stayed inside the scope its principal authorized, the loss flows one way. If it went outside, it flows the other.
 
-Which means the moment a person grants that scope is the moment that decides who eats a bad outcome months later. In a card dispute, the question will not be whether the agent behaved reasonably. It will be what the person agreed to, and whether they can be said to have understood it. [Fenwick](https://www.fenwick.com/insights/publications/is-2026-the-year-of-agentic-payments) notes it is still unresolved whether giving an agent your payment credentials even counts as authorization under Regulation E.
+Which means the moment a person grants that scope is the moment that decides who eats a bad outcome months later. In a card dispute, the question won’t be whether the agent behaved reasonably. It will be what the person agreed to, and whether they can be said to have understood it. [Fenwick](https://www.fenwick.com/insights/publications/is-2026-the-year-of-agentic-payments) notes it’s still unresolved whether giving an agent your payment credentials even counts as authorization under Regulation E.
 
-That is a screen. Somebody is designing it right now, probably in a sprint, probably under an engineer’s ticket, and it will determine the financial exposure of everyone who uses the product.
+That’s a screen. Somebody is designing it right now, probably in a sprint, probably under an engineer’s ticket, and it will determine the financial exposure of everyone who uses the product.
 
 I have watched this exact thing get treated as paperwork before. It never is.
 
@@ -770,25 +768,25 @@ I have watched this exact thing get treated as paperwork before. It never is.
 
 Crypto spent a decade answering “people cannot use this” with better documentation, and the answer turned out to be that the product was exposing its own machinery and calling it transparency. Seed phrases, gas, chain IDs. Account abstraction finally fixed it, and it fixed it by deciding what a person never needs to see rather than by explaining it better.
 
-Agentic payments are set up to repeat that, and the early patterns already look familiar. Scoped spend limits, cryptographic identity checks, circuit breakers. Every one of those is the right control. Every one of them is also a mechanism, and mechanisms have a way of arriving on the first screen because that is where they are easiest to put.
+Agentic payments are set up to repeat that, and the early patterns already look familiar. Scoped spend limits, cryptographic identity checks, circuit breakers. Every one of those is the right control. Every one of them is also a mechanism, and mechanisms have a way of arriving on the first screen because that’s where they’re easiest to put.
 
-“Grant this agent a $500 monthly limit with merchant category restrictions” is a control panel. It is not a decision a person can actually make, because it asks them to predict which categories a shopping agent will need before they have watched one work.
+“Grant this agent a $500 monthly limit with merchant category restrictions” is a control panel. It isn’t a decision a person can actually make, because it asks them to predict which categories a shopping agent will need before they have watched one work.
 
-The honest version of that screen is closer to what it would say out loud: what is this thing allowed to do without asking me, what will it always ask about, and how do I find out fast when it does something I did not expect.
+The honest version of that screen is closer to what it would say out loud: what’s this thing allowed to do without asking me, what will it always ask about, and how do I find out fast when it does something I didn’t expect.
 
 ## Three states nobody is designing
 
-Delegation is not one moment, it is three, and the industry is building the first and ignoring the rest.
+Delegation isn’t one moment, it’s three, and the industry is building the first and ignoring the rest.
 
-- **The grant.** Where scope is set. Currently drifting toward a permissions matrix, which is how you get consent that is legally valid and practically uninformed.
-- **The notice.** What reaches a person while the agent is acting. If every action pings them, they turn notifications off and the audit trail is theater. If nothing does, the first they hear of it is the statement.
+- **The grant.** Where scope is set. Currently drifting toward a permissions matrix, which is how you get consent that’s legally valid and practically uninformed.
+- **The notice.** What reaches a person while the agent is acting. If every action pings them, they turn notifications off and the audit trail is theater. If nothing does, the first they hear of it’s the statement.
 - **The dispute.** The one that matters. Something went wrong, and the person has to reconstruct what their agent did and on whose authority. Almost nothing I have seen treats this as a product surface at all. [Fenwick](https://www.fenwick.com/insights/publications/is-2026-the-year-of-agentic-payments) warns that consumers could be left without standard dispute rights when contesting agentic purchases.
 
-That last one is where trust actually gets decided, and it is always designed last, by whoever has time, after the demo has already been approved.
+That last one is where trust actually gets decided, and it’s always designed last, by whoever has time, after the demo has already been approved.
 
 ## Why I keep coming back to this
 
-I have spent 13 years in three fields that are now converging on exactly this problem. In consumer lending the lesson was paid for expensively: when a screen goes quiet after somebody has money on the line, they do not wait patiently, they call. At Chainlink Labs and Auth0 the lesson was that a credential is not a special category of thing that deserves its own frightening vocabulary. It is a credential, and it should behave like every other one.
+I have spent 13 years in three fields that are now converging on exactly this problem. In consumer lending the lesson was paid for expensively: when a screen goes quiet after somebody has money on the line, they don’t wait patiently, they call. At Chainlink Labs and Auth0 the lesson was that a credential isn’t a special category of thing that deserves its own frightening vocabulary. It’s a credential, and it should behave like every other one.
 
 Agentic payments need both lessons at once, and the people building the rails are mostly coming from neither tradition.
 
@@ -796,7 +794,7 @@ Agentic payments need both lessons at once, and the people building the rails ar
 
 For any agent that acts on someone’s behalf: when this goes wrong, can the person tell what happened, prove what they authorized, and stop it happening again?
 
-If the answer is no, adding a clearer consent dialog at the start does not fix it. The dialog is what gets written when the decision has been made not to design the rest.
+If the answer is no, adding a clearer consent dialog at the start doesn’t fix it. The dialog is what gets written when the decision has been made not to design the rest.
 
 The rails are getting built either way. Whether the consent is real is still open, and that part is ours.
 

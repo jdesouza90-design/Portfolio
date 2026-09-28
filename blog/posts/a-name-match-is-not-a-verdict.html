@@ -4,17 +4,17 @@
   "pillar": "fintech",
   "date": "2026-09-27T10:00:00-04:00",
   "lede": "Payee name checking is now running on almost every instant payment in Britain and every euro credit transfer in Europe. The rulebooks specify the message down to the response code. What the person reads is left to whoever writes the strings.",
-  "claim": "A payee name check answers one narrow question, and the screen reporting it is where a bank quietly answers a much bigger one on the payer's behalf.",
+  "claim": "A payee name check answers one narrow question, and the screen reporting it's where a bank quietly answers a much bigger one on the payer's behalf.",
   "keywords": ["verification of payee", "confirmation of payee", "APP fraud", "payments design", "fintech design", "consent design"],
   "sources": [
-    "<a href=\"https://www.europeanpaymentscouncil.eu/sites/default/files/kb/file/2026-03/EPC218-23%20v1.1%202026%20Verification%20Of%20Payee%20Scheme%20Rulebook_0.pdf\">Verification Of Payee Scheme Rulebook</a>, European Payments Council, EPC218-23 version 1.1, issued 16 March 2026, effective 20 September 2026. Section 3.2.1 on the response types, and the note leaving the payer-facing notification to the Requesting PSP.",
+    "<a href=\"https://www.europeanpaymentscouncil.eu/sites/default/files/kb/file/2026-03/EPC218-23%20v1.1%202026%20Verification%20Of%20Payee%20Scheme%20Rulebook_0.pdf\">Verification Of Payee Scheme Rulebook</a>, European Payments Council, EPC218-23 version 1.1, issued March 16, 2026, effective September 20, 2026. Section 3.2.1 on the response types, and the note leaving the payer-facing notification to the Requesting PSP.",
     "<a href=\"https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=OJ:L_202400886\">Regulation (EU) 2024/886</a>, the Instant Payments Regulation. Article 5c on the verification service, including 5c(5) on not preventing the payer from authorising and 5c(7) on liability and refund rights when a notification is ignored.",
-    "<a href=\"https://www.psr.org.uk/media/ugtogbad/cp26-2-extending-specific-direction-17-july-2026.pdf\">CP26/2: Specific Direction 17 (Confirmation of Payee)</a>, Payment Systems Regulator, July 2026. The proposal to remove the 1 November 2026 expiry date, the 25 times figure, 320 PSPs, 2 million checks a day and the Pay.UK reductions.",
-    "<a href=\"https://www.ukfinance.org.uk/news-and-insight/press-release/fraud-report-2026-press-release\">Annual Fraud Report 2026</a>, UK Finance, 15 June 2026. £1.28 billion in total payment fraud losses in 2025, APP losses of £576.4 million across 248,070 cases, and £354.3 million reimbursed.",
+    "<a href=\"https://www.psr.org.uk/media/ugtogbad/cp26-2-extending-specific-direction-17-july-2026.pdf\">CP26/2: Specific Direction 17 (Confirmation of Payee)</a>, Payment Systems Regulator, July 2026. The proposal to remove the November 1, 2026 expiry date, the 25 times figure, 320 PSPs, 2 million checks a day and the Pay.UK reductions.",
+    "<a href=\"https://www.ukfinance.org.uk/news-and-insight/press-release/fraud-report-2026-press-release\">Annual Fraud Report 2026</a>, UK Finance, June 15, 2026. £1.28 billion in total payment fraud losses in 2025, APP losses of £576.4 million across 248,070 cases, and £354.3 million reimbursed.",
     "<a href=\"https://www.frbservices.org/financial-services/multiservice-solutions/payee-name-verification\">Payee Name Verification</a>, Federal Reserve Financial Services, on the FedDetect service that verifies a payee name against an account before a payment is issued.",
     "<a href=\"https://www.linkedin.com/pulse/verification-payee-arrivesin-europe-6-big-lessons-redcompass-swnqe\">Verification of Payee arrives in Europe: 6 big lessons</a>, RedCompass Labs, October 2025, on what the payer is offered after a mismatch and how small data differences change the result."
   ],
-  "cover_line": "A match checks the name, not the payment."
+  "cover_line": "A name match confirms a name and nothing else."
 } -->
 
       <p>On September 20 the European Payments Council's <a href="https://www.europeanpaymentscouncil.eu/sites/default/files/kb/file/2026-03/EPC218-23%20v1.1%202026%20Verification%20Of%20Payee%20Scheme%20Rulebook_0.pdf">Verification of Payee rulebook</a> moved to version 1.1. It was an urgent release, fixing problems that surfaced once the service went live.</p>
@@ -25,27 +25,27 @@
 
       <h2>The check does what it says</h2>
 
-      <p>Uptake is not in question. Over 320 payment service providers offer the check in the UK, more than 99% of firms initiating a Faster Payment now offer it, and over 2 million checks complete every day.</p>
+      <p>Uptake isn't in question. Over 320 payment service providers offer the check in the UK, more than 99% of firms initiating a Faster Payment now offer it, and over 2 million checks complete every day.</p>
 
       <p>It works. Pay.UK found a 59% drop in claims for payments sent to the wrong account, and losses down between 20% and 40% for some types of fraud. The regulator adds that a transaction where the name doesn't match is 25 times more likely to be fraudulent.</p>
 
-      <p>A mismatch is one of the strongest single signals in retail payments. The check surfaces it before the money moves, which is why I am not arguing against it.</p>
+      <p>A mismatch is one of the strongest single signals in retail payments. The check surfaces it before the money moves, which is why I'm not arguing against it.</p>
 
       <h2>What a match cannot tell you</h2>
 
       <p>The PSR's own account of the rule is careful about the distinction. Confirmation of Payee "was introduced to stop misdirected payments". Then: "There was also an expectation that it would reduce the number of authorised push payment (APP) scams."</p>
 
-      <p>The first happened. The second has not shown up in the totals. <a href="https://www.ukfinance.org.uk/news-and-insight/press-release/fraud-report-2026-press-release">UK Finance reported</a> £576.4 million lost to authorized push payment fraud in 2025, up 19%, across 248,070 cases. Banks reimbursed £354.3 million of it, about 61%.</p>
+      <p>The first happened. The second hasn't shown up in the totals. <a href="https://www.ukfinance.org.uk/news-and-insight/press-release/fraud-report-2026-press-release">UK Finance reported</a> £576.4 million lost to authorized push payment fraud in 2025, up 19%, across 248,070 cases. Banks reimbursed £354.3 million of it, about 61%.</p>
 
-      <p>No causal claim there. The reason the check cannot reach those scams is in the mechanism, not the rollout.</p>
+      <p>No causal claim there. The reason the check can't reach those scams is in the mechanism, not the rollout.</p>
 
       <p>The check compares the name the payer typed with the name on the account. When someone is being talked into a payment, the same person supplies both. The fake seller gives you the name on the real account they control. The invoice arrives with new details on a letterhead you know. Both sides of the comparison come from the fraudster, so the check agrees with them.</p>
 
-      <p>The Federal Reserve is careful about this in its own marketing copy. Its service "may help to reduce the occurrences of Authorized Push Payment fraud where an imposter is impersonating an individual". May help. Impersonating an individual. That is one scam, not the category.</p>
+      <p>The Federal Reserve is careful about this in its own marketing copy. Its service "may help to reduce the occurrences of Authorized Push Payment fraud where an imposter is impersonating an individual". May help. Impersonating an individual. That's one scam, not the category.</p>
 
       <h2>The rulebook stops at the screen</h2>
 
-      <p>The European rulebook runs to 68 pages and it is precise where it needs to be. A responding provider returns one of five outcomes: match, no match, close match with the counterparty's actual name, identification code not supported or verification not possible.</p>
+      <p>The European rulebook runs to 68 pages and it's precise where it needs to be. A responding provider returns one of five outcomes: match, no match, close match with the counterparty's actual name, identification code not supported or verification not possible.</p>
 
       <p>Then it says this about the person: "It should be noted that the way the Requester is informed and the content of the notification messages are left to the discretion of the Requesting PSP."</p>
 
@@ -53,22 +53,22 @@
 
       <h2>The wording carries the liability</h2>
 
-      <p>This is not a copy quibble, because the European regulation already attached money to that screen. On a mismatch the payer's provider must say that authorizing the transfer "might lead to transferring the funds to a payment account not held by the payee indicated by the payer".</p>
+      <p>This isn't a copy quibble, because the European regulation already attached money to that screen. On a mismatch the payer's provider must say that authorizing the transfer "might lead to transferring the funds to a payment account not held by the payee indicated by the payer".</p>
 
       <p>The provider also may not stop the payer going ahead. And it has to explain "the implications for PSP liability and PSU refund rights resulting from a decision by PSUs to ignore a notification".</p>
 
-      <p>Read that in order. The bank warns you, cannot stop you, and your refund rights change if you continue. The sentence deciding all of that is being written by whoever owns the string file.</p>
+      <p>Read that in order. The bank warns you, can't stop you, and your refund rights change if you continue. The sentence deciding all of that's being written by whoever owns the string file.</p>
 
       <h2>Two things I would hold the screen to</h2>
 
-      <p>The first is a labeling rule. A check gets named for what it checked, so "this account is in the name you typed" is true and boring. "Payee verified" is a claim about the payment, and it is the screen a fraudster wants glowing behind their phone call. A name check is a fact about an account, not a judgment about a person.</p>
+      <p>The first is a labeling rule. A check gets named for what it checked, so "this account is in the name you typed" is true and boring. "Payee verified" is a claim about the payment, and it's the screen a fraudster wants glowing behind their phone call. A name check is a fact about an account, not a judgment about a person.</p>
 
       <p>The second is the no-match state, which needs something to do. Today, in <a href="https://www.linkedin.com/pulse/verification-payee-arrivesin-europe-6-big-lessons-redcompass-swnqe">RedCompass Labs' summary</a> of European go-live, the payer "can either proceed, amend, or stop the payment altogether". Three doors and no help choosing between them, at the exact moment somebody may be on the phone explaining which one to pick.</p>
 
-      <p>My question in review is always the same. What can this person do in the next 10 seconds, and does the screen still work if they are being coached while they read it?</p>
+      <p>My question in review is always the same. What can this person do in the next 10 seconds, and does the screen still work if they're being coached while they read it?</p>
 
       <p>I got that from the expensive end. At Best Egg I redesigned document verification so an applicant sees a status the moment a file lands, and the opportunity we sized was 7,000 fewer support calls a month. A status that doesn't say what happens next produces a phone call. On a payment screen it produces a payment.</p>
 
-      <p>At Auth0 the same lesson arrived in a different vocabulary. A check that returns true is an engineering result. Turning it into "verified" is a product decision, and it is usually made by nobody in particular.</p>
+      <p>At Auth0 the same lesson arrived in a different vocabulary. A check that returns true is an engineering result. Turning it into "verified" is a product decision, and it's usually made by nobody in particular.</p>
 
       <p>Europe will run this check on every euro credit transfer. Britain looks set to keep its version for good, and the Fed is selling one by the transaction. None of the three specifies what the payer reads. That leaves the most load-bearing word in the flow to whoever writes it, which today is a designer working without a rulebook.</p>
