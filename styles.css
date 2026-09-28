@@ -746,10 +746,11 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
    panel ground (which stays paper in both registers, like the AI card's art),
    then the point and its paragraph. The renders were color-matched to the
    panel ground, and their edges fade into it so no seam shows. */
-.lead-coach > .t-heading { margin: 0 0 clamp(20px, 2.5vw, 32px); }
+.lead-coach > .t-heading { margin: 0 auto clamp(20px, 2.5vw, 32px); text-align: center; }   /* on the axis of the centred section opener above, like a case study's row openers */
 .lead-coach + .lead-solo { margin-top: var(--row); }
 .lead-solo + .lead-coach { margin-top: var(--row); }
-.lead-coach-head { margin: 0 0 clamp(20px, 2.5vw, 32px); }
+.lead-coach-head { margin: 0 0 clamp(20px, 2.5vw, 32px); text-align: center; }
+.lead-coach-head > * { margin-inline: auto; }
 .lead-coach-head .t-body { max-width: 62ch; }
 /* Three layers: three across, as granola.ai lays out its cards. The copy
    column fills the card so each "It shows up as" line sits on the same floor. */
@@ -2012,6 +2013,8 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
   /* Section openers read left to right on a phone; a seven-line centred paragraph does not */
   .section-intro, .cs-hero-copy, .row.full > .row-copy { align-items: flex-start; text-align: left; margin-inline: 0; }
   .section-intro > *, .row.full .row-copy > * { margin-inline: 0; }
+  .lead-coach > .t-heading, .lead-coach-head { text-align: left; }
+  .lead-coach > .t-heading, .lead-coach-head > * { margin-inline: 0; }
   .cs-hero-copy h1 { max-width: none; }
   .testimonial { align-items: flex-start; text-align: left; }
   .testimonial .quote p { margin-inline: 0; }
