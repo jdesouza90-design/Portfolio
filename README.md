@@ -9,7 +9,7 @@ Live: https://john-desouza.com
 ## Structure
 
 ```
-index.html                      Home: hero, selected work, how I lead, how I track design, about, contact,
+index.html                      Home: hero, selected work (the featured stack), how I lead, how I track design, about, contact,
                                 and a bonus level (Nine holes, a one-button pixel golf game above the footer)
 work.html                       Work index: all six case studies
 work/agentic-design-system-audit.html  Best Egg · Agentic design system audit and remediation
@@ -38,8 +38,9 @@ styles.css                      Tokens (light and dark), the ten type roles, com
 main.js                         CONFIG links, then one function per feature: nav (and the scrollspy), scroll reveal, tabs, carousel,
                                 walkthroughs, AI strands, fields (hero dots, contact rings), chart, number flow, before and after,
                                 swipe strips, table frames, About portrait height, the Nine holes arcade, the work
-                                list's stage, the lens, steps, the agent window, the rebuild, the reading control, the palette,
-                                the chat panel, the theme switch
+                                list's stage, the home page's featured stack, the lens, steps, the agent window, the
+                                rebuild, the reading control, the palette, the chat panel, the theme switch, the
+                                LinkedIn button
 admin/index.html                Dashboard, Activity page: who is on the site, live (its own password); tabs lead to the other two
 admin/dash.js                   Its script: polls the feed, builds sessions, draws the charts and the map; ?visitor= follows one person
 admin/game.html, golf.js        Dashboard, Nine holes page: the leaderboard (delete, clear), banned words, the game's settings
@@ -287,21 +288,34 @@ Function, answers with Claude Haiku 4.5 by default.
 
 ## The work list, the lens and the steps
 
-- **The stage** (`initCases`, after nelson.co). From 821px up, every row's
+- **The featured stack** (`initStack`, the home page's three case studies,
+  after uselayouts.com's stack scroll reveal). Each case study is a card:
+  its copy beside its screen on the project's ground. With the script, the
+  deck sticks in the middle of the screen below the bar while its track
+  scrolls past, and each card but the last peels up and back over its own
+  stretch of the track (10–44% and 56–90%), the cards behind stepping
+  forward as it goes. Keyboard focus on a card behind scrolls to where it
+  is at the front, and a card that has peeled away is hidden, so it leaves
+  the tab order. A wide screen grows, anchored at its top corner, until it
+  runs off the ground's foot however tall the card is. Without the script,
+  or under reduced motion, the cards sit in a column. Below 821px the
+  screen sits above the copy.
+- **The stage** (`initCases`, after nelson.co, the work index). From 821px up, every row's
   screen leaves its row for one panel that sits beside the list and travels
   with it, showing the row under the pointer, else the row with focus, else
   the row nearest the middle of the screen; that row rises into a pill. Each
   screen keeps a wrapper carrying its project's class, so the ground and the
   emerge settings still apply. Below 821px the screens go back to their rows.
-- **The lens** (`initLens`, `[data-lens]` above the list on the home page and
-  the work index). Recruiter, Design leader, Product manager, Engineer
-  re-sort the rows. The orders are fixed
+- **The lens** (`initLens`, `[data-lens]` above the deck on the home page and
+  the list on the work index). Recruiter, Design leader, Product manager,
+  Engineer re-sort the rows, or the deck's cards. The orders are fixed
   in `LENSES` in `main.js` (no model, nothing sent anywhere), and no two
-  give the same order, on the work index or in the home page's three rows.
+  give the same order, on the work index or in the home page's three cards.
   On a desktop the choice is kept in `localStorage` (`lens`); a phone shows
   a dropdown whose face cycles the roles as a hint and starts every visit
   there. A choice re-sorts the rows in place and they rise into the new order
-  one after another (16ms apart, 200ms each), so no row slides past another; the
+  one after another (16ms apart, 200ms each; the home page's stack places its
+  own cards, so its deck fades in as one), so no row slides past another; the
   `row-<slug>` names (section 9) still carry each row across a page change.
 - **Steps** (`initSteps`, after diabrowser.com). A decisions block marked
   `data-steps` whose columns each end in a `.shot` becomes, from 761px up, a
@@ -746,8 +760,9 @@ scrolls to it, and every page gets it the same way:
   each with `data-reveal`; a new page built on the skeleton needs no
   attribute at all. Put `data-reveal` on an element yourself only to change
   the unit: children carrying it rise on their own and their parent is left
-  alone (the case rows on the homepage and work index, the portrait and
-  text of About). Nothing nests: a block inside a block would travel twice.
+  alone (the case rows on the work index, the portrait and text of About).
+  The home page's featured stack rises as one block, since `initStack`
+  owns its cards' transforms. Nothing nests: a block inside a block would travel twice.
 - **The hero's copy has its own cascade** on load: the `h1` and lede (after
   a blog post's topic eyebrow, where there is one) carry
   `data-rise style="--i:N"` (N = 0, 1, 2), a 12px rise at 70ms steps
@@ -763,10 +778,20 @@ scrolls to it, and every page gets it the same way:
   the two door edges and the halves part over 850ms on `--ease-in-out`; at
   1.98s `unlock:open` fires, which starts the scroll reveal (`afterOpener`)
   and releases the cascade, so the first screen rises as the doors part.
-  About 2.6s in all, the one thing on the site that runs past 300ms after a
-  user action; a click on the sheet or Escape jumps to the end. Under
+  About 2.6s in all, one of the two things on the site that run past 300ms
+  after a user action; a click on the sheet or Escape jumps to the end. Under
   reduced motion the sheet shows still for 1.4s and goes. The param is
   dropped from the address as it starts, so a refresh never replays it.
+- **The LinkedIn button meets you** (`initTalk` in `main.js`, `.talk` in
+  `styles.css`, the Get in touch block on the home page, the work index and
+  the blog index; after uselayouts.com's get in touch). A pointer over it,
+  or keyboard focus, lifts the label away (240ms) while John's portrait and
+  a You circle turn in from either side and meet in the middle; at 460ms
+  they overlap and "Let’s talk" writes in beside them, the group centred.
+  About 700ms end to end, the other thing that runs past 300ms, by John's
+  choice. Leaving puts the label back; a tap only follows the link; reduced
+  motion shows the last frame at once. The link's name stays "Message me on
+  LinkedIn": the portrait, the circle and the words are `aria-hidden`.
 - **What plays inside a block waits for the block.** The chart sweep, the
   odometer (`data-flow`) and the experience timeline each start after their
   block has revealed (`onceInView` in `main.js` listens for the `reveal`
