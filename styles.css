@@ -1852,18 +1852,16 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
 .anim [data-reveal] .cols > .col:nth-child(3) { --col-i: 2; }
 .anim [data-reveal] .cols > .col:nth-child(4) { --col-i: 3; }
 .anim [data-reveal].in .cols > .col { opacity: 1; transform: none; transition-delay: calc(120ms + var(--col-i, 0) * 100ms); }   /* the wait only on the way in, so hiding at load is instant; a fourth column lands by 920ms */
-/* The coaching cards enter one after another like the columns, and each
-   model is set down in its well a beat later: it drops the last few pixels
-   and settles from a slight zoom, so the objects land on the table in turn. */
-.anim [data-reveal] .coach-card { opacity: 0; transform: translateY(24px); transition: opacity .5s linear, transform .7s var(--ease-soft), border-color var(--dur-hover); }
-.anim [data-reveal] .coach-card:nth-child(2) { --col-i: 1; }
-.anim [data-reveal] .coach-card:nth-child(3) { --col-i: 2; }
-.anim [data-reveal] .coach-card:nth-child(4) { --col-i: 3; }
-.anim [data-reveal].in .coach-card { opacity: 1; transform: none; transition-delay: calc(80ms + var(--col-i, 0) * 110ms), calc(80ms + var(--col-i, 0) * 110ms), 0s; }
-.anim [data-reveal] .coach-art img { transition: opacity .6s linear, transform 1.1s var(--ease-soft); }
-.anim [data-reveal]:not(.in) .coach-art img { opacity: 0; --py: -18px; --ps: 1.1; }
-.anim [data-reveal].in .coach-art img { transition-delay: calc(260ms + var(--col-i, 0) * 110ms); }
-.anim [data-reveal].in .coach-card.settled .coach-art img { transition: transform .6s var(--ease-soft); }   /* landed (main.js): the lean follows the pointer at once */
+/* The coaching cards enter one at a time as each one's well comes on screen
+   (main.js adds .card-in, left to right within a row): the card rises, then
+   its build clip plays in the well. The well stays empty until the clip or
+   the still (.show-still: no clip, or it failed) takes it; a still drops the
+   last few pixels and settles from a slight zoom. */
+.anim .coach-card.waits { transition: opacity .5s linear, transform .7s var(--ease-soft), border-color var(--dur-hover); }
+.anim .coach-card.waits:not(.card-in) { opacity: 0; transform: translateY(24px); }
+.anim .coach-card.waits .coach-art img { transition: opacity .6s linear, transform 1.1s var(--ease-soft); }
+.anim .coach-card.waits .coach-art:not(.show-still) img { opacity: 0; --py: -18px; --ps: 1.1; }
+.anim .coach-card.waits.settled .coach-art img { transition: transform .6s var(--ease-soft); }   /* landed: the lean follows the pointer at once */
 [data-rise] { animation: rise .6s var(--ease) both; animation-delay: calc(var(--i, 0) * 70ms); }
 @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 /* The hero hands off (after granola.ai): where the browser can drive an
@@ -1878,8 +1876,8 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .hero .field { animation: none; }
-  .anim [data-reveal], [data-rise], .anim [data-reveal] .cols > .col, .anim [data-reveal] .coach-card { opacity: 1; transform: none; transition: none; animation: none; }
-  .coach-art img, .anim [data-reveal] .coach-art img { opacity: 1; transform: none; transition: none; }
+  .anim [data-reveal], [data-rise], .anim [data-reveal] .cols > .col, .anim .coach-card.waits { opacity: 1; transform: none; transition: none; animation: none; }
+  .coach-art img, .anim .coach-card.waits .coach-art img { opacity: 1; transform: none; transition: none; }
   .opener-body > * { opacity: 1; }                          /* the opener shows still, then goes */
   .opener-seam { transform: none; }
   .gauge .fill, .gauge .needle { animation: none !important; }

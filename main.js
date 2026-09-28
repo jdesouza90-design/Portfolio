@@ -427,6 +427,11 @@ const CONFIG = {
      (the "reveal" event), so nothing draws while its block is still hidden. */
   const onceInView = (el, threshold, cb, fallbackMs = 4000) => {
     let done = false, io = null, timer = 0;
+    // Every animation plays where it is seen (John, Sep 28 2026): at least 60%
+    // of the element on screen, or as much as fits when it is taller than 80%
+    // of the viewport, so a tall one still fires.
+    const h = Math.max(1, el.getBoundingClientRect().height);
+    threshold = Math.min(Math.max(threshold, 0.6), (window.innerHeight * 0.8) / h);
     const block = el.closest("[data-reveal]");
     const revealed = () => !block || block.classList.contains("in") || !document.documentElement.classList.contains("anim");
     const inView = () => {
@@ -787,7 +792,7 @@ const CONFIG = {
       const next = H / W >= .8 ? "tall" : "wide";
       if (next !== layout) { layout = next; g = GEO[layout]; root.dataset.layout = layout; place(); last = ""; }
       // fit to the room the pause button leaves: above it on a tall plate, beside it on a wide one
-      const bw = layout === "wide" ? W - 104 : W - 24, bh = H - 20 - Math.max(56, ...caps.map((c) => c.offsetHeight));   // the card fits above the tallest caption   // wide: equal room each side, so the card sits in the middle and clear of the button
+      const bw = layout === "wide" ? W - 104 : W - 24, bh = H - 20 - Math.max(56, ...caps.map((c) => c.offsetHeight));   // wide: equal room each side; the card fits above the tallest caption
       const s = Math.min(bw / g.SW, bh / g.SH);
       scene.style.left = `${(layout === "wide" ? 52 : 12) + bw / 2}px`; scene.style.top = `${8 + bh / 2}px`;
       scene.style.transform = `translate(${-g.SW * s / 2}px, ${-g.SH * s / 2}px) scale(${s})`;
@@ -3381,30 +3386,48 @@ const CONFIG = {
     img.addEventListener("transitionend", (e) => { if (e.propertyName === "transform") card.classList.add("settled"); });
     const art = img.parentElement;
     let clip = null;
-    // The build clip: fetched as the card comes within a screen of view, shown
-    // on its first frame (the empty well) once it can play, and played once
-    // when half the card is on screen, at 1.25x so a 4s render lands in about
-    // 3s. It holds its last frame, the still. A clip not ready by then is
-    // dropped and the still stays, as it does under reduced motion.
-    if (art.dataset.build && !reduced && "IntersectionObserver" in window) {
-      let ready = false, seen = false;
-      const near = new IntersectionObserver((es) => {
-        if (!es[0].isIntersecting) return;
-        near.disconnect();
-        clip = document.createElement("video");
-        Object.assign(clip, { muted: true, playsInline: true, preload: "auto", defaultPlaybackRate: 1.25, src: art.dataset.build });
-        clip.setAttribute("aria-hidden", "true");
-        clip.addEventListener("loadeddata", () => { if (seen) return; ready = true; art.classList.add("has-build"); }, { once: true });
-        clip.addEventListener("error", () => { art.classList.remove("has-build"); clip.remove(); });
-        art.append(clip);
-      }, { rootMargin: "100% 0px" });
-      const view = new IntersectionObserver((es) => {
-        if (!es[0].isIntersecting) return;
-        view.disconnect();
-        seen = true;
-        if (ready) { clip.playbackRate = 1.25; clip.play().catch(() => art.classList.remove("has-build")); }
-      }, { threshold: 0.5 });
-      near.observe(card); view.observe(card);
+    // Each card enters on its own, once its well is on screen, so the build is
+    // always seen: the card rises, then its build clip plays in the well at
+    // 1.25x (a 4-5s render lands in 3-4s) and holds its last frame, the still.
+    // The well stays empty until then; the still never shows first. The clip
+    // is fetched a screen ahead; one still loading when the card arrives is
+    // waited for, up to 4s, and the still drops in instead only if it fails.
+    // Cards in one row go left to right. Reduced motion shows the stills.
+    if (!reduced && document.documentElement.classList.contains("anim")) {
+      card.classList.add("waits");
+      let ready = false, go = false, started = false, gaveUp = false;
+      const still = () => { if (started) return; gaveUp = true; art.classList.remove("has-build"); art.classList.add("show-still"); if (clip) clip.remove(); };
+      const start = () => {
+        if (!ready || !go || started || gaveUp) return;
+        started = true;
+        art.classList.add("has-build");
+        clip.playbackRate = 1.25;
+        clip.play().catch(() => { started = false; still(); });
+      };
+      if (art.dataset.build) {
+        const near = new IntersectionObserver((es) => {
+          if (!es[0].isIntersecting) return;
+          near.disconnect();
+          clip = document.createElement("video");
+          Object.assign(clip, { muted: true, playsInline: true, preload: "auto", defaultPlaybackRate: 1.25, src: art.dataset.build });
+          clip.setAttribute("aria-hidden", "true");
+          clip.addEventListener("loadeddata", () => { ready = true; start(); }, { once: true });
+          clip.addEventListener("error", still);
+          art.append(clip);
+        }, { rootMargin: "100% 0px" });
+        near.observe(card);
+      }
+      onceInView(art, 0.9, (moving) => {
+        const row = $$(".coach-card", card.parentElement).filter((c) => c.offsetTop === card.offsetTop);
+        const wait = moving ? row.filter((c) => c.offsetLeft < card.offsetLeft).length * 150 : 0;
+        setTimeout(() => {
+          card.classList.add("card-in");
+          if (!moving || !art.dataset.build) { still(); return; }
+          go = true;
+          setTimeout(start, 250);                    // the card is mostly up before the build starts
+          setTimeout(() => { if (!started) still(); }, 4000);
+        }, wait);
+      });
     }
     if (reduced || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
     let frame = 0;
