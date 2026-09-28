@@ -166,8 +166,8 @@ Labs and Auth0"); if the new case study is from a new company, add it there and 
 
 Each page's `.cs-next` links forward to the next page and back to the previous one, and
 the last links forward to the first, so a reader who starts anywhere sees everything. The
-next link is the page's full name; the previous link is the "Previous case study" button
-(`.cs-prev-link`) that opens the band's actions (markup in `page-anatomy.md` §7). Today:
+next link is the page's full name; the previous link is the "Previous case study" arrow
+link (`.cs-prev-link`) straight under it (markup in `page-anatomy.md` §7). Today:
 
 ```
 cross-sell → verifications → refinance-offers → staking → no-code-tools → cross-sell

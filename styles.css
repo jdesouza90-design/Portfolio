@@ -235,7 +235,7 @@
 .post-meta, .post-cta, .sources li, .pillar-count,
 .card-desc, .post-search input, .view-toggle button,
 .layer-tab, .work-cta, .gate-form input, .arcade-post input, .seg-tab,
-.btn, .chip, .nav-links ul a, .nav-kbd, .back, .crumbs, .tools span, footer,
+.btn, .chip, .nav-links ul a, .nav-kbd, .back, .cs-prev-link, .cs-all-link, .crumbs, .tools span, footer,
 .facts dt, table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
 .gallery figcaption, .proof-head small, .tooltip, .chart-pill, details.data,
 .dash-live, .dash-list li, .leaflet-container, .leaflet-popup-content,
@@ -248,7 +248,7 @@ thead th, .gauge .lbl, .table-wrap td[data-label]::before, .dash-kind, .dash-now
   { font-size: var(--t-lede); line-height: var(--lh-lede); letter-spacing: var(--ls-lede); font-weight: 400; color: var(--ink-2); max-width: var(--m-lede); }
 .t-body, .layer-tab, .work-cta, .gate-form input, .arcade-post input, .chat-form textarea, .chat-unlock input, .dash-settings :is(input, textarea)
   { font-size: var(--t-body); line-height: var(--lh-body); font-weight: 400; color: var(--ink-2); max-width: var(--m-body); }
-.t-small, .btn, .chip, .nav-links ul a, .nav-kbd, .back, .crumbs, .tools span, footer, .seg-tab,
+.t-small, .btn, .chip, .nav-links ul a, .nav-kbd, .back, .cs-prev-link, .cs-all-link, .crumbs, .tools span, footer, .seg-tab,
 table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
 .gallery figcaption, .proof-head small, .tooltip, .chart-pill, details.data,
 .dash-live, .dash-list li, .leaflet-container, .leaflet-popup-content,
@@ -280,7 +280,7 @@ body { counter-reset: fig; }
 
 /* Weight: 500 is the one emphasis, for whatever names or acts. */
 strong, b, tbody th, .t-body a, .t-lede a, .prose p a, .prose li a, .post-cta,
-.btn, .chip, .chart-pill, .tooltip b, .tip-val, .nav-links ul a, .nav-kbd, .back, .crumbs, .tools span, .layer-tab, .layer-mark, .work-cta, .avatar, .testimonial-mark, .seg-tab,
+.btn, .chip, .chart-pill, .tooltip b, .tip-val, .nav-links ul a, .nav-kbd, .back, .cs-prev-link, .cs-all-link, .crumbs, .tools span, .layer-tab, .layer-mark, .work-cta, .avatar, .testimonial-mark, .seg-tab,
 .chat-msg a, .chat-unlock label, .chat-unlocked, .dash-settings :is(label, legend)
   { font-weight: 500; }
 
@@ -349,9 +349,9 @@ a { color: inherit; }
    exceptions: their shape says link. A flex label (.pillar-label, .work-cta)
    is underlined itself, since its parent link lays out more than text. */
 .t-body a, .t-lede a, .t-small a, .prose a, .sources a, .chat-msg a,
-footer a, .crumbs a, .back, .work-cta, .post-cta, .pillar-label, .cs-next-title a, .post-next .t-title a
+footer a, .crumbs a, .back, .cs-prev-link, .cs-all-link, .work-cta, .post-cta, .pillar-label, .cs-next-title a, .post-next .t-title a
   { text-decoration-line: underline; text-decoration-thickness: 1px; text-decoration-color: currentColor; text-underline-offset: .22em; }
-:is(.t-body, .t-lede, .t-small, .prose, .sources, .chat-msg, footer, .crumbs) a:hover, .back:hover, .post-cta:hover,
+:is(.t-body, .t-lede, .t-small, .prose, .sources, .chat-msg, footer, .crumbs) a:hover, .back:hover, .cs-prev-link:hover, .cs-all-link:hover, .post-cta:hover,
 .pillar-nav a:hover .pillar-label, .cs-next-title a:hover, .post-next .t-title a:hover, .case-row:hover .work-cta
   { text-decoration-thickness: 2px; }
 button { font-family: inherit; }
@@ -1402,10 +1402,22 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 /* Next: the closing band */
 .cs-next { margin-top: var(--section); padding-block: var(--section); background: var(--paper-2); border-top: 1px solid var(--hair); text-align: center; }
 .cs-next .wrap { display: flex; flex-direction: column; align-items: center; }
-/* The next case study's title is the link; the way back to the previous one is the first button under it (.cs-prev-link). */
+/* The next case study's title is the link. The two ways out of the sequence are
+   text links told apart by what they do (after Coinbase's docs pager and
+   Stripe's breadcrumb): the previous case study is a direction, an arrow
+   straight under the next one's title; All work is the index, a grid beside
+   Contact me. Contact me stays the band's one button. */
 .cs-next-title a { transition: color var(--dur-hover); }
 .cs-next-title a:hover { color: var(--accent-ink); }
-.cs-next .actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: clamp(28px, 3vw, 40px); }
+.cs-prev-link, .cs-all-link { display: inline-flex; align-items: center; gap: 8px; padding-block: var(--sp-2); color: var(--ink); transition: color var(--dur-hover); }   /* the padding lifts the tap target past 24px (2.5.8) */
+.cs-prev-link svg, .cs-all-link svg { width: 16px; height: 16px; flex: none; }
+.cs-prev-link { margin-top: var(--sp-4); }
+.cs-prev-link svg { transition: transform var(--dur-hover) var(--ease); }
+@media (hover: hover) and (pointer: fine) {
+  .cs-prev-link:hover, .cs-all-link:hover { color: var(--accent-ink); }
+  .cs-prev-link:hover svg { transform: translateX(-3px); }   /* the arrow leans the way it goes */
+}
+.cs-next .actions { display: flex; align-items: center; gap: var(--sp-4) var(--sp-5); flex-wrap: wrap; justify-content: center; margin-top: clamp(28px, 3vw, 40px); }
 .cs-next footer { width: 100%; justify-content: center; align-items: center; padding-bottom: 0; margin-top: clamp(40px, 5vw, 64px); }
 .cs-next footer .theme { margin: 0; }
 
@@ -1687,7 +1699,7 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
   .post-card:hover, .btn:hover:active { transform: none; }
   .case-media img, .tooltip, .chart-marker, .chart-node { transition: none; transform: none; }
   .tooltip { transform: translate(-50%, 0); }
-  .btn:hover, .btn:active, .icon-btn:active, .layer-tab:active, .testimonial-controls button:active { transform: none; }
+  .btn:hover, .btn:active, .icon-btn:active, .layer-tab:active, .testimonial-controls button:active, .cs-prev-link:hover svg { transform: none; }
   .icon-swap svg { transition: none; }
   .walk .play:active, .walk .play:hover:active { transform: translate(-50%, -50%); }
   .nav-links, .nav.open .nav-links, .nav-links li, .nav.open .nav-links li, .nav-foot, .nav.open .nav-foot { transition: none; }
@@ -1899,7 +1911,9 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
   .chart-shell { height: 250px; }
   .tooltip { width: 200px; padding: 12px 14px; }
   .note .t-body + .t-body { margin-top: 20px; padding-top: 20px; }
-  .cs-next .actions .btn { flex: 1 1 auto; justify-content: center; }
+  .cs-next .actions { align-self: stretch; flex-direction: column; align-items: stretch; }   /* All work over a full-width Contact me */
+  .cs-next .actions .btn { justify-content: center; }
+  .cs-all-link { align-self: center; }
   .walk-note { text-align: left; }
 }
 

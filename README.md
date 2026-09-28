@@ -626,7 +626,8 @@ All six case studies are the same document, in this order:
    where it happened (the agentic audit page's "The library", its walkthrough
    between The design and Try it).
 6. **Next**: the closing band: the next case study's title as a link, then
-   three buttons, Previous case study, All work and Contact me.
+   "Previous case study" as a text link with a left arrow under it, then All
+   work as a text link with a grid icon beside the Contact me button.
 
 Icons are inline SVG, 24-unit, 1.5 stroke, ink with one green accent detail
 (`class="ac"` for an accent stroke, `ac-fill` for a tinted shape).
@@ -824,7 +825,8 @@ The rules that shape the code:
   links (a work row, a post card) are the exceptions. A hover that quiets
   the other links steps them down to `--ink-3`, never an opacity fade.
   Links carry no arrows: a way forward or back is underlined text or a
-  button. Buttons take `--radius-btn` (4px) and are never pills.
+  button. The one exception is "Previous case study" in a case study's
+  closing band, whose left arrow tells it apart from All work. Buttons take `--radius-btn` (4px) and are never pills.
 - `prefers-reduced-motion` switches off every animation and smooth scrolling.
 - Nothing scrolls sideways at 320px.
 

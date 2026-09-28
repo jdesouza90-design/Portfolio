@@ -452,17 +452,19 @@ The title lists the labels: "Research timing, sequencing and what held".
 
 The closing band. `PREV_SLUG`, `NEXT_SLUG` and `NEXT_NAME` come from the ring in
 `wiring.md` §5: the next page is its full name as the one link in `p.t-title.cs-next-title`,
-and the previous page is the first of three buttons under it, "Previous case study"
-(`.cs-prev-link`), then All work and Contact me. No arrows: a link is underlined text or a
-button. The buttons are copied from a live page; only the three slots change.
+and the previous page is the text link straight under it, "Previous case study"
+(`.cs-prev-link`), led by a left arrow. Under that, `.actions` holds All work
+(`.cs-all-link`, a text link led by a grid) and the Contact me button. The previous link is
+the site's one arrowed link: elsewhere a link is underlined text or a button. The markup
+is copied from a live page; only the three slots change.
 ```html
 <section class="cs-next">
   <div class="wrap">
     <p class="eyebrow">Next case study</p>
     <p class="t-title cs-next-title"><a href="{{NEXT_SLUG}}.html">{{NEXT_NAME}}</a></p>
+    <a class="cs-prev-link" href="{{PREV_SLUG}}.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>Previous case study</a>
     <div class="actions">
-      <a class="btn btn-ghost cs-prev-link" href="{{PREV_SLUG}}.html">Previous case study</a>
-      <a class="btn btn-ghost" href="../work.html">All work</a>
+      <a class="cs-all-link" href="../work.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>All work</a>
       <a class="btn btn-primary" data-link="email" href="#"><span class="icon-swap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>Contact me</a>
     </div>
     <footer>
