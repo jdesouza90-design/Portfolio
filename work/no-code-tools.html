@@ -22,7 +22,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!-- A fresh unlock from the gate: hold the page until its opener is up (initUnlock in main.js). -->
 <script>if (/[?&]unlocked(?=&|$)/.test(location.search)) document.documentElement.classList.add("unlock");</script>
-<link rel="stylesheet" href="../styles.css?v=ec767a76">
+<link rel="stylesheet" href="../styles.css?v=3fa0404e">
 <script defer src="/_vercel/insights/script.js"></script>
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
@@ -74,7 +74,7 @@
     </div>
     </div>
     <figure class="panel hero-panel wide">
-      <img decoding="async" width="1800" height="839" src="../assets/nocode-customization.webp?v=d1c33af3" alt="Auth0 customization options: styles panel, live previews of welcome, password and secure-account screens, and a color panel">
+      <img decoding="async" fetchpriority="high" width="1800" height="839" src="../assets/nocode-customization.webp?v=d1c33af3" alt="Auth0 customization options: styles panel, live previews of welcome, password and secure-account screens, and a color panel">
     </figure>
     <dl class="facts">
       <div><dt>Role</dt><dd>Product Design Manager</dd></div>
@@ -126,7 +126,8 @@
         <span class="ba-dot" aria-hidden="true"></span>
       </div>
     </figure>
-    <ul class="chips ba-phases" aria-label="What shipped">
+    <p class="sr-only" id="ba-phases-label" hidden>What shipped</p>
+    <ul class="chips ba-phases" aria-labelledby="ba-phases-label">
       <li class="chip"><span class="eyebrow">Phase 1</span>Customization panel with live preview</li>
       <li class="chip"><span class="eyebrow">Phase 2</span>Flow builder</li>
       <li class="chip"><span class="eyebrow">Kept</span>Code path for developers</li>
@@ -236,6 +237,6 @@
   </div>
 </section>
 </main>
-<script src="../main.js?v=e661db8a"></script>
+<script src="../main.js?v=77abc89d"></script>
 </body>
 </html>

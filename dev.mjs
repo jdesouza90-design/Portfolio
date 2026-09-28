@@ -231,7 +231,11 @@ function identify(req) {
 
 // ---- Serve through the middleware, and the chat through its function ----
 const { default: middleware, config } = await import('./middleware.js');
-const chat = await import('./api/chat.js');
+// The chat needs the Anthropic SDK (npm install). Without it the rest of the
+// stand-in still runs, and /api/chat answers "not ready", so no button shows.
+let chat = null;
+try { chat = await import('./api/chat.js'); }
+catch (err) { console.warn(`chat off: ${err.code === 'ERR_MODULE_NOT_FOUND' ? 'run npm install once for the Anthropic SDK' : err.message}`); }
 const matchers = config.matcher.map((m) => new RegExp('^' + m.replace(/[.]/g, '\\.').replace(/\/:path\*$/, '(?:/.*)?') + '$'));
 const TYPES = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.mjs': 'text/javascript', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.ico': 'image/x-icon', '.mp4': 'video/mp4', '.pdf': 'application/pdf', '.json': 'application/json' };
 const root = path.dirname(new URL(import.meta.url).pathname);
@@ -267,8 +271,10 @@ const server = http.createServer(async (req, res) => {
   const jobs = [];
   let out;
   if (isChat) {
-    const handler = chat[req.method];
-    out = handler ? await handler(request) : new Response(null, { status: 405, headers: { Allow: 'GET, POST' } });
+    const handler = chat && chat[req.method];
+    out = handler ? await handler(request)
+      : chat ? new Response(null, { status: 405, headers: { Allow: 'GET, POST' } })
+      : new Response(JSON.stringify({ ready: false }), { status: 503, headers: { 'Content-Type': 'application/json' } });
   } else {
     out = await middleware(request, { waitUntil: (pr) => jobs.push(pr) });
   }

@@ -37,8 +37,8 @@ styles.css                      Tokens (light and dark), the ten type roles, com
                                 the blog, the chat, the palette
 main.js                         CONFIG links, then one function per feature: nav (and the scrollspy), scroll reveal, tabs, carousel,
                                 walkthroughs, AI strands, fields (hero dots, contact rings), chart, number flow, before and after,
-                                swipe strips, table frames, About portrait height, the Nine holes arcade, the work
-                                list's stage, the home page's featured stack, the lens, steps, the agent window, the
+                                swipe strips, table frames, About portrait height, the Nine holes arcade, the
+                                home page's featured stack, the lens, steps, the agent window, the
                                 reading control, the palette, the chat panel, the theme switch, the LinkedIn button
 admin/index.html                Dashboard, Activity page: who is on the site, live (its own password); tabs lead to the other two
 admin/dash.js                   Its script: polls the feed, builds sessions, draws the charts and the map; ?visitor= follows one person
@@ -94,7 +94,8 @@ before any file is served. The home page and the work index stay public.
   studies open without a password. `node dev.mjs` serves the site through the
   middleware instead, with an in-memory store and made-up cities (passwords
   `cs` and `admin`), so the gates and the dashboard can be tried at
-  http://127.0.0.1:4174.
+  http://127.0.0.1:4174. Run `npm install` once first: the chat needs the
+  Anthropic SDK, and without it the stand-in runs with the chat off.
 
 ## Who is on the site
 
@@ -304,12 +305,12 @@ Function, answers with Claude Haiku 4.5 by default.
   runs off the ground's foot however tall the card is. Without the script,
   or under reduced motion, the cards sit in a column. Below 821px the
   screen sits above the copy.
-- **The stage** (`initCases`, after nelson.co, the work index). From 821px up, every row's
-  screen leaves its row for one panel that sits beside the list and travels
-  with it, showing the row under the pointer, else the row with focus, else
-  the row nearest the middle of the screen; that row rises into a pill. Each
-  screen keeps a wrapper carrying its project's class, so the ground and the
-  emerge settings still apply. Below 821px the screens go back to their rows.
+- **The pile** (the work index, CSS only, after harvey.ai). From 821px up
+  each row is a card, copy beside its screen, every card as tall as the
+  tallest. On a screen at least 700px tall each card sticks under the bar
+  while the page keeps scrolling, and the next rises over it after a hold
+  (`row-gap: 32vh`). Nothing stops the scroll. Shorter screens keep a plain
+  column, and below 821px the screen sits above the copy on a 4:3 ground.
 - **The lens** (`initLens`, `[data-lens]` above the deck on the home page and
   the list on the work index). Design leader (the default, the page's own
   order), Product manager and Engineer re-sort the rows, or the deck's cards. The orders are fixed
@@ -461,7 +462,7 @@ the other pages for it.
 ### Covers
 
 A cover is the post's argument in one line: the claim cut to six to ten words
-("Count what the system failed to prevent."), set in Crimson Pro's light italic,
+("Count what the system failed to prevent."), set in Crimson Pro's italic (the 400 the blog pages load),
 centred over the double rule in the pillar's accent, with the pillar named in
 the corner and one tinted disc bleeding off the bottom right so the three
 grounds still tell apart at a glance. The format is Harvey's title plates,
@@ -630,6 +631,9 @@ All six case studies are the same document, in this order:
    the accent), the project's screens on its own tinted panel, then four facts
    (role, team, timeline, launch) as a `.facts` stat strip: a small label
    above the value at heading size, cells divided by hairlines.
+   The hero's screens carry `fetchpriority="high"`: one of them is the
+   page's largest paint, so they load ahead of everything below (the
+   work index's first row does the same; the case-study template has it).
 2. **My role**: hairline ledger rows (`.ledger`), heading left and paragraph
    right, directly under the facts, so a design leader reads the leadership
    story before the work.

@@ -268,9 +268,10 @@ const CONFIG = {
       if (now) now.setAttribute("aria-current", "location");
       here = now;
     };
-    const onScroll = () => { nav.classList.toggle("scrolled", window.scrollY > 8); if (spy.length) locate(); };
+    let queued = false;
+    const onScroll = () => { queued = false; nav.classList.toggle("scrolled", window.scrollY > 8); if (spy.length) locate(); };
     onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("scroll", () => { if (!queued) { queued = true; requestAnimationFrame(onScroll); } }, { passive: true });   // once a frame, as the other scroll readers do
     const toggle = $(".nav-toggle");
     if (!toggle) return;
     // While the menu is open the page holds still: the root's overflow is
@@ -1026,6 +1027,8 @@ const CONFIG = {
     // response by it, so a resting cursor leaves the field to settle.
     const p = { x: -9999, y: -9999, vx: 0, vy: 0, active: 0, inside: false, ripples: [] };
     let raf = 0, prev = 0, t = 0, fresh = true, playing = el.dataset.paused !== "1", stirring = true;   // a pause outlives a restart (a theme change)
+    let sleeping = false;                                   // a still piece stops asking for frames until something moves it
+    const wake = () => { if (sleeping) { sleeping = false; fresh = true; raf = requestAnimationFrame(tick); } };
     const box = { top: 0, left: 0, w: 0, h: 0 };
     const measure = () => { const r = el.getBoundingClientRect(); box.top = r.top; box.left = r.left; box.w = r.width; box.h = r.height; };
     const CONTROLS = "a, button, input, select, textarea, label, [role=button], form";
@@ -1038,6 +1041,7 @@ const CONFIG = {
       if (e.timeStamp - checked > 100) { over = e.target instanceof Element && !!e.target.closest(CONTROLS); checked = e.timeStamp; }
       if (over) { on = false; return; }
       tx = x; ty = y; on = true; moved = touched = e.timeStamp;
+      wake();
     };
     const leave = () => { on = false; p.inside = false; };
     const down = (e) => {
@@ -1048,12 +1052,14 @@ const CONFIG = {
       p.ripples.push({ x, y, born: e.timeStamp, age: 0 });
       if (p.ripples.length > 6) p.ripples.shift();
       touched = e.timeStamp;
+      wake();
     };
 
     const tick = (now) => {
-      raf = requestAnimationFrame(tick);
       const busy = on || p.inside || p.ripples.length || now - touched < 2500;
-      if (!fresh && !busy && (!stirring || now - prev < 33)) return;   // idle: 30fps is plenty for the breathing, none for a still piece
+      if (!fresh && !busy && !stirring) { raf = 0; sleeping = true; return; }   // a still piece: no frames at all until the pointer, a ripple or a resize wakes it
+      raf = requestAnimationFrame(tick);
+      if (!fresh && !busy && now - prev < 33) return;   // idle: 30fps is plenty for the breathing
       const dt = fresh ? 0 : Math.min((now - prev) / 1000, .05);
       fresh = false; prev = now; t += dt;
       measure();
@@ -1071,7 +1077,8 @@ const CONFIG = {
     };
     const sync = () => {
       const run = playing && visible() && !isScrolling();
-      if (run && !raf) { fresh = true; raf = requestAnimationFrame(tick); }
+      if (!run) sleeping = false;                           // off screen, paused or scrolling: stopped, not asleep, so the pointer can't start it
+      if (run && !raf && !sleeping) { fresh = true; raf = requestAnimationFrame(tick); }
       if (!run && raf) { cancelAnimationFrame(raf); raf = 0; }
       setPaused(btn, playing, "animation");
     };
@@ -1092,7 +1099,7 @@ const CONFIG = {
     document.addEventListener("pointermove", move, { passive: true });
     document.addEventListener("pointerleave", leave);
     document.addEventListener("pointerdown", down, { passive: true });
-    const ro = "ResizeObserver" in window ? new ResizeObserver(() => { size(); stirring = true; if (!raf) field.frame(t, 0, p, true); }) : null;
+    const ro = "ResizeObserver" in window ? new ResizeObserver(() => { size(); stirring = true; if (!raf) field.frame(t, 0, p, true); wake(); }) : null;
     if (ro) ro.observe(el); else window.addEventListener("resize", size);
     const visible = whileOnScreen(el, 0, sync);
     const unwatch = whileStill(sync);
@@ -2725,6 +2732,7 @@ const CONFIG = {
       <template class="chat-tpl-contact"><div class="chat-card chat-card-contact"><div class="t-small chat-card-summary">Email is the quickest way to reach me. LinkedIn works too.</div><div class="chat-card-row"><a class="btn btn-primary btn-sm" data-to="email">Email John</a><a class="btn btn-ghost btn-sm" data-to="linkedin" target="_blank" rel="noopener">Message on LinkedIn</a><a class="btn btn-ghost btn-sm" data-to="resume">Download resume</a></div></div></template>`;
     $("#chat-title", dlg).textContent = topic.label;
     document.body.append(launch, dlg);
+    launch.inert = document.documentElement.classList.contains("nav-locked");   // built after the fetch: if the phone menu is already open, it joins the page held behind it
     const log = $(".chat-log", dlg), form = $(".chat-form", dlg), input = $("#chat-input", dlg);
     const send = $(".chat-send", dlg), title = $("#chat-title", dlg), status = $("#chat-status", dlg);
     const tpl = (cls) => $(`template.${cls}`, dlg).content.firstElementChild.cloneNode(true);
