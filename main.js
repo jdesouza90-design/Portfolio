@@ -2321,17 +2321,19 @@ const CONFIG = {
      changes in three steps and comes back as the three new sheets (after the
      blueprint-animation method: every wire is the rect of one element,
      measured from the two screenshots by btn-sheet-rebuild.py into the JSON
-     the figure names). One loop of about 36 seconds: the old sheet, then each
+     the figure names). One loop of about 18 seconds: the old sheet, then each
      step in turn (its part comes into focus, the sheet crossfades to its
      drawing, the wires move, the sheet comes back changed), then the new
      sheets. Moves take the in-out ease, fades the soft one, both the page's
      own; the drawing takes the page's inks, and a part turns the color the
-     proof's plot gives its component as it lands. It waits for its block to
-     reveal, runs only on screen, holds while the page scrolls and stops
-     behind its button; the captions below mark the step playing, and each
-     heading jumps to its step. It starts on the after sheet, which the canvas
-     draws exactly as the still shows it, so the hand-off never shows. Under
-     reduced motion, or if anything fails to load, the still stays. */
+     proof's plot gives its component as it lands. Under it, a band says which
+     step is playing, the problem and the fix, from the three decision columns
+     (each carries its problem in data-problem), which it stands in for; its
+     step numbers jump to a step and its button pauses. It waits for its block
+     to reveal, runs only on screen and holds while the page scrolls. It
+     starts on the after sheet, which the canvas draws exactly as the still
+     shows it, so the hand-off never shows. Under reduced motion, or if
+     anything fails to load, the still and the columns stay. */
   const initRebuild = () => $$("[data-rebuild]").forEach((fig) => {
     const stage = $(".rebuild-stage", fig), canvas = $("canvas", fig), still = $("img", fig), btn = $(".art-ctl", fig);
     const capsEl = fig.nextElementSibling && fig.nextElementSibling.matches("[data-rebuild-steps]") ? fig.nextElementSibling : null;
@@ -2371,19 +2373,20 @@ const CONFIG = {
       const lerp = (a, b, t) => a + (b - a) * t;
       const soft = (t, a, b) => EASE_SOFT(ramp(t, a, b));
 
-      // The timeline, in the method's authored seconds, played 1.4 times slower.
-      const K = 1.4, PRE = 2, POST = 3.5;
-      const STEPS = [3.6, 5.2, 3.6].map((c1) => ({ c1, dur: c1 + 3.2 }));
+      // The timeline, in seconds. B is the moment the drawing has the sheet
+      // covered and the parts start to move; c1, when they have landed.
+      const PRE = 1.2, POST = 2.5, B = 1;
+      const STEPS = [2.8, 3.8, 2.8].map((c1) => ({ c1, dur: c1 + 1.6 }));
       let acc = PRE;
-      STEPS.forEach((s) => { s.start = acc; acc += s.dur * K; s.end = acc; });
+      STEPS.forEach((s) => { s.start = acc; acc += s.dur; s.end = acc; });
       const TOTAL = acc + POST, REST = STEPS[STEPS.length - 1].end;
       const phases = (T, s) => {
-        const t = (T - s.start) / K, out = EASE_OUT(ramp(t, s.dur - 0.5, s.dur));
-        const into = soft(t, 1.25, 1.75), back = soft(t, s.c1 + 0.05, s.c1 + 0.55);   // 0.7s each way: the page's reveal
+        const t = T - s.start, out = EASE_OUT(ramp(t, s.dur - 0.4, s.dur));
+        const into = soft(t, 0.45, 0.95), back = soft(t, s.c1 + 0.05, s.c1 + 0.55);   // half a second each way
         return {
-          t, focus: EASE_OUT(ramp(t, 0, 0.9)) * (1 - out), hl: ramp(t, 0.1, 0.9) * (1 - out),
-          drawn: into * (1 - back), dim: lerp(0.7, 0.3, soft(t, 1.9, 2.4)),
-          p: ramp(t, 1.9, s.c1), after: t >= 1.8 ? 1 : 0   // the sheet changes only while the drawing covers it
+          t, focus: EASE_OUT(ramp(t, 0, 0.5)) * (1 - out), hl: ramp(t, 0.05, 0.5) * (1 - out),
+          drawn: into * (1 - back), dim: lerp(0.7, 0.3, soft(t, B, B + 0.4)),
+          p: ramp(t, B, s.c1), after: t >= B - 0.03 ? 1 : 0   // the sheet changes only while the drawing covers it
         };
       };
 
@@ -2466,13 +2469,13 @@ const CONFIG = {
           return;
         }
         const col = c >= 0 ? PAL[c][Math.round(g.tone * 10)] : INK;
-        const sa = a * (c >= 0 ? lerp(0.55, 0.95, g.tone) : 0.55) * (kind === "text" || kind === "lbl" ? 0.8 : 1);
+        const sa = a * (c >= 0 ? lerp(0.8, 1, g.tone) : 0.8) * (kind === "text" || kind === "lbl" ? 0.85 : 1);
         if (h * VS < 6) tinyPath(col, sa).rect(x, y, w, h);
         else {
           const P = new Path2D();
           rrect(P, x, y, w, h, kind === "lbl" ? 0 : kind === "text" ? Math.min(2, h / 2) : Math.min(6, h * 0.24));
           if (kind === "box" || kind === "icon") { ctx.globalAlpha = a; ctx.fillStyle = SURF_HALF; ctx.fill(P); }
-          ctx.globalAlpha = sa; ctx.strokeStyle = col; ctx.stroke(P);
+          ctx.globalAlpha = sa; ctx.strokeStyle = col; ctx.lineWidth = LW * 1.25; ctx.stroke(P);
         }
         let tx0 = x, tx1 = x + w;
         if (ic) {   // the icon: a circle where it sits
@@ -2492,7 +2495,7 @@ const CONFIG = {
         }
       };
       const flush = () => {
-        ctx.lineWidth = LW;
+        ctx.lineWidth = LW * 1.25;
         batch.tiny.forEach((t) => { ctx.globalAlpha = t.a; ctx.strokeStyle = t.col; ctx.stroke(t.p); });
         const texts = batch.texts.sort((m, n) => m[0] - n[0]);
         ctx.textAlign = "center"; ctx.textBaseline = "middle";
@@ -2569,16 +2572,18 @@ const CONFIG = {
         for (let i = 1; i < n; i++) ctx.lineTo(pts[i][0], pts[i][1]);
         ctx.stroke();
       };
-      const box = (r, inset = 0) => { const [x, y, w, h] = r; return [[x - inset, y - inset], [x + w + inset, y - inset], [x + w + inset, y + h + inset], [x - inset, y + h + inset], [x - inset, y - inset]]; };
-      const along = (pts, steps = 60) => {   // points spaced along a closed box, so it can be drawn in by length
-        const out = [], len = pts.slice(1).reduce((s, p, i) => s + Math.hypot(p[0] - pts[i][0], p[1] - pts[i][1]), 0);
-        for (let k = 0; k <= steps; k++) {
-          let d = len * k / steps, i = 0;
-          for (; i < pts.length - 2; i++) { const seg = Math.hypot(pts[i + 1][0] - pts[i][0], pts[i + 1][1] - pts[i][1]); if (d <= seg) break; d -= seg; }
-          const seg = Math.hypot(pts[i + 1][0] - pts[i][0], pts[i + 1][1] - pts[i][1]) || 1;
-          out.push([lerp(pts[i][0], pts[i + 1][0], d / seg), lerp(pts[i][1], pts[i + 1][1], d / seg)]);
+      const outline = (r, prog, color, a, inset = 0) => {   // a box drawn in along its edges, corners and all
+        if (a <= 0.01 || prog <= 0) return;
+        const x0 = r[0] - inset, y0 = r[1] - inset, x1 = r[0] + r[2] + inset, y1 = r[1] + r[3] + inset;
+        const pts = [[x0, y0], [x1, y0], [x1, y1], [x0, y1], [x0, y0]];
+        let len = 2 * (x1 - x0 + y1 - y0) * prog;
+        ctx.globalAlpha = a; ctx.strokeStyle = color; ctx.lineWidth = LW;
+        ctx.beginPath(); ctx.moveTo(x0, y0);
+        for (let i = 1; i < 5 && len > 0; i++) {
+          const [ax, ay] = pts[i - 1], [bx, by] = pts[i], d = Math.abs(bx - ax) + Math.abs(by - ay), f = Math.min(1, len / d);
+          ctx.lineTo(lerp(ax, bx, f), lerp(ay, by, f)); len -= d;
         }
-        return out;
+        ctx.stroke();
       };
       const ticks = (r, a) => {   // corner marks on the part in focus
         if (a * MA <= 0.01) return;
@@ -2592,8 +2597,8 @@ const CONFIG = {
         ctx.stroke();
       };
       const picked = [0, 1, 2].map((k) => WIRES.filter((w) => w.h & (1 << k)));
-      const FOCUS_LINES = D.focus.map((r) => along(box(r, 0.5)));
-      const GROUP_LINES = D.marks.s2.groups.map((G) => along(box(G.r)));
+      const SLOTS = new Path2D();   // step 2's destinations, drawn faintly before anything lands in them
+      WIRES.forEach((w) => { const r = w.r[2]; if (r && w.c >= 0) SLOTS.rect(r[0], r[1], r[2], r[3]); });
       const ARROW = (() => {
         const s0 = D.marks.s3.slots[0], src = D.marks.s3.src;
         const A = [s0[0] + 8, s0[1] + s0[3] + 4], B = [src[0] + src[2] / 2, src[1] + src[3] + 4], C = [(A[0] + B[0]) / 2, Math.max(A[1], B[1]) + 44];
@@ -2601,26 +2606,26 @@ const CONFIG = {
       })();
       const MARKS = [
         (p, P) => {   // 01: the icon rows, selected, then gone
-          const M = D.marks.s1, la = soft(p.t, 1.95, 2.45);
+          const M = D.marks.s1, la = soft(p.t, B + 0.05, B + 0.4);
           const gone = EASE_IO(ramp(P[0], 0.3, 0.65)), closed = EASE_IO(ramp(P[0], 0.55, 1));
           M.guides.forEach((gy) => guide(M.gx[0], gy, M.gx[1], gy, la, 1 - gone));
           picked[0].forEach((w) => handles(geo(w, P), la * (1 - gone)));
           dim(M.dim.x, M.dim.top, M.dim.x, lerp(M.dim.bot0, M.dim.bot1, closed), la);
           label(M.label.text, M.label.x, M.label.y, "left", la);
         },
-        (p) => {   // 02: the three sheets, named with their counts
+        (p) => {   // 02: the three sheets, framed and named first, so the parts are seen to land in them
           const M = D.marks.s2, c1 = STEPS[1].c1;
-          const ga = soft(p.t, c1 - 0.9, c1 - 0.3), la = soft(p.t, c1 - 0.5, c1);
-          M.groups.forEach((G, i) => {
-            trace(GROUP_LINES[i], ga, PAL[G.c][10], MA * 0.6, LW);
+          const ga = soft(p.t, B, B + 0.5), la = soft(p.t, B + 0.2, B + 0.7), da = soft(p.t, c1 - 0.5, c1);
+          M.groups.forEach((G) => {
+            outline(G.r, ga, PAL[G.c][10], MA * 0.7);
             legend(G.c, G.text, G.r[0], G.r[1] + G.r[3] + LF + 8, la);
           });
-          dim(M.dim.x0, M.dim.y, M.dim.x1, M.dim.y, la);
-          label(M.dim.text, (M.dim.x0 + M.dim.x1) / 2, M.dim.y + LF + 12, "center", la);
+          dim(M.dim.x0, M.dim.y, M.dim.x1, M.dim.y, da);
+          label(M.dim.text, (M.dim.x0 + M.dim.x1) / 2, M.dim.y + LF + 12, "center", da);
         },
         (p, P) => {   // 03: three disabled cells gone, Primary's reused
           const M = D.marks.s3, s0 = M.slots[0], s2 = M.slots[2];
-          const ha = soft(p.t, 1.95, 2.4), aa = soft(p.t, 2.5, 3.2), da = soft(p.t, 2.95, 3.5);
+          const c1 = STEPS[2].c1, ha = soft(p.t, B + 0.05, B + 0.4), aa = soft(p.t, B + 0.45, B + 1.05), da = soft(p.t, c1 - 0.7, c1 - 0.15);
           picked[2].forEach((w) => handles(geo(w, P), ha));
           trace(ARROW, aa, ACC, MA, LW * 1.25);
           if (aa > 0.97) {
@@ -2632,16 +2637,27 @@ const CONFIG = {
           }
           dim(s0[0], s0[1] + s0[3] / 2, s2[0] + s2[2], s0[1] + s0[3] / 2, da);
           label(M.label1, s2[0] + s2[2], s0[1] + s0[3] + 44, "right", da);
-          label(M.label2, 30, s0[1] + s0[3] + 44, "left", soft(p.t, 2.5, 3.0), ACC_INK);
+          label(M.label2, 30, s0[1] + s0[3] + 44, "left", soft(p.t, B + 0.45, B + 0.95), ACC_INK);
         }
       ];
 
-      let T = REST, shown = -2;
-      const mark = (cur) => {   // the captions: the step playing, marked
-        if (cur === shown) return;
-        shown = cur;
-        caps.forEach((c, i) => { if (i === cur) c.setAttribute("aria-current", "step"); else c.removeAttribute("aria-current"); });
-        if (capsEl) capsEl.classList.toggle("live", cur >= 0);
+      // The band, built from the columns: which step, the problem, the fix.
+      const told = caps.map((col) => ({ name: ($(".t-subhead", col) || col).textContent.trim(), fix: ($(".t-body", col) || col).textContent.trim(), problem: col.dataset.problem || "" }));
+      const band = document.createElement("div");
+      band.className = "rebuild-band";
+      band.innerHTML = '<div class="rb-head"><div class="rb-ctl"></div><p class="t-subhead rb-name"></p></div>'
+        + '<div class="rb-problem"><p class="eyebrow">The problem</p><p class="t-body"></p></div>'
+        + '<div class="rb-fix"><p class="eyebrow">The fix</p><p class="t-body"></p></div>';
+      const nameEl = $(".rb-name", band), problemEl = $(".rb-problem .t-body", band), fixEl = $(".rb-fix .t-body", band);
+      let T = REST, toldI = -1, jumps = [];
+      const say = (i, fixed) => {
+        if (!told.length) return;
+        if (i !== toldI) {
+          toldI = i;
+          nameEl.textContent = told[i].name; problemEl.textContent = told[i].problem; fixEl.textContent = told[i].fix;
+          jumps.forEach((b, k) => b.setAttribute("aria-current", String(k === i)));
+        }
+        band.classList.toggle("fixed", fixed);
       };
       const draw = () => {
         ctx.setTransform(dpr * VS, 0, 0, dpr * VS, 0, 0);
@@ -2667,14 +2683,17 @@ const CONFIG = {
           MA = da;
           if (quiet[cur] > 60) { ctx.globalAlpha = p.dim * da; ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(stillLayer(cur, P), 0, 0); ctx.setTransform(dpr * VS, 0, 0, dpr * VS, 0, 0); begin(); }
           else { begin(); WIRES.forEach((w) => { if (!(w.a & (1 << cur))) { const g = geo(w, P); if (g) wire(g, p.dim * da, w.c); } }); }
+          if (cur === 1) { ctx.globalAlpha = 0.14 * da * soft(p.t, B, B + 0.4); ctx.strokeStyle = INK; ctx.lineWidth = LW; ctx.stroke(SLOTS); }
           WIRES.forEach((w) => { if (w.a & (1 << cur)) { const g = geo(w, P); if (g) wire(g, da, w.c); } });
           flush();
           MARKS[cur](p, P);
-          ticks(D.focus[cur], soft(p.t, 1.8, 2.3));
+          ticks(D.focus[cur], soft(p.t, B - 0.1, B + 0.3));
           MA = 1;
         }
-        if (p) trace(FOCUS_LINES[cur], p.hl, LBL, p.focus * vis * 0.7, LW);   // a thin outline draws round the part in focus
-        mark(cur);
+        if (p) outline(D.focus[cur], p.hl, LBL, p.focus * vis * 0.7, 0.5);   // a thin outline draws round the part in focus
+        // the band: the step playing (before the first, the first; after the last, the last) and, once its parts move, the fix
+        const last = STEPS.length - 1;
+        say(cur >= 0 ? cur : T < STEPS[0].start ? 0 : last, cur >= 0 ? p.t >= B : T >= STEPS[last].end);
       };
       const size = () => {
         const w = stage.clientWidth;
@@ -2685,24 +2704,27 @@ const CONFIG = {
         draw();
       };
 
-      // Captions: numbered, and each heading a way into its step.
+      // The band's controls: the pause button, then a number per step that plays it.
       let playing = true, raf = 0, last = 0;
-      caps.forEach((col, i) => {
-        const head = $(".col-head", col), h = $(".t-subhead", col);
-        if (head && !$(".step-no", head)) {
-          const n = document.createElement("span");
-          n.className = "step-no fig-no";
-          n.textContent = String(i + 1).padStart(2, "0");
-          head.prepend(n);
-        }
-        if (h && !$(".step-jump", h)) {
-          const b = document.createElement("button");
-          b.type = "button"; b.className = "step-jump"; b.textContent = h.textContent;
-          b.setAttribute("aria-label", `Play step ${i + 1}, ${h.textContent}`);
-          b.addEventListener("click", () => { T = STEPS[i].start; playing = true; setPaused(btn, playing, "the rebuild"); draw(); sync(); });
-          h.replaceChildren(b);
-        }
+      const ctl = $(".rb-ctl", band);
+      if (btn) ctl.append(btn);
+      jumps = told.map((s, i) => {
+        const b = document.createElement("button");
+        b.type = "button"; b.className = "t-micro rb-step"; b.textContent = String(i + 1).padStart(2, "0");
+        b.setAttribute("aria-label", `Play step ${i + 1}, ${s.name}`);
+        b.addEventListener("click", () => { T = STEPS[i].start; playing = true; setPaused(btn, playing, "the rebuild"); draw(); sync(); });
+        ctl.append(b);
+        return b;
       });
+      // The band holds the height of its tallest step, so the page under it never moves.
+      const fit = () => {
+        if (!told.length || !band.isConnected) return;
+        const keep = Math.max(0, toldI), fixed = band.classList.contains("fixed");
+        band.style.minHeight = "";
+        const tallest = Math.max(...told.map((s, i) => { toldI = -1; say(i, true); return band.offsetHeight; }));
+        band.style.minHeight = `${tallest}px`;
+        toldI = -1; say(keep, fixed);
+      };
       const visible = whileOnScreen(fig, 0.2, () => sync());
       const running = () => playing && visible() && !isScrolling();
       const frame = (now) => {
@@ -2725,13 +2747,15 @@ const CONFIG = {
         btn.addEventListener("click", () => { playing = !playing; setPaused(btn, playing, "the rebuild"); sync(); });
       }
       onTheme(() => { inks(); layerKey = ""; draw(); });
-      if (document.fonts) document.fonts.ready.then(() => { layerKey = ""; draw(); });
+      if (document.fonts) document.fonts.ready.then(() => { layerKey = ""; draw(); fit(); });
       if ("ResizeObserver" in window) {
         let w = stage.clientWidth;
-        new ResizeObserver(() => { if (stage.clientWidth !== w) { w = stage.clientWidth; size(); } }).observe(stage);
-      } else window.addEventListener("resize", debounce(size, 120));
+        new ResizeObserver(() => { if (stage.clientWidth !== w) { w = stage.clientWidth; size(); fit(); } }).observe(stage);
+      } else window.addEventListener("resize", debounce(() => { size(); fit(); }, 120));
+      if (told.length) { fig.after(band); if (capsEl) capsEl.hidden = true; }
       inks();
       size();                      // the after sheet, as the still shows it
+      fit();
       fig.classList.add("on");
       sync();
     };
