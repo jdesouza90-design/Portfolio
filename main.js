@@ -3457,25 +3457,34 @@ const CONFIG = {
 
     onceInView(fig, 0.35, (animate) => {
       if (!animate) { finish(); return; }
-      const b = steps(before), a = steps(after);
+      // Each lane walks its steps, a beat on each; a step holding a .ba-wait note is
+      // where it stalls: the dot waits in sight before it, the step goes amber for
+      // 2.5s, then the dot goes through. Before ends and its dot goes out; the lanes
+      // trade places; after runs to its last step. No-code tools stalls at the
+      // engineering queue, Cross-Sell at the decline.
       let t = 0;
       const then = (ms, fn) => setTimeout(fn, (t += ms));   // ms after the beat before it
       const reach = (li) => li.classList.add("is-reached");
-      // Before: brand change, ticket, a long wait outside the queue, through it, deploy.
-      then(600,       () => { place(before, 0, "mid", false); reach(b[0]); });
-      then(800,       () => hop(before, 1));
-      then(HOP + 500, () => hop(before, 2, "short"));
-      then(HOP,       () => { reach(b[2]); b[2].classList.add("is-waiting"); });
-      then(2500,      () => { b[2].classList.remove("is-waiting"); hop(before, 2); });
-      then(HOP + 200, () => hop(before, 3));
-      then(HOP + 300, () => { b[3].classList.add("is-done"); $(".ba-dot", before).classList.remove("is-on"); });
-      // After: the lanes trade places, then every step in turn, with a beat on each.
-      then(1000,      () => fig.classList.add("is-two"));
-      then(900,       () => { place(after, 0, "mid", false); reach(a[0]); });
-      then(700,       () => hop(after, 1));
-      then(HOP + 500, () => hop(after, 2));
-      then(HOP + 500, () => hop(after, 3));
-      then(HOP + 300, () => { a[3].classList.add("is-done"); fig.classList.remove("is-staged"); });
+      const walk = (lane, lead, first, end) => {
+        const s = steps(lane);
+        then(lead, () => { place(lane, 0, "mid", false); reach(s[0]); });
+        let beat = first;
+        for (let i = 1; i < s.length; i++) {
+          if ($(".ba-wait", s[i])) {
+            then(beat, () => hop(lane, i, "short"));
+            then(HOP,  () => { reach(s[i]); s[i].classList.add("is-waiting"); });
+            then(2500, () => { s[i].classList.remove("is-waiting"); hop(lane, i); });
+            beat = HOP + 200;
+          } else {
+            then(beat, () => hop(lane, i));
+            beat = HOP + 500;
+          }
+        }
+        then(HOP + 300, () => { s[s.length - 1].classList.add("is-done"); end(); });
+      };
+      walk(before, 600, 800, () => $(".ba-dot", before).classList.remove("is-on"));
+      then(1000, () => fig.classList.add("is-two"));
+      walk(after, 900, 700, () => fig.classList.remove("is-staged"));
     });
   });
 

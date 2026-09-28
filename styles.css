@@ -1473,7 +1473,28 @@ footer a:hover { color: var(--ink); }
 .ba-steps li.is-waiting .ba-state { border-color: color-mix(in srgb, var(--wait-edge) 35%, transparent); border-top-color: var(--wait-edge); animation-duration: 2.4s; }
 .ba-wait { display: block; max-height: 0; opacity: 0; overflow: hidden; font-size: var(--t-small); line-height: var(--lh-small); color: var(--wait-ink);
   transition: max-height .4s var(--ease), opacity .3s var(--ease); }
-.ba-steps li.is-waiting .ba-wait { max-height: 3em; opacity: 1; }
+.ba-steps li.is-waiting .ba-wait { max-height: 9em; opacity: 1; }
+/* a stall that is a rejection, not a wait (Cross-Sell's decline): the card goes red,
+   flinches once and carries what an applicant said about that moment */
+.ba-wait q { display: block; font-style: italic; quotes: "“" "”"; }
+.ba-cite { display: block; margin-top: 4px; font-family: var(--font-mono); font-size: var(--t-micro); letter-spacing: var(--ls-micro); text-transform: uppercase; opacity: .85; }
+.ba-steps li.ba-reject.is-waiting { background: color-mix(in srgb, var(--danger) 9%, var(--surface)); border-color: var(--danger); box-shadow: 0 0 0 4px color-mix(in srgb, var(--danger) 14%, transparent); animation: ba-flinch .45s cubic-bezier(.36, .07, .19, .97) both; }
+.ba-steps li.ba-reject.is-waiting .ba-head { color: var(--danger); border-color: color-mix(in srgb, var(--danger) 30%, transparent); }
+.ba-steps li.ba-reject.is-waiting .ba-title { color: var(--ink); }
+.ba-steps li.ba-reject.is-waiting .ba-wait { color: var(--ink-2); }
+.ba-steps li.ba-reject.is-waiting .ba-state { animation: none; border: 0; background: var(--danger) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='white' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M4 4l4 4M8 4l-4 4'/%3E%3C/svg%3E") center / 10px no-repeat; }
+.ba-steps li.ba-reject.is-reached:has(~ li.is-reached) .ba-state { background: var(--danger) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='white' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M4 4l4 4M8 4l-4 4'/%3E%3C/svg%3E") center / 10px no-repeat; }   /* a decline stays a cross, never a check */
+.flow-ba.is-two .ba-before .ba-steps li.ba-reject .ba-state { background-color: var(--hair-2); }
+@keyframes ba-flinch { 20% { transform: translateX(-5px); } 40% { transform: translateX(4px); } 60% { transform: translateX(-3px); } 80% { transform: translateX(2px); } }
+/* the end of a lane can say where it landed: a note that opens once the last step is done.
+   A lane that ends nowhere (data-end="lost", Cross-Sell's old decline) crosses its last step out. */
+.ba-end { display: block; max-height: 0; opacity: 0; overflow: hidden; font-size: var(--t-small); line-height: var(--lh-small); color: var(--accent-ink);
+  transition: max-height .4s var(--ease), opacity .3s var(--ease); }
+.ba-steps li.is-done .ba-end { max-height: 3em; opacity: 1; }
+[data-end="lost"] .ba-end { color: var(--ink-2); }
+[data-end="lost"] .ba-steps li.is-done .ba-state { background: var(--danger) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='white' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M4 4l4 4M8 4l-4 4'/%3E%3C/svg%3E") center / 10px no-repeat; }
+.flow-ba.is-two [data-end="lost"] .ba-steps li.is-done .ba-state { background-color: var(--hair-2); }
+.flow-ba.is-two .ba-before .ba-end { color: var(--ink-3); }
 /* The dot: main.js moves it along the wire; across it, it holds the lane's middle, where
    the wire runs, so it stays on the wire when the waiting note makes the queue card taller.
    A hop is HOP in main.js, on the plain in-out: only the gap between two cards shows the dot. */
@@ -1506,7 +1527,7 @@ footer a:hover { color: var(--ink); }
   .ba-dot { left: 50%; top: 0; transform: translateY(var(--y, 0)); }   /* the wire runs down the lane's middle */
   .flow-ba.is-staged .ba-before { transform: none; }   /* a stacked lane is too tall to centre: it waits at the top, under the lede */
 }
-@media (prefers-reduced-motion: reduce) { .ba-lane, .ba-steps li, .ba-wait, .ba-dot { transition: none; } .ba-state { animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { .ba-lane, .ba-steps li, .ba-wait, .ba-dot { transition: none; } .ba-state, .ba-steps li { animation: none !important; } }
 /* What shipped, under the lanes: the two phases and what was kept, as chips */
 .ba-phases { list-style: none; margin: 0; padding: 0; gap: var(--sp-3); }
 .ba-phases .chip { display: inline-flex; align-items: baseline; gap: var(--sp-2); padding: 10px 18px; border-radius: 999px; background: var(--surface); color: var(--ink); white-space: normal; }
