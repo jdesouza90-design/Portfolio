@@ -704,93 +704,146 @@ const CONFIG = {
     });
   });
 
-  /* ---- AI card: the strands, in three dimensions ----
-     Eighty-odd strands lie on a horn that narrows to a single line. The horn
-     turns slowly about its axis and breathes in perspective, and every strand
-     sways on its own. It draws only while the card is on screen and the tab
-     is visible, never under reduced motion (the still SVG stays), and the
-     button in the corner is the WCAG 2.2.2 stop. */
-  const initStrands = () => $$("[data-strands]").forEach((fig) => {
-    const c = $("canvas", fig), btn = $(".art-ctl", fig);
-    const ctx = c && c.getContext && c.getContext("2d");
-    if (reduced || !ctx) return;
-    const N = 88, M = 48, X0 = -2, XM = .55, D = 3.2;   // strands, points each, start x, merge x, camera distance
-    let seed = 20260914;                                 // same strands every visit
-    const rnd = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
-    const r = (a, b) => a + (b - a) * rnd();
-    const sm = (u) => { u = u < 0 ? 0 : u > 1 ? 1 : u; return u * u * (3 - 2 * u); };
-    const strands = [];
-    for (let i = 0; i < N; i++) strands.push({ phi: (i / N) * Math.PI * 2 + r(-.1, .1), r0: r(.55, 1), amp: r(.05, .16), lam: r(1.4, 3), p1: r(0, 6.28), p2: r(0, 6.28), sp: r(.5, 1.1), w: r(.6, 1.2), set: r(.004, .03) });
-    const green = { phi: 2.1, r0: .78, amp: .09, lam: 1.9, p1: 1.2, p2: 3.1, sp: .8, w: 2.2, set: 0 };
-    const axis = { phi: 0, r0: 0, amp: 0, lam: 1, p1: 0, p2: 0, sp: 1, set: 0 };
-    // the plate's ink and green: the panel stays sand in both registers, so the strands do too
-    const accent = hex("--plate-accent", "#3B6B44");
-    const ink = tint("--plate-ink-0", "#14100C");
-
-    let W = 0, H = 0, dpr = 1;
-    const size = () => { W = fig.clientWidth; H = fig.clientHeight; dpr = fitCanvas(c, W, H); };
-
-    // a point on strand k at world x, time t: spin about the axis, yaw toward the camera, a touch of tilt, then project
-    const o = [0, 0, 0];
-    const point = (k, x, t, rot) => {
-      const s = sm((x + 1.15) / (XM + 1.15)), fade = 1 - s;
-      const R = k.set + k.r0 * Math.pow(fade, .9) + k.amp * fade * Math.sin(k.lam * 1.7 * x + k.p2 + t * k.sp * .8);
-      const a = k.phi + k.amp * 3 * fade * Math.sin(k.lam * x + k.p1 + t * k.sp);
-      const y = R * Math.cos(a), z = R * Math.sin(a);
-      const y1 = y * rot.cx - z * rot.sx, z1 = y * rot.sx + z * rot.cx;
-      const x2 = x * rot.cy + z1 * rot.sy, z2 = -x * rot.sy + z1 * rot.cy;
-      const x3 = x2 * rot.cz - y1 * rot.sz, y3 = x2 * rot.sz + y1 * rot.cz;
-      const p = D / (D - z2);
-      o[0] = W / 2 + rot.S * x3 * p; o[1] = H / 2 - rot.S * y3 * p; o[2] = z2;
-    };
-    const trace = (k, t, rot, to, n) => {
-      ctx.beginPath();
-      let zn = 0;
-      for (let j = 0; j <= n; j++) {
-        point(k, X0 + (to - X0) * j / n, t, rot);
-        if (j === 8) zn = o[2];                  // depth at the mouth sets weight and tone
-        j ? ctx.lineTo(o[0], o[1]) : ctx.moveTo(o[0], o[1]);
+  /* ---- AI card: the agents at work, as a process ----
+     The card's copy played out one step at a time, after ramp.com's feature cards
+     and harvey.ai's product UI: the brief an agent picks up, its run ticking
+     through its steps, the team's review. Three flows take turns (the Figma
+     library audit, a flow turned into a prototype, research synthesis), each on
+     real facts: the site's own contrast fix and the Verifications usability
+     quote. It plays only after the card lands, while it is on screen and the
+     page is still; the button in the corner is the WCAG 2.2.2 stop, and under
+     reduced motion it holds on the audit, fixed. Replaced the strands canvas
+     on Sep 28, 2026. */
+  // Realistic app windows, after Harvey's product UI: a title bar with a breadcrumb,
+  // the brief as a task, the agent's run as a step list that spins and ticks, then
+  // the review. Every figure in them is real: the site's own contrast fix and the
+  // Verifications usability quote.
+  const SV = {
+    mark: '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 1.5v2.5M6 8v2.5M1.5 6H4M8 6h2.5"/></svg>',
+    rule: '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"><path d="M3 1.5h4.5l2 2v7H3z"/></svg>',
+    src: '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="6" cy="6" r="4.2"/></svg>',
+  };
+  const tb = (crumbs, right) => `<div class="st-tb"><span class="lg">${SV.mark}</span>${crumbs.map((c, i) => i === crumbs.length - 1 ? `<b>${c}</b>` : `${c}<span class="sep">/</span>`).join("")}<span class="rt">${right}</span></div>`;
+  const brief = (crumb, right, text, chips, icon, agent) => `<div class="st-card st-app">${tb(["Agents", crumb], right)}
+    <div class="st-bd"><div class="st-lbl">Brief</div><div class="st-txt">${text}</div><div class="st-chips">${chips.map((c) => `<span class="st-chip">${SV[icon]}${c}</span>`).join("")}</div></div>
+    <div class="st-ft"><span class="st-av">${SV.mark}</span>${agent}<span class="st-btn">Start run <span class="st-kbd">⏎</span></span></div></div>`;
+  const run = (agent, steps, out) => `<div class="st-card st-app">${tb([agent], `<span class="st-state"><span class="st-spin"></span><span class="st-okdot"></span><span class="st-s">Running</span></span>`)}
+    <ul class="st-steps">${steps.map(([t, m]) => `<li><span class="ic"></span>${t}${m ? `<span class="m${m[1] ? " bad" : ""}">${m[0]}</span>` : ""}</li>`).join("")}</ul>
+    <div class="st-out">${out}</div></div>`;
+  const review = (crumbs, title, sub, extra, ghost, solid) => `<div class="st-card st-app">${tb(crumbs, "Review")}
+    <div class="st-bd"><div class="st-lbl">Design team</div><div class="st-txt">${title}</div><div class="st-lbl" style="margin:4px 0 0">${sub}</div>${extra}</div>
+    <div class="st-ft"><span class="st-av lt">DT</span>Approved<span class="st-btn gh">${ghost}</span><span class="st-btn ok">${solid}</span></div></div>`;
+  const doneText = (w, t) => { const s = w.querySelector(".st-s"); if (s) s.textContent = t; };
+  const STORY = [
+    { brief: brief("Library audit", "Monthly", "Audit the Figma library and write the exact fix for each issue.", ["Tokens", "Spacing", "Contrast AA"], "rule", "Audit agent"),
+      work: run("Audit agent", [["Read the brief and rules"], ["Scan Button / Secondary"], ["Check label contrast", ["3.8:1", 1]], ["Write the fix"]],
+        `<div class="st-diff"><div class="dl">- color: #8A8279</div><div class="ad">+ color: Ink 3  #6F675D</div></div><div class="st-meta">Button / Secondary<span class="st-tag2">5.6:1 · AA</span></div>`),
+      review: review(["Library", "Button / Secondary"], "Fix approved", "Label color moves to Ink 3", "", "View diff", "Merged"),
+      set: (w, done) => doneText(w, done ? "Done · 1 fix" : "Running") },
+    { brief: brief("Prototype", "Flow", "Turn the application flow into a prototype customers can try.", ["Design system parts", "Real copy"], "rule", "Prototype agent"),
+      work: run("Prototype agent", [["Read the flow", ["3 screens"]], ["Place design system parts"], ["Link Income, Documents, Review"], ["Publish a shareable link"]],
+        `<div class="st-meta" style="border-top:0">Application flow<span class="st-tag2">Clickable</span></div>`),
+      review: review(["Prototype", "Application flow"], "Ready for customer sessions", "Checked copy, parts and every link", "", "Open", "Approved"),
+      set: (w, done) => doneText(w, done ? "Done · prototype live" : "Running") },
+    { brief: brief("Research", "Synthesis", "Find why applicants stall after upload.", ["Customer calls", "Analytics", "FullStory"], "src", "Research agent"),
+      work: run("Research agent", [["Read customer calls"], ["Read support tickets"], ["Read analytics"], ["Watch FullStory sessions"]],
+        `<div class="st-lbl" style="padding:8px 10px 0;margin:0">Theme</div><div class="st-theme2">After upload, the dashboard goes quiet</div>`),
+      review: review(["Research", "Upload status"], "Show a status the moment a file lands", "Synthesis for the designers",
+        `<div class="st-quote">“If that ‘in review’ would’ve been maybe bigger or a different color, I would’ve noticed it earlier.”<span>Usability session</span></div>`, "Open synthesis", "Shared"),
+      set: (w, done) => doneText(w, done ? "Done · 1 theme" : "Running") },
+  ];
+  const STEP_END = [4.2, 11.2, 15.8], WORK_DONE = 4.2 + 3.8, EXIT = 15.8, CYCLE = 16.8;   // slowed by half on John's ask
+  const STORY_REST = 9.6;   // the still under reduced motion: the audit, fixed
+  const GEO = { tall: { SW: 340, SH: 300, gap: 320 }, wide: { SW: 340, SH: 250, gap: 380 } };
+  const makeStory = (el) => {
+    const root = document.createElement("div");
+    root.className = "story"; root.setAttribute("aria-hidden", "true");
+    root.innerHTML = `<div class="st-scene">` + STORY.map((s) => `<div class="st-ex"><div class="st-track">
+      <span class="st-line stub" data-stub="0"></span><span class="st-line" data-l="0"></span><span class="st-line" data-l="1"></span><span class="st-line stub" data-stub="1"></span>
+      <span class="st-pkt" data-p="0"></span><span class="st-pkt" data-p="1"></span>
+      <div class="st-step">${s.brief}</div><div class="st-step">${s.work}</div><div class="st-step">${s.review}</div></div></div>`).join("") + `</div>`;
+    el.insertBefore(root, el.querySelector(".art-ctl"));   // under the pause button
+    const scene = root.querySelector(".st-scene");
+    const exs = [...root.querySelectorAll(".st-ex")].map((ex) => ({ ex, track: ex.querySelector(".st-track"),
+      steps: [...ex.querySelectorAll(".st-step")], lines: [...ex.querySelectorAll("[data-l]")], stubs: [...ex.querySelectorAll("[data-stub]")], pkts: [...ex.querySelectorAll(".st-pkt")] }));
+    let layout = "", g = GEO.tall;
+    const place = () => {
+      const tall = layout === "tall", c = tall ? g.SW / 2 : g.SH / 2, S = 150;
+      for (const e of exs) {
+        e.steps.forEach((s, i) => { s.style.left = `${tall ? c : i * g.gap}px`; s.style.top = `${tall ? i * g.gap : c}px`; });
+        e.lines.forEach((l, i) => { l.style.cssText = tall ? `left:${c}px;top:${i * g.gap}px;height:${g.gap}px` : `left:${i * g.gap}px;top:${c}px;width:${g.gap}px`; });
+        e.stubs.forEach((l, i) => { const at = i ? 2 * g.gap : -S; l.style.cssText = (tall ? `left:${c}px;top:${at}px;height:${S}px` : `left:${at}px;top:${c}px;width:${S}px`) + `;--dir:${i ? (tall ? "0deg" : "270deg") : (tall ? "180deg" : "90deg")}`; });
+        e.pkts.forEach((p, i) => { p.style.left = `${tall ? c : i * g.gap}px`; p.style.top = `${tall ? i * g.gap : c}px`; p.style.setProperty("--gap", `${g.gap}px`); });
       }
-      return Math.min(1, Math.max(0, (zn + 1) / 2));
     };
+    const size = () => {
+      const W = el.clientWidth, H = el.clientHeight;
+      if (!W || !H) return;
+      const next = H / W >= .8 ? "tall" : "wide";
+      if (next !== layout) { layout = next; g = GEO[layout]; root.dataset.layout = layout; place(); last = ""; }
+      // fit to the room the pause button leaves: above it on a tall plate, beside it on a wide one
+      const bw = layout === "wide" ? W - 104 : W - 24, bh = layout === "wide" ? H - 16 : H - 60;   // wide: equal room each side, so the card sits in the middle and clear of the button
+      const s = Math.min(bw / g.SW, bh / g.SH);
+      scene.style.left = `${(layout === "wide" ? 52 : 12) + bw / 2}px`; scene.style.top = `${(layout === "wide" ? 8 : 12) + bh / 2}px`;
+      scene.style.transform = `translate(${-g.SW * s / 2}px, ${-g.SH * s / 2}px) scale(${s})`;
+    };
+    let last = "";
+    size();
     const frame = (t) => {
-      const tx = t * .13, ty = .25 + .3 * Math.sin(t * .05), tz = -.06;
-      const rot = { cx: Math.cos(tx), sx: Math.sin(tx), cy: Math.cos(ty), sy: Math.sin(ty), cz: Math.cos(tz), sz: Math.sin(tz), S: Math.max(W / 2.3, H / 2) };
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.clearRect(0, 0, W, H);
-      ctx.lineCap = "round";
-      point(axis, XM, t, rot);                    // where the strands resolve, on screen, sets the fade
-      const g = ctx.createLinearGradient(0, 0, o[0] - W * .01, 0);
-      g.addColorStop(0, ink(1)); g.addColorStop(.55, ink(.8)); g.addColorStop(1, ink(0));
-      ctx.strokeStyle = g;
-      for (const k of strands) {
-        const zn = trace(k, t, rot, XM + .3, M);
-        ctx.globalAlpha = .08 + .22 * zn;
-        ctx.lineWidth = k.w * (.7 + .6 * zn);
-        ctx.stroke();
-      }
-      ctx.globalAlpha = 1; ctx.strokeStyle = accent; ctx.lineWidth = green.w;
-      trace(green, t, rot, 1.4, M + 16);          // the one that keeps going
-      ctx.stroke();
+      t = Math.max(0, t);   // a frame's timestamp can land a hair before the clock started
+      const k = Math.floor(t / CYCLE) % STORY.length, u = t % CYCLE;
+      const step = u < STEP_END[0] ? 0 : u < STEP_END[1] ? 1 : 2, out = u >= EXIT, done = u >= WORK_DONE;
+      const sub = step === 1 ? Math.min(3, Math.floor((u - STEP_END[0]) / .95)) : -1;   // the run ticks a step about every second
+      const state = [layout, k, step, out, done, sub].join();
+      if (state === last) return;
+      const prev = last.split(",");
+      last = state;
+      exs.forEach((e, i) => {
+        const me = i === k;
+        e.ex.classList.toggle("on", me && !out);
+        const at = me ? step : 0, tall = layout === "tall";
+        // the view centers the active step; jumping back at the start of an example happens while it is hidden
+        e.track.style.transition = me ? "" : "none";
+        e.track.style.transform = tall ? `translate(0, ${g.SH / 2 - at * g.gap}px)` : `translate(${g.SW / 2 - at * g.gap}px, 0)`;
+        e.steps.forEach((s, j) => { s.classList.toggle("on", me && j === at); s.classList.toggle("past", me && j < at); });
+        e.lines.forEach((l, j) => { l.style.transition = me ? "" : "none"; l.classList.toggle("on", me && at > j); });
+        e.pkts.forEach((p, j) => {
+          const go = me && at === j + 1 && !(prev[1] == k && prev[2] == at);
+          if (go) { p.classList.remove("go"); void p.offsetWidth; p.classList.add("go"); }
+          else if (!me || at !== j + 1) p.classList.remove("go");
+        });
+        const w = e.steps[1];
+        w.querySelectorAll(".st-steps li").forEach((li, j) => {
+          li.classList.toggle("ok", me && (done || (step === 1 && j < sub)));
+          li.classList.toggle("act", me && step === 1 && !done && j === sub);
+        });
+        w.classList.toggle("working", me && step === 1 && !done);
+        w.classList.toggle("done", me && done);
+        STORY[i].set(w, me && done);
+      });
     };
+    return { size, frame };
+  };
 
-    // the clock only runs while drawing, so a pause freezes the scene and resume picks it up
-    let raf = 0, acc = 0, since = 0, playing = true;
-    const tick = (now) => { frame(acc + (now - since) / 1000); raf = requestAnimationFrame(tick); };
+  const initStory = () => $$("[data-story]").forEach((fig) => {
+    const btn = $(".art-ctl", fig), eng = makeStory(fig);
+    fig.classList.add("live");
+    if ("ResizeObserver" in window) new ResizeObserver(() => eng.size()).observe(fig);
+    if (reduced) { eng.frame(STORY_REST); return; }
+    // the clock only runs while playing, so a pause freezes the story and resume picks it up
+    let raf = 0, acc = 0, since = 0, playing = true, visible = null;
+    eng.frame(0);
+    const tick = (now) => { eng.frame(acc + (now - since) / 1000); raf = requestAnimationFrame(tick); };
     const sync = () => {
       const run = playing && visible && visible() && !isScrolling();
+      fig.classList.toggle("run", !!run);
       if (run && !raf) { since = performance.now(); raf = requestAnimationFrame(tick); }
       if (!run && raf) { cancelAnimationFrame(raf); raf = 0; acc += (performance.now() - since) / 1000; }
       setPaused(btn, playing, "animation");
     };
-    let visible = null;
-    afterReveal(fig, () => {                       // the still SVG holds the frame until the card has landed
-      size();
-      fig.classList.add("live");
-      frame(0);
+    afterReveal(fig, () => {
+      eng.size();
       if (btn) { btn.hidden = false; btn.addEventListener("click", () => { playing = !playing; sync(); }); }
-      if ("ResizeObserver" in window) new ResizeObserver(() => { size(); frame(acc + (raf ? (performance.now() - since) / 1000 : 0)); }).observe(fig);
-      else window.addEventListener("resize", size);
       visible = whileOnScreen(fig, .05, sync);
       whileStill(sync);
       sync();
@@ -3396,6 +3449,6 @@ const CONFIG = {
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { if (current() === "system") document.dispatchEvent(new CustomEvent("themechange")); });
   };
 
-  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initCoach, initFields, initCharts, initMatrix, initConfig, initFlows, initBeforeAfter, initStrips, initTableWraps, initPortrait, initClock, initArcade, initStack, initLens, initSteps, initDemo, initPalette, initPostList, initChat, initYear, initTheme, initTalk]
+  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStory, initCoach, initFields, initCharts, initMatrix, initConfig, initFlows, initBeforeAfter, initStrips, initTableWraps, initPortrait, initClock, initArcade, initStack, initLens, initSteps, initDemo, initPalette, initPostList, initChat, initYear, initTheme, initTalk]
     .forEach((init) => { try { init(); } catch (err) { console.error(`main.js: ${init.name} failed`, err); } });
 })();
