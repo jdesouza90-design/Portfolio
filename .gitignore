@@ -10,3 +10,5 @@ node_modules/
 .claude/worktrees/
 assets/BE/
 __pycache__/
+motion/*/frames*/
+motion/*/out/

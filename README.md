@@ -55,6 +55,8 @@ stamp.py                        Re-stamps every ?v= cache hash; run it before co
 dev.mjs                         Local stand-in for the edge: the gates, the chat and the dashboard without deploying
 bot-check.mjs                   Checks middleware.js's bot list against real user agents; run it after changing that list
 ai-process-art.mjs              Draws assets/ai-process.svg, the abstract on the AI card
+motion/<slug>/scene.html        The source of a rendered motion piece (a WebP for the site, an MP4 for social),
+                                rendered by the motion-graphic skill; its frames/ and out/ are not committed
 assets/                         Mockups, logos, walkthrough recordings exported from the deck
 og-image.png                    Social preview image used when the link is shared
 favicon.svg                     The tally on a paper tile, drawn on a 32-unit grid
@@ -779,7 +781,14 @@ scrolls to it, and every page gets it the same way:
 To see a reveal from the code, scroll a page in `puppeteer-core` with
 `Animation.setPlaybackRate(0.2)` over CDP and screenshot at intervals; the
 Browser pane cannot, because a hidden pane paints no frames and the
-observers never fire.
+observers never fire. `capture.mjs page` in `.claude/skills/motion-graphic/`
+does this with nothing to install and lays the shots out on one sheet.
+
+Motion that ships as a file rather than as code (a clip on a case study, a
+social video, an animation for the deck) is drawn as an HTML scene in
+`motion/<slug>/scene.html`, rendered frame by frame in headless Chrome and
+encoded by the motion-graphic skill. Change the scene and re-render; never
+edit the WebP or MP4 it made.
 
 ## Accessibility
 
