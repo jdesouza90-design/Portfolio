@@ -54,7 +54,6 @@
   --plate-accent-ink: #2B5233;   /* the green on a panel: the accent's paper value, kept in the dark register too */
   --plate-accent-2: #6E9A5A;
   --plate-danger: #C0392B;
-  --shadow-pill: 0 14px 34px -22px rgba(20, 16, 12, .32), 0 0 0 1px rgba(20, 16, 12, .05);
 
   /* panel ground: the warm sand every screenshot sits on. Each case study
      overrides these from its own subject matter (section 10). */
@@ -169,7 +168,6 @@
   --contact-ground: linear-gradient(155deg, #F6F4F0 0%, #ECE8E1 58%, #E4DFD6 100%);
   --contact-rings: rgba(20, 16, 12, .08);
   --scrim: rgba(0, 0, 0, .55);
-  --shadow-pill: 0 14px 34px -22px rgba(0, 0, 0, .8), 0 0 0 1px rgba(255, 255, 255, .07);
   }
 }
 :root[data-theme="dark"] {
@@ -195,7 +193,6 @@
   --contact-ground: linear-gradient(155deg, #F6F4F0 0%, #ECE8E1 58%, #E4DFD6 100%);
   --contact-rings: rgba(20, 16, 12, .08);
   --scrim: rgba(0, 0, 0, .55);
-  --shadow-pill: 0 14px 34px -22px rgba(0, 0, 0, .8), 0 0 0 1px rgba(255, 255, 255, .07);
 }
 
 /* --------------------------------------------------------------------------
@@ -421,6 +418,7 @@ main, .nav { position: relative; z-index: 1; }
   padding: 7px 12px; white-space: nowrap;
 }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips .chip { white-space: normal; text-wrap: pretty; }   /* one line whenever it fits; a chip wider than its row wraps inside itself instead of pushing the card past a narrow phone */
 
 /* Panel: the tinted ground every screenshot sits on, from the --panel-* tokens
    (the site's warm sand by default; each project sets its own in section 10). */
@@ -702,7 +700,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
    stretch of the scroll, the cards behind stepping forward as it goes.
    Without the script, or under reduced motion, the cards sit in a column. */
 .stack { --peek: 18px; --card-h: min(72vh, 540px); }
-.stack-deck { display: grid; gap: clamp(20px, 3vw, 32px); }
+.stack-deck { display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(20px, 3vw, 32px); }   /* never wider than the page, whatever a card holds */
 .stack-card {
   display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(20px, 3vw, 40px);
   padding: clamp(14px, 1.6vw, 20px); color: inherit; text-decoration: none;
@@ -1895,7 +1893,7 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
   .testimonial { align-items: flex-start; text-align: left; }
   .testimonial .quote p { margin-inline: 0; }
   .testimonial-foot { justify-content: flex-start; flex-wrap: wrap; }
-  .testimonial-mark { flex-basis: 100%; margin-left: 0; padding-left: 0; border-left: 0; }
+  .testimonial-mark { flex-basis: 100%; margin-left: 0; border-left: 0; }
   .testimonial-controls { justify-content: flex-start; }
 
   /* Work index: every screen on the same 4:3 ground (the home cards' ratio
@@ -1961,10 +1959,10 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
   /* Testimonials: the mark drops under the name */
   .testimonial .t-quote { max-width: none; }
   .testimonial .quote { padding-bottom: 24px; }
-  .testimonial-foot { flex-wrap: wrap; gap: 12px 14px; padding-top: 20px; }
+  .testimonial-foot { gap: 12px 14px; padding-top: 20px; }
   .testimonial-foot .avatar { width: 44px; height: 44px; }
   .testimonial-foot cite { flex: 1; }
-  .testimonial-mark { margin-left: 0; flex-basis: 100%; padding-left: 58px; }
+  .testimonial-mark { padding-left: 58px; }
 
   /* Proof, note, next */
   .proof { padding: 20px 18px; }
@@ -2390,7 +2388,7 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
 }
 .cov-disc { position: absolute; right: -16cqw; bottom: -49cqw; width: 66cqw; aspect-ratio: 1; border-radius: 50%; background: var(--cv-tint); mix-blend-mode: multiply; }
 .cov-eye { position: absolute; left: 5cqw; top: 4.6cqw; font: 500 2.7cqw/1.3 var(--font-body); letter-spacing: .08em; text-transform: uppercase; color: var(--cv-ink-3); }
-.cov-line { position: relative; display: block; max-width: 17ch; font: italic 300 7.8cqw/1.1 var(--font-display); letter-spacing: -.012em; text-wrap: balance; }
+.cov-line { position: relative; display: block; max-width: 17ch; font: italic 400 7.8cqw/1.1 var(--font-display); letter-spacing: -.012em; text-wrap: balance; }
 .cov-rule { position: relative; display: block; width: 14cqw; height: .9cqw; border-block: 1px solid var(--cv-acc); }   /* the double rule: under a total, or under the argument */
 
 /* ---- Post: one column, centred on the measure ---- */

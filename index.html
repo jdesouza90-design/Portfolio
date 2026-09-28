@@ -21,7 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=6bccb578">
+<link rel="stylesheet" href="styles.css?v=7f345937">
 <script defer src="/_vercel/insights/script.js"></script>
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
@@ -364,7 +364,8 @@
         <canvas width="192" height="64" aria-hidden="true"></canvas>
       </button>
       <p class="sr-only arcade-status" aria-live="polite"></p>
-      <ol class="sr-only arcade-board" aria-label="Leaderboard, fewest strokes first" hidden></ol>
+      <p class="sr-only" id="arcade-board-label" hidden>Leaderboard, fewest strokes first</p>
+      <ol class="sr-only arcade-board" aria-labelledby="arcade-board-label" hidden></ol>
       <form class="arcade-post" hidden>
         <label class="t-small" for="arcade-name">Put your round on the leaderboard. Letters and numbers, up to 10.</label>
         <div class="arcade-post-row">
@@ -382,6 +383,6 @@
 </section>
 
 </main>
-<script src="main.js?v=72f0a604"></script>
+<script src="main.js?v=113ded21"></script>
 </body>
 </html>

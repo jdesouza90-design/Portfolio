@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../styles.css?v=6bccb578">
+<link rel="stylesheet" href="../styles.css?v=7f345937">
 </head>
 <body class="dash-body">
 <a class="skip" href="#main">Skip to content</a>
@@ -55,7 +55,7 @@
             <button class="dash-act" type="button" id="board-clear" hidden>Clear all</button>
           </div>
           <p class="t-small dash-status" id="board-status" role="status" tabindex="-1"></p>
-          <ol class="dash-list dash-board" id="board" aria-label="Leaderboard, fewest strokes first"></ol>
+          <ol class="dash-list dash-board" id="board" aria-labelledby="h-board"></ol>
           <p class="t-small dash-empty" id="board-empty" hidden>No rounds posted yet.</p>
         </section>
         <div class="dash-golf-side">
@@ -80,7 +80,7 @@
               </div>
               <p class="t-small dash-status" id="ban-status" role="status"></p>
             </form>
-            <ul class="dash-bans" id="ban-list" aria-label="Banned words"></ul>
+            <ul class="dash-bans" id="ban-list" aria-labelledby="h-banned"></ul>
           </section>
         </div>
       </div>
