@@ -1474,6 +1474,15 @@ footer a:hover { color: var(--ink); }
 .ba-wait { display: block; max-height: 0; opacity: 0; overflow: hidden; font-size: var(--t-small); line-height: var(--lh-small); color: var(--wait-ink);
   transition: max-height .4s var(--ease), opacity .3s var(--ease); }
 .ba-steps li.is-waiting .ba-wait { max-height: 3em; opacity: 1; }
+/* the end of a lane can say where it landed: a note that opens once the last step is done.
+   A lane that ends nowhere (data-end="lost", Cross-Sell's old decline) crosses its last step out. */
+.ba-end { display: block; max-height: 0; opacity: 0; overflow: hidden; font-size: var(--t-small); line-height: var(--lh-small); color: var(--accent-ink);
+  transition: max-height .4s var(--ease), opacity .3s var(--ease); }
+.ba-steps li.is-done .ba-end { max-height: 3em; opacity: 1; }
+[data-end="lost"] .ba-end { color: var(--ink-2); }
+[data-end="lost"] .ba-steps li.is-done .ba-state { background: var(--danger) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='white' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M4 4l4 4M8 4l-4 4'/%3E%3C/svg%3E") center / 10px no-repeat; }
+.flow-ba.is-two [data-end="lost"] .ba-steps li.is-done .ba-state { background-color: var(--hair-2); }
+.flow-ba.is-two .ba-before .ba-end { color: var(--ink-3); }
 /* The dot: main.js moves it along the wire; across it, it holds the lane's middle, where
    the wire runs, so it stays on the wire when the waiting note makes the queue card taller.
    A hop is HOP in main.js, on the plain in-out: only the gap between two cards shows the dot. */
