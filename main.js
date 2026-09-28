@@ -1698,6 +1698,7 @@ const CONFIG = {
         el.appendChild(s);
       }
       el.classList.add("flow-on");
+      const wait = Number(el.dataset.flowDelay || 0) * 120;   // a row of figures rolls in one after another
       let done = false;
       const settle = (animate) => {
         if (done) return;
@@ -1706,7 +1707,7 @@ const CONFIG = {
           const end = `translateY(${-(10 + c.n)}em)`;     // one full turn, then the digit
           if (animate) {
             c.strip.animate([{ transform: "translateY(0)" }, { transform: end }],
-              { duration: 1100, delay: 200 + i * 45, easing: flowEase, fill: "both" })
+              { duration: 1100, delay: 200 + i * 45 + wait, easing: flowEase, fill: "both" })
               .finished.then(() => { c.strip.style.transform = end; }, () => { c.strip.style.transform = end; });
           } else c.strip.style.transform = end;
         });
@@ -2226,8 +2227,7 @@ const CONFIG = {
         const d = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
         if (!d) return;
         e.preventDefault();
-        goTo(front + d);
-        dots[front].focus();
+        dots[goTo(front + d)].focus();   // goTo returns the card it went to; the dots only catch up once the scroll has
       });
     };
     if (reduced) {
@@ -2236,6 +2236,7 @@ const CONFIG = {
         const cs = $$(".stack-card", deck), i = Math.max(0, Math.min(cs.length - 1, k));
         mark(i);
         cs[i].scrollIntoView({ block: "center" });
+        return i;
       });
       return;
     }
@@ -2370,7 +2371,11 @@ const CONFIG = {
       const i = cards.indexOf(e.target.closest(".stack-card"));
       if (i >= 0) place(i, "instant");   // not smooth: it follows the focus, which has already moved
     });
-    wire((k) => place(Math.max(0, Math.min(cards.length - 1, k)), "smooth"));   // smooth: the cards peel on the way, as they do under a scroll
+    wire((k) => {
+      const i = Math.max(0, Math.min(cards.length - 1, k));
+      place(i, "smooth");   // smooth: the cards peel on the way, as they do under a scroll
+      return i;
+    });
     // Back and Forward: the browser would scroll back to where the reader
     // was, smoothly, through the whole track. So the page restores places
     // itself: each entry of the history keeps its own, noted as the scroll
