@@ -257,7 +257,7 @@ def foot(note, *, contact=False, css=""):
         <h2 class="t-title">Get in touch</h2>
       </div>
       <div class="contact-actions">
-        <a class="btn btn-primary" data-link="linkedin" href="#"><span class="icon-swap">{LINKEDIN_SVG}{EXTLINK_SVG}</span>Message me on LinkedIn</a>
+        <a class="btn btn-primary talk" data-link="linkedin" href="#"><span class="talk-label"><span class="icon-swap">{LINKEDIN_SVG}{EXTLINK_SVG}</span>Message me on LinkedIn</span><span class="talk-meet" aria-hidden="true"><span class="talk-pair"><span class="talk-face talk-me"><img decoding="async" width="687" height="1024" src="{css}assets/john.webp?v={stamp('assets/john.webp')}" alt="" loading="lazy"></span><span class="talk-plus">+</span><span class="talk-face talk-you">You</span></span><span class="talk-words">Let’s talk</span></span></a>
         <a class="btn btn-ghost" data-link="email" href="#"><span class="icon-swap">{MAIL_SVG}{SEND_SVG}</span>Email me</a>
         <a class="btn btn-ghost" data-link="resume" href="#"><span class="icon-swap">{DOWN_SVG}{CHECK_SVG}</span>Download resume</a>
       </div>
