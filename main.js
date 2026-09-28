@@ -3312,6 +3312,29 @@ const CONFIG = {
     });
   });
 
+  /* ---- Coaching cards ----
+     Each clay model leans away from the pointer, up to 12px across and 9px
+     down, a parallax that gives the render its depth. The lean waits for the
+     model to land (the entrance in styles.css), then marks the card settled
+     so the lean answers at once. Touch and reduced motion keep the still. */
+  const initCoach = () => $$("[data-coach] .coach-card").forEach((card) => {
+    const img = $(".coach-art img", card);
+    if (!img) return;
+    img.addEventListener("transitionend", (e) => { if (e.propertyName === "transform") card.classList.add("settled"); });
+    if (reduced || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    let frame = 0;
+    const lean = (x, y) => { img.style.setProperty("--px", `${x * -12}px`); img.style.setProperty("--py", `${y * -9}px`); };
+    card.addEventListener("pointermove", (e) => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        const r = card.getBoundingClientRect();
+        lean((e.clientX - r.left) / r.width * 2 - 1, (e.clientY - r.top) / r.height * 2 - 1);
+      });
+    });
+    card.addEventListener("pointerleave", () => { cancelAnimationFrame(frame); frame = 0; img.style.removeProperty("--px"); img.style.removeProperty("--py"); });
+  });
+
   /* ---- Footer year ---- */
   const initYear = () => $$("[data-year]").forEach((el) => (el.textContent = new Date().getFullYear()));
 
@@ -3346,6 +3369,6 @@ const CONFIG = {
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { if (current() === "system") document.dispatchEvent(new CustomEvent("themechange")); });
   };
 
-  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initMatrix, initConfig, initFlows, initBeforeAfter, initStrips, initTableWraps, initPortrait, initClock, initArcade, initStack, initLens, initSteps, initDemo, initPalette, initPostList, initChat, initYear, initTheme, initTalk]
+  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initCoach, initFields, initCharts, initMatrix, initConfig, initFlows, initBeforeAfter, initStrips, initTableWraps, initPortrait, initClock, initArcade, initStack, initLens, initSteps, initDemo, initPalette, initPostList, initChat, initYear, initTheme, initTalk]
     .forEach((init) => { try { init(); } catch (err) { console.error(`main.js: ${init.name} failed`, err); } });
 })();
