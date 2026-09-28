@@ -154,6 +154,7 @@
   --surface-2: #1C1812;
   --ink: #F0EBE2;
   --ink-2: #BDB4A7;
+  --wait-text: var(--wait-ink);   /* --wait stays light in dark mode, so a step waiting on it takes the wait ink */
   --ink-3: #9C9387;   /* 5.8:1 on paper-2 */
   --hair: #2C261F;
   --hair-2: #3F382F;
@@ -179,6 +180,7 @@
   --surface-2: #1C1812;
   --ink: #F0EBE2;
   --ink-2: #BDB4A7;
+  --wait-text: var(--wait-ink);   /* --wait stays light in dark mode, so a step waiting on it takes the wait ink */
   --ink-3: #9C9387;   /* 5.8:1 on paper-2 */
   --hair: #2C261F;
   --hair-2: #3F382F;
@@ -236,7 +238,7 @@
 .post-meta, .post-cta, .sources li, .pillar-count,
 .card-desc, .post-search input, .view-toggle button,
 .layer-tab, .work-cta, .gate-form input, .arcade-post input, .seg-tab,
-.btn, .chip, .nav-links ul a, .nav-kbd, .back, .crumbs, .tools span, footer,
+.btn, .chip, .nav-links ul a, .nav-kbd, .back, .cs-prev-link, .cs-all-link, .crumbs, .tools span, footer,
 .facts dt, table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
 .gallery figcaption, .proof-head small, .tooltip, .chart-pill, details.data,
 .dash-live, .dash-list li, .leaflet-container, .leaflet-popup-content,
@@ -249,7 +251,7 @@ thead th, .gauge .lbl, .table-wrap td[data-label]::before, .dash-kind, .dash-now
   { font-size: var(--t-lede); line-height: var(--lh-lede); letter-spacing: var(--ls-lede); font-weight: 400; color: var(--ink-2); max-width: var(--m-lede); }
 .t-body, .layer-tab, .work-cta, .gate-form input, .arcade-post input, .chat-form textarea, .chat-unlock input, .dash-settings :is(input, textarea)
   { font-size: var(--t-body); line-height: var(--lh-body); font-weight: 400; color: var(--ink-2); max-width: var(--m-body); }
-.t-small, .btn, .chip, .nav-links ul a, .nav-kbd, .back, .crumbs, .tools span, footer, .seg-tab,
+.t-small, .btn, .chip, .nav-links ul a, .nav-kbd, .back, .cs-prev-link, .cs-all-link, .crumbs, .tools span, footer, .seg-tab,
 table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
 .gallery figcaption, .proof-head small, .tooltip, .chart-pill, details.data,
 .dash-live, .dash-list li, .leaflet-container, .leaflet-popup-content,
@@ -281,7 +283,7 @@ body { counter-reset: fig; }
 
 /* Weight: 500 is the one emphasis, for whatever names or acts. */
 strong, b, tbody th, .t-body a, .t-lede a, .prose p a, .prose li a, .post-cta,
-.btn, .chip, .chart-pill, .tooltip b, .tip-val, .nav-links ul a, .nav-kbd, .back, .crumbs, .tools span, .layer-tab, .layer-mark, .work-cta, .avatar, .testimonial-mark, .seg-tab,
+.btn, .chip, .chart-pill, .tooltip b, .tip-val, .nav-links ul a, .nav-kbd, .back, .cs-prev-link, .cs-all-link, .crumbs, .tools span, .layer-tab, .layer-mark, .work-cta, .avatar, .testimonial-mark, .seg-tab,
 .chat-msg a, .chat-unlock label, .chat-unlocked, .dash-settings :is(label, legend)
   { font-weight: 500; }
 
@@ -350,9 +352,9 @@ a { color: inherit; }
    exceptions: their shape says link. A flex label (.pillar-label, .work-cta)
    is underlined itself, since its parent link lays out more than text. */
 .t-body a, .t-lede a, .t-small a, .prose a, .sources a, .chat-msg a,
-footer a, .crumbs a, .back, .work-cta, .post-cta, .pillar-label, .cs-next-title a, .post-next .t-title a
+footer a, .crumbs a, .back, .cs-prev-link, .cs-all-link, .work-cta, .post-cta, .pillar-label, .cs-next-title a, .post-next .t-title a
   { text-decoration-line: underline; text-decoration-thickness: 1px; text-decoration-color: currentColor; text-underline-offset: .22em; }
-:is(.t-body, .t-lede, .t-small, .prose, .sources, .chat-msg, footer, .crumbs) a:hover, .back:hover, .post-cta:hover,
+:is(.t-body, .t-lede, .t-small, .prose, .sources, .chat-msg, footer, .crumbs) a:hover, .back:hover, .cs-prev-link:hover, .cs-all-link:hover, .post-cta:hover,
 .pillar-nav a:hover .pillar-label, .cs-next-title a:hover, .post-next .t-title a:hover, .case-row:hover .work-cta
   { text-decoration-thickness: 2px; }
 button { font-family: inherit; }
@@ -844,19 +846,23 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
    panel's width and height is tighter, and the copy column sets the height.
    The caption keeps a band at the bottom (the extra padding). */
 .fig-panel { --fig-pad: clamp(20px, 2.6vw, 32px); container-type: size; display: grid; place-items: center; padding: var(--fig-pad) var(--fig-pad) calc(var(--fig-pad) + 60px); border-radius: var(--radius-sm); }
-.fig-nest { position: relative; width: min(100%, 460px); width: min(100cqw, 100cqh, 460px); aspect-ratio: 1; }
+.fig-nest { position: relative; width: min(100%, 460px); width: min(100cqw, 100cqh, 460px); aspect-ratio: 1; container-type: inline-size; }   /* its own container, so the ring names can size to it */
 .nest { position: absolute; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--plate-ink-0) 34%, transparent); transition: border-color var(--dur-ui), box-shadow var(--dur-ui), background var(--dur-ui); }
-.nest[data-ring="2"] { inset: 0; transform-origin: 50% 80%; --from: .4; }
-.nest[data-ring="1"] { left: 13%; top: 26%; width: 74%; height: 74%; transform-origin: 50% 73%; --from: .54; }
-.nest[data-ring="0"] { left: 30%; top: 60%; width: 40%; height: 40%; transform-origin: 50% 50%; --from: .5; }
+.nest[data-ring="2"] { inset: 0; }
+.nest[data-ring="1"] { left: 13%; top: 26%; width: 74%; height: 74%; }
+.nest[data-ring="0"] { left: 30%; top: 60%; width: 40%; height: 40%; }
 /* each label sits in the lower half of its ring's band, where the chord is
    wide, with a clear 6% of the figure between it and the next ring below;
-   the innermost is centred in its disc */
-.nlbl { position: absolute; left: 50%; transform: translate(-50%, -100%); text-align: center; white-space: nowrap; }
+   the innermost is centred in its disc. The names are sized off the figure
+   (6cqw, never above their role or under 12px), so a figure that shrinks to
+   fit a shorter copy column still keeps them inside their rings with room
+   around them: a 267px figure sets them at 16px, a full 460px one at 20px. */
+.nlbl { position: absolute; left: 50%; transform: translate(-50%, -100%); text-align: center; white-space: nowrap;
+  font-size: clamp(12px, 6cqw, var(--t-subhead)); }
 .nest[data-ring="2"] .nlbl { top: 22%; }
 .nest[data-ring="1"] .nlbl { top: 35.8%; }
 .nest[data-ring="0"] .nlbl { top: 50%; transform: translate(-50%, -50%); white-space: normal; width: 8ch; }
-.nest .t-subhead { color: var(--plate-ink); transition: color var(--dur-ui); }   /* the figure sits on a plate, so its inks are the plate's in both registers */
+.nest .t-subhead { font-size: 1em; color: var(--plate-ink); transition: color var(--dur-ui); }   /* the figure sits on a plate, so its inks are the plate's in both registers */
 .nest.hover, .nest.hover .t-subhead { border-color: var(--plate-ink-0); color: var(--plate-ink-0); }   /* the ring under the pointer; main.js hit-tests the circle */
 .nest.on { border-color: var(--accent); box-shadow: 0 0 0 8px var(--glow);
   background: color-mix(in srgb, var(--plate-surface) 72%, transparent); }   /* the picked ring lifts to a lighter disc so it reads off the ground and the two it shares */
@@ -868,21 +874,24 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
   .fig-panel { padding-bottom: var(--fig-pad); }
   .fig-cap { position: static; margin-top: var(--sp-4); justify-self: start; }
 }
-/* As the card arrives, Figure A draws itself from the centre: the inner disc
-   lands first, then each ring grows out of it (its transform origin is the
-   inner disc's centre and its first size, --from, the disc's own), and each
-   label fades in as its ring settles. It starts a quarter second into the
-   card's rise and is at rest by about 900ms, like the experience track;
-   under reduced motion or without JS the figure is still. */
-.anim .lead-fig .nest, .anim .lead-fig .nlbl { opacity: 0; }
-.anim .lead-fig.in .nest { animation: nest-grow .4s var(--ease-soft) .25s both; }
-.anim .lead-fig.in .nest[data-ring="1"] { animation-delay: .37s; }
-.anim .lead-fig.in .nest[data-ring="2"] { animation-delay: .49s; }
-.anim .lead-fig.in .nlbl { animation: nest-label .25s var(--ease) .4s both; }
-.anim .lead-fig.in .nest[data-ring="1"] .nlbl { animation-delay: .52s; }
-.anim .lead-fig.in .nest[data-ring="2"] .nlbl { animation-delay: .64s; }
-@keyframes nest-grow { from { opacity: 0; transform: scale(var(--from, .5)); } 30% { opacity: 1; } to { opacity: 1; transform: none; } }
-@keyframes nest-label { from { opacity: 0; } to { opacity: 1; } }
+/* Figure A in motion is one wave: influence travelling the chain. Every ring
+   is the outer one scaled about the point they share at the bottom, so main.js
+   can send a single circle (.nest-wave, a non-scaling stroke) from one ring's
+   shape to the next. As the card arrives the Design quality disc springs in,
+   the wave leaves it, each ring appears and flexes as the wave reaches it, and
+   the wave spills past Business outcome and dissolves. Picking a layer sends
+   the same wave out (cause to effect) or back in (tracing a result to its
+   decision), and the ring lights as it lands. Staged hidden until the card
+   is in view; under reduced motion or without JS the figure is still. */
+.fig-nest.is-staged .nest { opacity: 0; }
+.nest.pass { border-color: var(--accent); }   /* a ring the wave crosses on its way to another */
+.nest-wave { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.nest-wave circle { fill: none; stroke: var(--accent); stroke-width: 1.5; opacity: 0; transform-box: view-box; transform-origin: 50% 100%; }
+/* The layer's signal draws on like a marker stroke, landing with the wave */
+.lead-fig.is-played .layer.active .layer-mark { background: linear-gradient(var(--glow), var(--glow)) no-repeat 0 0 / 100% 100%;
+  animation: mark-ink .45s var(--ease-soft) var(--mark-delay, 0ms) both; }
+.lead-fig.instant .layer-mark { animation: none; }
+@keyframes mark-ink { from { background-size: 0% 100%; } }
 /* Each tab carries its own slice of the track, and there is no gap between
    them, so the track reads as one line and still works if the strip wraps. */
 .layer-tabs { position: relative; display: flex; flex-wrap: wrap; box-shadow: inset 0 -1px var(--hair-2); }   /* the rule runs the column's width; each tab's own border draws over it */
@@ -1344,7 +1353,7 @@ footer a:hover { color: var(--ink); }
 .ba-after .ba-steps li { color: var(--ink); }
 .ba-steps li.is-reached { box-shadow: inset 0 0 0 2px var(--ink-3); }
 .ba-after .ba-steps li.is-reached { box-shadow: inset 0 0 0 2px var(--accent); }
-.ba-steps li.is-waiting { background: var(--wait); box-shadow: inset 0 0 0 2px var(--wait-edge); }
+.ba-steps li.is-waiting { background: var(--wait); color: var(--wait-text, var(--ink-2)); box-shadow: inset 0 0 0 2px var(--wait-edge); }
 .ba-steps li.is-done { background: var(--ink-2); color: var(--paper); box-shadow: inset 0 0 0 2px var(--ink-2); }
 .ba-after .ba-steps li.is-done { background: var(--accent); color: var(--surface); box-shadow: inset 0 0 0 2px var(--accent); }
 .ba-wait { display: block; max-height: 0; opacity: 0; overflow: hidden; font-size: var(--t-small); color: var(--wait-ink);
@@ -1479,10 +1488,22 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 /* Next: the closing band */
 .cs-next { margin-top: var(--section); padding-block: var(--section); background: var(--paper-2); border-top: 1px solid var(--hair); text-align: center; }
 .cs-next .wrap { display: flex; flex-direction: column; align-items: center; }
-/* The next case study's title is the link; the way back to the previous one is the first button under it (.cs-prev-link). */
+/* The next case study's title is the link. The two ways out of the sequence are
+   text links told apart by what they do (after Coinbase's docs pager and
+   Stripe's breadcrumb): the previous case study is a direction, an arrow
+   straight under the next one's title; All work is the index, a grid beside
+   Contact me. Contact me stays the band's one button. */
 .cs-next-title a { transition: color var(--dur-hover); }
 .cs-next-title a:hover { color: var(--accent-ink); }
-.cs-next .actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: clamp(28px, 3vw, 40px); }
+.cs-prev-link, .cs-all-link { display: inline-flex; align-items: center; gap: 8px; padding-block: var(--sp-2); color: var(--ink); transition: color var(--dur-hover); }   /* the padding lifts the tap target past 24px (2.5.8) */
+.cs-prev-link svg, .cs-all-link svg { width: 16px; height: 16px; flex: none; }
+.cs-prev-link { margin-top: var(--sp-4); }
+.cs-prev-link svg { transition: transform var(--dur-hover) var(--ease); }
+@media (hover: hover) and (pointer: fine) {
+  .cs-prev-link:hover, .cs-all-link:hover { color: var(--accent-ink); }
+  .cs-prev-link:hover svg { transform: translateX(-3px); }   /* the arrow leans the way it goes */
+}
+.cs-next .actions { display: flex; align-items: center; gap: var(--sp-4) var(--sp-5); flex-wrap: wrap; justify-content: center; margin-top: clamp(28px, 3vw, 40px); }
 .cs-next footer { width: 100%; justify-content: center; align-items: center; padding-bottom: 0; margin-top: clamp(40px, 5vw, 64px); }
 .cs-next footer .theme { margin: 0; }
 
@@ -1764,7 +1785,7 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
   .post-card:hover, .btn:hover:active { transform: none; }
   .case-media img, .tooltip, .chart-marker, .chart-node { transition: none; transform: none; }
   .tooltip { transform: translate(-50%, 0); }
-  .btn:hover, .btn:active, .icon-btn:active, .layer-tab:active, .testimonial-controls button:active { transform: none; }
+  .btn:hover, .btn:active, .icon-btn:active, .layer-tab:active, .testimonial-controls button:active, .cs-prev-link:hover svg { transform: none; }
   .talk *, .talk *::before { transition: none !important; }   /* the LinkedIn button goes straight to its last frame (main.js skips the meet) */
   .icon-swap svg { transition: none; }
   .walk .play:active, .walk .play:hover:active { transform: translate(-50%, -50%); }
@@ -1926,7 +1947,8 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
   .layer-head { padding: 22px 20px; }
   .lead-fig .layer-head { padding: 20px 0 0; }
   /* the ring names step down a role so they clear the rings on a narrow figure */
-  .nest .t-subhead { font-size: var(--t-small); line-height: var(--lh-small); }
+  .nest .nlbl { font-size: clamp(12px, 6cqw, var(--t-small)); }
+  .nest .t-subhead { line-height: var(--lh-small); }
   .nest[data-ring="0"] .nlbl { width: 7ch; }
 
   /* About */
@@ -1977,7 +1999,9 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
   .chart-shell { height: 250px; }
   .tooltip { width: 200px; padding: 12px 14px; }
   .note .t-body + .t-body { margin-top: 20px; padding-top: 20px; }
-  .cs-next .actions .btn { flex: 1 1 auto; justify-content: center; }
+  .cs-next .actions { align-self: stretch; flex-direction: column; align-items: stretch; }   /* All work over a full-width Contact me */
+  .cs-next .actions .btn { justify-content: center; }
+  .cs-all-link { align-self: center; }
   .walk-note { text-align: left; }
 }
 

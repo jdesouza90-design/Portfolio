@@ -471,9 +471,90 @@ const CONFIG = {
       // on a phone the strip scrolls, so the selected tab is brought into view
       if (list.scrollWidth > list.clientWidth) list.scrollTo({ left: t.offsetLeft - (list.clientWidth - t.offsetWidth) / 2, behavior: "smooth" });
     };
-    const select = (i, focus) => {
+    // Figure A's wave (see styles.css): a circle that takes each ring's shape in
+    // turn. Every ring is the outer one scaled about the point they share at the
+    // bottom, so a ring's shape is just its width over the figure's.
+    const nest = rings.length ? rings[0].parentElement : null;
+    const ring = (k) => rings.find((r) => Number(r.dataset.ring) === k);
+    const size = (k) => ring(k).offsetWidth / nest.offsetWidth;
+    const HOP = 300, SOFT = "cubic-bezier(.33, 1, .68, 1)", SETTLE = "cubic-bezier(.34, 1.56, .64, 1)";
+    let wave = null, timers = [];
+    if (nest && !reduced) {
+      nest.insertAdjacentHTML("beforeend", '<svg class="nest-wave" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><circle cx="50" cy="50" r="50" vector-effect="non-scaling-stroke"/></svg>');
+      wave = $(".nest-wave circle", nest);
+    }
+    const flex = (k, dir, delay = 0) => ring(k).animate(   // a ring gives a little the way the wave came
+      [{ transform: "none", transformOrigin: "50% 100%", easing: SOFT }, { transform: `scale(${1 + dir * 0.018})`, transformOrigin: "50% 100%", offset: 0.3 }, { transform: "none", transformOrigin: "50% 100%" }],
+      { duration: 560, delay });
+    // Send the wave from ring `from` to ring `to`, a hop per ring, each hop easing
+    // into its ring. `spill` carries it past the outer ring before it dissolves.
+    // Returns the rings it reaches and when it lands, in ms.
+    const travel = (from, to, spill = false, hop = HOP) => {
+      const dir = to >= from ? 1 : -1, stops = [];
+      for (let k = from; k !== to; k += dir) stops.push(k + dir);
+      const land = stops.length * hop, total = land + (spill ? 420 : 0);
+      const frames = [from, ...stops].map((k, n) => ({ transform: `scale(${size(k)})`, offset: land / total * n / stops.length, easing: SOFT }));
+      if (spill) frames.push({ transform: "scale(1.07)", offset: 1 });
+      wave.getAnimations().forEach((a) => a.cancel());
+      wave.animate(frames, { duration: total });
+      wave.animate([{ opacity: 0 }, { opacity: 1, offset: 0.12 }, { opacity: 1, offset: spill ? land / total : 0.8 }, { opacity: 0 }], { duration: total });
+      return { stops, land };
+    };
+    const light = (to) => rings.forEach((r) => r.classList.toggle("on", Number(r.dataset.ring) === to));
+    // A picked layer: the old ring lets go, the wave crosses any ring between,
+    // and the new one lights and flexes as it lands. A keyboard move (`jump`)
+    // just switches. Returns the landing time.
+    const move = (from, to, jump = false) => {
+      timers.forEach(clearTimeout);
+      timers = [];
+      rings.forEach((r) => r.classList.remove("pass"));
+      if (!wave || jump || from === to || nest.classList.contains("is-staged")) {
+        if (wave && jump && !nest.classList.contains("is-staged")) wave.getAnimations().forEach((a) => a.cancel());
+        light(to);
+        return 0;
+      }
+      light(-1);
+      const { stops, land } = travel(from, to), dir = to > from ? 1 : -1;
+      stops.forEach((k, n) => {
+        const at = (n + 1) * HOP;
+        flex(k, dir, at);
+        timers.push(setTimeout(() => {
+          if (k === to) { light(to); return; }
+          ring(k).classList.add("pass");
+          timers.push(setTimeout(() => ring(k).classList.remove("pass"), 160));
+        }, at));
+      });
+      return land;
+    };
+    // The entrance: the disc springs in, then the wave carries out to the edge,
+    // bringing each ring (and its name, rising) in as it arrives.
+    const enter = () => {
+      root.classList.add("is-played");
+      root.style.setProperty("--mark-delay", "380ms");
+      const lead = 320, hop = 400, { stops } = travel(0, 2, true, hop);   // a slower beat than a click's
+      wave.getAnimations().forEach((a) => { a.effect.updateTiming({ delay: lead, fill: "backwards" }); });
+      ring(0).animate([{ opacity: 0, transform: "scale(.6)", transformOrigin: "50% 50%", easing: SETTLE }, { opacity: 1, transform: "none", transformOrigin: "50% 50%" }], { duration: 560, fill: "backwards" });
+      stops.forEach((k, n) => {
+        const at = lead + (n + 1) * hop;
+        ring(k).animate([{ opacity: 0 }, { opacity: 1 }], { duration: 280, delay: at, fill: "backwards", easing: "linear" });
+        $(".nlbl", ring(k)).animate([{ translate: "0 8px" }, { translate: "0 0" }], { duration: 480, delay: at, fill: "backwards", easing: SOFT });
+        flex(k, 1, at);
+      });
+      nest.classList.remove("is-staged");
+    };
+    if (wave) {
+      nest.classList.add("is-staged");
+      onceInView(nest, 0.5, (animate) => {
+        if (animate) setTimeout(enter, 250); else nest.classList.remove("is-staged");
+      });
+    }
+
+    const select = (i, focus, first = false) => {
+      const was = current;
       current = i;
       root.classList.toggle("instant", Boolean(focus));   // keyboard moves repeat; they don't animate
+      const lands = move(was, i, first || Boolean(focus));
+      root.style.setProperty("--mark-delay", `${lands}ms`);   // the marker draws as the ring lights
       tabs.forEach((t, k) => {
         const on = k === i;
         t.setAttribute("aria-selected", String(on));
@@ -482,7 +563,6 @@ const CONFIG = {
         // means a quick Tab after an arrow key can't land on one mid-fade
         if (panels[k]) { panels[k].classList.toggle("active", on); panels[k].tabIndex = on ? 0 : -1; }
       });
-      rings.forEach((r) => r.classList.toggle("on", Number(r.dataset.ring) === i));
       place();
       if (focus) tabs[i].focus();
     };
@@ -500,7 +580,6 @@ const CONFIG = {
     // tab (the innermost ring wins where they overlap) and the ring under the
     // pointer darkens. The hit test is the circle, not its box, so the corner
     // of an inner ring's box never steals the band around it.
-    const nest = rings.length ? rings[0].parentElement : null;
     if (nest) {
       const ringAt = (e) => rings.filter((r) => {
         const b = r.getBoundingClientRect();
@@ -511,7 +590,7 @@ const CONFIG = {
       nest.addEventListener("pointerleave", () => hover(null));
       nest.addEventListener("click", (e) => { const r = ringAt(e); if (r) select(Number(r.dataset.ring)); });
     }
-    select(current);
+    select(current, false, true);
     window.addEventListener("resize", place, { passive: true });
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(place);
   });

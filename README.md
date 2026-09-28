@@ -638,7 +638,8 @@ All six case studies are the same document, in this order:
    where it happened (the agentic audit page's "The library", its walkthrough
    between The design and Try it).
 6. **Next**: the closing band: the next case study's title as a link, then
-   three buttons, Previous case study, All work and Contact me.
+   "Previous case study" as a text link with a left arrow under it, then All
+   work as a text link with a grid icon beside the Contact me button.
 
 Icons are inline SVG, 24-unit, 1.5 stroke, ink with one green accent detail
 (`class="ac"` for an accent stroke, `ac-fill` for a tinted shape).
@@ -847,7 +848,8 @@ The rules that shape the code:
   links (a work row, a post card) are the exceptions. A hover that quiets
   the other links steps them down to `--ink-3`, never an opacity fade.
   Links carry no arrows: a way forward or back is underlined text or a
-  button. Buttons take `--radius-btn` (4px) and are never pills.
+  button. The one exception is "Previous case study" in a case study's
+  closing band, whose left arrow tells it apart from All work. Buttons take `--radius-btn` (4px) and are never pills.
 - `prefers-reduced-motion` switches off every animation and smooth scrolling.
 - Nothing scrolls sideways at 320px.
 
@@ -904,11 +906,18 @@ The rules that shape the code:
   the height. `initTabs` lights the ring (`[data-ring]`) for the selected
   tab, and a click inside a ring picks its tab (the circle is the hit area,
   the innermost ring winning where they overlap; the tabs remain the
-  keyboard control). As the card arrives the figure draws itself from the centre (the inner
-  disc, then each ring growing out of it, labels fading in as they settle),
-  timed off the reveal like the experience track. Under 1100px the card is
-  one column with the figure as a cover, and on a phone the ring names step
-  down to the Small role.
+  keyboard control). Its motion is one wave, influence travelling the chain:
+  every ring is the outer one scaled about the shared bottom point, so one
+  non-scaling circle (`.nest-wave`) can take each ring's shape in turn. As the
+  card arrives the Design quality disc springs in and the wave carries out,
+  each ring appearing and flexing as it arrives, then spills past the edge;
+  a clicked layer sends it out or back in and the ring lights as it lands,
+  with the layer's marker drawing on at the same moment. Keyboard moves just
+  switch. Under 1100px the card is
+  one column with the figure as a cover. The ring names size off the figure
+  (`.fig-nest` is its own container, names at 6cqw, capped at the Subhead
+  role, the Small role on a phone, and never under 12px), so a figure that
+  shrinks to a shorter copy column keeps them inside their rings.
 - The abstract beside "AI in the process" on the homepage is drawn live by
   `main.js` on a canvas: the same strands in three dimensions, turning slowly,
   with a pause button in the corner. `assets/ai-process.svg` is the still it

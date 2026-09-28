@@ -108,8 +108,8 @@ for p, s in html.items():
         if slug not in hidden and nm.group(1) in hidden:
             err(f"{p}: next link points to hidden page {nm.group(1)}.html")
 
-    # Prev link: the "Previous case study" button, the first of the band's .actions
-    pm = re.search(r'<a class="btn btn-ghost cs-prev-link" href="([a-z0-9-]+)\.html">', block(s, '<section class="cs-next">', "</section>") or "")
+    # Prev link: the "Previous case study" arrow link under the next link's title
+    pm = re.search(r'<a class="cs-prev-link" href="([a-z0-9-]+)\.html">', block(s, '<section class="cs-next">', "</section>") or "")
     if not pm:
         err(f"{p}: no previous-case-study link")
     else:
