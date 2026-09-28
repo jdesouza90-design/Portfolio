@@ -515,21 +515,17 @@ points at the sitemap and keeps crawlers out of the two gated areas.
 The mark is a tally: four capital I's from Crimson Pro, a fifth stroke across them
 in the accent, and a double rule under the count, the ledger's rule under a total.
 The I's are Crimson Pro's own outline at weight 200, narrowed to 62% width so four
-of them fit in a square. It signs each surface once: the nav, the browser tab, the
-home-screen icon and the link preview.
+of them fit in a square. It signs the browser tab, the home-screen icon and the
+link preview. The nav carries the name alone: John took the mark out of the bar
+(and the gate and dashboard headers with it) on Sep 27, 2026.
 
 It comes in three cuts, like a typeface's optical sizes:
 
 - **Display** (`brand/tally.svg`): hairline rules and a thin stroke, for anything
   larger than about 80px, such as a slide or a printed page.
 - **Small** (`brand/tally-small.svg`): heavier rules and stroke that hold at 20 to
-  40px. The nav carries this cut inline as `.brand-mark` (styles.css section 5),
-  1.1em tall beside the name; the count takes `currentColor` and the stroke
-  `--accent`, so it follows the theme. The same `<svg>` sits in every page's nav,
-  in `blog.py`'s nav, in the case-study template and in the gate in
-  `middleware.js`. Change one, change all. `apple-touch-icon.png` (180, on paper,
-  because iOS fills transparency with black) and the mark in `og-image.png` are
-  this cut too.
+  40px. `apple-touch-icon.png` (180, on paper, because iOS fills transparency
+  with black) and the mark in `og-image.png` are this cut.
 - **Tab** (`favicon.svg`): redrawn on a 32-unit grid with 2-unit stems, 1-unit slab
   serifs and 1-unit rules, so every edge lands on a pixel on a retina tab.
   `favicon.ico` holds a separate 16px cut (1px stems, no serifs, one rule) plus the
@@ -611,8 +607,11 @@ icon's elements. A case study's decision icons stay ink with one green accent
 detail: `--ac 1` puts `class="ac"` (an accent stroke) on element 1 and
 `--ac-fill 3` puts `ac-fill` (a tinted shape) on element 3. The two icons
 drawn in CSS, the search field's clear button and the dashboard's select
-chevron, are Hugeicons paths used as masks. The tally, the company logos and
-the tool logos on the AI card are marks, not icons, and keep their own drawing.
+chevron, are Hugeicons paths used as masks. The one exception is the LinkedIn
+link in the bar, which carries LinkedIn's own solid logo (John's call, Sep 27,
+2026; `LINKEDIN_LOGO` in `blog.py`); the LinkedIn buttons keep Hugeicons' tile.
+The company logos and the tool logos on the AI card are marks, not icons, and
+keep their own drawing.
 
 ## Case study skeleton
 
