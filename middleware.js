@@ -97,7 +97,7 @@ function page({ path, error, unconfigured, ref, admin }) {
     ? ''
     : '<p class="t-body">Enter the password I shared with you. Don\'t have it yet? <a href="https://www.linkedin.com/in/johndesouza-/" target="_blank" rel="noopener">Message me on LinkedIn</a> and I\'ll send it over.</p>';
   const button = admin ? 'Sign in' : 'Open case study';
-  const back = admin ? '<a class="back" href="/">← Back to the site</a>' : '<a class="back" href="/work.html">← Back to all work</a>';
+  const back = admin ? '<a class="back" href="/">Back to the site</a>' : '<a class="back" href="/work.html">Back to all work</a>';
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -110,7 +110,7 @@ function page({ path, error, unconfigured, ref, admin }) {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/styles.css?v=524f2bdb">
+<link rel="stylesheet" href="/styles.css?v=2013fede">
 </head>
 <body>
 <main class="gate-wrap"><div class="gate">

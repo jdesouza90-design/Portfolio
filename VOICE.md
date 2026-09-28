@@ -29,13 +29,14 @@ The tone barely moves. It is warmest in Contact and driest in Results, and both 
 
 ## Shape of a section
 
-Every section on the site has the same three parts, in this order.
+Every section on the site has two parts, in this order. There is no eyebrow over a section heading (after harvey.ai): the heading itself names the section.
 
 | Part | Job | Rules |
 |---|---|---|
-| Eyebrow | Says what kind of section this is | One to three words: The problem, My role, Results, What I'd do differently |
-| Heading | Says the point of the section | Sentence case, under eight words. Never repeats a number shown right below it. Home page headings are statements and end in a full stop; case-study section headings are fragments and don't |
+| Heading | Says what kind of section this is | One to three words, sentence case, no full stop: The problem, My role, Results, What I'd do differently, How I lead |
 | Body | Gives the specifics | One to three sentences, then stop |
+
+The eyebrow stays for labels that are not section headings: a chart's, figure's or stat's label (Outcome, Monthly originations · USD, Figure A), the Next case study band, the Viewing as switch, and the blog.
 
 Cards and triads: a one- or two-word label, then one full sentence with a subject. Not a gerund fragment ("Minimizing cognitive load at key decision points").
 
