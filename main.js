@@ -2006,137 +2006,6 @@ const CONFIG = {
     document.addEventListener("visibilitychange", () => { if (document.hidden) setPaused(true); });
   };
 
-  /* ---- Work list and its stage ----
-     After nelson.co. From 821px up, every row's screen leaves its row for
-     one panel beside the list, which sticks and travels with it. The panel
-     shows the row under the pointer, else the row with focus, else the row
-     nearest the middle of the screen, and that row rises into a pill. Each
-     screen keeps a wrapper carrying its project's class, so the ground and
-     the emerge settings from styles.css still apply. Below 821px the screens
-     go back to their rows, so a phone sees the list it always did. While
-     staged the scroll stops on each row (lockScroll). */
-  const initCases = () => $$(".cases").forEach((list) => {
-    const rows = $$(".case-row", list).filter((r) => $(".case-media", r));
-    if (rows.length < 2) return;
-    const wide = window.matchMedia("(min-width: 821px)");
-    const fine = window.matchMedia("(hover: hover) and (pointer: fine)");
-    const stage = document.createElement("div");
-    stage.className = "cases-stage";
-    stage.addEventListener("pointerleave", (e) => { hover = rows.find((r) => r.contains(e.relatedTarget)) || null; pick(); });
-    const media = new Map(rows.map((r) => [r, $(".case-media", r)]));
-    const slot = new Map(rows.map((r) => {
-      const s = document.createElement("a");   // the screen is a link to its case study too, out of the tab order (the row is the stop)
-      s.href = r.getAttribute("href");
-      s.tabIndex = -1;
-      s.className = "cases-slot " + Array.from(r.classList).filter((c) => c.startsWith("case-") && c !== "case-row").join(" ");
-      return [r, s];
-    }));
-    let on = null, hover = null, focus = null, staged = false;
-    const show = (row) => {
-      if (row === on) return;
-      rows.forEach((r) => { r.classList.toggle("is-on", r === row); slot.get(r).classList.toggle("is-on", r === row); slot.get(r).setAttribute("aria-hidden", String(r !== row)); });
-      on = row;
-    };
-    const nearest = () => {
-      const mid = window.innerHeight * 0.45;
-      let best = rows[0], d = Infinity;
-      rows.forEach((r) => { const b = r.getBoundingClientRect(); const gap = Math.abs((b.top + b.bottom) / 2 - mid); if (gap < d) { d = gap; best = r; } });
-      return best;
-    };
-    const pick = () => { if (staged) show(hover || focus || nearest()); };
-    const mount = () => {
-      if (staged) return;
-      staged = true;
-      rows.forEach((r) => { slot.get(r).append(media.get(r)); stage.append(slot.get(r)); });
-      stage.style.gridRow = `1 / span ${rows.length}`;
-      list.append(stage);
-      list.classList.add("staged");
-      pick();
-    };
-    const unmount = () => {
-      if (!staged) return;
-      staged = false;
-      rows.forEach((r) => { r.append(media.get(r)); r.classList.remove("is-on"); slot.get(r).classList.remove("is-on"); slot.get(r).removeAttribute("aria-hidden"); });
-      stage.remove();
-      list.classList.remove("staged");
-      on = null;
-    };
-    const sync = () => (wide.matches ? mount() : unmount());
-    wide.addEventListener("change", sync);
-    sync();
-    rows.forEach((r) => {
-      r.addEventListener("pointerenter", () => { if (fine.matches) { hover = r; pick(); } });
-      r.addEventListener("pointerleave", (e) => { if (staged && stage.contains(e.relatedTarget)) return; hover = null; pick(); });   // across to the screen: it keeps showing this row until the page scrolls
-      r.addEventListener("focusin", () => { if (r.matches(":focus-visible")) { focus = r; pick(); } });   // keyboard focus only; a click leaves no hold behind
-      r.addEventListener("focusout", () => { focus = null; pick(); });
-    });
-    let tick = false, px = -1, py = -1;
-    document.addEventListener("pointermove", (e) => { if (e.pointerType === "mouse") { px = e.clientX; py = e.clientY; } }, { passive: true });
-    const onScroll = () => {
-      if (staged && px >= 0) hover = rows.find((r) => r.contains(document.elementFromPoint(px, py))) || null;   // scrolling moves the rows under a resting pointer: follow what is under it now
-      if (!staged || tick || hover || focus) return;
-      tick = true;
-      requestAnimationFrame(() => { tick = false; pick(); });
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("pageshow", (e) => { if (e.persisted) { hover = null; focus = null; pick(); } });   // back from a case study: start from the page, not the row clicked
-    list.addEventListener("lens", pick);   // re-sorted: show the row now nearest
-    const pageTop = (el) => { let y = 0; for (let e = el; e; e = e.offsetParent) y += e.offsetTop; return y; };   // layout, not the box: a row still rising in its reveal would move under the lock
-    lockScroll(() => rows.map((r) => Math.round(pageTop(r) + r.offsetHeight / 2 - window.innerHeight * 0.45)).sort((a, b) => a - b), () => staged);   // each row where it comes on stage: its middle on the line nearest() reads
-  });
-
-  /* ---- The scroll lock ----
-     A list that stops on each item. restsY() gives the scroll positions
-     where an item sits in place; a scroll that reaches one stops on it and
-     holds there until the wheel or the fling goes quiet, and a scroll that
-     stops between two rests finishes the move it started. So one scroll
-     moves one item, and the reader pauses before the next. Only the
-     reader's own wheel, touch or keys are held; a link or a script
-     scrolling past goes straight through, and outside the first and last
-     rest the page scrolls freely. active() switches it off (the work list
-     below 821px). CSS scroll snapping was tried first: a wheel tick is far
-     shorter than the gap between rests, so it always snapped back. */
-  const lockScroll = (restsY, active = () => true) => {
-    if (reduced) return;
-    const HOLD = 180, SETTLE = 140, NUDGE = 24;
-    let lastY = window.scrollY, lastInput = 0, holdTill = 0, held = -1, settleT = 0, auto = false, touching = false, dir = 0;
-    const input = () => { lastInput = performance.now(); };
-    window.addEventListener("wheel", input, { passive: true });
-    window.addEventListener("touchstart", () => { touching = true; input(); }, { passive: true });
-    window.addEventListener("touchmove", input, { passive: true });
-    window.addEventListener("keydown", (e) => { if (/^(Arrow(Up|Down)|Page(Up|Down)| |Spacebar)$/.test(e.key)) input(); });
-    const go = (y) => { auto = true; held = -1; lastY = y; window.scrollTo({ top: y, behavior: "smooth" }); };
-    const settle = () => {
-      settleT = 0;
-      if (auto || touching || performance.now() < holdTill || !active()) return;
-      const ys = restsY(), y = Math.round(window.scrollY);
-      if (y <= ys[0] || y >= ys[ys.length - 1] || ys.includes(y)) return;   // outside the list, or already at a rest
-      const next = dir > 0 ? ys.find((v) => v > y) : [...ys].reverse().find((v) => v < y);
-      const prev = dir > 0 ? [...ys].reverse().find((v) => v < y) : ys.find((v) => v > y);
-      go(Math.abs(y - prev) < NUDGE ? prev : next);   // a nudge falls back; anything more finishes the move
-    };
-    window.addEventListener("touchend", () => { touching = false; input(); clearTimeout(settleT); settleT = setTimeout(settle, SETTLE); }, { passive: true });
-    window.addEventListener("scroll", () => {
-      const y = window.scrollY, now = performance.now();
-      if (!active()) { lastY = y; return; }
-      if (auto) { if (Math.abs(y - lastY) < 2 || now - lastInput < 50) auto = false; else return; }   // our own smooth move, until it lands or the reader takes over
-      if (now - lastInput > 400) { lastY = y; return; }   // not the reader: a link or a script, let it through
-      const ys = restsY();
-      if (held >= 0 && now < holdTill) { holdTill = now + HOLD; if (y !== ys[held]) window.scrollTo({ top: ys[held], behavior: "instant" }); lastY = ys[held]; return; }   // still flinging: stay put
-      held = -1;
-      if (y !== lastY) dir = Math.sign(y - lastY);
-      const crossed = ys.map((v, i) => (((lastY < v && y >= v) || (lastY > v && y <= v)) ? i : -1)).filter((i) => i >= 0);
-      const cross = crossed.length ? (dir > 0 ? crossed[0] : crossed[crossed.length - 1]) : -1;   // the first rest in the direction of travel
-      if (cross >= 0 && !touching) {
-        held = cross; holdTill = now + Math.max(HOLD, 380);
-        window.scrollTo({ top: ys[cross], behavior: "instant" }); lastY = ys[cross];
-        return;
-      }
-      lastY = y;
-      clearTimeout(settleT); settleT = setTimeout(settle, SETTLE);
-    }, { passive: true });
-  };
-
   /* ---- The featured stack ----
      After uselayouts.com's stack scroll reveal. The home page's three case
      studies are cards in a deck that sticks in the middle of the screen
@@ -2253,8 +2122,7 @@ const CONFIG = {
         const ia = order.indexOf(slugOf(a)), ib = order.indexOf(slugOf(b));
         return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
       });
-      const stage = $(".cases-stage", list);
-      rows.forEach((r) => list.insertBefore(r, stage));
+      rows.forEach((r) => list.append(r));
       list.dispatchEvent(new CustomEvent("lens"));
     };
     // On a phone the tabs become one dropdown (a native <select> under a
@@ -3317,6 +3185,6 @@ const CONFIG = {
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { if (current() === "system") document.dispatchEvent(new CustomEvent("themechange")); });
   };
 
-  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initMatrix, initConfig, initFlows, initBeforeAfter, initStrips, initTableWraps, initPortrait, initClock, initArcade, initCases, initStack, initLens, initSteps, initDemo, initPalette, initPostList, initChat, initYear, initTheme, initTalk]
+  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStrands, initFields, initCharts, initMatrix, initConfig, initFlows, initBeforeAfter, initStrips, initTableWraps, initPortrait, initClock, initArcade, initStack, initLens, initSteps, initDemo, initPalette, initPostList, initChat, initYear, initTheme, initTalk]
     .forEach((init) => { try { init(); } catch (err) { console.error(`main.js: ${init.name} failed`, err); } });
 })();
