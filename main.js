@@ -2089,7 +2089,16 @@ const CONFIG = {
      last peels up and back over its own stretch of the track, and the cards
      behind step forward as it goes, so the deck reads one card at a time.
      Keyboard focus on a card behind scrolls to where it is at the front.
-     Under reduced motion the script leaves the cards in their column. The
+     The deck locks on each card. A rest is where a card sits alone at the
+     front (the deck sticking, between the peels, the deck letting go). A
+     scroll that reaches a rest stops on it and holds there until the wheel
+     or the fling goes quiet, and a scroll that stops between two rests
+     finishes the move it started. So one scroll moves one card, and you
+     have to pause before the next one. Only the reader's own wheel, touch or
+     keys are held; a link or a script scrolling past the deck goes straight
+     through. CSS scroll snapping was tried first: a wheel tick is far
+     shorter than the gap between rests, so it always snapped back. Under
+     reduced motion the script leaves the cards in their column. The
      lens re-sorts the deck and says "lens"; the pile is redrawn in the new
      order. */
   const initStack = () => $$("[data-stack]").forEach((stack) => {
@@ -2097,8 +2106,10 @@ const CONFIG = {
     if (reduced || !track || !deck) return;
     const PEEK = 18, TILT = 15;
     const PEELS = [[0.1, 0.44], [0.56, 0.9]];   // each card's stretch of the track; the last card has none and stays
+    const RESTS = [0, (PEELS[0][1] + PEELS[1][0]) / 2, 1];   // where a card sits alone at the front
     let cards = [];
     stack.classList.add("on");
+
     const clamp01 = (v) => Math.max(0, Math.min(1, v));
     const measure = () => {
       const r = track.getBoundingClientRect(), h = deck.offsetHeight;
@@ -2133,8 +2144,50 @@ const CONFIG = {
       if (i < 0) return;
       const { r, h, top } = measure();
       const at = i === 0 ? 0 : (PEELS[i - 1][1] + (PEELS[i] ? PEELS[i][0] : 1)) / 2;   // between its predecessor's peel and its own
-      window.scrollTo({ top: window.scrollY + r.top - top + at * (r.height - h), behavior: "instant" });   // not smooth: it follows the focus, which has already moved
+      auto = true; lastY = window.scrollY + r.top - top + at * (r.height - h);
+      window.scrollTo({ top: lastY, behavior: "instant" });   // not smooth: it follows the focus, which has already moved
+      setTimeout(() => { auto = false; }, 60);
     });
+    /* The lock (see above). */
+    const HOLD = 180, SETTLE = 140, NUDGE = 24;
+    let lastY = window.scrollY, lastInput = 0, holdTill = 0, held = -1, settleT = 0, auto = false, touching = false, dir = 0;
+    const restsY = () => { const { r, h, top } = measure(); const y0 = window.scrollY + r.top - top; return RESTS.map((a) => Math.round(y0 + a * (r.height - h))); };
+    const input = () => { lastInput = performance.now(); };
+    window.addEventListener("wheel", input, { passive: true });
+    window.addEventListener("touchstart", () => { touching = true; input(); }, { passive: true });
+    window.addEventListener("touchmove", input, { passive: true });
+    window.addEventListener("touchend", () => { touching = false; input(); }, { passive: true });
+    window.addEventListener("keydown", (e) => { if (/^(Arrow(Up|Down)|Page(Up|Down)| |Spacebar)$/.test(e.key)) input(); });
+    const go = (y) => { auto = true; held = -1; lastY = y; window.scrollTo({ top: y, behavior: "smooth" }); };
+    const settle = () => {
+      settleT = 0;
+      if (auto || touching || performance.now() < holdTill) return;
+      const ys = restsY(), y = window.scrollY;
+      if (y <= ys[0] || y >= ys[ys.length - 1] || ys.includes(Math.round(y))) return;   // outside the deck, or already at a rest
+      const next = dir > 0 ? ys.find((v) => v > y) : [...ys].reverse().find((v) => v < y);
+      const prev = dir > 0 ? [...ys].reverse().find((v) => v < y) : ys.find((v) => v > y);
+      go(Math.abs(y - prev) < NUDGE ? prev : next);   // a nudge falls back; anything more finishes the move
+    };
+    const lock = () => {
+      const y = window.scrollY, now = performance.now();
+      if (auto) { if (Math.abs(y - lastY) < 2 || now - lastInput < 50) auto = false; else return; }   // our own smooth move, until it lands or the reader takes over
+      if (now - lastInput > 400) { lastY = y; return; }   // not the reader: a link or a script, let it through
+      const ys = restsY();
+      if (held >= 0 && now < holdTill) { holdTill = now + HOLD; if (y !== ys[held]) window.scrollTo({ top: ys[held], behavior: "instant" }); lastY = ys[held]; return; }   // still flinging: stay on the card
+      held = -1;
+      if (y !== lastY) dir = Math.sign(y - lastY);
+      const hit = ys.findIndex((v) => (lastY < v && y >= v) || (lastY > v && y <= v));
+      const cross = dir > 0 ? hit : ys.map((v, i) => ((lastY > v && y <= v) ? i : -1)).filter((i) => i >= 0).pop() ?? -1;   // the first rest in the direction of travel
+      if (cross >= 0 && !touching) {
+        held = cross; holdTill = now + Math.max(HOLD, 380);
+        window.scrollTo({ top: ys[cross], behavior: "instant" }); lastY = ys[cross];
+        return;
+      }
+      lastY = y;
+      clearTimeout(settleT); settleT = setTimeout(settle, SETTLE);
+    };
+    window.addEventListener("scroll", lock, { passive: true });
+    window.addEventListener("touchend", () => { clearTimeout(settleT); settleT = setTimeout(settle, SETTLE); }, { passive: true });
     window.addEventListener("scroll", request, { passive: true });
     window.addEventListener("resize", request);
     order();
