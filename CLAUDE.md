@@ -13,6 +13,14 @@ The site and the deck change together. A change to what a reader sees on the sit
 done until the matching slides say the same thing, in the same session. John should never
 have to ask for the deck to be updated.
 
+**The Vanta copy changes too, every time** (John, September 28, 2026). "John DeSouza ·
+Vanta Portfolio", https://claude.ai/artifact/G3KAnpzqvxt9oKHVMyqt1w, is a 24-slide cut of
+the main deck: cover, three `lead-` slides, `work-index`, the `nc-` and `ads-` runs and
+`close`. Its headlines and copy are tailored and its speaker notes are John's talk track:
+change only the lines that carry the site's wording, never the notes. It is shared with
+anyone who has the link, so viewers see a publish at once. A plain `read` of its url
+clears a "haven't viewed the latest version" refusal.
+
 **What counts.** Copy, numbers, quotes, images and section order on the home page (the
 hero, how I lead with its coaching columns, the three layers and the AI card, about, the
 experience track, what colleagues said), the work index blurbs, and every case study page
