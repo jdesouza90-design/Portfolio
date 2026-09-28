@@ -102,13 +102,33 @@ Hold it to `VOICE.md` and to POSITION.md's seven rules. The ones most often miss
 - **Open on the industry's position**, not on John.
 - **A source or a receipt in every section.** Either John shipped it, or it is linked.
 - **Show how he operates**: one concrete thing he does. The question he asks in an
-  interview, the rule he holds, the call he makes. POSITION.md rule 5.
+  interview, the rule he holds, the call he makes. POSITION.md rule 5. Say it plainly and
+  differently each time: never "The rule I hold", which five posts used by Sep 28 2026.
 - **Name the screen**, not "the experience".
 - **"I" for what John decided, "we" for what the team shipped.** Check POSITION.md's
   attribution note before crediting any audit or agent work. The button component audit
   was a senior designer's; the whole-library audit was John's. Do not blur them.
 - **No em dashes, no serial comma, sentence case, numerals from 10 up in prose.**
 - **800 to 1,200 words.**
+
+**Don't repeat the blog's own habits.** Read two or three recent posts before drafting.
+On Sep 28 2026 an audit found the first eleven read as generated because they shared one
+shape, not because any single line was wrong. So:
+
+- **Contractions in prose**, the way John talks: it's, don't, can't, I'd. The early posts
+  wrote "it is" and "do not" throughout and read stiff next to the case studies.
+- **Vary the shape.** Not every post needs a news hook with a survey number, a "nobody is
+  designing X" turn, a section on John's rule, a Best Egg story and a closing line that
+  repeats the opening number. Use the parts this argument needs.
+- **Name who isn't doing it**, or give the number. "Nobody" and "almost no one" framed the
+  gap 36 times in eleven posts.
+- **One post per statistic.** grep `blog/posts` before leaning on a number. The 80%
+  quality-judgment figure carried four posts.
+- **End on the implication or the fact**, not an aphorism and not the opening number
+  restated.
+- **No stock emphasis**: "Read that twice", "worth sitting with", "genuinely", "quietly",
+  "X, not Y" in the title and the cover and three headings at once.
+- **Dates are American** in prose and in sources: September 28, 2026.
 
 ## Build it
 
@@ -141,8 +161,9 @@ the claim is final:
 - Six to ten words. `blog.py` refuses anything outside four to eleven.
 - The claim with the reasoning cut off: the sentence someone would quote. Not the title
   again, and not a question.
-- Two short sentences can beat one long one ("Rewards bring the money in. Redemption
-  decides the trust.").
+- One sentence ("Build the screen for the day money leaves."). Two short sentences set
+  against each other ("Rewards bring the money in. Redemption decides the trust.") was
+  every early cover's shape and read as a formula, so it was dropped on Sep 28 2026.
 - Same voice rules as the body: no dashes, no semicolons, sentence case, a full stop.
 - Read the other posts' `cover_line`s first so no two covers say the same thing.
 

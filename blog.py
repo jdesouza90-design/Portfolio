@@ -91,7 +91,7 @@ def read_posts():
 
 def pretty_date(iso):
     d = datetime.datetime.fromisoformat(iso)
-    return "%d %s %d" % (d.day, d.strftime("%B"), d.year)
+    return "%s %d, %d" % (d.strftime("%B"), d.day, d.year)
 
 
 # The serif shows the difference between a straight quote and a typographic
