@@ -744,36 +744,31 @@ const CONFIG = {
       work: run("Audit agent", [["Read the brief and rules"], ["Scan Button / Secondary"], ["Check label contrast", ["3.8:1", 1]], ["Write the fix"]],
         `<div class="st-diff"><div class="dl">- color: #8A8279</div><div class="ad">+ color: Ink 3  #6F675D</div></div><div class="st-meta">Button / Secondary<span class="st-tag2">5.6:1 · AA</span></div>`),
       review: review(["Library", "Button / Secondary"], "Fix approved", "Label color moves to Ink 3", "", "View diff", "Merged"),
-      set: (w, done) => doneText(w, done ? "Done · 1 fix" : "Running"),
-      cap: ["We give the audit agent a brief and the rules it checks against.", "The agent scans each component and finds a label at 3.8:1, under AA.", "A designer approves the fix before it merges into the library."] },
+      set: (w, done) => doneText(w, done ? "Done · 1 fix" : "Running") },
     { brief: brief("Prototype", "Flow", "Turn the application flow into a prototype customers can try.", ["Design system parts", "Real copy"], "rule", "Prototype agent"),
       work: run("Prototype agent", [["Read the flow", ["3 screens"]], ["Place design system parts"], ["Link Income, Documents, Review"], ["Publish a shareable link"]],
         `<div class="st-meta" style="border-top:0">Application flow<span class="st-tag2">Clickable</span></div>`),
       review: review(["Prototype", "Application flow"], "Ready for customer sessions", "Checked copy, parts and every link", "", "Open", "Approved"),
-      set: (w, done) => doneText(w, done ? "Done · prototype live" : "Running"),
-      cap: ["We hand the agent a flow, our design system parts and real copy.", "The agent links three screens and publishes a link customers can try.", "A designer checks copy, parts and links before customer sessions."] },
+      set: (w, done) => doneText(w, done ? "Done · prototype live" : "Running") },
     { brief: brief("Research", "Synthesis", "Find why applicants stall after upload.", ["Customer calls", "Analytics", "FullStory"], "src", "Research agent"),
       work: run("Research agent", [["Read customer calls"], ["Read support tickets"], ["Read analytics"], ["Watch FullStory sessions"]],
         `<div class="st-lbl" style="padding:8px 10px 0;margin:0">Theme</div><div class="st-theme2">After upload, the dashboard goes quiet</div>`),
       review: review(["Research", "Upload status"], "Show a status the moment a file lands", "Synthesis for the designers",
         `<div class="st-quote">“If that ‘in review’ would’ve been maybe bigger or a different color, I would’ve noticed it earlier.”<span>Usability session</span></div>`, "Open synthesis", "Shared"),
-      set: (w, done) => doneText(w, done ? "Done · 1 theme" : "Running"),
-      cap: ["We point the agent at customer calls, analytics and FullStory.", "The agent reads every source and pulls out one theme.", "Designers get the theme with the customer’s own words attached."] },
+      set: (w, done) => doneText(w, done ? "Done · 1 theme" : "Running") },
   ];
   const STEP_END = [4.2, 11.2, 15.8], WORK_DONE = 4.2 + 3.8, EXIT = 15.8, CYCLE = 16.8;   // slowed by half on John's ask
-  const CAP_STEP = ["Brief", "Run", "Review"];   // the caption under the card says what the frame shows (John, Sep 28)
   const STORY_REST = 9.6;   // the still under reduced motion: the audit, fixed
-  const GEO = { tall: { SW: 340, SH: 300, gap: 320 }, wide: { SW: 340, SH: 250, gap: 380 } };
+  const GEO = { tall: { SW: 296, SH: 272, gap: 320 }, wide: { SW: 296, SH: 272, gap: 380 } };   // the card (288 wide, 266 at its tallest) with little room to spare, so it reads large (John, Sep 28)
   const makeStory = (el) => {
     const root = document.createElement("div");
     root.className = "story"; root.setAttribute("aria-hidden", "true");
     root.innerHTML = `<div class="st-scene">` + STORY.map((s) => `<div class="st-ex"><div class="st-track">
       <span class="st-line stub" data-stub="0"></span><span class="st-line" data-l="0"></span><span class="st-line" data-l="1"></span><span class="st-line stub" data-stub="1"></span>
       <span class="st-pkt" data-p="0"></span><span class="st-pkt" data-p="1"></span>
-      <div class="st-step">${s.brief}</div><div class="st-step">${s.work}</div><div class="st-step">${s.review}</div></div></div>`).join("") + `</div>` +
-      `<div class="st-caps">` + STORY.map((s, i) => s.cap.map((c, j) => `<p class="st-cap" data-k="${i}" data-s="${j}"><span>${j + 1} · ${CAP_STEP[j]}</span>${c}</p>`).join("")).join("") + `</div>`;
+      <div class="st-step">${s.brief}</div><div class="st-step">${s.work}</div><div class="st-step">${s.review}</div></div></div>`).join("") + `</div>`;
     el.insertBefore(root, el.querySelector(".art-ctl"));   // under the pause button
-    const scene = root.querySelector(".st-scene"), caps = [...root.querySelectorAll(".st-cap")];
+    const scene = root.querySelector(".st-scene");
     const exs = [...root.querySelectorAll(".st-ex")].map((ex) => ({ ex, track: ex.querySelector(".st-track"),
       steps: [...ex.querySelectorAll(".st-step")], lines: [...ex.querySelectorAll("[data-l]")], stubs: [...ex.querySelectorAll("[data-stub]")], pkts: [...ex.querySelectorAll(".st-pkt")] }));
     let layout = "", g = GEO.tall;
@@ -792,9 +787,9 @@ const CONFIG = {
       const next = H / W >= .8 ? "tall" : "wide";
       if (next !== layout) { layout = next; g = GEO[layout]; root.dataset.layout = layout; place(); last = ""; }
       // fit to the room the pause button leaves: above it on a tall plate, beside it on a wide one
-      const bw = layout === "wide" ? W - 104 : W - 24, bh = H - 20 - Math.max(56, ...caps.map((c) => c.offsetHeight));   // wide: equal room each side; the card fits above the tallest caption
+      const bw = layout === "wide" ? W - 104 : W - 24, bh = layout === "wide" ? H - 16 : H - 60;   // wide: equal room each side, so the card sits in the middle and clear of the button
       const s = Math.min(bw / g.SW, bh / g.SH);
-      scene.style.left = `${(layout === "wide" ? 52 : 12) + bw / 2}px`; scene.style.top = `${8 + bh / 2}px`;
+      scene.style.left = `${(layout === "wide" ? 52 : 12) + bw / 2}px`; scene.style.top = `${(layout === "wide" ? 8 : 12) + bh / 2}px`;
       scene.style.transform = `translate(${-g.SW * s / 2}px, ${-g.SH * s / 2}px) scale(${s})`;
     };
     let last = "";
@@ -831,7 +826,6 @@ const CONFIG = {
         w.classList.toggle("done", me && done);
         STORY[i].set(w, me && done);
       });
-      caps.forEach((c) => c.classList.toggle("on", !out && +c.dataset.k === k && +c.dataset.s === step));
     };
     return { size, frame };
   };
