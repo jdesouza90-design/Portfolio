@@ -913,6 +913,14 @@ The rules that shape the code:
   `.claude/skills/add-case-study/scripts/anim.py`, which does its own frame
   differencing: libwebp's animation encoder leaves a ghost of the previous
   screen behind after a page change.
+- The agentic audit page's design row plays a rendered piece in the same
+  `.walk` player (`assets/btn-variants.webp`, 2.3 MB, 1398×1020, 6s loop; the
+  poster is its settled frame). The old .Button sheet is cut into 2,304
+  tiles, one per variant; all but a seeded 321 fade to paper in a sweep from
+  left to right while the count falls with them, the 321 take an accent
+  outline, then the three new sheets cross-fade in with the matrix legend's
+  labels. Its source is `motion/button-variants/scene.html`: change that and
+  re-render with the motion-graphic skill rather than editing the file.
 - Image, stylesheet, script, icon, social-image and resume URLs carry a `?v=`
   content hash. After replacing any of them run `python3 stamp.py`, which
   restamps every page, the resume link in `main.js` and the password gate in

@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scene: Button variants, 2,304 to 321</title>
+<style>
+/* ==== The site's three faces: the files index.html gets from Google Fonts (latin and
+   latin-ext), kept in the skill so a render needs no network and comes out the same on
+   every machine. The paths assume the scene sits at motion/<slug>/scene.html. ==== */
+@font-face { font-family: "Crimson Pro"; font-style: normal; font-weight: 400; font-display: block; src: url("../../.claude/skills/motion-graphic/assets/fonts/crimson-pro-400-latin-ext.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Crimson Pro"; font-style: normal; font-weight: 400; font-display: block; src: url("../../.claude/skills/motion-graphic/assets/fonts/crimson-pro-400-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "DM Mono"; font-style: normal; font-weight: 400; font-display: block; src: url("../../.claude/skills/motion-graphic/assets/fonts/dm-mono-400-latin-ext.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "DM Mono"; font-style: normal; font-weight: 400; font-display: block; src: url("../../.claude/skills/motion-graphic/assets/fonts/dm-mono-400-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "DM Mono"; font-style: normal; font-weight: 500; font-display: block; src: url("../../.claude/skills/motion-graphic/assets/fonts/dm-mono-500-latin-ext.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "DM Mono"; font-style: normal; font-weight: 500; font-display: block; src: url("../../.claude/skills/motion-graphic/assets/fonts/dm-mono-500-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "DM Sans"; font-style: normal; font-weight: 400; font-display: block; src: url("../../.claude/skills/motion-graphic/assets/fonts/dm-sans-400-latin-ext.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "DM Sans"; font-style: normal; font-weight: 400; font-display: block; src: url("../../.claude/skills/motion-graphic/assets/fonts/dm-sans-400-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "DM Sans"; font-style: normal; font-weight: 500; font-display: block; src: url("../../.claude/skills/motion-graphic/assets/fonts/dm-sans-400-latin-ext.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "DM Sans"; font-style: normal; font-weight: 500; font-display: block; src: url("../../.claude/skills/motion-graphic/assets/fonts/dm-sans-400-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+/* ==== Tokens: the light register of styles.css :root. Re-copy them if the site's change. ==== */
+:root {
+  --paper: #F6F4F0; --paper-2: #EFECE6;
+  --ink: #14100C; --ink-2: #5C564E; --ink-3: #6F675D;
+  --accent: #3B6B44; --accent-ink: #2B5233; --accent-2: #6E9A5A;
+  --font-display: "Crimson Pro", "Iowan Old Style", Georgia, serif;
+  --font-body: "DM Sans", system-ui, sans-serif;
+  --font-mono: "DM Mono", ui-monospace, Menlo, monospace;
+  --ease: cubic-bezier(.23, 1, .32, 1);
+  --ease-in-out: cubic-bezier(.77, 0, .175, 1);
+  --ease-soft: cubic-bezier(.33, 1, .68, 1);
+  --ease-settle: cubic-bezier(.34, 1.56, .64, 1);
+}
+
+/* ==== The motion vocabulary. Every class takes --at (start, seconds from the scene's
+   start) and --dur. A rise is the site's reveal: the travel on --ease-soft, the fade
+   straight, so the block lands opaque. --y is 48px for a block, 12px for a line of type. ==== */
+.rise { animation: m-rise var(--dur, .7s) var(--ease-soft) var(--at, 0s) both, m-in var(--dur, .7s) linear var(--at, 0s) both; }
+.fade { animation: m-in var(--dur, .4s) linear var(--at, 0s) both; }
+.leave { animation: m-out var(--dur, .4s) linear var(--at, 0s) both; }             /* put on a wrapper: one element, one list of animations */
+.draw { stroke-dasharray: 1; animation: m-draw var(--dur, .5s) var(--ease) var(--at, 0s) both; }  /* the path carries pathLength="1" */
+.wipe { animation: m-wipe var(--dur, .5s) var(--ease) var(--at, 0s) both; }
+.grow { transform-origin: var(--origin, left center); animation: m-grow var(--dur, .5s) var(--ease) var(--at, 0s) both; }
+@keyframes m-rise { from { translate: 0 var(--y, 48px); } to { translate: 0 0; } }
+@keyframes m-in   { from { opacity: 0; } to { opacity: 1; } }
+@keyframes m-out  { from { opacity: 1; } to { opacity: 0; } }
+@keyframes m-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes m-wipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes m-grow { from { scale: 0 1; } to { scale: 1 1; } }
+
+/* ==== Type roles, from styles.css at desktop size. Scale them with the stage. ==== */
+.display { font: 400 64px/1.05 var(--font-display); letter-spacing: -.01em; color: var(--ink); margin: 0; text-wrap: balance; }
+.stat    { font: 400 160px/1 var(--font-display); letter-spacing: -.02em; font-variant-numeric: lining-nums tabular-nums; color: var(--accent-ink); margin: 0; }
+.lede    { font: 400 28px/1.4 var(--font-body); color: var(--ink); margin: 0; text-wrap: pretty; }
+.small   { font: 400 22px/1.45 var(--font-body); color: var(--ink-2); margin: 0; text-wrap: pretty; }
+.label   { font: 500 16px/1.3 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); margin: 0; }
+
+/* ==== Stage and preview. Captured, the page is the stage at 0,0; opened in a browser,
+   it plays on a loop, fitted to the window, with a scrubber under it. ==== */
+html, body { margin: 0; }
+body { min-height: 100vh; display: grid; place-content: center; gap: 16px; background: #2A2622; font: 500 13px/1 var(--font-mono); color: #CFC7BA; }
+#stage { position: relative; overflow: hidden; background: var(--paper); color: var(--ink); zoom: var(--fit, 1); }
+.capture body { display: block; min-height: 0; background: var(--paper); }
+.capture #stage { zoom: 1; }
+.capture #controls { display: none; }
+#controls { display: flex; align-items: center; gap: 12px; }
+#controls input { flex: 1; accent-color: var(--accent-2); }
+#controls button { font: inherit; color: inherit; background: none; border: 1px solid #5C564E; border-radius: 6px; padding: 6px 10px; cursor: pointer; }
+
+/* ==== The scene's own styles ==== */
+/* 932 wide, the .walk's maximum; the .walk clips 16px corners and puts Play over the
+   middle, so nothing sits within 36px of an edge and the poster reads around the button. */
+.plate { position: absolute; inset: 0; padding: 36px 40px; }
+.plate .label { font-size: 15px; }
+.swap { display: grid; } .swap > * { grid-area: 1 / 1; }
+.count { font: 400 76px/1 var(--font-display); letter-spacing: -.02em; font-variant-numeric: lining-nums tabular-nums; margin: 8px 0 0;
+  background: linear-gradient(0deg, var(--accent-ink), var(--accent) 55%, color-mix(in srgb, var(--accent) 62%, var(--accent-2)));
+  -webkit-background-clip: text; background-clip: text; color: transparent; }
+.caption { font: 400 19px/1.4 var(--font-body); color: var(--ink-2); margin: 8px 0 0; height: 27px; }
+.sheets { position: relative; margin-top: 22px; height: 410px; }
+.sheet { position: absolute; inset: 0; border-radius: 10px; overflow: hidden; box-shadow: 0 0 0 1px rgba(20, 16, 12, .08); }
+.sheet img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: left top; }
+.sheet canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* the matrix legend's marks: Button the accent, Icon Button accent-2, Link ink-2 */
+.groups { position: relative; height: 20px; margin-top: 14px; }
+.groups .label { position: absolute; top: 0; display: flex; align-items: center; gap: 8px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); }
+.dot.m2 { background: var(--accent-2); } .dot.m3 { background: var(--ink-2); }
+</style>
+</head>
+<body>
+<div id="stage">
+  <!-- Words are work/agentic-design-system-audit.html's, verbatim: the table's column heads
+       ("Old .Button", "New system"), the proof's stat and its line, the matrix legend. -->
+  <div class="leave" style="--at: 5.7s; --dur: .3s"><div class="fade" style="--at: 0s; --dur: .3s">
+  <div class="plate">
+    <div class="swap">
+      <div class="leave" style="--at: 2.9s; --dur: .5s"><p class="label">Old .Button</p></div>
+      <p class="label fade" style="--at: 2.9s; --dur: .5s">New system</p>
+    </div>
+    <p class="count" id="count">2,304</p>
+    <p class="caption rise" style="--at: 3.5s; --y: 12px">variants across three components, down from 2,304 in one</p>
+    <div class="sheets">
+      <div class="leave" style="--at: 2.9s; --dur: .5s"><div class="sheet"><img src="../../assets/btn-sheet-before.webp" alt=""><canvas id="tiles"></canvas></div></div>
+      <div class="sheet fade" style="--at: 2.9s; --dur: .5s"><img src="../../assets/btn-sheet-after.webp" alt=""></div>
+    </div>
+    <div class="groups">
+      <p class="label rise" style="--at: 3.3s; --y: 12px; left: 17px"><i class="dot"></i>Button · 141</p>
+      <p class="label rise" style="--at: 3.37s; --y: 12px; left: 487px"><i class="dot m2"></i>Icon Button · 120</p>
+      <p class="label rise" style="--at: 3.44s; --y: 12px; left: 705px"><i class="dot m3"></i>Link · 60</p>
+    </div>
+  </div>
+  </div></div>
+</div>
+<div id="controls"><button type="button" id="play">Pause</button><input id="scrub" type="range" min="0" step="0.001" aria-label="Time"><span id="time">0.00s</span></div>
+
+<script>
+/* ==== The scene: size in CSS px (capture --scale 2 doubles the output), length, beats. ====
+   beats are the storyboard: capture.mjs stills renders one frame per beat, labelled.
+   draw(t) is for what CSS keyframes can't do (counting, canvas, generative work): it gets
+   the time in seconds and must draw the whole frame from it, remembering nothing between
+   calls, so any frame can be rendered alone and in any order. */
+// The old sheet as 2,304 tiles, one per variant, the way the page's matrix is one dot per
+// variant. 321 tiles (a seeded choice) stay; the rest drop out in a sweep from left to
+// right, each fading to paper over 150ms, and the count is simply the tiles still standing.
+// A kept tile takes an accent outline as the sweep reaches its column, so the set that
+// remains reads on the light half of the sheet as well as the dark.
+const COLS = 48, ROWS = 48, TOTAL = 2304, KEEP = 321, BOX = [852, 410];
+let seed = 20260928;
+const rnd = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+const order = [...Array(TOTAL).keys()];
+for (let i = TOTAL - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
+const kept = new Set(order.slice(0, KEEP));
+const drops = [], marks = [];   // [cell, time]
+const sweep = (c) => .9 + 1.6 * ((c % COLS) / (COLS - 1));
+for (let c = 0; c < TOTAL; c++) (kept.has(c) ? marks : drops).push([c, sweep(c) + .4 * rnd()]);
+const FADE = .15;
+const canvas = document.getElementById("tiles"), ctx = canvas.getContext("2d"), dpr = devicePixelRatio || 1;
+canvas.width = BOX[0] * dpr; canvas.height = BOX[1] * dpr;
+const css = getComputedStyle(document.documentElement), paper = css.getPropertyValue("--paper").trim(), accent = css.getPropertyValue("--accent").trim();
+const count = document.getElementById("count");
+
+const scene = {
+  width: 932, height: 680, duration: 6, fps: 30,
+  beats: [
+    { t: 0, label: "Loop start: paper" },
+    { t: .6, label: "The old .Button: 2,304" },
+    { t: 1.5, label: "Thinning left to right" },
+    { t: 2.4, label: "Sweep ending" },
+    { t: 3.15, label: "321 remain; the new sheets arrive" },
+    { t: 4.5, label: "Settled (the poster)" },
+    { t: 5.85, label: "Loop end: back to paper" },
+  ],
+  draw(t) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = paper;
+    const w = canvas.width / COLS, h = canvas.height / ROWS;
+    let gone = 0;
+    for (const [c, at] of drops) {
+      const a = clamp((t - at) / FADE);
+      if (a <= 0) continue;
+      if (t >= at) gone++;
+      ctx.globalAlpha = a;
+      const x = c % COLS, y = Math.floor(c / COLS);
+      ctx.fillRect(Math.floor(x * w), Math.floor(y * h), Math.ceil(w), Math.ceil(h));
+    }
+    ctx.strokeStyle = accent; ctx.lineWidth = 1.5 * dpr;
+    for (const [c, at] of marks) {
+      const a = clamp((t - at) / FADE);
+      if (a <= 0) continue;
+      ctx.globalAlpha = a;
+      const x = c % COLS, y = Math.floor(c / COLS);
+      ctx.strokeRect(Math.floor(x * w) + ctx.lineWidth / 2, Math.floor(y * h) + ctx.lineWidth / 2, Math.ceil(w) - ctx.lineWidth, Math.ceil(h) - ctx.lineWidth);
+    }
+    ctx.globalAlpha = 1;
+    count.textContent = (TOTAL - gone).toLocaleString("en-US");
+  },
+};
+
+/* ==== Runtime: leave this block as it is. ==== */
+const bezier = (x1, y1, x2, y2) => {
+  const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+  const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+  const X = (s) => ((ax * s + bx) * s + cx) * s, Y = (s) => ((ay * s + by) * s + cy) * s, dX = (s) => (3 * ax * s + 2 * bx) * s + cx;
+  return (x) => {
+    if (x <= 0 || x >= 1) return x <= 0 ? 0 : 1;
+    let s = x;
+    for (let i = 0; i < 8; i++) { const e = X(s) - x, d = dX(s); if (Math.abs(e) < 1e-6) return Y(s); if (Math.abs(d) < 1e-6) break; s -= e / d; }
+    let lo = 0, hi = 1; s = x;
+    for (let i = 0; i < 30; i++) { const v = X(s); if (Math.abs(v - x) < 1e-6) break; v < x ? (lo = s) : (hi = s); s = (lo + hi) / 2; }
+    return Y(s);
+  };
+};
+const ease = { linear: (x) => x, out: bezier(.23, 1, .32, 1), inOut: bezier(.77, 0, .175, 1), soft: bezier(.33, 1, .68, 1), settle: bezier(.34, 1.56, .64, 1) };
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const tween = (t, at, dur, e = ease.soft) => e(clamp((t - at) / dur));   // 0 before at, 1 after at + dur
+const lerp = (a, b, p) => a + (b - a) * p;
+
+(() => {
+  const root = document.documentElement, stage = document.getElementById("stage");
+  const capture = new URLSearchParams(location.search).has("capture");
+  root.classList.toggle("capture", capture);
+  stage.style.width = scene.width + "px";
+  stage.style.height = scene.height + "px";
+  const faces = ['400 40px "Crimson Pro"', '400 20px "DM Sans"', '500 20px "DM Sans"', '500 20px "DM Mono"'];
+  // Ready once the faces are in and every <img> is decoded; resolves to the faces that failed.
+  // fonts.load() lists the faces it loaded, so an empty list means the file never arrived
+  // (fonts.check() would say true: with no face declared, nothing is left to load).
+  const ready = Promise.all([
+    Promise.all(faces.map((f) => document.fonts.load(f).then((got) => (got.length ? null : f), () => f))),
+    ...[...document.images].map((i) => i.decode().catch(() => {})),
+  ]).then(([missing]) => document.fonts.ready.then(() => missing.filter(Boolean)));
+  const frame = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+  const scrub = document.getElementById("scrub"), time = document.getElementById("time"), btn = document.getElementById("play");
+  const seek = (t) => {
+    t = clamp(t, 0, scene.duration);
+    for (const a of document.getAnimations()) { a.pause(); a.currentTime = t * 1000; }
+    scene.draw(t);
+    scrub.value = t; time.textContent = t.toFixed(2) + "s";
+    return frame();
+  };
+  window.__motion = { width: scene.width, height: scene.height, duration: scene.duration, fps: scene.fps, beats: scene.beats, ready, seek };
+  if (capture) { ready.then(() => seek(0)); return; }
+
+  // Preview: loop in real time; the scrubber and Space pause and seek.
+  scrub.max = scene.duration;
+  const fit = () => root.style.setProperty("--fit", Math.min(1, (innerWidth - 48) / scene.width, (innerHeight - 96) / scene.height));
+  fit(); addEventListener("resize", fit);
+  let playing = true, origin = 0, now = 0;
+  const loop = (ms) => { if (playing) { now = ((ms - origin) / 1000) % scene.duration; seek(now); } requestAnimationFrame(loop); };
+  const toggle = () => { playing = !playing; btn.textContent = playing ? "Pause" : "Play"; origin = performance.now() - now * 1000; };
+  btn.onclick = toggle;
+  addEventListener("keydown", (e) => { if (e.code === "Space") { e.preventDefault(); toggle(); } });
+  scrub.oninput = () => { playing = false; btn.textContent = "Play"; now = +scrub.value; seek(now); };
+  ready.then(() => { origin = performance.now(); requestAnimationFrame(loop); });
+})();
+</script>
+</body>
+</html>
