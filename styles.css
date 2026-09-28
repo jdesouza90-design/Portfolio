@@ -1423,7 +1423,20 @@ footer a:hover { color: var(--ink); }
 
 /* Proof blocks: the chart and the capacity gauge share one frame */
 .proof { background: var(--surface); border: 1px solid var(--hair); border-radius: 16px; padding: clamp(22px, 3vw, 32px); position: relative; }
-.proof + .proof { margin-top: clamp(28px, 4vw, 44px); }   /* two proofs stacked in one Results (the audit page): the full row's gap */
+/* Figures (after vercel.com): a row of headline numbers, each with a mono
+   label and one sentence, no frame. The audit page's projected outcomes sit
+   under its button proof. Each stat rolls in (data-flow) a beat after the one
+   before it (data-flow-delay), as its column rises. */
+.proof + .figures { margin-top: clamp(48px, 6vw, 80px); }
+.figures-label { text-align: center; }
+.figures-row { list-style: none; margin: var(--sp-7) 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sp-7) clamp(24px, 3vw, 48px); }
+.figure { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
+.figure .eyebrow { margin-top: var(--sp-4); color: var(--ink); }
+.figure .t-body { margin-top: var(--sp-4); color: var(--ink-2); }
+.figures details.data { margin-top: var(--sp-7); }
+@media (max-width: 900px) { .figures-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .figures-row { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 640px) { .figures-label { text-align: left; } }   /* the phone's section intros are left-aligned */
 .proof-head { display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; margin-bottom: var(--sp-5); }
 .proof-head small { display: block; max-width: 40ch; }
 /* The frame also hosts a comparison table (Verifications) or, where there is no
@@ -1949,6 +1962,11 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
 .anim [data-reveal] .cols > .col:nth-child(3) { --col-i: 2; }
 .anim [data-reveal] .cols > .col:nth-child(4) { --col-i: 3; }
 .anim [data-reveal].in .cols > .col { opacity: 1; transform: none; transition-delay: calc(120ms + var(--col-i, 0) * 100ms); }   /* the wait only on the way in, so hiding at load is instant; a fourth column lands by 920ms */
+.anim [data-reveal] .figures-row > .figure { opacity: 0; transform: translateY(24px); transition: opacity .5s linear, transform .7s var(--ease-soft); }
+.anim [data-reveal] .figures-row > .figure:nth-child(2) { --col-i: 1; }
+.anim [data-reveal] .figures-row > .figure:nth-child(3) { --col-i: 2; }
+.anim [data-reveal] .figures-row > .figure:nth-child(4) { --col-i: 3; }
+.anim [data-reveal].in .figures-row > .figure { opacity: 1; transform: none; transition-delay: calc(120ms + var(--col-i, 0) * 120ms); }   /* the figures follow each other, like the columns */
 /* The coaching cards enter one at a time as each one's well comes on screen
    (main.js adds .card-in, left to right within a row): the card rises, then
    its build clip plays in the well. The well stays empty until the clip or

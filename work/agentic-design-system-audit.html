@@ -22,7 +22,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!-- A fresh unlock from the gate: hold the page until its opener is up (initUnlock in main.js). -->
 <script>if (/[?&]unlocked(?=&|$)/.test(location.search)) document.documentElement.classList.add("unlock");</script>
-<link rel="stylesheet" href="../styles.css?v=4b3c06cb">
+<link rel="stylesheet" href="../styles.css?v=ce60ba68">
 <script defer src="/_vercel/insights/script.js"></script>
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
@@ -309,27 +309,31 @@
         </table>
       </details>
     </div>
-    <div class="proof">
-      <div class="proof-head">
-        <div><div class="t-stat" data-flow>66%</div><small>fewer components in the picker once the plan runs: 491 standalone to 166</small></div>
-        <span class="eyebrow">Measured · After the plan</span>
-      </div>
-      <section class="table-wrap" aria-label="The library as measured against the after state the plan projects" tabindex="0">
-      <table>
-        <thead><tr><th scope="col">Metric</th><th scope="col">Measured</th><th scope="col" class="hl">After the plan</th></tr></thead>
-        <tbody>
-          <tr><th scope="row">Standalone components in the picker</th><td data-label="Measured">491</td><td class="hl" data-label="After the plan">166</td></tr>
-          <tr><th scope="row">Illustrations in the UI library</th><td data-label="Measured">266</td><td class="hl" data-label="After the plan">0, in their own library</td></tr>
-          <tr><th scope="row">Standalone components with zero instances</th><td data-label="Measured">59</td><td class="hl" data-label="After the plan">0</td></tr>
-          <tr><th scope="row">Hand-set values with a token already published</th><td data-label="Measured">844,333</td><td class="hl" data-label="After the plan">Bound to the 229 variables</td></tr>
-          <tr><th scope="row">Ways color is modeled</th><td data-label="Measured">2</td><td class="hl" data-label="After the plan">1</td></tr>
-          <tr><th scope="row">Ways type is modeled</th><td data-label="Measured">3</td><td class="hl" data-label="After the plan">1</td></tr>
-          <tr><th scope="row">Dead libraries still published</th><td data-label="Measured">2</td><td class="hl" data-label="After the plan">0</td></tr>
-          <tr><th scope="row">Component descriptions that mislead</th><td data-label="Measured">4</td><td class="hl" data-label="After the plan">0</td></tr>
-          <tr><th scope="row">Trend visibility</th><td data-label="Measured">One snapshot</td><td class="hl" data-label="After the plan">Monthly history</td></tr>
-        </tbody>
-      </table>
-      </section>
+    <div class="figures">
+      <p class="eyebrow figures-label">Projected · Once the plan runs</p>
+      <ul class="figures-row">
+        <li class="figure"><div class="t-stat" data-flow data-flow-delay="0">66%</div><p class="eyebrow">Fewer components in the picker</p><p class="t-body">The picker drops from 491 standalone components to 166.</p></li>
+        <li class="figure"><div class="t-stat" data-flow data-flow-delay="1">844K</div><p class="eyebrow">Hand-set values bound</p><p class="t-body">844,333 values set by hand get bound to the 229 variables the library already publishes.</p></li>
+        <li class="figure"><div class="t-stat" data-flow data-flow-delay="2">266</div><p class="eyebrow">Illustrations moved out</p><p class="t-body">The hand-drawn art gets a library of its own, so nobody scrolls past it to reach a button.</p></li>
+        <li class="figure"><div class="t-stat" data-flow data-flow-delay="3">59</div><p class="eyebrow">Unused components deprecated</p><p class="t-body">Every standalone component with zero instances comes out of the library.</p></li>
+      </ul>
+      <details class="data">
+        <summary>View as a table</summary>
+        <table>
+          <thead><tr><th scope="col">Metric</th><th scope="col">Measured</th><th scope="col" class="hl">After the plan</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Standalone components in the picker</th><td>491</td><td class="hl">166</td></tr>
+            <tr><th scope="row">Illustrations in the UI library</th><td>266</td><td class="hl">0, in their own library</td></tr>
+            <tr><th scope="row">Standalone components with zero instances</th><td>59</td><td class="hl">0</td></tr>
+            <tr><th scope="row">Hand-set values with a token already published</th><td>844,333</td><td class="hl">Bound to the 229 variables</td></tr>
+            <tr><th scope="row">Ways color is modeled</th><td>2</td><td class="hl">1</td></tr>
+            <tr><th scope="row">Ways type is modeled</th><td>3</td><td class="hl">1</td></tr>
+            <tr><th scope="row">Dead libraries still published</th><td>2</td><td class="hl">0</td></tr>
+            <tr><th scope="row">Component descriptions that mislead</th><td>4</td><td class="hl">0</td></tr>
+            <tr><th scope="row">Trend visibility</th><td>One snapshot</td><td class="hl">Monthly history</td></tr>
+          </tbody>
+        </table>
+      </details>
     </div>
   </div>
 </section>
@@ -349,6 +353,6 @@
   </div>
 </section>
 </main>
-<script src="../main.js?v=6ab20ab6"></script>
+<script src="../main.js?v=5914bcfd"></script>
 </body>
 </html>
