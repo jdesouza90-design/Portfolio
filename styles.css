@@ -813,12 +813,12 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .st-scene { position: absolute; transform-origin: 0 0; }
 .story[data-layout="tall"] .st-scene { width: 340px; height: 300px; }
 .story[data-layout="wide"] .st-scene { width: 340px; height: 250px; }
-.st-ex { position: absolute; inset: 0; opacity: 0; transition: opacity 900ms cubic-bezier(.16, 1, .3, 1); perspective: 1200px; }
+.st-ex { position: absolute; inset: 0; opacity: 0; transition: opacity 600ms cubic-bezier(.16, 1, .3, 1); perspective: 1200px; }
 .st-ex.on { opacity: 1; }
-.st-track { position: absolute; left: 0; top: 0; transition: transform 1500ms cubic-bezier(.65, 0, .25, 1); }
+.st-track { position: absolute; left: 0; top: 0; transition: transform 800ms cubic-bezier(.65, 0, .25, 1); }
 
 /* the dotted line: round dots, drawn in as the view moves on */
-.st-line { position: absolute; transform-origin: 0 0; transition: transform 1500ms cubic-bezier(.65, 0, .25, 1); }
+.st-line { position: absolute; transform-origin: 0 0; transition: transform 800ms cubic-bezier(.65, 0, .25, 1); }
 .story[data-layout="tall"] .st-line { width: 4px; margin-left: -2px; background: radial-gradient(circle, rgba(20, 16, 12, .38) 1.3px, transparent 1.8px) center top / 4px 10px repeat-y; transform: scaleY(0); }
 .story[data-layout="wide"] .st-line { height: 4px; margin-top: -2px; background: radial-gradient(circle, rgba(20, 16, 12, .38) 1.3px, transparent 1.8px) left center / 10px 4px repeat-x; transform: scaleX(0); }
 .story[data-layout="tall"] .st-line.on { transform: scaleY(1); }
@@ -828,7 +828,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .story[data-layout="wide"] .st-line.stub { -webkit-mask: linear-gradient(var(--dir, 90deg), transparent, #000); mask: linear-gradient(var(--dir, 90deg), transparent, #000); }
 /* the work passing along the line */
 .st-pkt { position: absolute; width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 50%; background: #14100C; opacity: 0; box-shadow: 0 0 0 4px rgba(20, 16, 12, .08); }
-.st-pkt.go { animation: st-pkt 1500ms cubic-bezier(.65, 0, .25, 1) both; }
+.st-pkt.go { animation: st-pkt 800ms cubic-bezier(.65, 0, .25, 1) both; }
 .story[data-layout="tall"] .st-pkt.go { --dx: 0px; --dy: var(--gap); }
 .story[data-layout="wide"] .st-pkt.go { --dx: var(--gap); --dy: 0px; }
 @keyframes st-pkt { 0% { opacity: 0; transform: none; } 15%, 80% { opacity: 1; } 100% { opacity: 0; transform: translate(var(--dx), var(--dy)); } }
@@ -836,9 +836,9 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 /* a step: alone in the frame, arriving out of a slight tilt and blur */
 .st-step { position: absolute; width: max-content; transform: translate(-50%, -50%); }   /* its own width, so the -50% centers it in every browser */
 .st-card { opacity: 0; transform: translate3d(0, 18px, 0) rotateX(14deg) scale(.95); filter: blur(6px);
-  transition: opacity 1050ms cubic-bezier(.16, 1, .3, 1), transform 1350ms cubic-bezier(.16, 1, .3, 1), filter 900ms cubic-bezier(.16, 1, .3, 1); }
-.st-step.on .st-card { opacity: 1; transform: none; filter: blur(0); transition-delay: 525ms; }
-.st-step.past .st-card { opacity: 0; transform: translate3d(0, -14px, 0) scale(.97); filter: blur(4px); transition-duration: 750ms; transition-delay: 0ms; }
+  transition: opacity 600ms cubic-bezier(.16, 1, .3, 1), transform 750ms cubic-bezier(.16, 1, .3, 1), filter 500ms cubic-bezier(.16, 1, .3, 1); }
+.st-step.on .st-card { opacity: 1; transform: none; filter: blur(0); transition-delay: 250ms; }
+.st-step.past .st-card { opacity: 0; transform: translate3d(0, -14px, 0) scale(.97); filter: blur(4px); transition-duration: 400ms; transition-delay: 0ms; }
 .story[data-layout="wide"] .st-step.past .st-card { transform: translate3d(-14px, 0, 0) scale(.97); }
 
 .st-card { background: #FFFFFF; border-radius: 10px; border: 1px solid rgba(20, 16, 12, .1);
