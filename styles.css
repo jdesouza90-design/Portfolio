@@ -677,19 +677,18 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
    two cards. On a short screen (under 700px tall) a card would not fit
    under the bar, so the cards stay a plain column there. */
 @media (min-width: 821px) {
-  .cases { border-top: 0; }
+  .cases { display: grid; grid-auto-rows: 1fr; row-gap: clamp(20px, 3vw, 32px); border-top: 0; }   /* every card as tall as the tallest, so each one covers the one under it exactly */
   .cases > .case-row {
     gap: clamp(20px, 3vw, 40px); align-items: stretch;
     padding: clamp(14px, 1.6vw, 20px); border: 1px solid var(--hair); border-radius: calc(var(--radius) + 6px);
     background: var(--surface); box-shadow: var(--shadow-lift);
   }
-  .cases > .case-row + .case-row { margin-top: clamp(20px, 3vw, 32px); }
   .cases > .case-row > .case-copy { justify-content: center; padding: clamp(12px, 2vw, 28px); }
   .cases > .case-row > .case-media { border-radius: var(--radius); aspect-ratio: auto; min-height: 380px; }   /* fills its cell; a ratio here would take its width from the card's height and run past the column */
 }
 @media (min-width: 821px) and (min-height: 700px) {
-  .cases > .case-row { position: sticky; top: calc(var(--nav-h) + var(--sp-5)); }
-  .cases > .case-row + .case-row { margin-top: 32vh; }   /* the hold: each card sits alone under the bar for this stretch, then the next rises over it */
+  .cases { row-gap: 32vh; }   /* the hold: each card sits alone under the bar for this stretch, then the next rises over it */
+  .cases > .case-row { position: sticky; top: calc(var(--nav-h) + var(--sp-5)); box-shadow: none; }   /* no lift: under a pile the shadows would add up, card on card */
 }
 @media (max-width: 820px) {
   .case-row { grid-template-columns: minmax(0, 1fr); gap: 24px; }
