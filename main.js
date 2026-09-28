@@ -2093,12 +2093,16 @@ const CONFIG = {
     };
     let settling = 0;
     const later = () => { clearTimeout(settling); settling = setTimeout(() => settle(false), 200); };
-    const pass = (to) => {
-      if (whole) { later(); return; }
-      const vh = window.innerHeight, { r, h, top } = measure();
-      const land = to ? window.scrollY + to.getBoundingClientRect().top - (parseFloat(getComputedStyle(to).scrollMarginTop) || 0) : 0;
-      const t1 = r.top + window.scrollY - Math.max(0, Math.min(root.scrollHeight - vh, land));   // the track's top on screen where the jump lands
-      if (Math.max(r.top, t1) <= -r.height || Math.min(r.top, t1) >= vh) return;                // the jump never brings it on screen
+    // Makes the deck one block for a jump to `to`, or to the scroll position
+    // `at` when that is given, and returns where that position is on the
+    // shrunk page (null when the jump never brings the deck on screen).
+    const pass = (to, at) => {
+      if (whole) { later(); return null; }
+      const vh = window.innerHeight, { r, h, top } = measure(), y0 = window.scrollY;
+      const aim = at != null ? at : to ? y0 + to.getBoundingClientRect().top - (parseFloat(getComputedStyle(to).scrollMarginTop) || 0) : 0;
+      const land = Math.max(0, Math.min(root.scrollHeight - vh, aim));
+      const t1 = r.top + y0 - land;                                                               // the track's top on screen where the jump lands
+      if (Math.max(r.top, t1) <= -r.height || Math.min(r.top, t1) >= vh) return null;            // the jump never brings it on screen
       const d = deck.getBoundingClientRect().top;
       const now = r.bottom > 0 && r.top < vh, there = t1 < vh && t1 + r.height > 0;
       // The block it passes as: the deck as it shows now, or else as it will
@@ -2122,6 +2126,12 @@ const CONFIG = {
       });
       draw();
       later();
+      // The landing on the shrunk page: unmoved above the track, moved up by
+      // what was taken out below it, and where the deck shows, so that it
+      // shows in the same place.
+      const cut2 = r.height - track.getBoundingClientRect().height, T = r.top + y0;
+      const shrunk = t1 >= vh ? land : t1 + r.height <= 0 ? land - cut2 : T - (t1 + Math.max(0, Math.min(r.height - h, top - t1)) - hold.above);
+      return Math.max(0, Math.min(root.scrollHeight - vh, shrunk));
     };
     const settle = (force) => {
       if (!whole) return;
@@ -2157,14 +2167,46 @@ const CONFIG = {
       const at = i === 0 ? 0 : (PEELS[i - 1][1] + (PEELS[i] ? PEELS[i][0] : 1)) / 2;   // between its predecessor's peel and its own
       window.scrollTo({ top: window.scrollY + r.top - top + at * (r.height - h), behavior: "instant" });   // not smooth: it follows the focus, which has already moved
     });
-    window.addEventListener("scroll", () => { request(); if (whole) later(); }, { passive: true });
+    // Back and Forward: the browser would scroll back to where the reader
+    // was, smoothly, through the whole track. So the page restores places
+    // itself: each entry of the history keeps its own, noted as the scroll
+    // comes to rest (never while the track is shrunk, and just before a
+    // link jumps away), and a step back or forward goes there with the deck
+    // as one block. A reload, or a step back that loads the page afresh,
+    // lands there at once, as the browser would have.
+    let noting = 0;
+    const note = () => {
+      if (whole) return;
+      const s = history.state && typeof history.state === "object" ? history.state : {};
+      try { history.replaceState({ ...s, y: window.scrollY }, ""); } catch (_) {}
+    };
+    const kept = (state) => (state && typeof state === "object" && typeof state.y === "number" ? state.y : null);
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+    window.addEventListener("pagehide", note);   // off to another page before the scroll came to rest
+    window.addEventListener("popstate", (e) => {
+      const y = kept(e.state), to = y === null && location.hash ? hashTarget(location.hash) : null;
+      if (y === null && !to) return;   // nowhere noted: stay put
+      settle(true);
+      const shrunk = pass(to, y);
+      if (shrunk !== null) window.scrollTo({ top: shrunk, behavior: "smooth" });
+      else if (y !== null) window.scrollTo({ top: y, behavior: "smooth" });
+      else to.scrollIntoView({ behavior: "smooth" });
+    });
+    window.addEventListener("scroll", () => {
+      request();
+      if (whole) later();
+      clearTimeout(noting);
+      noting = setTimeout(note, 250);
+    }, { passive: true });
     window.addEventListener("resize", request);
     document.addEventListener("click", (e) => {   // a link to a section of this page, before the browser scrolls to it
       if (e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       const a = e.target.closest && e.target.closest("a[href*='#']");
       if (!a || (a.target && a.target !== "_self") || a.origin !== location.origin || a.pathname !== location.pathname || a.search !== location.search) return;
       const to = a.hash ? hashTarget(a.hash) : null;
-      if (!a.hash || to) pass(to);
+      if (a.hash && !to) return;
+      note();   // the entry being left keeps the place it is left from
+      pass(to);
     });
     document.addEventListener("nav:jump", (e) => pass(e.detail));
     order();
@@ -2172,8 +2214,13 @@ const CONFIG = {
     // scrolls there from the top once the page is in: one block then too.
     // A reload or a step back puts the reader back where they were instead.
     const arrival = performance.getEntriesByType ? performance.getEntriesByType("navigation")[0] : null;
-    const to = location.hash && hashTarget(location.hash);
+    const to = location.hash && hashTarget(location.hash), back = kept(history.state);
     if (to && !window.scrollY && (!arrival || arrival.type === "navigate")) pass(to);
+    else if (back !== null && arrival && arrival.type !== "navigate") {
+      const go = () => window.scrollTo({ top: back, behavior: "instant" });
+      go();
+      window.addEventListener("load", () => { if (Math.abs(window.scrollY - back) > 1 && !whole) go(); }, { once: true });   // fonts and images can move it before then
+    }
   });
 
   /* ---- The LinkedIn button ----
