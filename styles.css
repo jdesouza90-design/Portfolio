@@ -721,6 +721,11 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 }
 .stack.on .stack-card { position: absolute; inset: 0 0 auto 0; height: var(--card-h); box-sizing: border-box; overflow: hidden; transform-origin: 50% 100%; will-change: transform; }
 .stack.on .stack-card .case-media { aspect-ratio: auto; height: 100%; }
+/* A jump to a section passes the deck as one block (main.js, initStack): for
+   the length of the scroll the track keeps only the deck and whatever of its
+   empty stretch was on screen, and the deck stops sticking. */
+.stack.on.whole .stack-track { height: auto; padding-block: var(--whole-above, 0px) var(--whole-below, 0px); }
+.stack.on.whole .stack-deck { position: relative; top: auto; }
 @media (max-width: 820px) {
   .stack { --card-h: min(80vh, 640px); }
   .stack-card { grid-template-columns: minmax(0, 1fr); gap: 4px; }
