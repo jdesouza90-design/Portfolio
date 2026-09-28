@@ -132,7 +132,7 @@ and source filters keep it while any one of its values is ticked: filter to
 Unlocked and you get the sessions that got in, to Greenhouse and the ones that
 arrived from there. Every one of those is a menu of checkboxes, all ticked to
 begin with, so any number of values can be kept at once — untick the one you
-don't want, or press None and then tick the two you do. The pill says what
+don't want, or press None and then tick the two you do. The button says what
 is left (`All kinds`, `2 of 4 kinds`, `Everywhere but Austin, TX, US`, `Home
 only`), nothing ticked shows nothing, and Clear filters puts it all back. A
 value stays listed while it is unticked even after the last visit carrying it
@@ -607,7 +607,7 @@ three rhythm tokens: `--section` between sections, `--row` between rows,
 All six case studies are the same document, in this order:
 
 1. **Hero**: a breadcrumb trail (Home / Work / this study, the current page
-   in plain ink and not a link) and then the eyebrow, title and one-sentence
+   in plain ink and not a link) and then the title and one-sentence
    lede with the outcome stat beside
    them (`data-flow`: it rolls into place digit by digit, lit from above with
    the accent), the project's screens on its own tinted panel, then four facts
@@ -621,25 +621,30 @@ All six case studies are the same document, in this order:
    capacity gauge, A/B table, or a hairline list of what shipped where there
    are no published numbers or the number is too new to chart).
 4. **The story** (`#story`), which opens on the problem: the section intro
-   is the eyebrow "The problem" and the problem's heading as the Title, and
+   is the Title "The problem", and
    the first row under it carries the problem copy (a short paragraph and a
    tensions list beside an illustration or the old screen) with no heading
    of its own. There is no separate "How we got there" header; it used to
    sit above the problem and mostly restated it. Then, always in this order:
    the design (a `.row.full` with one framed panel or walkthrough under
    centred copy), any supporting rows (`.row.flip`), then the quotes last (a
-   `.row.full` with an eyebrow and an intro line saying where they came
+   `.row.full` with its heading and an intro line saying where they came
    from; Verifications gives its quotes their own section between Results
    and the story, as the research that shaped it). A full-width
    row is centred and its headline takes the Title role with a Lede beneath,
    the same as a section intro; a side-by-side row keeps the Heading role.
-   Each later row is one eyebrow, one heading, one short paragraph.
+   Each later row is one heading that names it, then one short paragraph.
+   No section or row heading has an eyebrow over it: the heading is the
+   label (The problem, My role, Results), as on harvey.ai. `.eyebrow` is
+   kept for chart, figure and stat labels and the Next case study band.
 5. **What I'd do differently**: one narrow note with run-in labels, where a
    retro exists.
    A second deliverable takes a `.row.full` of its own in the story, placed
    where it happened (the agentic audit page's "The library", its walkthrough
    between The design and Try it).
-6. **Next**: the closing band with the next case study and contact.
+6. **Next**: the closing band: the next case study's title as a link, then
+   "Previous case study" as a text link with a left arrow under it, then All
+   work as a text link with a grid icon beside the Contact me button.
 
 Icons are inline SVG, 24-unit, 1.5 stroke, ink with one green accent detail
 (`class="ac"` for an accent stroke, `ac-fill` for a tinted shape).
@@ -738,8 +743,9 @@ scrolls to it, and every page gets it the same way:
   the unit: children carrying it rise on their own and their parent is left
   alone (the case rows on the homepage and work index, the portrait and
   text of About). Nothing nests: a block inside a block would travel twice.
-- **The hero's copy has its own cascade** on load: eyebrow, `h1` and lede
-  carry `data-rise style="--i:N"` (N = 0, 1, 2), a 12px rise at 70ms steps
+- **The hero's copy has its own cascade** on load: the `h1` and lede (after
+  a blog post's topic eyebrow, where there is one) carry
+  `data-rise style="--i:N"` (N = 0, 1, 2), a 12px rise at 70ms steps
   on top of the block's own reveal. Nothing else animates by attribute.
 - **A fresh unlock opens behind a sheet** (`initUnlock` in `main.js`,
   section 8b of `styles.css`). The gate's redirect carries `?unlocked`; a
@@ -830,6 +836,14 @@ The rules that shape the code:
   a `tabindex="0"` in the markup stands without the script.
 - Icons are `aria-hidden`; every image has an alt; logos used as decoration
   have an empty one. Focus rings switch to paper on dark grounds.
+- A text link is underlined in its own ink (1px, 2px on hover), so no link
+  rests on colour alone (1.4.1); the rule and its list of links are at the
+  top of section 3 in `styles.css`. The nav's rows, buttons and whole-card
+  links (a work row, a post card) are the exceptions. A hover that quiets
+  the other links steps them down to `--ink-3`, never an opacity fade.
+  Links carry no arrows: a way forward or back is underlined text or a
+  button. The one exception is "Previous case study" in a case study's
+  closing band, whose left arrow tells it apart from All work. Buttons take `--radius-btn` (4px) and are never pills.
 - `prefers-reduced-motion` switches off every animation and smooth scrolling.
 - Nothing scrolls sideways at 320px.
 

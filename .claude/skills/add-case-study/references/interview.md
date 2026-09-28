@@ -90,7 +90,7 @@ take the time to get it right.
 Fills the problem row and the first sentence of the Results lede.
 
 1. **What was broken? Name the screen or the moment.**
-   Slots: `PROBLEM_HEADING`, `PROBLEM_BODY`. Good: "Once a file was sent, the dashboard went
+   Slot: `PROBLEM_BODY` (the heading is "The problem"). Good: "Once a file was sent, the dashboard went
    quiet. Nothing said whether it was pending, accepted or still needed, so applicants called
    to ask." Two sentences, the thing named, the consequence stated. If the answer is "the
    experience was confusing", ask what was on the screen and what people did next.
@@ -114,7 +114,7 @@ Fills the design row and the optional story rows. Ask 1 and 2 always; ask 3 to 6
 and expect some to be "no".
 
 1. **What shipped? Walk me through the screens in order.**
-   Slots: `DESIGN_HEADING`, `DESIGN_BODY`, and it tells you which screens are the hero and
+   Slot: `DESIGN_BODY` (the heading is "The design"), and it tells you which screens are the hero and
    which belong in the gallery or flow. Good: "Design B replaces the progress bar with a
    document-led checklist: one upload per document, format guidance, and a status the moment
    a file lands."
@@ -136,8 +136,8 @@ and expect some to be "no".
    the v0.1 early-access flow"), and an alt for the poster.
 
 5. **Anything below the fold or on a second surface worth its own row?**
-   Slot: an extra `.row.flip`. Staking's "See what your stake secures" is the model: eyebrow,
-   heading, one paragraph, one cropped screen.
+   Slot: an extra `.row.flip`. Staking's "Below the fold" is the model: a heading that names
+   the row, one paragraph, one cropped screen.
 
 6. **What did people say in research or testing?**
    Slot: research row with `.quote-list`. Same rules as round 2 quote 5. Three quotes is the

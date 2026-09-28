@@ -6,8 +6,8 @@ Run from the repo root after adding or editing a case study:
     python3 .claude/skills/add-case-study/scripts/check.py [--no-validate]
 
 It reads work/*.html, work.html, index.html, styles.css, README.md and the skill's own
-template, and reports the things that break silently: a next-link ring with a gap, a prev
-arrow that doesn't point back, a page with no ground, an image with no size, an asset that
+template, and reports the things that break silently: a next-link ring with a gap, a
+previous-case-study button that doesn't point back, a page with no ground, an image with no size, an asset that
 isn't there, nav drift between pages, a stale count in the README, a placeholder left in.
 Then it runs html-validate on every page unless --no-validate is given. Exit status is 1 if
 anything is an error.
@@ -95,9 +95,8 @@ for p, s in html.items():
         if slug not in hidden and f'class="case-row {cls}"' not in work_rows:
             err(f"{p}: work.html has no .case-row.{cls}")
 
-    # Next link: the plain <a> in p.cs-next-title, after the .cs-prev-link one (which is "previous")
-    nm = re.search(r'<p class="t-title cs-next-title">(?:<a class="cs-prev-link"[^>]*>.*?</a>)?\s*'
-                   r'<a href="([a-z0-9-]+)\.html">', s, re.S)
+    # Next link: the one <a> in p.cs-next-title
+    nm = re.search(r'<p class="t-title cs-next-title">\s*<a href="([a-z0-9-]+)\.html">', s)
     if not nm:
         err(f"{p}: no next-case-study link")
     else:
@@ -109,8 +108,8 @@ for p, s in html.items():
         if slug not in hidden and nm.group(1) in hidden:
             err(f"{p}: next link points to hidden page {nm.group(1)}.html")
 
-    # Prev link: the bare-arrow <a class="cs-prev-link"> that opens the same <p>
-    pm = re.search(r'<p class="t-title cs-next-title">\s*<a class="cs-prev-link" href="([a-z0-9-]+)\.html"', s)
+    # Prev link: the "Previous case study" arrow link under the next link's title
+    pm = re.search(r'<a class="cs-prev-link" href="([a-z0-9-]+)\.html">', block(s, '<section class="cs-next">', "</section>") or "")
     if not pm:
         err(f"{p}: no previous-case-study link")
     else:
@@ -177,7 +176,7 @@ if ring_next and len(ring_next) == len(shown):
             f"followed {' → '.join(seen)} → {cur}; not reached: {missing or 'none'}")
 for slug, prev in prev_of.items():
     if slug in hidden:
-        continue  # a hidden page's arrows point into the ring; nothing in the ring points back
+        continue  # a hidden page's links point into the ring; nothing in the ring points back
     if prev in next_of and next_of[prev] != slug:
         err(f"work/{slug}.html: prev link points to {prev}.html, whose next link is "
             f"{next_of[prev]}.html, not this page")

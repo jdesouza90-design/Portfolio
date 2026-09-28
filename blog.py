@@ -209,10 +209,7 @@ MAIL_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
 SEND_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>'
 DOWN_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11"/><path d="m7 11 5 5 5-5"/><path d="M4 20h16"/></svg>'
 CHECK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="20 6 9 17 4 12"/></svg>'
-PILLAR_ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>'
 RSS_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg>'
-NEXT_ARROW_SVG = '<svg class="cs-next-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>'
-ARROW_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>'
 
 
 def nav(current, section=None):
@@ -250,22 +247,21 @@ def nav(current, section=None):
 """
 
 
-def foot(note, *, heading="", css=""):
-    """The end of a page: the contact band when it has a heading, then the
-    footer and the script. Posts pass no heading and just end."""
+def foot(note, *, contact=False, css=""):
+    """The end of a page: the contact band when asked for, then the footer
+    and the script. Posts leave it out and just end."""
     band = f"""
     <div class="contact" data-reveal data-field="rings">
       <canvas class="field" aria-hidden="true"></canvas>
       <div>
-        <p class="eyebrow">Get in touch</p>
-        <h2 class="t-title">{heading}</h2>
+        <h2 class="t-title">Get in touch</h2>
       </div>
       <div class="contact-actions">
         <a class="btn btn-primary" data-link="linkedin" href="#"><span class="icon-swap">{LINKEDIN_SVG}{EXTLINK_SVG}</span>Message me on LinkedIn</a>
         <a class="btn btn-ghost" data-link="email" href="#"><span class="icon-swap">{MAIL_SVG}{SEND_SVG}</span>Email me</a>
         <a class="btn btn-ghost" data-link="resume" href="#"><span class="icon-swap">{DOWN_SVG}{CHECK_SVG}</span>Download resume</a>
       </div>
-    </div>""" if heading else ""
+    </div>""" if contact else ""
     return f"""
 <section class="section tight">
   <div class="wrap">{band}
@@ -401,9 +397,9 @@ def render_post(p, nxt):
   <div class="wrap">
     <div class="post-next" data-reveal>
       <p class="eyebrow">Next</p>
-      <h2 class="t-title"><a href="/blog/{nxt["slug"]}.html">{html.escape(nxt["title"])}{NEXT_ARROW_SVG}</a></h2>
+      <h2 class="t-title"><a href="/blog/{nxt["slug"]}.html">{html.escape(nxt["title"])}</a></h2>
       <div class="actions">
-        <a class="btn btn-ghost" href="/blog.html">All posts{ARROW_SVG}</a>
+        <a class="btn btn-ghost" href="/blog.html">All posts</a>
       </div>
     </div>
   </div>
@@ -443,7 +439,7 @@ def render_index(posts):
     links = ""
     for key, (label, _, _short) in PILLARS.items():
         n = sum(1 for p in posts if p["pillar"] == key)
-        links += f"""        <li><a href="#{key}"><span class="pillar-label">{label}{PILLAR_ARROW}</span><span class="pillar-count t-small">{n} post{"" if n == 1 else "s"}</span></a></li>\n"""
+        links += f"""        <li><a href="#{key}"><span class="pillar-label">{label}</span><span class="pillar-count t-small">{n} post{"" if n == 1 else "s"}</span></a></li>\n"""
 
     out += f"""
 <section class="cs-hero solo">
@@ -475,7 +471,7 @@ def render_index(posts):
     <div class="featured" data-reveal>
       <div class="featured-head">
         <h2 class="t-title featured-title">Latest</h2>
-        <a class="post-cta" href="#all">All posts{ARROW_SVG}</a>
+        <a class="post-cta" href="#all">All posts</a>
       </div>
       <div class="cards">{cards}
       </div>
@@ -518,7 +514,7 @@ def render_index(posts):
   </div>
 </section>
 """
-    out += foot("Posts are my own views.", heading="Building or rebuilding a design org? Let’s talk.")
+    out += foot("Posts are my own views.", contact=True)
     return out
 
 
@@ -631,12 +627,10 @@ def render_search(posts):
     for m in re.finditer(r'<section[^>]*\sid="([a-z-]+)"[^>]*>(.*?)</section>', home, re.S):
         sid, body = m.group(1), m.group(2)
         h = re.search(r'<h2 class="t-title[^"]*">(.*?)</h2>', body, re.S)
-        lede = re.search(r'<p class="t-lede">(.*?)</p>', body, re.S)
-        eyebrow = re.search(r'<p class="eyebrow">(.*?)</p>', body, re.S)
+        lede = re.search(r'<p class="t-lede">(.*?)</p>', body, re.S) or re.search(r'<p class="t-body">(.*?)</p>', body, re.S)   # About has no lede: its first paragraph, John's current title, stands in
         if not h or sid in ("top", "work"):
             continue
-        title = strip_tags(eyebrow.group(1)) if eyebrow else strip_tags(h.group(1))
-        entries.append({"t": title, "d": strip_tags(h.group(1)) if eyebrow else (strip_tags(lede.group(1)) if lede else ""), "u": "/#" + sid, "k": "Section"})
+        entries.append({"t": strip_tags(h.group(1)), "d": strip_tags(lede.group(1)) if lede else "", "u": "/#" + sid, "k": "Section"})
     work = open("work.html", encoding="utf-8").read()
     work = re.sub(r"<!--.*?-->", "", work, flags=re.S)
     for m in re.finditer(r'<a class="case-row[^"]*" href="(work/[a-z-]+\.html)"[^>]*>(.*?)</a>\s*\n', work, re.S):

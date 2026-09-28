@@ -166,14 +166,14 @@ Labs and Auth0"); if the new case study is from a new company, add it there and 
 
 Each page's `.cs-next` links forward to the next page and back to the previous one, and
 the last links forward to the first, so a reader who starts anywhere sees everything. The
-next link is the page's full name with a right arrow; the previous link is a bare left
-arrow with `aria-label="Previous case study"` (markup in `page-anatomy.md` §7). Today:
+next link is the page's full name; the previous link is the "Previous case study" arrow
+link (`.cs-prev-link`) straight under it (markup in `page-anatomy.md` §7). Today:
 
 ```
 cross-sell → verifications → refinance-offers → staking → no-code-tools → cross-sell
 ```
 
-(`sign-in-with-ethereum` is hidden, see below, so it is out of the ring; its own arrows
+(`sign-in-with-ethereum` is hidden, see below, so it is out of the ring; its own links
 still point at `no-code-tools` and `cross-sell`.)
 
 Inserting a page after X means three pages change: the new page's `PREV_SLUG` is X and its
@@ -200,7 +200,7 @@ A page can be taken off the site without deleting anything (Sign-in with Ethereu
 2. Its `.case-row` on `work.html` (and `index.html`, if it had one) goes inside an HTML
    comment where it stood, not into the bin, so the blurb and the composition survive.
 3. Close the ring over it: its previous page's next link takes its old next, and its old
-   next's `cs-prev-link` takes its previous page. Leave the hidden page's own arrows alone.
+   next's `cs-prev-link` takes its previous page. Leave the hidden page's own links alone.
 4. The README: the structure block says it is hidden, and the "all N case studies" counts
    drop by one.
 

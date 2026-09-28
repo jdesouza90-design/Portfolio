@@ -18,6 +18,9 @@ Contents
 
 ## 1. Conventions that apply everywhere
 
+- **No eyebrow over a heading.** A section or row heading names the section itself (The
+  problem, My role, Results, Design decisions); `.eyebrow` is only for a chart's, figure's
+  or stat's label (Outcome, Monthly originations · USD) and the Next case study band.
 - **Type roles.** Every heading and paragraph carries its role as a class: `.eyebrow`,
   `.t-display` (the h1), `.t-title` (section title), `.t-lede`, `.t-heading` (row or ledger
   heading), `.t-subhead` (column heading), `.t-body`, `.t-small`, `.t-stat`, `.t-quote`.
@@ -127,14 +130,13 @@ a duration, a date or a phrase. Numerals always.
 
 ## 3. Results and the proof variants
 
-Slots: `RESULTS_TITLE`, `RESULTS_LEDE`, `PROOF`.
+Slots: `RESULTS_LEDE`, `PROOF`. The title is "Results".
 
 ```html
 <section class="cs-section" id="results">
   <div class="wrap">
     <header class="section-intro">
-      <p class="eyebrow">Results</p>
-      <h2 class="t-title">{{RESULTS_TITLE}}</h2>
+      <h2 class="t-title">Results</h2>
       <p class="t-lede">{{RESULTS_LEDE}}</p>
     </header>
     {{PROOF}}
@@ -229,16 +231,14 @@ published usage metrics for this project, so the outcome is qualitative" or equi
 <section class="cs-section" id="story">
   <div class="wrap">
     <header class="section-intro">
-      <p class="eyebrow">The problem</p>
-      <h2 class="t-title">{{PROBLEM_HEADING}}</h2>
+      <h2 class="t-title">The problem</h2>
     </header>
     {{ROWS}}
   </div>
 </section>
 ```
 
-The story opens on the problem. Its section intro is the eyebrow "The problem" and the
-problem's heading as the Title; the problem row underneath carries the body and the
+The story opens on the problem. Its section intro is the Title "The problem"; the problem row underneath carries the body and the
 tensions list and has no heading of its own. There is no separate "How we got there"
 header with an arc title ("From a dead end to a second offer"): it used to sit above the
 problem and mostly restated it, so it was removed from every page in September 2026.
@@ -246,8 +246,8 @@ problem and mostly restated it, so it was removed from every page in September 2
 Rows alternate. The pattern the pages use, in order: problem (`.row`), design (`.row.full`),
 then any of decisions (`.row.full`), a second surface (`.row.flip`), research (`.row.flip`),
 community (`.row.full`). Two rows minimum (problem and design); five is the most any page
-has. Each row has one eyebrow, one heading and at most one short paragraph before its list
-or visual. Split rows (`.row`, `.row.flip`) take `t-heading` + `t-body`; full-width rows
+has. Each row has one heading, which names the row ("The design", "Design decisions",
+"Research"), and at most one short paragraph before its list or visual. Split rows (`.row`, `.row.flip`) take `t-heading` + `t-body`; full-width rows
 (`.row.full`) take `t-title` + `t-lede`.
 
 **Row types**
@@ -258,8 +258,8 @@ or visual. Split rows (`.row`, `.row.flip`) take `t-heading` + `t-body`; full-wi
 | `.row.flip` | panel left, copy right | research quotes with a screen, a second surface |
 | `.row.full` | copy on top, visual full width | galleries, flows, decision grids, walkthroughs, quote grids |
 
-**Problem row** (always first; the tensions list is its signature; its eyebrow and heading
-live in the section intro above, so the row starts on the body):
+**Problem row** (always first; the tensions list is its signature; its heading lives in
+the section intro above, so the row starts on the body):
 ```html
 <article class="row" id="problem">
   <div class="row-copy">
@@ -283,8 +283,7 @@ floating on the ground with a drop shadow that follows the alpha.
 ```html
 <article class="row full" id="design">
   <div class="row-copy">
-    <p class="eyebrow">The design</p>
-    <h3 class="t-title">{{DESIGN_HEADING}}</h3>
+    <h3 class="t-title">The design</h3>
     <p class="t-lede">{{DESIGN_BODY}}</p>
   </div>
   <div class="panel">
@@ -329,8 +328,7 @@ place the icon-over-heading grid appears on a case study; don't reuse it for rol
 ```html
 <article class="row full" id="decisions">
   <div class="row-copy">
-    <p class="eyebrow">Design decisions</p>
-    <h3 class="t-title">Three decisions inside the flow</h3>
+    <h3 class="t-title">Design decisions</h3>
   </div>
   <div class="cols">
     <div class="col">
@@ -363,8 +361,7 @@ text, no icons) and float the card itself on the right. Refinance offers uses th
 ```html
 <article class="row" id="decisions">
   <div class="row-copy">
-    <p class="eyebrow">Design decisions</p>
-    <h3 class="t-heading">Three decisions inside the card</h3>
+    <h3 class="t-heading">Design decisions</h3>
     <ul class="tensions stack">
       <li><h4 class="t-subhead">A suggestion, not a notice</h4><p class="t-body">The copy moved from "Just wanted to let you know" to "Refi might be right for you".</p></li>
       <li><h4 class="t-subhead">…</h4><p class="t-body">…</p></li>
@@ -380,8 +377,7 @@ patterns, a gauge arc for capacity, a checklist for status.
 ```html
 <article class="row flip" id="research">
   <div class="row-copy">
-    <p class="eyebrow">What we heard</p>
-    <h3 class="t-heading">Applicants asked for status, communication and cues</h3>
+    <h3 class="t-heading">What we heard</h3>
     <ul class="quote-list">
       <li><blockquote class="quote"><p class="t-quote">"If that 'in review' would've been maybe bigger or a different color, I would've noticed it earlier."</p><cite><b>Clear status badge</b>Usability session</cite></blockquote></li>
       <li><blockquote class="quote"><p class="t-quote">"…"</p><cite><b>Communication</b>Usability session</cite></blockquote></li>
@@ -391,15 +387,14 @@ patterns, a gauge arc for capacity, a checklist for status.
   <figure class="panel"><img decoding="async" width="376" height="1200" src="../assets/ver-thankyou.webp" alt="Thank you screen: you've successfully submitted your documents, you should hear from us in 1 to 3 business days" loading="lazy"></figure>
 </article>
 ```
-Eyebrow variants: "What we heard" (research), "What customers told us", "Community
+Heading variants: "What we heard" (research), "What customers told us", "Community
 reaction" (public posts; use the `.quotes` grid in a `.row.full` instead, as Staking does).
 
 **Second-surface row** (`.row.flip` with a cropped wide panel):
 ```html
 <article class="row flip" id="feeds">
   <div class="row-copy">
-    <p class="eyebrow">Below the fold</p>
-    <h3 class="t-heading">See what your stake secures</h3>
+    <h3 class="t-heading">Below the fold</h3>
     <p class="t-body">Under the pool sit the data feeds it secures: each feed's latest answer, its node operators and whether each one responded.</p>
   </div>
   <figure class="panel wide crop" style="--crop-pos: 30% 0"><img decoding="async" width="1600" height="813" src="../assets/staking-feeds.webp" alt="Data feeds secured: ETH/USD feed details and node operator responses" loading="lazy"></figure>
@@ -417,8 +412,7 @@ precisely.
 <section class="cs-section" id="role">
   <div class="wrap">
     <header class="section-intro">
-      <p class="eyebrow">My role</p>
-      <h2 class="t-title">{{ROLE_TITLE}}</h2>
+      <h2 class="t-title">My role</h2>
       <!-- optional: <p class="t-lede">{{ROLE_LEDE}}</p> -->
     </header>
     <div class="ledger">
@@ -440,8 +434,7 @@ A narrow note with run-in labels. Optional. Two or three paragraphs; the last on
 <section class="cs-section" id="retro">
   <div class="wrap">
     <header class="section-intro">
-      <p class="eyebrow">What I'd do differently</p>
-      <h2 class="t-title">{{RETRO_TITLE}}</h2>
+      <h2 class="t-title">What I'd do differently</h2>
     </header>
     <div class="note">
       <p class="t-body"><strong>Research timing.</strong> The qualitative signal was strong going in, but the A/B test came after Vehicle Equity launched. Testing the redirect copy earlier would have saved iteration after go-live.</p>
@@ -458,16 +451,20 @@ The title lists the labels: "Research timing, sequencing and what held".
 ## 7. Next
 
 The closing band. `PREV_SLUG`, `NEXT_SLUG` and `NEXT_NAME` come from the ring in
-`wiring.md` §5: the previous page is a bare left arrow with an `aria-label`, the next page
-is its full name with a right arrow, both inside one `p.t-title.cs-next-title`. The SVGs
-and the two buttons are copied from a live page; only the three slots change.
+`wiring.md` §5: the next page is its full name as the one link in `p.t-title.cs-next-title`,
+and the previous page is the text link straight under it, "Previous case study"
+(`.cs-prev-link`), led by a left arrow. Under that, `.actions` holds All work
+(`.cs-all-link`, a text link led by a grid) and the Contact me button. The previous link is
+the site's one arrowed link: elsewhere a link is underlined text or a button. The markup
+is copied from a live page; only the three slots change.
 ```html
 <section class="cs-next">
   <div class="wrap">
     <p class="eyebrow">Next case study</p>
-    <p class="t-title cs-next-title"><a class="cs-prev-link" href="{{PREV_SLUG}}.html" aria-label="Previous case study"><svg class="cs-next-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg></a><a href="{{NEXT_SLUG}}.html">{{NEXT_NAME}}<svg class="cs-next-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a></p>
+    <p class="t-title cs-next-title"><a href="{{NEXT_SLUG}}.html">{{NEXT_NAME}}</a></p>
+    <a class="cs-prev-link" href="{{PREV_SLUG}}.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>Previous case study</a>
     <div class="actions">
-      <a class="btn btn-ghost btn-browse" href="../work.html">All work<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+      <a class="cs-all-link" href="../work.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>All work</a>
       <a class="btn btn-primary" data-link="email" href="#"><span class="icon-swap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>Contact me</a>
     </div>
     <footer>
