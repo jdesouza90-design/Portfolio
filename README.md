@@ -304,8 +304,8 @@ Function, answers with Claude Haiku 4.5 by default.
   screen keeps a wrapper carrying its project's class, so the ground and the
   emerge settings still apply. Below 821px the screens go back to their rows.
 - **The lens** (`initLens`, `[data-lens]` above the deck on the home page and
-  the list on the work index). Recruiter, Design leader, Product manager,
-  Engineer re-sort the rows, or the deck's cards. The orders are fixed
+  the list on the work index). Design leader (the default, the page's own
+  order), Product manager and Engineer re-sort the rows, or the deck's cards. The orders are fixed
   in `LENSES` in `main.js` (no model, nothing sent anywhere), and no two
   give the same order, on the work index or in the home page's three cards.
   On a desktop the choice is kept in `localStorage` (`lens`); a phone shows
