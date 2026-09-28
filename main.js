@@ -3050,7 +3050,10 @@ const CONFIG = {
      stalls at the queue, then rises as the after lane runs straight through.
      Reduced motion, or a figure that settles without animating, shows both
      lanes finished. The dot is placed from the steps' own boxes, so it follows
-     whichever layout the width gives (a row, or a column on a phone). */
+     whichever layout the width gives (a row, or a column on a phone). It runs
+     under the boxes, so only the gap between two steps shows it: a hop first
+     slips it, unseen, to the far edge of the box it is in, and spends the whole
+     hop crossing the gap, where it can be watched. */
   const initBeforeAfter = () => $$("[data-flow-ba]").forEach((fig) => {
     const [before, after] = $$(".ba-lane", fig);
     if (!before || !after) return;
@@ -3067,22 +3070,35 @@ const CONFIG = {
     if (reduced) { finish(); return; }
     fig.classList.add("is-staged");
 
+    const HOP = 900;   // one hop across a gap: the dot's transition in styles.css
+    const HIDE = 16;   // how far inside a box the dot is out of sight: its radius and glow
     let last = null;   // where each dot was last sent, to put it back after a resize
-    const place = (lane, i, short = false, glide = true) => {
-      const dot = $(".ba-dot", lane), s = steps(lane), L = lane.getBoundingClientRect(), r = s[i].getBoundingClientRect();
-      let x = r.left - L.left + r.width / 2, y = r.top - L.top + r.height / 2;
-      if (short && i > 0) {   // stop on the rail just before the step, instead of on it
-        const p = s[i - 1].getBoundingClientRect();
-        const dx = x - (p.left - L.left + p.width / 2), dy = y - (p.top - L.top + p.height / 2), d = Math.hypot(dx, dy) || 1;
-        const reach = Math.abs(dx) > Math.abs(dy) ? r.width / 2 : r.height / 2;
-        x -= (dx / d) * (reach + 18); y -= (dy / d) * (reach + 18);
-      }
+    // Where on the rail the dot goes for step i: "mid", the middle of its box; "in"
+    // and "out", just inside the edges it comes in and leaves by; "short", the
+    // middle of the gap before the box, where it waits in sight. Only the distance
+    // along the rail: across it, styles.css holds the dot on the lane's middle line.
+    const spot = (lane, i, at) => {
+      const s = steps(lane), L = lane.getBoundingClientRect(), r = s[i].getBoundingClientRect();
+      const p = s[0].getBoundingClientRect(), q = s[1].getBoundingClientRect();
+      const row = Math.abs(q.left - p.left) > Math.abs(q.top - p.top);   // a row, or a column on a phone
+      const half = (row ? r.width : r.height) / 2, gap = row ? q.left - p.right : q.top - p.bottom;
+      const d = { mid: 0, in: HIDE - half, out: half - HIDE, short: -half - gap / 2 }[at];
+      return row ? ["--x", r.left - L.left - lane.clientLeft + half + d] : ["--y", r.top - L.top - lane.clientTop + half + d];
+    };
+    const place = (lane, i, at = "mid", glide = true) => {
+      const dot = $(".ba-dot", lane), [axis, v] = spot(lane, i, at);
       if (!glide) { dot.style.transition = "none"; }
-      dot.style.setProperty("--x", `${x}px`);
-      dot.style.setProperty("--y", `${y}px`);
+      dot.style.setProperty(axis, `${v}px`);
       if (!glide) { void dot.offsetWidth; dot.style.transition = ""; }
       dot.classList.add("is-on");
-      last = [lane, i, short];
+      last = [lane, i, at];
+    };
+    // A hop to step i. From inside a box the dot slips to its far edge first, so
+    // the hop is all gap; the step lights as the dot goes half under it.
+    const hop = (lane, i, at = "in") => {
+      if (last[2] !== "short") place(lane, i - 1, "out", false);
+      place(lane, i, at);
+      if (at === "in") setTimeout(() => steps(lane)[i].classList.add("is-reached"), HOP * .7);
     };
     window.addEventListener("resize", debounce(() => {   // move the dot, but never bring back one that has gone out
       if (last && $(".ba-dot", last[0]).classList.contains("is-on")) place(last[0], last[1], last[2], false);
@@ -3091,27 +3107,24 @@ const CONFIG = {
     onceInView(fig, 0.35, (animate) => {
       if (!animate) { finish(); return; }
       const b = steps(before), a = steps(after);
-      const at = (ms, fn) => setTimeout(fn, ms);
+      let t = 0;
+      const then = (ms, fn) => setTimeout(fn, (t += ms));   // ms after the beat before it
       const reach = (li) => li.classList.add("is-reached");
-      // Before: brand change, ticket, a long wait outside the queue, deploy.
-      at(600,   () => { place(before, 0, false, false); reach(b[0]); });
-      at(1400,  () => place(before, 1));
-      at(2100,  () => reach(b[1]));
-      at(2800,  () => place(before, 2, true));
-      at(3500,  () => { reach(b[2]); b[2].classList.add("is-waiting"); });
-      at(6000,  () => { b[2].classList.remove("is-waiting"); place(before, 3); });
-      at(6700,  () => reach(b[3]));
-      at(7000,  () => { b[3].classList.add("is-done"); $(".ba-dot", before).classList.remove("is-on"); });
+      // Before: brand change, ticket, a long wait outside the queue, through it, deploy.
+      then(600,       () => { place(before, 0, "mid", false); reach(b[0]); });
+      then(800,       () => hop(before, 1));
+      then(HOP + 500, () => hop(before, 2, "short"));
+      then(HOP,       () => { reach(b[2]); b[2].classList.add("is-waiting"); });
+      then(2500,      () => { b[2].classList.remove("is-waiting"); hop(before, 2); });
+      then(HOP + 200, () => hop(before, 3));
+      then(HOP + 300, () => { b[3].classList.add("is-done"); $(".ba-dot", before).classList.remove("is-on"); });
       // After: the lanes trade places, then every step in turn, with a beat on each.
-      at(8000,  () => fig.classList.add("is-two"));
-      at(8900,  () => { place(after, 0, false, false); reach(a[0]); });
-      at(9600,  () => place(after, 1));
-      at(10300, () => reach(a[1]));
-      at(11000, () => place(after, 2));
-      at(11700, () => reach(a[2]));
-      at(12400, () => place(after, 3));
-      at(13100, () => reach(a[3]));
-      at(13400, () => { a[3].classList.add("is-done"); fig.classList.remove("is-staged"); });
+      then(1000,      () => fig.classList.add("is-two"));
+      then(900,       () => { place(after, 0, "mid", false); reach(a[0]); });
+      then(700,       () => hop(after, 1));
+      then(HOP + 500, () => hop(after, 2));
+      then(HOP + 500, () => hop(after, 3));
+      then(HOP + 300, () => { a[3].classList.add("is-done"); fig.classList.remove("is-staged"); });
     });
   });
 
