@@ -854,6 +854,116 @@ const CONFIG = {
     afterReveal(fig, () => { eng.size(); landed = true; sync(); });
   });
 
+  /* ---- The brief, as a run ----
+     The agentic audit's brief drawn as the six steps it sets up, played the
+     way the AI card plays its agents: one step wakes out of a slight tilt,
+     works (its counts run up, its rows arrive, a spinner in its title bar),
+     ticks done, and the work travels a dotted wire to the next. After step
+     six the wire back to step one draws, for the monthly rerun, then the run
+     holds and starts over. The wires are measured from the cards, so they
+     follow the three-across layout and the single column alike (the loop is
+     only drawn when step six sits under step one). The clock only runs while
+     playing, on screen and after the panel lands; the button is the WCAG
+     2.2.2 stop. Under reduced motion, or without the script, every step
+     shows done. */
+  const RUN_STEP = 2.3, RUN_WORK = 1.5, RUN_WIRE = .8, RUN_LEAD = .4, RUN_HOLD = 3.4;
+  const initRun = () => $$("[data-brief-run]").forEach((fig) => {
+    const nodes = $$(".rn-node", fig), svg = $(".rn-wires", fig), loopLbl = $(".rn-loop", fig), btn = $(".art-ctl", fig);
+    const NS = "http://www.w3.org/2000/svg", n = nodes.length;
+    const nums = nodes.map((nd) => $$("[data-to]", nd).map((el) => ({ el, to: +el.dataset.to, dp: +(el.dataset.dp || 0), suf: el.dataset.suffix || "" })));
+    const bars = nodes.map((nd) => $$(".rn-bar i", nd));
+    const parts = nodes.map((nd) => $$(".rn-rows li, .rn-fix, .rn-hand", nd));
+    const fmt = (v, dp) => v.toLocaleString("en-US", { minimumFractionDigits: dp, maximumFractionDigits: dp });
+    const start = (i) => RUN_LEAD + i * RUN_STEP;
+    const LOOP_AT = start(n - 1) + RUN_WORK, END = LOOP_AT + RUN_WIRE + RUN_HOLD, CYCLE = END + .8;
+    // wires: i joins step i to i+1; the last joins step six back to step one
+    const wires = nodes.map((_, i) => {
+      const g = document.createElementNS(NS, "g"), mk = (tag, cls) => { const e = document.createElementNS(NS, tag); if (cls) e.setAttribute("class", cls); g.appendChild(e); return e; };
+      const trk = mk("path", "trk"), lit = mk("path", "lit"), arw = mk("path", "arw"), pkt = mk("circle", "pkt");
+      pkt.setAttribute("r", "4");
+      svg.appendChild(g);
+      return { g, trk, lit, arw, pkt, len: 0, on: true, from: i, to: (i + 1) % n };
+    });
+    const size = () => {
+      const box = fig.getBoundingClientRect();
+      const r = nodes.map((nd) => { const q = nd.getBoundingClientRect(); return { l: q.left - box.left, r: q.right - box.left, t: q.top - box.top, b: q.bottom - box.top }; });
+      const G = 8;   // the wire stops short of a card's edge
+      wires.forEach((w) => {
+        const a = r[w.from], b = r[w.to];
+        let pts = null;
+        const midY = (Math.max(a.t, b.t) + Math.min(a.b, b.b)) / 2, midX = (Math.max(a.l, b.l) + Math.min(a.r, b.r)) / 2;
+        if (b.l >= a.r - 1 && midY > Math.max(a.t, b.t)) pts = [[a.r + G, midY], [b.l - G, midY]];
+        else if (b.r <= a.l + 1 && midY > Math.max(a.t, b.t)) pts = [[a.l - G, midY], [b.r + G, midY]];
+        else if (b.t >= a.b - 1 && midX > Math.max(a.l, b.l)) pts = [[midX, a.b + G], [midX, b.t - G]];
+        else if (b.b <= a.t + 1 && midX > Math.max(a.l, b.l)) {
+          // back up: only when nothing sits between the two (the loop, three across)
+          const clear = r.every((q, k) => k === w.from || k === w.to || q.b <= b.b || q.t >= a.t || q.r <= Math.max(a.l, b.l) || q.l >= Math.min(a.r, b.r));
+          if (clear) pts = [[midX, a.t - G], [midX, b.b + G]];
+        }
+        w.on = !!pts;
+        w.g.style.display = pts ? "" : "none";
+        if (!pts) return;
+        const d = `M${pts[0][0]} ${pts[0][1]}L${pts[1][0]} ${pts[1][1]}`;
+        w.trk.setAttribute("d", d); w.lit.setAttribute("d", d);
+        w.len = Math.hypot(pts[1][0] - pts[0][0], pts[1][1] - pts[0][1]);
+        w.a = pts[0]; w.b = pts[1];
+        const ang = Math.atan2(pts[1][1] - pts[0][1], pts[1][0] - pts[0][0]) * 180 / Math.PI;
+        w.arw.setAttribute("d", "M-5 -4.5L0 0L-5 4.5");
+        w.arw.setAttribute("transform", `translate(${pts[1][0]} ${pts[1][1]}) rotate(${ang})`);
+        if (w.to === 0 && loopLbl) { loopLbl.style.left = `${pts[0][0] + 14}px`; loopLbl.style.top = `${(pts[0][1] + pts[1][1]) / 2}px`; }
+      });
+      if (loopLbl) loopLbl.hidden = !wires[n - 1].on;
+      frame(last);
+    };
+    const ease = (x) => 1 - Math.pow(1 - Math.min(1, Math.max(0, x)), 3);
+    let last = 1e9;
+    // one frame of the run at time t; t past the end of a cycle shows it finished
+    const frame = (t) => {
+      last = t;
+      const u = t >= CYCLE ? END : t % CYCLE, reset = u > END;
+      nodes.forEach((nd, i) => {
+        const s = start(i), on = !reset && u >= s, ok = on && u >= s + RUN_WORK, p = on ? ease((u - s) / (RUN_WORK * .85)) : 0;
+        nd.classList.toggle("on", on && !ok);
+        nd.classList.toggle("ok", ok);
+        nums[i].forEach((m) => { m.el.textContent = fmt(ok ? m.to : m.to * p, m.dp) + m.suf; });
+        bars[i].forEach((b) => b.style.setProperty("--p", ok ? 1 : p));
+        parts[i].forEach((el, k) => el.classList.toggle("in", on && u >= s + .25 + k * .3));
+      });
+      wires.forEach((w, i) => {
+        const s = i === n - 1 ? LOOP_AT : start(i) + RUN_WORK, p = reset ? 0 : Math.min(1, Math.max(0, (u - s) / RUN_WIRE));
+        const q = ease(p), dots = w.len * q;
+        // the darker dots run as far as the work has got, cut off at the packet
+        w.lit.style.opacity = q > 0 ? 1 : 0;
+        w.lit.style.strokeDasharray = q >= 1 ? "0 8" : dashTo(dots);
+        w.arw.style.opacity = q >= 1 ? 1 : 0;
+        const moving = p > 0 && p < 1;
+        w.pkt.style.opacity = moving ? 1 : 0;
+        if (w.a) w.pkt.setAttribute("cx", w.a[0] + (w.b[0] - w.a[0]) * q), w.pkt.setAttribute("cy", w.a[1] + (w.b[1] - w.a[1]) * q);
+      });
+      if (loopLbl) loopLbl.style.opacity = reset || u < LOOP_AT + RUN_WIRE * .5 ? .35 : 1;
+    };
+    // a dash pattern of dots up to `len`, then a gap as long as the wire
+    const dashTo = (len) => [...Array(Math.max(0, Math.floor(len / 8))).fill("0 8"), "0 100000"].join(" ");
+    fig.classList.add("live");
+    if ("ResizeObserver" in window) new ResizeObserver(size).observe(fig);
+    if (document.fonts) document.fonts.ready.then(size);
+    size();
+    if (reduced) { frame(1e9); return; }
+    let raf = 0, acc = 0, since = 0, playing = true, landed = false;
+    frame(0);
+    const tick = (now) => { frame(acc + (now - since) / 1000); raf = requestAnimationFrame(tick); };
+    const sync = () => {
+      const go = playing && landed && visible();
+      fig.classList.toggle("playing", !!go);
+      if (go && !raf) { since = performance.now(); raf = requestAnimationFrame(tick); }
+      if (!go && raf) { cancelAnimationFrame(raf); raf = 0; acc += (performance.now() - since) / 1000; }
+      setPaused(btn, playing, "animation");
+    };
+    if (btn) { btn.hidden = false; btn.addEventListener("click", () => { playing = !playing; sync(); }); }
+    const visible = whileOnScreen(fig, .25, sync);
+    afterReveal(fig, () => { size(); landed = true; sync(); });
+  });
+
   /* ---- Fields ----
      A block's ground as a canvas that answers the cursor: `data-field` on the
      block names which piece runs over its `canvas.field`. Two pieces: the
@@ -3471,6 +3581,6 @@ const CONFIG = {
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { if (current() === "system") document.dispatchEvent(new CustomEvent("themechange")); });
   };
 
-  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStory, initCoach, initFields, initCharts, initMatrix, initConfig, initFlows, initBeforeAfter, initStrips, initTableWraps, initPortrait, initClock, initArcade, initStack, initLens, initSteps, initDemo, initPalette, initPostList, initChat, initYear, initTheme, initTalk]
+  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStory, initRun, initCoach, initFields, initCharts, initMatrix, initConfig, initFlows, initBeforeAfter, initStrips, initTableWraps, initPortrait, initClock, initArcade, initStack, initLens, initSteps, initDemo, initPalette, initPostList, initChat, initYear, initTheme, initTalk]
     .forEach((init) => { try { init(); } catch (err) { console.error(`main.js: ${init.name} failed`, err); } });
 })();
