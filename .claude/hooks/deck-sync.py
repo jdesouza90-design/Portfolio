@@ -24,16 +24,18 @@ import sys
 import tempfile
 
 DECK = 'https://claude.ai/artifact/VGcbxmLiVZPo1tD7tsdo5L'
+VANTA = 'https://claude.ai/artifact/G3KAnpzqvxt9oKHVMyqt1w'   # the Vanta copy: every change reaches it too (John, Sep 28 2026)
 PAGE = re.compile(r'^(index\.html|work\.html|work/[^/]+\.html)$')
 IMAGE = re.compile(r'^assets/(?!blog/|BE/)[^/]+\.(webp|png|jpe?g|gif|svg|mp4|webm)$')
 STAMP = re.compile(r'\?v=[a-f0-9]+')
 COMMIT = re.compile(r'\bgit\b(?:\s+-C\s+\S+)?\s+commit(?![-\w])')
 
 REMIND = (
-    'Deck sync: {what}. John\'s interview deck mirrors these pages, so update the matching '
+    'Deck sync: {what}. John\'s interview decks mirror these pages, so update the matching '
     'slides in this same pass, before you call the work done ("Deck sync" in CLAUDE.md: the '
-    'deck is ' + DECK + '; list its files, read the slides you will change, edit them, publish '
-    'to the same url, and name the slides in your final message). Skip only a change the deck '
+    'main deck is ' + DECK + ' and the Vanta copy is ' + VANTA + ', and every change reaches '
+    'both; list each one\'s files, read the slides you will change, edit them, publish to the '
+    'same url, and name the slides in your final message). Skip only a change the deck '
     'cannot show (markup, CSS, motion, accessibility), and say that you skipped it. If this '
     'session cannot reach the deck, add an entry to DECK-PENDING.md at the repo root and commit '
     'it with the change.'
@@ -89,7 +91,8 @@ def on_start(data):
         say('SessionStart',
             'Deck sync: DECK-PENDING.md lists ' + str(len(entries)) + ' site change(s) the deck does '
             'not have yet: ' + ' | '.join(entries[:6]) + '. Tell John at the start of your reply, '
-            'apply them to the deck ("Deck sync" in CLAUDE.md), then clear the entries on a branch '
+            'apply them to both decks, the main one and the Vanta copy ("Deck sync" in CLAUDE.md), '
+            'then clear the entries on a branch '
             'and merge it.')
 
 

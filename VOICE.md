@@ -62,6 +62,18 @@ Cards and triads: a one- or two-word label, then one full sentence with a subjec
 - **Quotes** keep the speaker's grammar. Attribution is a label plus a source (Product confusion · Applicant interview). Public posts get the handle and the date.
 - **Spelling is American** throughout: color, not colour; organize, not organise; favor, not favour.
 
+## What reads as generated
+
+An audit on September 28, 2026 found the site read as AI-written because of a few shapes repeated across pages, not because any one line was wrong. Each is fine once. Watch the count.
+
+- **"X, not Y."** One per page at most. Refinance had four in a row as headings.
+- **A quotable line to end the paragraph.** "The agents make us faster. The review keeps the quality up." End on the fact instead.
+- **Arcs and mirrors.** "It started with one button and ended with every file." "I started directing and finished coaching." Say what happened.
+- **A paragraph, then cards that repeat it.** If the cards carry the points, the paragraph says what they don't.
+- **Everything in threes.** Use the number of points that are true.
+- **Resume nouns as labels.** Cross-functional leadership, Design execution, Orchestration. Name the work: Weekly reviews, Protocol calls.
+- **Praise that sounds like an ad.** "A game-changer!" from an unnamed developer reads as invented. Research quotes can stay anonymous. Praise needs a name, a link or a date, or it goes.
+
 ## Before and after
 
 | On the site today | Rewritten |
