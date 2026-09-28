@@ -1458,8 +1458,7 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 @media (prefers-reduced-motion: reduce) { .lens-pick-word.roll { animation: none; } }
 @media (max-width: 640px) {
   .lens { align-items: flex-start; }
-  .lens.has-pick { flex-direction: column; align-items: stretch; gap: var(--sp-3); }   /* the label centred over a full-width dropdown */
-  .lens.has-pick .lens-label { text-align: center; }
+  .lens.has-pick { flex-direction: column; align-items: stretch; gap: var(--sp-3); }   /* the label on the left edge over a full-width dropdown, in line with the heading above */
   .lens.has-pick .seg { display: none; }   /* the dropdown stands in for the tabs */
   .lens-pick { display: flex; width: 100%; }
 }
