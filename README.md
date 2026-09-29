@@ -335,13 +335,19 @@ Function, answers with Claude Haiku 4.5 by default.
 ## Inside a case study
 
 - **The agent window** (`initDemo`, the audit case study's hero, after
-  granola.ai). A figure marked `data-demo` carries its script as JSON in a
-  `<script type="application/json" data-demo-script>` and a window with a
-  status, a log and a figure; the script's steps play in order and loop,
-  each holding for its `hold_ms`; a figure with a `to` counts to it. It
-  waits for its block to reveal, runs only on screen, stops behind its
-  button, and under reduced motion stands at the run's last step. Every
-  number in the script is one the page states.
+  granola.ai). A split window: on the left a dark terminal
+  (`data-demo-term`) running `figma-audit`, on the right the remediation
+  guide it writes (`data-demo-guide`), one card per fix, marked "Agent can
+  make it" or "Needs write access", each with "Open in Figma". The markup
+  is the finished run; the script replays it: the command types, the crawl
+  bar fills, each line prints after the last has held for its `data-hold`,
+  a line's `data-card` writes those cards in (titles typed), `data-total`
+  counts the guide to 28, `data-decide` flips the button card to "Designer
+  decided", `data-status` sets the bar. Its clock runs only while it is on
+  screen and not paused; the window is held at the finished run's height.
+  On a phone the panes stack at a fixed height and follow the newest line
+  and card. Under reduced motion (or with no script) the finished run
+  stands. Every number in it is one the page states.
 - **The brief** (`.panel.brief`): the agent's instructions as one paragraph,
   each clause with the question it answers as a mono label above it (after
   wattenberger.com). It is a reconstruction from the page until John replaces

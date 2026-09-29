@@ -1730,10 +1730,10 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 .hero-panel.demo { flex-direction: column; align-items: stretch; padding: clamp(20px, 3.5vw, 40px); }
 @media (max-width: 1100px) { .hero-panel.demo { padding-bottom: 60px; } }   /* where the window fills the panel, its pause sits under it, not on its corner */
 .agent-win {
-  position: relative; width: 100%; max-width: 880px; margin-inline: auto; min-height: clamp(240px, 26vw, 330px);
+  position: relative; width: 100%; max-width: 1120px; margin-inline: auto;
   display: grid; grid-template-rows: auto 1fr; overflow: hidden;
   background: var(--plate-surface); border: 1px solid var(--plate-hair); border-radius: 12px; box-shadow: var(--shadow-screen);
-  font-family: var(--font-mono); font-size: var(--t-small); line-height: 1.5; color: var(--plate-ink);
+  font-family: var(--font-mono); font-size: 13px; line-height: 1.6; color: var(--plate-ink);
 }
 .agent-bar { display: flex; align-items: center; gap: var(--sp-3); padding: 10px 14px; border-bottom: 1px solid var(--plate-hair); background: var(--plate-paper); }
 .agent-dots { display: inline-flex; gap: 6px; }
@@ -1744,21 +1744,84 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 .agent-status::before { content: ""; flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--plate-accent); }
 .agent-win.busy .agent-status::before { animation: agent-pulse 1s ease-in-out infinite; }
 @keyframes agent-pulse { 50% { opacity: .25; } }
-.agent-body { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--sp-5); padding: var(--sp-5); align-items: end; }
-.agent-log { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; align-content: start; align-self: start; }
-.agent-log li { opacity: 0; transform: translateY(6px); animation: agent-line .35s var(--ease) both; animation-delay: calc(var(--i, 0) * 140ms); }
-.agent-log li::before { content: "› "; color: var(--plate-ink-2); }
-@keyframes agent-line { to { opacity: 1; transform: none; } }
-.agent-fig { text-align: right; }
-.agent-fig b { display: block; font-family: var(--font-display); font-weight: 400; font-size: var(--t-stat); line-height: var(--lh-stat); letter-spacing: var(--ls-stat); color: var(--plate-accent-ink); font-variant-numeric: lining-nums tabular-nums; }
-.agent-fig span { display: block; margin-top: 6px; font-size: var(--t-micro); letter-spacing: var(--ls-micro); text-transform: uppercase; color: var(--plate-ink-2); }
+.agent-split { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); }
+
+/* Left: the terminal the agent runs in. A dark pane in both registers, on
+   the plate's inks: green for a pass, a warm amber (its one extra color,
+   the terminal's warning) for a flag, and dim for what it skipped. */
+.agent-term {
+  --term-ink: var(--plate-paper-2); --term-dim: #9C958B; --term-ok: var(--plate-accent-2); --term-flag: #D9A066;
+  list-style: none; margin: 0; padding: var(--sp-5); display: flex; flex-direction: column; gap: 2px;
+  background: var(--plate-ink-0); color: var(--term-ink);
+}
+.agent-term li { white-space: pre-wrap; padding-left: 2.4ch; text-indent: -2.4ch; }   /* a wrapped line hangs under its text, clear of its mark */
+.agent-term li > i { font-style: normal; display: inline-block; width: 1.4ch; text-indent: 0; }
+.agent-term .t-prompt { color: var(--term-ok); }
+.agent-term .t-cmd { margin-bottom: 6px; }
+.agent-term .t-ok > i { color: var(--term-ok); }
+.agent-term .t-ok b { font-weight: 500; color: var(--term-ok); }
+.agent-term .t-dim { color: var(--term-dim); }
+.agent-term .t-flag { color: var(--term-flag); }
+.agent-term .t-bar { color: var(--term-dim); }
+.t-track { display: inline-block; width: 9ch; height: 7px; vertical-align: 1px; border-radius: 2px; background: rgba(239, 236, 230, .14); overflow: hidden; }
+.t-track b { display: block; height: 100%; background: var(--term-ok); transform-origin: left; transform: scaleX(var(--p, 1)); }
+.agent-term .t-caret { margin-top: auto; padding-top: 6px; }
+.caret { display: inline-block; width: .6em; height: 1.1em; vertical-align: -3px; background: var(--term-ink); animation: caret 1.1s steps(1) infinite; }
+@keyframes caret { 50% { opacity: 0; } }
+
+/* Right: the remediation guide the agent writes as it flags. One card per
+   fix, marked for the agent or for a designer with write access, each with
+   its link into Figma. */
+.agent-guide { display: flex; flex-direction: column; gap: var(--sp-3); padding: var(--sp-5); background: var(--plate-paper); border-left: 1px solid var(--plate-hair); }
+.g-head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--sp-3); font-size: var(--t-micro); letter-spacing: var(--ls-micro); text-transform: uppercase; color: var(--plate-ink-2); }
+.g-total b { font-weight: 500; color: var(--plate-ink-0); font-variant-numeric: tabular-nums; }
+.g-cards { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-2); }
+.g-card {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px var(--sp-3); align-items: baseline;
+  padding: 10px 12px; background: var(--plate-surface); border: 1px solid var(--plate-hair); border-radius: 8px;
+  animation: g-in .45s var(--ease) both;
+}
+@keyframes g-in { from { opacity: 0; transform: translateY(8px); } }
+.g-title { font-family: var(--font-body); font-size: 14.5px; font-weight: 500; line-height: 1.35; color: var(--plate-ink-0); }
+.g-tag { justify-self: end; white-space: nowrap; padding: 2px 8px; border-radius: 99px; font-size: 11px; letter-spacing: .02em; }
+.g-write { background: var(--plate-paper-2); color: var(--plate-ink-2); }
+.g-agent { background: var(--plate-glow); color: var(--plate-accent-ink); }
+.g-decided { background: var(--plate-accent-ink); color: var(--plate-surface); }
+.g-meta { font-size: 12px; color: var(--plate-ink-2); }
+.g-link { justify-self: end; font-size: 12px; color: var(--plate-accent-ink); white-space: nowrap; }
+.g-card .g-after, .g-card.decided .g-before { display: none; }
+.g-card.decided .g-after { display: inline; }
+.g-card.decided .g-tag.g-after { display: inline-block; animation: g-pop .4s var(--ease) both; }
+@keyframes g-pop { from { opacity: 0; transform: scale(.85); } }
+
+/* The run in progress: main.js marks what has not printed yet. It keeps
+   its room (the window is held at the finished run's height), so nothing
+   under the window moves. */
+.agent-win:not(.measure) .pending { display: none; }
+.agent-win.paused .caret, .agent-win.paused .g-card { animation-play-state: paused; }
+
+@media (max-width: 860px) {
+  .agent-split { grid-template-columns: minmax(0, 1fr); }
+  .agent-guide { border-left: 0; border-top: 1px solid var(--plate-hair); }
+}
 @media (max-width: 640px) {
-  .agent-body { grid-template-columns: minmax(0, 1fr); align-items: start; }
-  .agent-fig { text-align: left; }
+  .agent-win { font-size: 12px; }
+  .agent-term, .agent-guide { padding: var(--sp-4); }
   .agent-title { display: none; }   /* the status alone fits the bar */
+  .g-card { grid-template-columns: minmax(0, 1fr) auto; }
+  .g-title, .g-meta { grid-column: 1 / -1; }
+  .g-tag { justify-self: start; grid-row: 3; }
+  .g-link { grid-row: 3; }
+  /* Both panes keep a fixed height and follow the newest output, as a
+     terminal and a document being written do; what scrolled off fades at
+     the top. main.js keeps each one at its end. */
+  .agent-term { height: 17.5rem; overflow: hidden; }
+  .agent-term .t-caret { margin-top: 0; }
+  .g-cards { max-height: 21rem; overflow: hidden; align-content: start; }
+  .agent-term, .g-cards { -webkit-mask-image: linear-gradient(to bottom, transparent, #000 2.5rem); mask-image: linear-gradient(to bottom, transparent, #000 2.5rem); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .agent-log li { animation: none; opacity: 1; transform: none; }
+  .g-card, .g-card.decided .g-tag.g-after, .caret { animation: none; }
   .agent-win.busy .agent-status::before { animation: none; }
 }
 
