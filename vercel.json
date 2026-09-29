@@ -6,6 +6,9 @@
       "main": true
     }
   },
+  "redirects": [
+    { "source": "/work/sign-in-with-ethereum.html", "destination": "/work.html", "permanent": true }
+  ],
   "functions": {
     "api/chat.js": {
       "maxDuration": 60,

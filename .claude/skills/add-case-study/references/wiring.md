@@ -23,9 +23,9 @@ Three names, chosen once and used everywhere:
 
 | Name | Form | Examples | Used for |
 |---|---|---|---|
-| Slug | kebab-case of the project name | `cross-sell`, `sign-in-with-ethereum` | `work/<slug>.html`, `og:url`, hrefs |
-| Class | `case-` + a short form | `case-cross-sell`, `case-no-code`, `case-siwe` | `<body>` of the page, `.case-row` in both indexes, the ground rule in `styles.css` |
-| Prefix | two to seven characters + `-` | `cs-`, `ver-`, `staking-`, `nocode-`, `siwe-` | every asset file |
+| Slug | kebab-case of the project name | `cross-sell`, `no-code-tools` | `work/<slug>.html`, `og:url`, hrefs |
+| Class | `case-` + a short form | `case-cross-sell`, `case-no-code`, `case-refi` | `<body>` of the page, `.case-row` in both indexes, the ground rule in `styles.css` |
+| Prefix | two to seven characters + `-` | `cs-`, `ver-`, `staking-`, `nocode-`, `refi-` | every asset file |
 
 The class and prefix may be shorter than the slug; the slug is never abbreviated.
 
@@ -114,7 +114,7 @@ say which one you chose:
 | `case-media cutout bleed` | A taller keyed-out piece blown up until it runs off the bottom | Verifications, `ver-documents.webp` |
 | `case-media emerge` | One phone screen, large, coming out of the bottom-left corner of the ground | Cross-Sell, `cs-decline.webp` |
 | `case-media wide emerge` / `wide emerge right` | One desktop screen the same way; `.right` shows its top-right corner instead | No-code tools; Staking |
-| `case-media wide` | One landscape image contained inside the ground | Sign-in with Ethereum |
+| `case-media wide` | One landscape image contained inside the ground | none live yet |
 
 `emerge` takes its offsets per project, beside the rule in `styles.css` section "Selected
 work" (`.case-<slug> .case-media.emerge { --x: 12%; --y: 10%; --w: 92%; }`): `--x`/`--y`
@@ -128,7 +128,7 @@ desktop). The `::after` overlay paints the ground itself (base, art and gradient
 same `--panel-*` tokens, so a new ground is picked up with nothing to add) masked to a band
 along the edges: where nothing sits on the ground it is invisible, and where the screen runs
 off the ground it dissolves into it instead of stopping at the clip line. Contained images
-(`cutout`, `wide`) get no fade; John took it off Refinance offers and Sign-in with Ethereum
+(`cutout`, `wide`) get no fade; John took it off Refinance offers
 because a card or illustration that sits whole on the ground should keep its crisp edges.
 Compose for it:
 
@@ -173,9 +173,6 @@ link (`.cs-prev-link`) straight under it (markup in `page-anatomy.md` §7). Toda
 cross-sell → verifications → refinance-offers → staking → no-code-tools → cross-sell
 ```
 
-(`sign-in-with-ethereum` is hidden, see below, so it is out of the ring; its own links
-still point at `no-code-tools` and `cross-sell`.)
-
 Inserting a page after X means three pages change: the new page's `PREV_SLUG` is X and its
 `NEXT_SLUG` is X's old next; X's next link now points to the new page; and X's old next
 gets its `cs-prev-link` pointed back at the new page. Inserting first means the new page
@@ -190,8 +187,8 @@ whose next link points to it.
 
 ### Hiding a case study
 
-A page can be taken off the site without deleting anything (Sign-in with Ethereum, Sep
-2026). Four edits, all reversible:
+A page can be taken off the site without deleting anything (Sign-in with Ethereum was parked
+this way in Sep 2026, then removed for good). Four edits, all reversible:
 
 1. `<meta name="robots" content="noindex">` in the page's `<head>`, with a comment saying
    why. `check.py` reads it as "parked": the page is still checked like the others, but is

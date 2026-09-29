@@ -21,8 +21,6 @@ work/verifications.html         Best Egg · Verifications
 work/refinance-offers.html      Best Egg · Refinance offers on native mobile
 work/staking.html               Chainlink Labs · Staking v0.1
 work/no-code-tools.html         Auth0 · No-code tools
-work/sign-in-with-ethereum.html Auth0 · Sign-in with Ethereum (hidden for now: no index row, out of the
-                                ring, noindex; still opens by URL; its work.html row is parked in a comment)
 blog.html                       Blog index: the three pillars, then the posts under each (generated)
 blog/<slug>.html                A post (generated, never hand-edited)
 blog/posts/<slug>.html          A post's source: JSON front matter (with its cover line), then the body as an HTML fragment
@@ -678,7 +676,7 @@ Every case study is the same document, in this order:
    and under it the evidence (chart, capacity gauge, A/B table, or a
    hairline list of what shipped where there are no published numbers).
    **Reception** (`#reception`) follows where there is public reaction after
-   launch (Staking, Sign-in with Ethereum): its own section, an intro line
+   launch (Staking): its own section, an intro line
    saying where the quotes came from, then the carousel.
 6. **What I'd do differently**: one narrow note with run-in labels, where a
    retro exists. Never invented: a page without John's own retro has none.
@@ -968,9 +966,7 @@ The rules that shape the code:
   sharp and their corners keyed); `.cutout.bleed` blows a taller one up until
   it runs off the bottom; `.emerge` sets a whole screen large, coming out of
   a bottom corner of the ground (`--x`/`--y`/`--w` per row set beside the
-  rule; `.right` shows the screen's top-right corner instead). Sign-in with
-  Ethereum (its row is parked in a comment while the page is hidden) keeps
-  the plain `.wide` ground. Where a screen runs off the ground
+  rule; `.right` shows the screen's top-right corner instead). Where a screen runs off the ground
   (`.emerge`, `.bleed`) the ground fades it out over the last stretch before
   each edge (`--fade`, 40 to 80 px): the `::after` overlay paints the ground
   itself, masked to a band along the edges, so the screen dissolves into it

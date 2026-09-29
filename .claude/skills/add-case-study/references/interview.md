@@ -103,7 +103,7 @@ Fills the problem row and the first sentence of the Results lede.
    Slot: `TENSIONS`, three items, each a one-word label and one sentence with a subject.
    Offer the shapes the existing pages use so John can react rather than compose: Pivot /
    Trust / Business (Cross-Sell), Clarity / Trust / Growth (Staking), Access / Confidence /
-   Control (No-code), Autonomy / Safety / Adoption (Sign-in with Ethereum). Two is acceptable;
+   Control (No-code). Two is acceptable;
    four means one is really a sub-point.
 
 ---
