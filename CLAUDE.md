@@ -47,9 +47,8 @@ accessibility fixes, the blog and the admin pages.
 2. Slide ids: `cover`, `for-company`, `lead-intro`, `lead-coaching`, `lead-ai`,
    `lead-layers`, `about`, `experience`, `kudos`, `work-index`, then one run per case
    study, prefixed `ads-` (agentic design system audit), `cs-` (Cross-Sell), `ver-`
-   (Verifications), `refi-` (Refinance offers), `stk-` (Staking), `nc-` (No-code tools)
-   and `siwe-` (Sign-in with Ethereum, hidden like its page). A run is the intro and the
-   hero, then one slide per section of the page, in the page's order.
+   (Verifications), `refi-` (Refinance offers), `stk-` (Staking), and `nc-` (No-code tools).
+   A run is the intro and the hero, then one slide per section of the page, in the page's order.
 3. Match the site. Headings, eyebrows, numbers, quotes, names, who did what and section
    order are exactly what the site says, and quotes are never shortened. A slide may
    condense a long paragraph to fit, as long as it keeps every fact and adds none. Slides

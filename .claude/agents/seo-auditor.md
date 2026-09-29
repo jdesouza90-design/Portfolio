@@ -20,8 +20,8 @@ For every page (home, `work.html`, `work/*.html`, `blog.html`, `blog/*.html`, `4
    `twitter:card`.
 2. **JSON-LD.** Parse every `application/ld+json` block. It's valid JSON of the right type, and it
    points to `#john` by `@id` without repeating the Person. Dates are ISO. Headlines match the page's h1.
-3. **Parked pages.** A page with `noindex` (today the audit agent and Sign-in with Ethereum case
-   studies, and 404) is in no sitemap, no feed, no `llms.txt`, and no link a crawler can follow from a
+3. **Parked pages.** A page with `noindex` (today the audit agent case
+   study and 404) is in no sitemap, no feed, no `llms.txt`, and no link a crawler can follow from a
    public page. That's how parking works on this site, so a parked page that leaks is a finding.
 4. **Gated areas.** `robots.txt` keeps crawlers out of `/work/` and `/admin/`, and points at the sitemap.
    `llms.txt` leaves `/work/` out.

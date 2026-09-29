@@ -21,7 +21,7 @@ You never edit, commit, switch branches, start servers or publish. Bash is for r
   because the orchestrator treats README as the spec.
 - **`middleware.js`** is the edge (gates, activity log, scores, chat settings). `api/chat.js` is the chat.
 - **The deck slide ids** for a page come from CLAUDE.md "Deck sync" (`stk-`, `cs-`, `ver-`, `refi-`,
-  `nc-`, `ads-`, `siwe-`, plus the home-page ids). Name the likely slides for any content you find.
+  `nc-`, `ads-`, plus the home-page ids). Name the likely slides for any content you find.
 
 ## What to return
 

@@ -58,7 +58,7 @@ Cards and triads: a one- or two-word label, then one full sentence with a subjec
 - **Lists** have no serial comma: product, engineering and compliance.
 - **Punctuation** is full stops, commas and colons. No em dashes, semicolons or exclamation marks outside a quote. The one exception is the page-title separator (Verifications — John DeSouza). Arrows belong in diagrams and the metric chain, not in prose. 0→1 is a term, not an arrow, and is fine anywhere.
 - **Abbreviations** are spelled out on first use on each page. Vehicle Equity and Home Secured, not VEL and HSL. General manager, not GM. Tickers (LINK) and A/B are fine.
-- **Names** as the company writes them: Best Egg, Chainlink Labs, Auth0, Sign-in with Ethereum, Staking v0.1.
+- **Names** as the company writes them: Best Egg, Chainlink Labs, Auth0, Staking v0.1.
 - **Quotes** keep the speaker's grammar. Attribution is a label plus a source (Product confusion · Applicant interview). Public posts get the handle and the date.
 - **Spelling is American** throughout: color, not colour; organize, not organise; favor, not favour.
 

@@ -1435,7 +1435,7 @@ footer a:hover { color: var(--ink); }
 .proof-head { display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; margin-bottom: var(--sp-5); }
 .proof-head small { display: block; max-width: 40ch; }
 /* The frame also hosts a comparison table (Verifications) or, where there is no
-   number to chart, a hairline list of what shipped (No-code tools, SIWE). */
+   number to chart, a hairline list of what shipped (No-code tools). */
 .proof .table-wrap { border: 0; border-top: 1px solid var(--hair); border-radius: 0; background: transparent; }
 .proof .tensions { margin-top: 0; }
 .proof .tensions li { grid-template-columns: minmax(0, 11rem) minmax(0, 1fr); }
@@ -2050,7 +2050,6 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
 .case-refi .case-media, .case-refi .hero-panel { view-transition-name: case-refi; }
 .case-staking .case-media, .case-staking .hero-panel { view-transition-name: case-staking; }
 .case-no-code .case-media, .case-no-code .hero-panel { view-transition-name: case-no-code; }
-.case-siwe .case-media, .case-siwe .hero-panel { view-transition-name: case-siwe; }
 /* The rows themselves, for the lens's reorder (initLens): each row keeps its
    place in the eye as the list re-sorts. */
 .case-row.case-system { view-transition-name: row-system; }
@@ -2060,7 +2059,6 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
 .case-row.case-refi { view-transition-name: row-refi; }
 .case-row.case-staking { view-transition-name: row-staking; }
 .case-row.case-no-code { view-transition-name: row-no-code; }
-.case-row.case-siwe { view-transition-name: row-siwe; }
 @media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
 /* A block waits below its place and rises into it once the reader reaches
    it (main.js sets .in). The fade runs straight so the block is still
@@ -2165,13 +2163,6 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
   /* a lattice of nodes: the flow builder's canvas */
   --panel-art: radial-gradient(rgba(20,16,12,.10) 1.2px, transparent 1.4px);
   --panel-size: 28px 28px;
-}
-.case-siwe {
-  --panel-base: #E7E3DC;
-  --panel: linear-gradient(155deg, #F0EDE9 0%, #DDD8D0 100%);
-  /* dashed rulings: sign on the dotted line */
-  --panel-art: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='32'%3E%3Cpath d='M0 .5h14' stroke='rgba(20,16,12,.09)'/%3E%3C/svg%3E");
-  --panel-size: 24px 32px;
 }
 .case-audit {
   --panel-base: #E6DFD0;
