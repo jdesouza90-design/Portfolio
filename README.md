@@ -879,7 +879,10 @@ The rules that shape the code:
 - Tables have header scopes. A table wider than its `.table-wrap` frame
   scrolls sideways, so `main.js` (`dash.js` on the dashboard) makes the frame
   a labelled tab stop only while it overflows, with the inputs' focus ring;
-  a `tabindex="0"` in the markup stands without the script.
+  a `tabindex="0"` in the markup stands without the script. The agent
+  window's two panes on the agentic audit page do the same on a phone when
+  the run isn't playing, and the window turns from one image into a group
+  while either pane is a stop.
 - Icons are `aria-hidden`; every image has an alt; logos used as decoration
   have an empty one. Focus rings switch to paper on dark grounds.
 - A text link is underlined in its own ink (1px, 2px on hover), so no link
