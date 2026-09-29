@@ -5,6 +5,18 @@ export const meta = {
   phases: [{ title: 'Audit', detail: 'one copy-audit per page' }],
 }
 
+// A session that started on a branch older than the agent stack has no .claude/agents, so the named
+// agent type isn't registered and agent() throws. Fall back to a Sonnet general-purpose agent that
+// reads the same definition and follows it.
+const brief = (type) =>
+  `You stand in for the "${type}" agent. Read its definition, .claude/agents/${type}.md, and follow the body (below the frontmatter) as your instructions. ` +
+  `If this checkout has no .claude/agents it predates the agent stack: read it with \`git show main:.claude/agents/${type}.md\` instead.\n\n`
+const run = (type, prompt, opts, extra = '') => agent(prompt, { ...opts, agentType: type }).catch((e) => {
+  if (!/agent type .* not found/i.test(String((e && e.message) || e))) throw e
+  log(`${type} is not registered in this session; ${opts.label} runs as a general-purpose agent reading its definition`)
+  return agent(brief(type) + extra + prompt, { ...opts, agentType: 'general-purpose', model: 'sonnet' })
+})
+
 const PAGES = (args && args.pages) || [
   'index.html', 'work.html',
   'work/agentic-design-system-audit.html', 'work/cross-sell.html', 'work/verifications.html',
@@ -24,8 +36,8 @@ const FINDINGS = {
 }
 
 const audits = await parallel(PAGES.map((p) => () =>
-  agent(`Audit the copy on ${p}. Also grep the other pages for every number and claim on it and flag mismatches (card, work row, page).`,
-    { label: `audit:${p}`, phase: 'Audit', agentType: 'copy-audit', schema: FINDINGS })
+  run('copy-audit', `Audit the copy on ${p}. Also grep the other pages for every number and claim on it and flag mismatches (card, work row, page).`,
+    { label: `audit:${p}`, phase: 'Audit', schema: FINDINGS })
     .then((r) => r && { page: p, ...r })))
 
 const done = audits.filter(Boolean)
