@@ -335,13 +335,26 @@ Function, answers with Claude Haiku 4.5 by default.
 ## Inside a case study
 
 - **The agent window** (`initDemo`, the audit case study's hero, after
-  granola.ai). A figure marked `data-demo` carries its script as JSON in a
-  `<script type="application/json" data-demo-script>` and a window with a
-  status, a log and a figure; the script's steps play in order and loop,
-  each holding for its `hold_ms`; a figure with a `to` counts to it. It
-  waits for its block to reveal, runs only on screen, stops behind its
-  button, and under reduced motion stands at the run's last step. Every
-  number in the script is one the page states.
+  granola.ai). A split window: on the left a dark terminal
+  (`data-demo-term`) running `figma-audit`, on the right the remediation
+  guide it writes (`data-demo-guide`): two charts of numbers the page states
+  (the .Button variants, one bar that shrinks to the 321 kept, split Button,
+  Icon Button, Link; the component picker, 491 standalones with 266
+  illustrations and 59 unused peeling off the end, 166 staying, a 66% cut),
+  then a row per fix with its "Open in Figma" link. A row's mark says who
+  acts (ring: needs write access; light green: the agent can make it; dark
+  green check: designer decided). The markup is the finished run; the script
+  replays it: the command types, the crawl bar fills, each line prints after
+  the last has held for its `data-hold`, a line's `data-card` writes those
+  charts and rows in (row titles typed), `data-set="picker:dep"` gives that
+  chart's bar a part (the `set-*` class), `data-total` counts the guide to
+  28, `data-decide` flips a chart or row to its decided state, `data-status`
+  sets the bar. Its clock runs only while it is on screen and not paused;
+  the window is held at the finished run's height. On a phone the panes stack
+  at a fixed height and follow the newest line or row, and the guide
+  scrolls back to its charts when the results land. Under reduced motion (or
+  with no script) the finished run stands. Every number in it is one the page
+  states; 166 is the page's 491 less its 266 and 59.
 - **The brief** (`.panel.brief`): the agent's instructions as one paragraph,
   each clause with the question it answers as a mono label above it (after
   wattenberger.com). It is a reconstruction from the page until John replaces

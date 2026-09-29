@@ -2759,88 +2759,142 @@ const CONFIG = {
   });
 
   /* ---- The agent window ----
-     After granola.ai and replicate.com. A figure marked data-demo carries
-     its script as JSON (a script tag inside it) and a window with a status,
-     a log and a figure; this plays the steps in order and loops, holding
-     each for its hold_ms. A figure with a `to` counts from its value to it.
-     It waits for its block to reveal, runs only on screen, stops behind its
-     button, and under reduced motion shows the run's last step and nothing
-     moves. */
+     After granola.ai and replicate.com. A figure marked data-demo holds a
+     finished run in its markup: a terminal on the left (data-demo-term)
+     and the remediation guide it wrote on the right (data-demo-guide).
+     This replays it: the command types, the crawl bar fills, each line
+     prints after the one before has held for its data-hold, a line's
+     data-card writes those guide cards in (their titles typed), data-total
+     counts the guide up, data-decide marks a card designer decided, and
+     data-status sets the bar. Then it holds and runs again. The clock only
+     advances while the figure is on screen and not paused behind its
+     button; under reduced motion, or with no script, the finished run
+     stands as written. */
   const initDemo = () => $$("[data-demo]").forEach((fig) => {
-    const src = $("script[data-demo-script]", fig);
-    const win = $(".agent-win", fig);
-    if (!src || !win) return;
-    let script;
-    try { script = JSON.parse(src.textContent); } catch (e) { return; }
-    const steps = script.steps || [];
-    if (!steps.length) return;
-    const status = $("[data-demo-status]", win), log = $("[data-demo-log]", win), figEl = $("[data-demo-fig]", win);
-    const num = $("b", figEl), unit = $("span", figEl);
-    let raf = 0;
-    const count = (f, animate) => {
-      const to = f.to == null ? f.value : f.to;
-      cancelAnimationFrame(raf);
-      if (!animate || f.to == null) { num.textContent = to; return; }
-      const parse = (v) => Number(String(v).replace(/[^0-9.]/g, "")) || 0;
-      const a = parse(f.value), b = parse(to), dec = (String(to).split(".")[1] || "").replace(/\D/g, "").length;
-      const suffix = String(to).replace(/[0-9.,]/g, "");
-      const fmt = (n) => n.toLocaleString("en-US", { minimumFractionDigits: dec, maximumFractionDigits: dec }) + suffix;
-      const t0 = performance.now(), dur = 900;
-      const tick = (now) => {
-        const p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3);
-        num.textContent = p < 1 ? fmt(a + (b - a) * e) : to;
-        if (p < 1) raf = requestAnimationFrame(tick);
-      };
-      raf = requestAnimationFrame(tick);
-    };
-    const render = (step, animate) => {
-      status.textContent = step.label;
-      win.classList.toggle("busy", animate && step.kind !== "result");
-      log.replaceChildren(...(step.lines || []).map((t, i) => {
-        const li = document.createElement("li");
-        li.textContent = t;
-        li.style.setProperty("--i", String(i));
-        return li;
-      }));
-      if (step.figure) { figEl.hidden = false; unit.textContent = step.figure.unit || ""; count(step.figure, animate); }
-      else figEl.hidden = true;
-    };
-    const last = steps.find((s) => s.id === (script.final_state || {}).step) || steps[steps.length - 1];
-    if (reduced) { render(last, false); return; }
+    const win = $(".agent-win", fig), term = $("[data-demo-term]", fig), guide = $("[data-demo-guide]", fig);   // guide: the pane that scrolls on a phone
+    if (!win || !term || !guide) return;
+    if (reduced) { term.scrollTop = term.scrollHeight; return; }   // the finished run, its terminal at the end
+    win.classList.add("playing");
+    const status = $("[data-demo-status]", win), total = $("[data-demo-total]", win);
+    const lines = $$("li:not(.t-caret)", term), cards = $$("[data-card]", guide);
+    const card = (id) => cards.find((c) => c.dataset.card === id);
+    const ids = (v) => (v || "").split(" ").filter(Boolean);
+    const typed = $$("[data-type]", win);
+    typed.forEach((el) => { el.dataset.full = el.textContent; });
+    const finalStatus = status.textContent, finalTotal = total.textContent;
     const btn = $(".art-ctl", fig);
-    let i = -1, timer = 0, playing = true, started = false;
-    // The window keeps its tallest step's height at the current width, so the
-    // page under it never moves as the steps change (on a phone they differ
-    // by a third). Each step is drawn once, unseen, to measure it.
+
+    // Held at the finished run's height for the current width, so the page
+    // under it never moves as lines and cards arrive.
     const fit = () => {
       win.style.minHeight = "";
-      const tallest = Math.max(...steps.map((st) => { render(st, false); return win.offsetHeight; }));
-      win.style.minHeight = `${tallest}px`;
-      render(i < 0 ? last : steps[i], false);
+      const now = typed.map((el) => el.textContent);
+      typed.forEach((el) => { el.textContent = el.dataset.full; });
+      const was = cards.map((c) => c.classList.contains("decided"));
+      win.classList.add("measure");
+      const at = (on) => { cards.forEach((c) => c.classList.toggle("decided", on)); return win.offsetHeight; };
+      const h = Math.max(at(true), at(false));   // a card is a line taller or shorter once decided
+      cards.forEach((c, i) => c.classList.toggle("decided", was[i]));
+      win.classList.remove("measure");
+      typed.forEach((el, i) => { el.textContent = now[i]; });
+      win.style.minHeight = `${h}px`;
     };
     fit();
     if (document.fonts) document.fonts.ready.then(fit);
     let fitW = window.innerWidth;
     window.addEventListener("resize", debounce(() => { if (window.innerWidth !== fitW) { fitW = window.innerWidth; fit(); } }, 150));
+
+    // A clock that runs only while the run can be seen.
+    let playing = true, started = false, clock = 0, last = 0, raf = 0, waiters = [];
     const visible = whileOnScreen(fig, 0.2, () => sync());
-    const next = () => {
-      i = (i + 1) % steps.length;
-      render(steps[i], true);
-      timer = setTimeout(next, steps[i].hold_ms || 1800);
+    const active = () => started && playing && visible();
+    const frame = (now) => {
+      clock += Math.min(64, now - last); last = now;
+      waiters = waiters.filter((w) => (clock >= w.at ? (w.go(), false) : true));
+      raf = active() ? requestAnimationFrame(frame) : 0;
     };
     const sync = () => {
-      clearTimeout(timer);
-      if (!started) return;
-      if (playing && visible()) timer = setTimeout(next, i < 0 ? 0 : 500);
-      else win.classList.remove("busy");
+      win.classList.toggle("paused", !active());
+      win.classList.toggle("busy", active());
+      if (active() && !raf) { last = performance.now(); raf = requestAnimationFrame(frame); }
+    };
+    const SPEED = 2.5;   // the run is the hero, so it plays 2.5x: the charts land in about ten seconds, not twenty-six
+    const wait = (ms) => new Promise((go) => waiters.push({ at: clock + ms / SPEED, go }));
+
+    const type = async (el, ms) => {
+      const full = el.dataset.full;
+      for (let k = 0; k <= full.length; k++) { el.textContent = full.slice(0, k); await wait(ms); }
+    };
+    const reset = () => {
+      lines.forEach((l) => l.classList.add("pending"));
+      cards.forEach((c) => {
+        c.classList.add("pending");
+        c.classList.remove("decided", ...Array.from(c.classList).filter((k) => k.startsWith("set-")));
+      });
+      typed.forEach((el) => { el.textContent = ""; });
+      total.textContent = "0";
+      status.textContent = "Starting";
+      term.scrollTop = 0; guide.scrollTop = 0;
+    };
+    const show = (el) => {
+      el.classList.remove("pending");
+      el.style.animation = "none"; void el.offsetWidth; el.style.animation = "";   // replay its entrance
+      follow(term.contains(el) ? term : guide);
+    };
+    // Where a pane has a fixed height (a phone), it keeps its newest line
+    // or card in view.
+    const follow = (pane) => {
+      if (pane.scrollHeight > pane.clientHeight + 1) pane.scrollTo({ top: pane.scrollHeight, behavior: "smooth" });
+      else pane.scrollTop = 0;
+    };
+    const run = async () => {
+      for (;;) {
+        reset();
+        await wait(600);
+        for (const line of lines) {
+          if (line.dataset.status) status.textContent = line.dataset.status;
+          show(line);
+          const cmd = $("[data-type]", line);
+          if (cmd) await type(cmd, 38);
+          const bar = $(".t-track b", line), n = $("[data-count]", line);
+          if (bar) {
+            for (let k = 0; k <= 30; k++) {
+              const p = k / 30;
+              bar.style.setProperty("--p", p.toFixed(3));
+              n.textContent = String(Math.round(p * Number(n.dataset.count)));
+              await wait(45);
+            }
+          }
+          for (const id of ids(line.dataset.card)) {
+            const c = card(id);
+            if (!c) continue;
+            show(c);
+            const title = $("[data-type]", c);
+            if (title) await type(title, 16);   // a chart has no title to type: it draws in
+            follow(guide);
+            await wait(250);
+          }
+          for (const pair of ids(line.dataset.set)) {   // "picker:dep": that chart's bar takes that part
+            const [id, part] = pair.split(":");
+            if (card(id)) card(id).classList.add(`set-${part}`);
+          }
+          if (line.dataset.total) {
+            const to = Number(line.dataset.total);
+            for (let k = 0; k <= to; k++) { total.textContent = String(k); await wait(28); }
+          }
+          for (const id of ids(line.dataset.decide)) if (card(id)) card(id).classList.add("decided");
+          if (line.dataset.decide && guide.scrollTop > 0) guide.scrollTo({ top: 0, behavior: "smooth" });   // the charts take the result, so bring them back into view
+          await wait(Number(line.dataset.hold) || 400);
+        }
+        status.textContent = finalStatus; total.textContent = finalTotal;
+      }
     };
     if (btn) {
       btn.hidden = false;
       setPaused(btn, playing, "the agent demo");
       btn.addEventListener("click", () => { playing = !playing; setPaused(btn, playing, "the agent demo"); sync(); });
     }
-    render(last, false);   // still, until its block has arrived
-    afterReveal(fig, () => { started = true; sync(); });
+    afterReveal(fig, () => { started = true; reset(); sync(); run(); });
   });
 
   /* ---- The palette ----
