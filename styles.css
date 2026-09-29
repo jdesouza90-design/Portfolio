@@ -1574,6 +1574,8 @@ footer a:hover { color: var(--ink); }
    reveals, then thins it to the set that remains, tinted by component. */
 .matrix-plot { position: relative; margin-top: var(--sp-2); }
 .matrix-plot canvas { display: block; width: 100%; height: auto; }
+.proof-foot { position: relative; }
+.proof-foot .sheets-replay { position: absolute; top: -6px; right: 0; }   /* on the summary's line; the table opens beneath it */
 .matrix-legend { display: inline-flex; flex-wrap: wrap; gap: 6px 16px; }
 .matrix-legend > span { display: inline-flex; align-items: center; gap: 8px; }
 .matrix-legend .m2 { background: var(--accent-2); }

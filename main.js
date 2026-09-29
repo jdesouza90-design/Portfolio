@@ -1727,14 +1727,22 @@ const CONFIG = {
       draw(t);
       if (t < END) raf = requestAnimationFrame(frame);
     };
-    const play = () => {
-      if (played) return;
-      played = true;
+    const replayBtn = $("[data-sheets-replay]", el);
+    const run = () => {
+      cancelAnimationFrame(raf);
+      count(total);
       start = performance.now();
       raf = requestAnimationFrame(frame);
     };
+    const play = () => {
+      if (played) return;
+      played = true;
+      if (replayBtn) replayBtn.hidden = false;    // a still page has nothing to replay
+      run();
+    };
     const settle = () => { played = true; cancelAnimationFrame(raf); draw(END); };
     const redraw = () => { if (played) { cancelAnimationFrame(raf); draw(END); } };
+    if (replayBtn) replayBtn.addEventListener("click", run);
     onTheme(redraw);
     [imgB, imgA].forEach((img) => { img.loading = "eager"; if (!img.complete) img.addEventListener("load", redraw, { once: true }); });
 
