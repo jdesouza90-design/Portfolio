@@ -55,6 +55,8 @@ stamp.py                        Re-stamps every ?v= cache hash; run it before co
 dev.mjs                         Local stand-in for the edge: the gates, the chat and the dashboard without deploying
 bot-check.mjs                   Checks middleware.js's bot list against real user agents; run it after changing that list
 hugeicon.mjs                    Prints a Hugeicons icon as the site's inline SVG (see Icons)
+.claude/agents, qa, workflows  The agent stack that builds the site (see CLAUDE.md, Agent stack): Sonnet subagents,
+                                the QA scripts (gate.mjs is the definition of done) and saved workflows. Not deployed
 ai-process-art.mjs              Draws assets/ai-process.svg, the abstract on the AI card
 assets/                         Mockups, logos, walkthrough recordings exported from the deck
 og-image.png                    Social preview image used when the link is shared
