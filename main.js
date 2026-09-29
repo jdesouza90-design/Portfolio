@@ -2208,38 +2208,7 @@ const CONFIG = {
      the deck is out of sight or would look no different. */
   const initStack = () => $$("[data-stack]").forEach((stack) => {
     const track = $(".stack-track", stack), deck = $(".stack-deck", stack);
-    if (!track || !deck) return;
-    // The pager under the deck (the testimonials' dots and arrows): a dot or
-    // an arrow scrolls the page to where its card is at the front, and the
-    // dots follow the scroll. Under reduced motion the cards sit in a column,
-    // so the pager brings the card into view instead.
-    const pager = $(".stack-controls", stack), dots = pager ? $$(".dot", pager) : [];
-    let front = -1;
-    const mark = (i) => { if (i === front) return; front = i; dots.forEach((d, n) => d.setAttribute("aria-current", n === i ? "true" : "false")); };
-    const wire = (goTo) => {
-      if (!pager) return;
-      const prev = $(".prev", pager), next = $(".next", pager);
-      prev && prev.addEventListener("click", () => goTo(front - 1));
-      next && next.addEventListener("click", () => goTo(front + 1));
-      dots.forEach((d, n) => d.addEventListener("click", () => goTo(n)));
-      pager.addEventListener("keydown", (e) => {
-        if (e.target.closest(".dots") === null) return;
-        const d = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
-        if (!d) return;
-        e.preventDefault();
-        dots[goTo(front + d)].focus();   // goTo returns the card it went to; the dots only catch up once the scroll has
-      });
-    };
-    if (reduced) {
-      mark(0);
-      wire((k) => {
-        const cs = $$(".stack-card", deck), i = Math.max(0, Math.min(cs.length - 1, k));
-        mark(i);
-        cs[i].scrollIntoView({ block: "center" });
-        return i;
-      });
-      return;
-    }
+    if (reduced || !track || !deck) return;
     const PEEK = 18, TILT = 15;
     const PEELS = [[0.1, 0.44], [0.56, 0.9]];   // each card's stretch of the track; the last card has none and stays
     let cards = [], whole = null;               // whole: while a jump passes, the progress the cards hold at
@@ -2265,7 +2234,6 @@ const CONFIG = {
         c.style.transform = `translate3d(0, ${(PEEK * depth).toFixed(2)}px, 0) scale(${scale.toFixed(4)}) perspective(500px) translate3d(0, ${(t * lift).toFixed(1)}px, 0) rotateX(${(t * TILT).toFixed(2)}deg)`;
         c.style.visibility = t >= 1 ? "hidden" : "";   // gone off the top: out of sight and out of the tab order
       });
-      mark(peel.filter((v) => v >= 0.5).length);   // the card in front: past the halfway point of a peel the next one has it
     };
     const request = () => { if (!raf) raf = requestAnimationFrame(draw); };
     const order = () => {
@@ -2359,22 +2327,13 @@ const CONFIG = {
       draw();
     };
     deck.addEventListener("lens", order);
-    // Scrolls to where card i is at the front: between its predecessor's
-    // peel and its own.
-    const place = (i, behavior) => {
-      settle(true);   // a jump's single block grows back first, so the place below is there to scroll to
-      const { r, h, top } = measure();
-      const at = i === 0 ? 0 : (PEELS[i - 1][1] + (PEELS[i] ? PEELS[i][0] : 1)) / 2;
-      window.scrollTo({ top: window.scrollY + r.top - top + at * (r.height - h), behavior });
-    };
     deck.addEventListener("focusin", (e) => {
       const i = cards.indexOf(e.target.closest(".stack-card"));
-      if (i >= 0) place(i, "instant");   // not smooth: it follows the focus, which has already moved
-    });
-    wire((k) => {
-      const i = Math.max(0, Math.min(cards.length - 1, k));
-      place(i, "smooth");   // smooth: the cards peel on the way, as they do under a scroll
-      return i;
+      if (i < 0) return;
+      settle(true);   // a jump's single block grows back first, so the place below is there to scroll to
+      const { r, h, top } = measure();
+      const at = i === 0 ? 0 : (PEELS[i - 1][1] + (PEELS[i] ? PEELS[i][0] : 1)) / 2;   // between its predecessor's peel and its own
+      window.scrollTo({ top: window.scrollY + r.top - top + at * (r.height - h), behavior: "instant" });   // not smooth: it follows the focus, which has already moved
     });
     // Back and Forward: the browser would scroll back to where the reader
     // was, smoothly, through the whole track. So the page restores places
