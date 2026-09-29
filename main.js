@@ -2818,7 +2818,8 @@ const CONFIG = {
       win.classList.toggle("busy", active());
       if (active() && !raf) { last = performance.now(); raf = requestAnimationFrame(frame); }
     };
-    const wait = (ms) => new Promise((go) => waiters.push({ at: clock + ms, go }));
+    const SPEED = 2.5;   // the run is the hero, so it plays 2.5x: the charts land in about ten seconds, not twenty-six
+    const wait = (ms) => new Promise((go) => waiters.push({ at: clock + ms / SPEED, go }));
 
     const type = async (el, ms) => {
       const full = el.dataset.full;
