@@ -2773,6 +2773,25 @@ const CONFIG = {
   const initDemo = () => $$("[data-demo]").forEach((fig) => {
     const win = $(".agent-win", fig), term = $("[data-demo-term]", fig), guide = $("[data-demo-guide]", fig);   // guide: the pane that scrolls on a phone
     if (!win || !term || !guide) return;
+    // On a phone each pane scrolls on its own once the run is not playing
+    // (reduced motion). A region that scrolls has to be reachable from the
+    // keyboard, so, as with the table frames, a pane is a labelled tab stop
+    // only while it scrolls, and the window is a group rather than one image
+    // for as long as it holds one (an image's content can't take focus).
+    if ("ResizeObserver" in window) {
+      const panes = [[term, "Terminal, scrolls"], [guide, "Remediation guide, scrolls"]];
+      const ro = new ResizeObserver(() => {
+        const on = panes.map(([p]) => getComputedStyle(p).overflowY !== "hidden" && p.scrollHeight > p.clientHeight + 1);
+        win.setAttribute("role", on.some(Boolean) ? "group" : "img");
+        panes.forEach(([p, name], i) => {
+          if (on[i]) {
+            p.tabIndex = 0; p.setAttribute("aria-label", name);
+            if (p.tagName !== "OL") p.setAttribute("role", "group");
+          } else { p.removeAttribute("tabindex"); p.removeAttribute("aria-label"); if (p.tagName !== "OL") p.removeAttribute("role"); }
+        });
+      });
+      panes.forEach(([p]) => ro.observe(p));
+    }
     if (reduced) { term.scrollTop = term.scrollHeight; return; }   // the finished run, its terminal at the end
     win.classList.add("playing");
     const status = $("[data-demo-status]", win), total = $("[data-demo-total]", win);
