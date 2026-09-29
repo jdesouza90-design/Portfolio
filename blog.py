@@ -210,7 +210,6 @@ MAIL_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
 SEND_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18.5 12L4.99997 12"/><path d="M13 18C13 18 19 13.5811 19 12C19 10.4188 13 6 13 6"/></svg>'
 DOWN_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.99969 17.0002C2.99969 17.9302 2.99969 18.3952 3.10192 18.7767C3.37932 19.8119 4.18796 20.6206 5.22324 20.898C5.60474 21.0002 6.06972 21.0002 6.99969 21.0002L16.9997 21.0002C17.9297 21.0002 18.3947 21.0002 18.7762 20.898C19.8114 20.6206 20.6201 19.8119 20.8975 18.7767C20.9997 18.3952 20.9997 17.9302 20.9997 17.0002"/><path d="M16.4998 11.5002C16.4998 11.5002 13.1856 16.0002 11.9997 16.0002C10.8139 16.0002 7.49976 11.5002 7.49976 11.5002M11.9997 15.0002V3.00016"/></svg>'
 CHECK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 14L8.5 17.5L19 6.5"/></svg>'
-RSS_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 19.5C19.5 11.2157 12.7843 4.5 4.5 4.5"/><path d="M12.5 19.5C12.5 15.0817 8.91828 11.5 4.5 11.5"/><path d="M5.25 19H5M5.5 19C5.5 19.2761 5.27614 19.5 5 19.5C4.72386 19.5 4.5 19.2761 4.5 19C4.5 18.7239 4.72386 18.5 5 18.5C5.27614 18.5 5.5 18.7239 5.5 19Z"/></svg>'
 
 
 def nav(current, section=None):
@@ -446,9 +445,8 @@ def render_index(posts):
 <section class="cs-hero solo">
   <div class="wrap">
     <div class="cs-hero-copy">
-      <p class="eyebrow" data-rise style="--i:0">Blog<a class="feed-link" href="/feed.xml" aria-label="RSS feed">{RSS_SVG}</a></p>
-      <h1 class="t-display" data-rise style="--i:1">Notes from the field.</h1>
-      <p class="t-lede" data-rise style="--i:2">Where product design is heading, how I lead through it, and what thirteen years in lending, crypto and identity says about what comes next.</p>
+      <h1 class="t-display" data-rise style="--i:0">Notes from the field.</h1>
+      <p class="t-lede" data-rise style="--i:1">Where product design is heading, how I lead through it, and what thirteen years in lending, crypto and identity says about what comes next.</p>
     </div>
   </div>
 </section>
