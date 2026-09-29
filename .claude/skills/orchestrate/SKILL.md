@@ -39,6 +39,14 @@ doesn't hand its judgment to a subagent, and it doesn't do a subagent's legwork 
 | `concept-maker` | Three to five working options in one comparison artifact | artifact only | one per question |
 | `worktree-janitor` | Worktree and branch inventory, removes merged clean ones on ask | worktrees | **no, one at a time** |
 | `role-tailor` | Maps a job description onto the cases and proposes a deck cut | no | yes, one per role |
+| `interview-prepper` | One round at one company: likely questions, sourced answers, weak spots | no | yes, one per round |
+| `outreach-drafter` | Recruiter replies and notes in John's voice; never sends | a mail draft on ask | yes |
+| `resume-sync` | Resume and LinkedIn text against the site's titles, dates and numbers | no | yes |
+| `peer-watch` | Recent merges on main survived; no silent reverts | no | yes |
+| `analytics-reader` | What visitors did, from a pull John runs (`activity-pull.mjs`) | no | yes |
+| `link-rot` | Outside links and blog sources still load and still say it | no | yes |
+| `a11y-fixer` | Fixes confirmed WCAG 2.2 AA findings without changing the design | branch | in its own worktree |
+| `blog-researcher` | The live argument and read, dated sources before blog-writer drafts | no | yes |
 
 The shared tooling is in `.claude/qa/` (`sh .claude/qa/setup.sh` makes it ready in any checkout or worktree): `gate.mjs` (the
 definition of done), `static.mjs`, `motion.mjs`, `shots.mjs`, `voice-lint.mjs` and `prod-smoke.mjs`.
@@ -96,7 +104,8 @@ slides it changed in your final message. If nothing needed it, say why.
 **10. Ship.** Once John has seen it and stopped asking for changes, and `diff-reviewer` has no
 blockers, send `release-prep`. When it hands
 back a push command because the harness refused the push, give John that exact command in a bash
-block. After a push, confirm with `prod-smoke.mjs --expect`.
+block. After a push, confirm with `prod-smoke.mjs --expect`, then send `peer-watch`
+to check that nothing on `main` was reverted.
 
 **11. Remember (Opus).** Write or update memory for decisions John made, approaches he rejected, and
 traps that cost a round. Subagents never write memory. Remove worktrees you created once their
@@ -107,12 +116,13 @@ branches are merged.
 - **A copy change**: scout, then copy-editor, copy-audit, gate, show John, deck-sync, release.
 - **A visual or motion change**: scout (plus reference-scout), then plan, site-builder, then qa-runner
   with motion and visual-reviewer, show John, release. Deck-sync only if images or copy changed.
+- **An accessibility bug**: qa-runner to confirm, then a11y-fixer, then qa-runner again on that page.
 - **A bug**: qa-runner to reproduce and localize, then site-builder to fix, then qa-runner again on
   that page.
 - **A new case study**: follow the add-case-study skill. The interview and every copy approval stay
   with the orchestrator and John. Hand the build to site-builder, the assets to asset-maker and the
   checks to qa-runner and copy-audit. The deck runs through deck-sync.
-- **A blog post**: blog-writer, then copy-audit, then the orchestrator reviews the argument against
+- **A blog post**: blog-researcher, then blog-writer with the chosen brief, then copy-audit, then the orchestrator reviews the argument against
   POSITION.md, then publish per the skill.
 - **Sitewide QA**: qa-runner per page group in parallel. Or run the `site-qa` workflow when John asks
   for a workflow.
@@ -125,7 +135,11 @@ branches are merged.
   and `chat-tester`, plus qa-runner per page group.
 - **A specific company or interview**: `role-tailor` with the job description. Any deck cut it proposes
   is John's to approve, then `deck-sync` builds it.
-- **Housekeeping**: `worktree-janitor` for a report. It removes worktrees only when John says clean up.
+- **Job search**: `role-tailor` for the fit, `interview-prepper` per round, `outreach-drafter` for
+  messages (John sends them), `resume-sync` after any change to experience or numbers.
+- **"Who's been on the site"**: `analytics-reader`. If the pull is stale, hand John `node
+  .claude/qa/activity-pull.mjs`, which asks for his dashboard password.
+- **Housekeeping**: `link-rot` weekly, `peer-watch` after busy merge days, and `worktree-janitor` for a report. It removes worktrees only when John says clean up.
 
 ## What stays with Opus
 
