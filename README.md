@@ -39,7 +39,7 @@ main.js                         CONFIG links, then one function per feature: nav
                                 walkthroughs, AI strands, fields (hero dots, contact rings), chart, number flow, before and after,
                                 swipe strips, table frames, About portrait height, the Nine holes arcade, the
                                 home page's featured stack, the lens, steps, the agent window, the
-                                reading control, the palette, the chat panel, the theme switch, the LinkedIn button
+                                palette, the chat panel, the theme switch, the LinkedIn button
 admin/index.html                Dashboard, Activity page: who is on the site, live (its own password); tabs lead to the other two
 admin/dash.js                   Its script: polls the feed, builds sessions, draws the charts and the map; ?visitor= follows one person
 admin/game.html, golf.js        Dashboard, Nine holes page: the leaderboard (delete, clear), banned words, the game's settings
@@ -872,8 +872,6 @@ The rules that shape the code:
   studies' breadcrumb is a second landmark, `<nav aria-label="Breadcrumb">`
   around an ordered list, the current page marked `aria-current="page"` and
   the slashes `aria-hidden`.
-- The layer tabs follow the tablist pattern: arrows, Home and End move the
-  selection; hidden panels leave the tab order.
 - The walkthrough control leaves the tab order when it fades out. The chart's
   plot is a labelled, focusable group: left and right arrows, Home and End
   step through the months and read each one into a live card; the data table
@@ -947,27 +945,14 @@ The rules that shape the code:
   The quotes are verbatim with the project sentences cut and the people left
   out by John's choice, so the mark stands in for the byline and the source
   says only "Senior leader" or "Peer feedback".
-- "Three layers, one chain" on the homepage is one card mirroring the AI card:
-  Figure A on the left (`.fig-panel`, three nested rings on the panel ground,
-  after the figure on Mercury's About page), the copy and the layer tabs on
-  the right. The rings share a bottom point, not a centre, so each has a tall
-  band for its label; the panel is a size container, so the figure fits
-  whichever of the panel's width and height is tighter while the copy sets
-  the height. `initTabs` lights the ring (`[data-ring]`) for the selected
-  tab, and a click inside a ring picks its tab (the circle is the hit area,
-  the innermost ring winning where they overlap; the tabs remain the
-  keyboard control). Its motion is one wave, influence travelling the chain:
-  every ring is the outer one scaled about the shared bottom point, so one
-  non-scaling circle (`.nest-wave`) can take each ring's shape in turn. As the
-  card arrives the Design quality disc springs in and the wave carries out,
-  each ring appearing and flexing as it arrives, then spills past the edge;
-  a clicked layer sends it out or back in and the ring lights as it lands,
-  with the layer's marker drawing on at the same moment. Keyboard moves just
-  switch. Under 1100px the card is
-  one column with the figure as a cover. The ring names size off the figure
-  (`.fig-nest` is its own container, names at 6cqw, capped at the Subhead
-  role, the Small role on a phone, and never under 12px), so a figure that
-  shrinks to a shorter copy column keeps them inside their rings.
+- "How I track design" on the homepage is three cards in the coaching block's
+  layout (`.coach-grid.three`, `[data-coach]`): Design quality, Experience
+  metrics and Business outcome, every layer showing at once, each card ending
+  on the line it shows up as. Each card's clay model builds in its well:
+  `initCoach` fetches the build clip (`data-build`) a screen ahead, plays it at
+  1.25x once the well is on screen and holds its last frame, the still. Cards
+  in one row go left to right; reduced motion, or a clip that fails, shows the
+  stills.
 - The abstract beside "AI in the process" on the homepage is drawn live by
   `main.js` on a canvas: the same strands in three dimensions, turning slowly,
   with a pause button in the corner. `assets/ai-process.svg` is the still it
