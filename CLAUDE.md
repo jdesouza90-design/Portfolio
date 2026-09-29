@@ -3,6 +3,19 @@
 Read README.md for how the site is built, and VOICE.md before writing any copy.
 Never commit on `main`: Vercel deploys it on every push.
 
+## Agent stack
+
+The main session is the orchestrator and runs on Opus. The work goes to Sonnet subagents defined in
+`.claude/agents/`. For any site task bigger than a one-line fix, follow the `orchestrate` skill
+(`.claude/skills/orchestrate/SKILL.md`): scout, plan, branch, build, check, show John, deck sync,
+ship, remember. Judgment stays with the orchestrator: design direction, copy claims and who did what,
+what John sees, merge readiness and memory. Subagents never write memory.
+
+`node .claude/qa/gate.mjs` is the definition of done for a branch. `sh .claude/qa/setup.sh` readies the
+QA tooling in any checkout or worktree. Only one `deck-sync` and one `release-prep` agent run at a
+time. The saved workflows in `.claude/workflows/` (`site-qa`, `voice-pass`, `deck-audit`) run only when
+John asks for a workflow.
+
 ## Deck sync
 
 John's interview deck mirrors this site. It is a Claude Artifact of the Slides type,

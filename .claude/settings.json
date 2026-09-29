@@ -22,5 +22,14 @@
         ]
       }
     ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(node .claude/qa/*)",
+      "Bash(sh .claude/qa/setup.sh)",
+      "Bash(python3 stamp.py)",
+      "Bash(python3 blog.py --check)",
+      "Bash(python3 .claude/skills/add-case-study/scripts/check.py*)"
+    ]
   }
 }

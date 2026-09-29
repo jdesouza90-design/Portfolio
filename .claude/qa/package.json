@@ -1,0 +1,11 @@
+{
+  "name": "portfolio-qa",
+  "private": true,
+  "type": "module",
+  "description": "QA tooling for the agent stack. Kept out of the root package.json so Vercel never installs it; .claude/ is also in .vercelignore.",
+  "dependencies": {
+    "axe-core": "^4.10.0",
+    "html-validate": "^9.0.0",
+    "puppeteer-core": "^24.0.0"
+  }
+}
