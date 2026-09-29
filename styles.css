@@ -1873,7 +1873,9 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
   .agent-term .t-caret { margin-top: 0; }
   .agent-guide { height: 30rem; overflow: auto; }
   .agent-win.playing .agent-term, .agent-win.playing .agent-guide { overflow: hidden; }
-  .agent-term { -webkit-mask-image: linear-gradient(to bottom, transparent, #000 2.5rem); mask-image: linear-gradient(to bottom, transparent, #000 2.5rem); }
+  /* The fade at the top of the terminal is a strip of its own ground laid
+     over the scrolled lines (a mask would show the paper bar through it). */
+  .agent-term::before { content: ""; display: block; flex: none; position: sticky; top: 0; z-index: 1; height: 2.5rem; margin: calc(-1 * var(--sp-4)) calc(-1 * var(--sp-4)) calc(var(--sp-4) - 2.5rem - 2px); pointer-events: none; background: linear-gradient(to bottom, var(--plate-ink-0) 10%, rgba(20, 16, 12, 0)); }
 }
 @media (prefers-reduced-motion: reduce) {
   .g-chart, .g-row, .caret { animation: none; }
