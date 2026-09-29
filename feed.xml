@@ -6,7 +6,60 @@
     <atom:link href="https://john-desouza.com/feed.xml" rel="self" type="application/rss+xml"/>
     <description>Design leadership, where product design is heading, and trust in fintech and web3.</description>
     <language>en</language>
-    <lastBuildDate>Mon, 28 Sep 2026 10:00:00 -0400</lastBuildDate>
+    <lastBuildDate>Tue, 29 Sep 2026 10:00:00 -0400</lastBuildDate>
+    <item>
+      <title>The bottleneck moved and the budget didn’t</title>
+      <link>https://john-desouza.com/blog/the-constraint-moved-to-review.html</link>
+      <guid isPermaLink="true">https://john-desouza.com/blog/the-constraint-moved-to-review.html</guid>
+      <pubDate>Tue, 29 Sep 2026 10:00:00 -0400</pubDate>
+      <category>Design leadership</category>
+      <dc:creator>John DeSouza</dc:creator>
+      <description>Developers and engineering leaders both name reviewing AI output as their top constraint. Teams are spending the gain on deferred hires instead.</description>
+      <content:encoded><![CDATA[<p><strong>When agents triple a team’s output the constraint moves to the people who decide whether the work is right, and spending that gain on a deferred hire funds the queue instead of the decision.</strong></p>
+<p>On September 25, Dan Graves, chief product officer at WitnessAI, <a href="https://www.cio.com/article/4226177/i-stopped-asking-my-team-to-use-ai-i-asked-them-to-manage-it.html">published an account</a> of how his product team works now. Seven people, each managing a role-based agent with subagents under it. A product design agent called Muffin turns mockups into working code. An orchestrator called PacMan routes tickets. Release velocity doubled. By the team’s own weekly measure, interfaces designed, each user experience designer now produces what three used to.</p>
+
+      <p>It’s the most specific writeup of an agent-run product team I’ve read this year, and he’s candid about what broke. Muffin’s early designs “looked right on the surface but used the wrong components and missed our branding”, and developers reworked half the output. A senior designer picked “finish the load animations” off a list of options just to point Muffin at the task, and Muffin started building. That’s a real account, not a case study with the failures sanded off.</p>
+
+      <p>The sentence I keep going back to sits in the middle of it. “We’ve since automated the path from specification to ship, which only moved the constraint. The human reviewers are now the bottleneck.”</p>
+
+      <h2>Then he says where the money went</h2>
+
+      <p>Further down the same piece: “Together, these gains have let us defer hiring new staff.”</p>
+
+      <p>He’s right on both counts, and the two point opposite ways. The team found its constraint and then spent the surplus everywhere except on it. Output at the designer level went up three times. The number of people who can look at that output and say no stayed at seven.</p>
+
+      <p>I don’t read that as carelessness. It’s what a throughput gain feels like from the inside. The queue gets longer at the last step, which is the least visible place for it to get longer, and the savings from not hiring land this quarter while the cost of a thin review lands in something that ships wrong two quarters from now.</p>
+
+      <h2>It isn’t one team’s problem</h2>
+
+      <p>Two days before that piece ran, Qodo published <a href="https://www.qodo.ai/blog/state-of-ai-code-quality-report-2026/">a Censuswide survey</a> of 500 American software developers and 300 American engineering leaders, all at companies where AI already does real work in the development lifecycle. The two groups answered separate questionnaires and never saw each other’s answers. Asked to name the primary constraint in their delivery pipeline, both picked reviewing and validating AI-generated code, at 26% each. It outranked trusting the output, integration, security and compliance, context retrieval and cost in both samples.</p>
+
+      <p>Two audiences with different incentives, one answer. The report’s line for it is that “generation scaled across the entire lifecycle, and verification never scaled with it”. In the same research, 89% of organizations reported an AI-related production incident, and 3.7% of engineering leaders said their current processes are enough to hold quality as agents take on more work.</p>
+
+      <p>That’s engineering data. The design version is on the same curve now, because design output goes into the same pipeline. When an agent hands a reviewer finished frontend code with the mockups attached, the reviewer’s problem is the one those 800 people just described.</p>
+
+      <h2>Teaching agents to out-review humans</h2>
+
+      <p>Graves’s answer to his own bottleneck is to push the review down to the agents. His team aggregates everyone’s review questions into a checklist the agents run every time, then asks Claude for other industry review practices and teaches those too. “Eventually, an agent reviews things 100 ways automatically, leaving less that requires a human eye.”</p>
+
+      <p>Half of that is right and it’s the half nobody should be arguing with. If a check can be written down as a rule, a person should never run it twice. Component use, contrast, the naming, whether the empty state was drawn at all: that work belongs to an agent running at three in the morning.</p>
+
+      <p>The other half files a hundred checks and one decision under the same word. A checklist can tell you the screen conforms. It can’t tell you the screen shouldn’t exist, that the flow asks an applicant for a document they won’t have on a Sunday, or that the answer is correct and still wrong for this customer. Automating the first job doesn’t create capacity for the second. It clears the desk faster and leaves the same people holding the part that was always scarce.</p>
+
+      <h2>The hire you already paid for</h2>
+
+      <p>Box’s <a href="https://blog.box.com/SAI26-agentic-ai-is-here">2026 State of AI in the Enterprise</a> surveyed 1,640 information technology decision makers across the United States, United Kingdom, France and Japan in early May. 58% expect headcount to rise over the next three years. Among the most mature adopters, 79% do. The companies furthest into this are not the ones planning to be smaller.</p>
+
+      <p>So deferring a hire is a choice, and it deserves to be argued as one. A team that triples its output has earned the case for another person who can decide. Making that case is harder than banking the saving, because the deferred hire is a line a finance partner can see and a thin review is not.</p>
+
+      <h2>How I plan a team now</h2>
+
+      <p>I size a team by what it can decide in a week rather than what it can produce. When I ran the whole-library audit of <a href="/work/agentic-design-system-audit.html">Best Egg’s design system</a>, the plan divided at write access: specs and lists to the agent, every edit to the library to one senior product designer, and the order set by who could act. The agent was never the constraint. One read-only run produced 28 fixes with deep links into Figma. Write access was the constraint, and we built the schedule around it instead of finding out later.</p>
+
+      <p>Before anyone on my team adds an agent, I ask two things. Who signs this off, and what else is already on that person’s desk. If the answer is someone already at capacity, the agent isn’t adding throughput. It’s adding a queue with their name on it.</p>
+
+      <p>Graves knows exactly what his agents cost. He publishes the figure: $2,000 to $5,000 per person per month. The review those agents generate doesn’t appear on any invoice, which is most of the reason it’s the easy thing to defer.</p>]]></content:encoded>
+    </item>
     <item>
       <title>Disclose the review, not the tool</title>
       <link>https://john-desouza.com/blog/disclose-the-review-not-the-tool.html</link>
