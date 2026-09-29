@@ -31,6 +31,14 @@ doesn't hand its judgment to a subagent, and it doesn't do a subagent's legwork 
 | `blog-writer` | One post through add-blog-post, stops before publish | branch | one per post |
 | `deck-sync` | Main deck and the Vanta copy | the decks | **no, one at a time** |
 | `release-prep` | Merge main in, restamp, gate, prepare the push | branch | **no, one at a time** |
+| `diff-reviewer` | Reviews a branch's diff against the site rules, catches peer reverts | no | yes |
+| `claims-checker` | Every number, team size, quote and who-did-what, across site and decks | no | yes |
+| `perf-auditor` | LCP, CLS, long tasks and weight at 1440 and 390, traced to the source | scratch only | yes (own ports) |
+| `seo-auditor` | Heads, JSON-LD, sitemap, feed, robots, llms.txt, parked pages | no | yes |
+| `chat-tester` | The site chat: gate, citations, limits, invented facts | scratch only | yes (stand-in); real model only on ask |
+| `concept-maker` | Three to five working options in one comparison artifact | artifact only | one per question |
+| `worktree-janitor` | Worktree and branch inventory, removes merged clean ones on ask | worktrees | **no, one at a time** |
+| `role-tailor` | Maps a job description onto the cases and proposes a deck cut | no | yes, one per role |
 
 The shared tooling is in `.claude/qa/` (`sh .claude/qa/setup.sh` makes it ready in any checkout or worktree): `gate.mjs` (the
 definition of done), `static.mjs`, `motion.mjs`, `shots.mjs`, `voice-lint.mjs` and `prod-smoke.mjs`.
@@ -66,7 +74,10 @@ independent units in one message. When a builder returns an open question, answe
 it's his) and send the builder again with SendMessage so it keeps its context.
 
 **6. Check (Sonnet, parallel).** In one message, send `qa-runner` on the pages touched,
-`visual-reviewer` on what changed, and `copy-audit` on any page whose words changed. On a sitewide
+`visual-reviewer` on what changed, `copy-audit` on any page whose words changed, and `diff-reviewer`
+on the branch. Add `perf-auditor` when media, motion or scripts changed, `seo-auditor` when a page was
+added, renamed or parked, `claims-checker` when a number or an attribution changed, and `chat-tester`
+when `api/chat.js`, its settings or a page's section structure changed. On a sitewide
 CSS or JS change, split `qa-runner` by page group: home, work index plus cases, blog, admin.
 
 **7. Judge (Opus).** Read the findings and decide what's real and worth fixing. Send fixes back to the
@@ -82,7 +93,8 @@ what a reader sees.
 `deck-sync` with the pages, the commit and the slide ids the builders named. Wait for it, and name the
 slides it changed in your final message. If nothing needed it, say why.
 
-**10. Ship.** Once John has seen it and stopped asking for changes, send `release-prep`. When it hands
+**10. Ship.** Once John has seen it and stopped asking for changes, and `diff-reviewer` has no
+blockers, send `release-prep`. When it hands
 back a push command because the harness refused the push, give John that exact command in a bash
 block. After a push, confirm with `prod-smoke.mjs --expect`.
 
@@ -104,10 +116,16 @@ branches are merged.
   POSITION.md, then publish per the skill.
 - **Sitewide QA**: qa-runner per page group in parallel. Or run the `site-qa` workflow when John asks
   for a workflow.
-- **"Options" or "concepts" for John** (heroes, illustrations): generate several in parallel, from
-  site-builder prototypes or asset-maker candidates. Put them in one comparison artifact, then wait
-  for John's pick. Past rounds were rejected as unoriginal, so each concept starts from John's own
+- **"Options" or "concepts" for John** (heroes, illustrations): pitch them in words first, then send
+  `concept-maker` to build the picked ones into one comparison artifact (asset-maker first when they
+  need generated art), then wait for John's pick. Past rounds were rejected as unoriginal, so each concept starts from John's own
   vernacular and gets pitched in words before anything is built.
+
+- **Before sending the link out**: in one message, `claims-checker`, `seo-auditor`, `perf-auditor`
+  and `chat-tester`, plus qa-runner per page group.
+- **A specific company or interview**: `role-tailor` with the job description. Any deck cut it proposes
+  is John's to approve, then `deck-sync` builds it.
+- **Housekeeping**: `worktree-janitor` for a report. It removes worktrees only when John says clean up.
 
 ## What stays with Opus
 
