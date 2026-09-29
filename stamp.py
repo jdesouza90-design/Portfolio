@@ -40,6 +40,9 @@ for f in pages + ['middleware.js']:
     # The coaching cards' build clips load from data-build as a card nears the screen.
     s = re.sub(r'data-build="((?:\.\./)?assets/[^"?]+)(?:\?v=[a-f0-9]+)?"',
                lambda m: asset(m).replace('src=', 'data-build=', 1), s)
+    # The variant sheets' outlines load from data-cells when the Results chart sets up.
+    s = re.sub(r'data-cells="((?:\.\./)?assets/[^"?]+)(?:\?v=[a-f0-9]+)?"',
+               lambda m: asset(m).replace('src=', 'data-cells=', 1), s)
     # Icons are root-absolute on every page; browsers cache favicons hard, so stamp them too.
     s = re.sub(r'href="/(favicon\.svg|favicon\.ico|apple-touch-icon\.png)(?:\?v=[a-f0-9]+)?"',
                lambda m: 'href="/%s?v=%s"' % (m.group(1), h(m.group(1))), s)
