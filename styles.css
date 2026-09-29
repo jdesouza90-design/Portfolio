@@ -1239,6 +1239,8 @@ footer a:hover { color: var(--ink); }
 .hero-panel img { max-height: min(620px, 62vh); }
 .hero-panel.two img { max-width: 40%; }
 .hero-panel.three img { max-width: 30%; }
+.case-no-code .hero-panel { min-height: 0; padding: clamp(14px, 2.6vw, 32px); }   /* the window is the subject: thin ground, full width */
+.case-no-code .hero-panel img { width: 100%; max-height: none; }
 @media (max-width: 600px) {
   .hero-panel { min-height: 0; }
   .hero-panel.two img { max-width: 46%; max-height: 420px; }
