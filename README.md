@@ -893,10 +893,15 @@ The rules that shape the code:
   `data-annotations`; the table below it is the accessible fallback. The
   line is swept open left to right when the card scrolls in and the closing
   value lands in a pill at the right edge.
-- The agentic audit page's proof (and the parked audit agent page's) is a matrix (`[data-matrix]` with `data-total`
-  and `data-groups`): one dot per variant on a canvas, the wall sweeping in
-  as the block reveals and thinning to the set that remains, one tinted
-  block per component. The comparison table sits behind "View as a table".
+- The agentic audit page's Results proof is the two variant sheets
+  (`[data-sheets]`): a front sweeps the old .Button screenshot into an
+  outline of every button, most outlines fall away while the stat counts
+  2,304 down to 321, the rest take their component's tint and travel into
+  the new sheets, and the new screenshot sweeps in as they fade. The cells
+  are measured from the two images into `assets/btn-sheet-cells.json`
+  (stamped through `data-cells`). The parked audit agent page keeps the
+  older dot matrix (`[data-matrix]` with `data-total` and `data-groups`).
+  The comparison table sits behind "View as a table".
   Its "Try it" row is a configurator (`[data-config]`): two labelled groups
   of chip-styled radios and checkboxes (names prefixed by side, so the two
   sides never share a radio group) and a specimen `main.js` repaints in Best

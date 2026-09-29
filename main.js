@@ -1589,6 +1589,175 @@ const CONFIG = {
     }
   });
 
+  /* ---- Sheets: the old .Button sheet traced, then cut to the new ones ----
+     Both sheets are drawn on one canvas, each fitted to the plot's width.
+     A front sweeps the old sheet left to right: behind it the screenshot
+     gives way to an outline of every button on it. Then the cut: most
+     outlines fall away while the stat counts 2,304 down to 321, the rest
+     take their component's tint and travel into the cells of the new
+     sheets, and the new screenshot sweeps in under them and the outlines
+     fade as it passes, leaving the new sheet clean. The outlines are
+     the sheets' own cells, measured from the two images, in
+     assets/btn-sheet-cells.json ([x, y, w, h] per cell, plus the group on
+     the new sheet). Survivors are a seeded pick, paired to their
+     destination left to right, so the cut runs the same every time.
+     Reduced motion, or a block that never gets to animate, draws the end. */
+  const initSheets = () => $$("[data-sheets]").forEach((el) => {
+    const canvas = $("canvas", el), plot = $(".matrix-plot", el);
+    const imgB = $('[data-sheet="before"]', el), imgA = $('[data-sheet="after"]', el);
+    const stat = $("[data-sheets-count]", el);
+    if (!canvas || !plot || !imgB || !imgA || !el.dataset.cells) return;
+    const total = Number(el.dataset.total) || 0, kept = Number(el.dataset.kept) || 0;
+    const ctx = canvas.getContext("2d");
+    const ink = tint("--ink", "#14100C");
+    const tints = [tint("--accent", "#3B6B44"), tint("--accent-2", "#6E9A5A"), tint("--ink-2", "#5C564E")];
+    const fmt = (n) => Math.round(n).toLocaleString("en-US");
+
+    // the stat reads its final figure to a screen reader; the count is for the eye
+    let shown = null;
+    if (stat) {
+      const text = stat.textContent.trim();
+      stat.textContent = "";
+      const sr = document.createElement("span");
+      sr.className = "sr-only"; sr.textContent = text;
+      shown = document.createElement("span");
+      shown.setAttribute("aria-hidden", "true"); shown.textContent = text;
+      stat.append(sr, shown);
+    }
+    const count = (n) => { if (shown) { const s = fmt(n); if (shown.textContent !== s) shown.textContent = s; } };
+
+    let data = null, W = 0, H = 0, dpr = 1, sB = 1, sA = 1, olds = [], movers = [];
+    const layout = () => {
+      const w = plot.clientWidth;
+      if (!w || !data) return false;
+      W = w; H = w * data.after.h / data.after.w;
+      sB = w / data.before.w; sA = w / data.after.w;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+      canvas.style.height = `${H}px`;
+      return true;
+    };
+    const build = () => {
+      const b = data.before.cells, a = data.after.cells, limit = data.after.h * data.before.w / data.after.w;
+      // only the cells of the old sheet that fit the plot; the sheet runs on below it
+      const cells = [];
+      for (let i = 0; i < b.length; i += 4) if (b[i + 1] + b[i + 3] < limit - 4) cells.push({ x: b[i], y: b[i + 1], w: b[i + 2], h: b[i + 3] });
+      const dest = [];
+      for (let i = 0; i < a.length; i += 5) dest.push({ x: a[i], y: a[i + 1], w: a[i + 2], h: a[i + 3], g: a[i + 4] });
+      let seed = 2304;
+      const rand = () => { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; };
+      const order = cells.map((_, i) => i);
+      for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
+      const n = Math.min(dest.length, cells.length);
+      const pick = new Set(order.slice(0, n));
+      cells.forEach((c) => { c.lag = rand(); });
+      olds = cells.filter((_, i) => !pick.has(i));
+      const from = cells.filter((_, i) => pick.has(i)).sort((p, q) => p.x - q.x || p.y - q.y);
+      const to = dest.slice().sort((p, q) => p.x - q.x || p.y - q.y);
+      movers = from.map((c, i) => ({ ...c, to: to[i] }));
+    };
+
+    const clamp = (v) => Math.min(Math.max(v, 0), 1);
+    const ease = (t) => 1 - Math.pow(1 - t, 3);
+    const inOut = (t) => (t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+    const R = 10;
+    const outline = (x, y, w, h, p) => {
+      const r = Math.min(3, w / 2, h / 2), len = 2 * (w + h);
+      ctx.setLineDash(p >= 1 ? [] : [len * p, len]);
+      ctx.beginPath(); ctx.roundRect(x, y, w, h, r); ctx.stroke();
+    };
+    // a sheet fitted to the width, shown only on one side of the front
+    const sheet = (img, left, right, alpha) => {
+      if (!img.complete || !img.naturalWidth || alpha <= 0 || right <= left) return;
+      ctx.save();
+      ctx.beginPath(); ctx.roundRect(0, 0, W, H, R); ctx.clip();
+      ctx.beginPath(); ctx.rect(left, 0, right - left, H); ctx.clip();
+      ctx.globalAlpha = alpha;
+      ctx.drawImage(img, 0, 0, W, W * img.naturalHeight / img.naturalWidth);
+      ctx.restore();
+    };
+
+    // t is ms into the piece: the trace runs to 1700, the cut from 2100,
+    // the travel from 2700, the new sheet sweeps in from 4200
+    const END = 5400;
+    const draw = (t) => {
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, W, H);
+      ctx.lineWidth = 1;
+      const front = W * ease(clamp((t - 200) / 1500)) * 1.08 - W * .04;     // the trace front, a touch past each edge
+      const cut = clamp((t - 2100) / 700), move = clamp((t - 2700) / 1500);
+      const front2 = W * ease(clamp((t - 4200) / 1000)) * 1.08 - W * .04;
+
+      sheet(imgB, Math.max(front, 0), W, 1 - cut);
+      sheet(imgA, 0, Math.min(front2, W), 1);
+
+      // the cells that were cut
+      if (cut < 1) for (const c of olds) {
+        const x = c.x * sB, p = clamp((front - x) / (W * .12));
+        if (p <= 0) continue;
+        const gone = clamp((cut - c.lag * .5) / .5);
+        const k = 1 - .4 * gone;
+        ctx.strokeStyle = ink(.5 * (1 - gone));
+        const w = c.w * sB * k, h = c.h * sB * k;
+        outline(x + (c.w * sB - w) / 2, c.y * sB + (c.h * sB - h) / 2, w, h, p);
+      }
+      // the cells that survive, travelling into the new sheets
+      for (const c of movers) {
+        const x0 = c.x * sB, p = clamp((front - x0) / (W * .12));
+        if (p <= 0) continue;
+        const d = c.to, lag = (d.x / data.after.w) * .25;
+        const m = inOut(clamp((move - lag) / .75));
+        const x = x0 + (d.x * sA - x0) * m, y = c.y * sB + (d.y * sA - c.y * sB) * m;
+        const w = c.w * sB + (d.w * sA - c.w * sB) * m, h = c.h * sB + (d.h * sA - c.h * sB) * m;
+        const on = ease(clamp((cut - c.lag * .5) / .5));
+        // once the new sheet sweeps in under it, the outline has done its job and goes
+        const done = clamp((front2 - d.x * sA) / (W * .1));
+        if (done >= 1) continue;
+        ctx.lineWidth = 1 + .5 * on;
+        ctx.strokeStyle = on > 0 ? tints[d.g]((.5 + .5 * on) * (1 - done)) : ink(.5);
+        outline(x - .5 * on, y - .5 * on, w + on, h + on, p);
+      }
+      ctx.setLineDash([]);
+      count(t < 2100 ? total : total - (total - kept) * ease(cut));
+    };
+
+    let played = false, start = 0, raf = 0;
+    const frame = (now) => {
+      const t = now - start;
+      draw(t);
+      if (t < END) raf = requestAnimationFrame(frame);
+    };
+    const play = () => {
+      if (played) return;
+      played = true;
+      start = performance.now();
+      raf = requestAnimationFrame(frame);
+    };
+    const settle = () => { played = true; cancelAnimationFrame(raf); draw(END); };
+    const redraw = () => { if (played) { cancelAnimationFrame(raf); draw(END); } };
+    onTheme(redraw);
+    [imgB, imgA].forEach((img) => { img.loading = "eager"; if (!img.complete) img.addEventListener("load", redraw, { once: true }); });
+
+    fetch(el.dataset.cells).then((r) => r.json()).then((d) => {
+      data = d;
+      if (!layout()) return;
+      build();
+      onceInView(plot, 0.35, (animate) => {
+        if (animate && !reduced) {
+          count(total);
+          const go = () => Promise.all([imgB, imgA].map((img) => img.decode?.().catch(() => {}))).then(play);
+          afterReveal(plot, go);
+        } else settle();
+      });
+      if ("ResizeObserver" in window) {
+        let w = plot.clientWidth;
+        new ResizeObserver(() => { if (plot.clientWidth !== w) { w = plot.clientWidth; if (layout() && played) { cancelAnimationFrame(raf); draw(END); } } }).observe(plot);
+      } else {
+        window.addEventListener("resize", debounce(() => { if (layout() && played) draw(END); }, 120));
+      }
+    }).catch(() => {});
+  });
+
   /* ---- Configurator: the old .Button and the new Button, live ----
      Each side is a form of radios and checkboxes under chips; the specimen
      above it is repainted from the form on every change. The colors are
@@ -3591,6 +3760,6 @@ const CONFIG = {
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { if (current() === "system") document.dispatchEvent(new CustomEvent("themechange")); });
   };
 
-  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStory, initRun, initCoach, initFields, initCharts, initMatrix, initConfig, initFlows, initBeforeAfter, initStrips, initTableWraps, initPortrait, initClock, initArcade, initStack, initLens, initSteps, initDemo, initPalette, initPostList, initChat, initYear, initTheme, initTalk]
+  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStory, initRun, initCoach, initFields, initCharts, initMatrix, initSheets, initConfig, initFlows, initBeforeAfter, initStrips, initTableWraps, initPortrait, initClock, initArcade, initStack, initLens, initSteps, initDemo, initPalette, initPostList, initChat, initYear, initTheme, initTalk]
     .forEach((init) => { try { init(); } catch (err) { console.error(`main.js: ${init.name} failed`, err); } });
 })();
