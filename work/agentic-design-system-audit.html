@@ -22,7 +22,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!-- A fresh unlock from the gate: hold the page until its opener is up (initUnlock in main.js). -->
 <script>if (/[?&]unlocked(?=&|$)/.test(location.search)) document.documentElement.classList.add("unlock");</script>
-<link rel="stylesheet" href="../styles.css?v=a26ae8b6">
+<link rel="stylesheet" href="../styles.css?v=b6cf948d">
 <script defer src="/_vercel/insights/script.js"></script>
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
@@ -75,7 +75,7 @@
       <div class="outcome-stat"><p class="eyebrow">Outcome</p><div class="t-stat" data-flow>90.7%</div><p class="t-small">Library adoption, measured for the first time across 296 files</p></div>
     </div>
     <figure class="panel hero-panel wide demo" data-demo>
-      <div class="agent-win" role="img" aria-label="The design system audit agent at work. On the left, a terminal runs figma-audit across Best Egg’s Figma: 8 teams, 296 files, 1.15 million instances, 90.7% library adoption, then four flags. On the right, it writes the remediation guide as it goes, one card per fix with a link into Figma, marked for the agent or for a designer with write access, until the guide holds 28 fixes and the button split is marked designer decided.">
+      <div class="agent-win" role="img" aria-label="The design system audit agent at work. On the left, a terminal runs figma-audit across Best Egg’s Figma: 8 teams, 296 files, 1.15 million instances, 90.7% library adoption, then four flags. On the right, it writes the remediation guide as it goes: a chart of the .Button variants cut from 2,304 to the 321 kept, a chart of the component picker cut from 491 standalones to 166 (266 illustrations move out, 59 unused are deprecated), and one row per fix with a link into Figma, marked for the agent or for a designer with write access, until the guide holds 28 fixes and the button split is marked designer decided.">
         <div class="agent-bar"><span class="agent-dots"><i></i><i></i><i></i></span><span class="agent-title">figma-audit</span><span class="agent-status" data-demo-status>Report written</span></div>
         <div class="agent-split">
           <ol class="agent-term" data-demo-term>
@@ -87,56 +87,58 @@
             <li class="t-bar" data-status="Crawling 296 files" data-hold="400"><i>›</i> crawl  <span class="t-track"><b></b></span> <span data-count="296">296</span>/296 files</li>
             <li class="t-dim" data-status="Counting instances" data-hold="500"><i>›</i> 1.15M instances read against 1,316 assets</li>
             <li class="t-ok" data-hold="800"><i>✓</i> library adoption <b>90.7%</b></li>
-            <li class="t-flag" data-status="Writing the guide" data-hold="1700" data-card="button icons"><i>!</i> .Button: 2,304 variants from 7 properties</li>
-            <li class="t-flag" data-hold="1300" data-card="deprecate"><i>!</i> 770 components with zero instances</li>
-            <li class="t-flag" data-hold="1300" data-card="illustrations"><i>!</i> 266 of 491 standalones are illustrations</li>
+            <li class="t-flag" data-status="Writing the guide" data-hold="1700" data-card="button variants"><i>!</i> .Button: 2,304 variants from 7 properties</li>
+            <li class="t-flag" data-hold="1300" data-card="deprecate picker" data-set="picker:dep"><i>!</i> 770 components with zero instances</li>
+            <li class="t-flag" data-hold="1300" data-card="illustrations" data-set="picker:ill"><i>!</i> 266 of 491 standalones are illustrations</li>
             <li class="t-flag" data-hold="1300" data-card="bind"><i>!</i> 844,333 hand-set values, 229 variables unbound</li>
             <li class="t-ok" data-hold="1300" data-card="guideline"><i>✓</i> usage guideline drafted for the button set</li>
-            <li class="t-ok" data-status="Report written" data-hold="900" data-total="28"><i>✓</i> 28 fixes, each with a deep link into Figma</li>
-            <li class="t-dim" data-hold="1100" data-decide="button"><i>›</i> decisions to the design team</li>
+            <li class="t-ok" data-status="Report written" data-hold="900" data-total="28" data-decide="picker"><i>✓</i> 28 fixes, each with a deep link into Figma</li>
+            <li class="t-dim" data-hold="1100" data-decide="button variants"><i>›</i> decisions to the design team</li>
             <li class="t-dim" data-hold="5000"><i>›</i> next run: the first of the month</li>
             <li class="t-caret" aria-hidden="true"><span class="t-prompt">$</span> <i class="caret"></i></li>
           </ol>
-          <div class="agent-guide">
+          <div class="agent-guide" data-demo-guide>
             <div class="g-head"><span>Remediation guide</span><span class="g-total"><b data-demo-total>28</b> fixes</span></div>
-            <ol class="g-cards" data-demo-guide>
-            <li class="g-card decided" data-card="button">
-              <span class="g-title" data-type>Split .Button into Button, Icon Button, Link</span>
-              <span class="g-tag g-write g-before">Needs write access</span><span class="g-tag g-decided g-after">Designer decided</span>
-              <span class="g-meta"><span class="g-before">2,304 variants in one component</span><span class="g-after">2,304 variants, 321 kept</span></span>
-              <span class="g-link">Open in Figma ↗</span>
-            </li>
-            <li class="g-card" data-card="icons">
-              <span class="g-title" data-type>Make icons a boolean and a swap</span>
-              <span class="g-tag g-write">Needs write access</span>
-              <span class="g-meta">One icon multiplied the matrix by 4</span>
-              <span class="g-link">Open in Figma ↗</span>
-            </li>
-            <li class="g-card" data-card="deprecate">
-              <span class="g-title" data-type>Deprecate unused standalones</span>
-              <span class="g-tag g-write">Needs write access</span>
-              <span class="g-meta">59 with zero instances</span>
-              <span class="g-link">Open in Figma ↗</span>
-            </li>
-            <li class="g-card" data-card="illustrations">
-              <span class="g-title" data-type>Move illustrations to their own library</span>
-              <span class="g-tag g-write">Needs write access</span>
-              <span class="g-meta">266 of 491 standalones</span>
-              <span class="g-link">Open in Figma ↗</span>
-            </li>
-            <li class="g-card" data-card="bind">
-              <span class="g-title" data-type>Bind hand-set values to variables</span>
-              <span class="g-tag g-write">Needs write access</span>
-              <span class="g-meta">844,333 values, 229 variables</span>
-              <span class="g-link">Open in Figma ↗</span>
-            </li>
-            <li class="g-card" data-card="guideline">
-              <span class="g-title" data-type>Write the usage guideline</span>
-              <span class="g-tag g-agent">Agent can make it</span>
-              <span class="g-meta">Button, Icon Button, Link</span>
-              <span class="g-link">Open in Figma ↗</span>
-            </li>
-            </ol>
+            <div class="g-body">
+              <section class="g-chart g-var decided" data-card="variants">
+                <div class="gc-top"><span class="gc-label">.Button variants</span><span class="gc-val"><b class="g-before">2,304</b><b class="g-after">321</b><small class="g-after">from 2,304</small></span></div>
+                <div class="gc-bar gc-track"><div class="gc-kept"><i class="v-btn"></i><i class="v-icon"></i><i class="v-link"></i></div></div>
+                <ul class="gc-key"><li class="v-btn"><b>141</b> Button</li><li class="v-icon"><b>120</b> Icon Button</li><li class="v-link"><b>60</b> Link</li></ul>
+              </section>
+              <section class="g-chart g-picker decided set-dep set-ill" data-card="picker">
+                <div class="gc-top"><span class="gc-label">Component picker</span><span class="gc-val"><b class="g-before">491</b><b class="g-after">166</b><small class="g-before">standalone</small><small class="g-after">from 491, a 66% cut</small></span></div>
+                <div class="gc-bar"><i class="k-stay"></i><i class="k-ill"></i><i class="k-dep"></i></div>
+                <ul class="gc-key"><li class="k-stay"><b>166</b> stay</li><li class="k-ill"><b>266</b> illustrations move out</li><li class="k-dep"><b>59</b> deprecated</li></ul>
+              </section>
+              <ol class="g-rows">
+                <li class="g-row decided" data-card="button">
+                  <span class="g-mark" aria-hidden="true"></span>
+                  <span class="g-title" data-type>Split .Button into Button, Icon Button, Link</span>
+                  <span class="g-meta">Icons become a boolean and a swap</span><span class="g-link">Open in Figma ↗</span>
+                </li>
+                <li class="g-row" data-card="deprecate">
+                  <span class="g-mark" aria-hidden="true"></span>
+                  <span class="g-title" data-type>Deprecate unused standalones</span>
+                  <span class="g-meta">59 with zero instances</span><span class="g-link">Open in Figma ↗</span>
+                </li>
+                <li class="g-row" data-card="illustrations">
+                  <span class="g-mark" aria-hidden="true"></span>
+                  <span class="g-title" data-type>Move illustrations to their own library</span>
+                  <span class="g-meta">266 of 491 standalones</span><span class="g-link">Open in Figma ↗</span>
+                </li>
+                <li class="g-row" data-card="bind">
+                  <span class="g-mark" aria-hidden="true"></span>
+                  <span class="g-title" data-type>Bind hand-set values to variables</span>
+                  <span class="g-meta">844,333 values, 229 variables</span><span class="g-link">Open in Figma ↗</span>
+                </li>
+                <li class="g-row g-agent" data-card="guideline">
+                  <span class="g-mark" aria-hidden="true"></span>
+                  <span class="g-title" data-type>Write the usage guideline</span>
+                  <span class="g-meta">Button, Icon Button, Link</span><span class="g-link">Open in Figma ↗</span>
+                </li>
+              </ol>
+              <p class="g-legend"><span class="g-write">Needs write access</span><span class="g-agentkey">Agent can make it</span><span class="g-donekey">Designer decided</span></p>
+            </div>
           </div>
         </div>
       </div>
@@ -404,6 +406,6 @@
   </div>
 </section>
 </main>
-<script src="../main.js?v=aa196491"></script>
+<script src="../main.js?v=c5dc38d6"></script>
 </body>
 </html>

@@ -1769,36 +1769,88 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 .caret { display: inline-block; width: .6em; height: 1.1em; vertical-align: -3px; background: var(--term-ink); animation: caret 1.1s steps(1) infinite; }
 @keyframes caret { 50% { opacity: 0; } }
 
-/* Right: the remediation guide the agent writes as it flags. One card per
-   fix, marked for the agent or for a designer with write access, each with
-   its link into Figma. */
-.agent-guide { display: flex; flex-direction: column; gap: var(--sp-3); padding: var(--sp-5); background: var(--plate-paper); border-left: 1px solid var(--plate-hair); }
-.g-head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--sp-3); font-size: var(--t-micro); letter-spacing: var(--ls-micro); text-transform: uppercase; color: var(--plate-ink-2); }
+/* Right: the remediation guide the agent writes as it flags. Two charts of
+   numbers the page states (the .Button variants cut to what was kept; the
+   component picker split into what stays, what moves and what goes), then
+   one row per fix with its link into Figma. A row's mark says who acts. */
+.agent-guide { --g-pad: var(--sp-5); position: relative; display: flex; flex-direction: column; background: var(--plate-paper); border-left: 1px solid var(--plate-hair); }
+.g-head { position: sticky; top: 0; z-index: 1; display: flex; justify-content: space-between; align-items: baseline; gap: var(--sp-3); padding: 16px var(--g-pad) 12px; background: var(--plate-paper); border-bottom: 1px solid var(--plate-hair); font-size: var(--t-micro); letter-spacing: var(--ls-micro); text-transform: uppercase; color: var(--plate-ink-2); }
 .g-total b { font-weight: 500; color: var(--plate-ink-0); font-variant-numeric: tabular-nums; }
-.g-cards { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-2); }
-.g-card {
-  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px var(--sp-3); align-items: baseline;
-  padding: 10px 12px; background: var(--plate-surface); border: 1px solid var(--plate-hair); border-radius: 8px;
-  animation: g-in .45s var(--ease) both;
-}
+.g-body { display: flex; flex-direction: column; gap: var(--sp-4); padding: var(--sp-4) var(--g-pad) var(--g-pad); flex: 1; }
+
+.g-chart { display: grid; gap: 8px; animation: g-in .45s var(--ease) both; }
 @keyframes g-in { from { opacity: 0; transform: translateY(8px); } }
-.g-title { font-family: var(--font-body); font-size: 14.5px; font-weight: 500; line-height: 1.35; color: var(--plate-ink-0); }
-.g-tag { justify-self: end; white-space: nowrap; padding: 2px 8px; border-radius: 99px; font-size: 11px; letter-spacing: .02em; }
-.g-write { background: var(--plate-paper-2); color: var(--plate-ink-2); }
-.g-agent { background: var(--plate-glow); color: var(--plate-accent-ink); }
-.g-decided { background: var(--plate-accent-ink); color: var(--plate-surface); }
-.g-meta { font-size: 12px; color: var(--plate-ink-2); }
-.g-link { justify-self: end; font-size: 12px; color: var(--plate-accent-ink); white-space: nowrap; }
-.g-card .g-after, .g-card.decided .g-before { display: none; }
-.g-card.decided .g-after { display: inline; }
-.g-card.decided .g-tag.g-after { display: inline-block; animation: g-pop .4s var(--ease) both; }
-@keyframes g-pop { from { opacity: 0; transform: scale(.85); } }
+.gc-top { display: flex; justify-content: space-between; align-items: baseline; gap: var(--sp-3); }
+.gc-label { font-size: var(--t-micro); letter-spacing: var(--ls-micro); text-transform: uppercase; color: var(--plate-ink-2); }
+.gc-val { display: inline-flex; align-items: baseline; gap: 8px; color: var(--plate-ink-2); }
+.gc-val b { font-family: var(--font-display); font-weight: 400; font-size: 28px; line-height: 1; letter-spacing: -.5px; font-variant-numeric: lining-nums tabular-nums; color: var(--plate-ink-0); }
+.g-chart.decided .gc-val b { color: var(--plate-accent-ink); }
+.gc-val small { font-size: 12px; }
+.gc-bar { --gap: 2px; display: flex; height: 12px; border-radius: 6px; overflow: hidden; background: var(--plate-paper-2); }
+.gc-bar i { display: block; height: 100%; }
+.gc-key { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; line-height: 1.4; color: var(--plate-ink-2); }
+.gc-key li { display: inline-flex; align-items: center; gap: 6px; }
+.gc-key li::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 2px; background: var(--sw); }
+.gc-key b { font-weight: 500; color: var(--plate-ink-0); font-variant-numeric: tabular-nums; }
+
+/* .Button variants: the whole 2,304 as a sand bar; at the decision it
+   shrinks to the 321 kept, split Button, Icon Button and Link. */
+.g-var { --sand: var(--plate-hair-2); --v-btn: #2B5233; --v-icon: #4E7D4C; --v-link: #9DBF98; }
+.g-var .gc-track { background: repeating-linear-gradient(135deg, var(--plate-hair) 0 2px, var(--plate-paper-2) 2px 6px); }
+.gc-kept { display: flex; gap: 0; height: 100%; width: 100%; transition: width .8s var(--ease), gap .5s var(--ease) .3s; }   /* one component until the split */
+.gc-kept i { transition: background-color .5s var(--ease) .15s; background: var(--sand); }
+.gc-kept .v-btn { flex: 141; } .gc-kept .v-icon { flex: 120; } .gc-kept .v-link { flex: 60; }
+.g-var.decided .gc-kept { width: 13.93%; gap: 2px; }   /* 321 of 2,304 */
+.g-var.decided .gc-kept .v-btn { background: var(--v-btn); }
+.g-var.decided .gc-kept .v-icon { background: var(--v-icon); }
+.g-var.decided .gc-kept .v-link { background: var(--v-link); }
+.gc-key .v-btn { --sw: var(--v-btn); } .gc-key .v-icon { --sw: var(--v-icon); } .gc-key .v-link { --sw: var(--v-link); }
+.g-var .gc-key { opacity: 0; transition: opacity .4s var(--ease) .5s; }
+.g-var.decided .gc-key { opacity: 1; }
+.g-chart .g-after { display: none; }
+.g-chart.decided .g-after { display: inline; }
+.g-chart.decided .g-before { display: none; }
+
+/* Component picker: 491 standalones. What is flagged peels off the end of
+   the bar: illustrations move to a library of their own, the unused go. */
+.g-picker { --stay: var(--plate-accent-ink); --ill: var(--plate-hair-2); --dep: #C98A48; --w-ill: 0%; --w-dep: 0%; }
+.g-picker.set-ill { --w-ill: 54.16%; }   /* 266 of 491 */
+.g-picker.set-dep { --w-dep: 12.02%; }   /* 59 of 491 */
+.g-picker .gc-bar .k-stay { flex: 1 1 0; background: var(--stay); }
+.g-picker .gc-bar .k-ill { flex: none; width: var(--w-ill); background: repeating-linear-gradient(135deg, var(--ill) 0 3px, #E3DFD7 3px 6px); transition: width .7s var(--ease); }
+.g-picker .gc-bar .k-dep { flex: none; width: var(--w-dep); background: var(--dep); transition: width .7s var(--ease); }
+.g-picker .gc-bar i + i { box-shadow: -2px 0 0 0 var(--plate-paper); }
+.g-picker .gc-key li { opacity: .35; transition: opacity .4s var(--ease); }
+.g-picker .gc-key .k-stay { opacity: 1; }
+.g-picker.set-ill .gc-key .k-ill, .g-picker.set-dep .gc-key .k-dep { opacity: 1; }
+.gc-key .k-stay { --sw: var(--plate-accent-ink); }
+.gc-key .k-ill { --sw: var(--plate-hair-2); }
+.gc-key .k-dep { --sw: #C98A48; }
+
+.g-rows { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--plate-hair); }
+.g-row {
+  display: grid; grid-template-columns: 16px minmax(0, 1fr) auto; column-gap: 12px; row-gap: 1px; align-items: baseline;
+  padding: 9px 0; border-bottom: 1px solid var(--plate-hair); animation: g-in .45s var(--ease) both;
+}
+.g-mark { grid-row: 1 / span 2; align-self: start; position: relative; width: 16px; height: 16px; margin-top: 2px; border-radius: 50%; border: 1.5px solid var(--plate-hair-2); background: var(--plate-surface); transition: background-color .3s var(--ease), border-color .3s var(--ease); }
+.g-mark::after { content: ""; position: absolute; left: 4.5px; top: 1.5px; width: 4px; height: 8px; border: solid var(--plate-surface); border-width: 0 1.5px 1.5px 0; transform: rotate(45deg) scale(0); transition: transform .3s var(--ease) .1s; }
+.g-agent .g-mark { background: var(--plate-accent-2); border-color: var(--plate-accent-2); }
+.g-row.decided .g-mark { background: var(--plate-accent-ink); border-color: var(--plate-accent-ink); }
+.g-row.decided .g-mark::after { transform: rotate(45deg) scale(1); }
+.g-title { grid-column: 2 / -1; font-family: var(--font-body); font-size: 15px; font-weight: 500; line-height: 1.35; color: var(--plate-ink-0); }
+.g-meta { grid-column: 2; font-size: 12px; color: var(--plate-ink-2); }
+.g-link { grid-column: 3; font-size: 12px; color: var(--plate-accent-ink); white-space: nowrap; }
+.g-legend { display: flex; flex-wrap: wrap; gap: 4px 16px; margin: 0; font-size: 11px; letter-spacing: .02em; color: var(--plate-ink-2); }
+.g-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.g-legend span::before { content: ""; width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid var(--plate-hair-2); background: var(--plate-surface); }
+.g-legend .g-agentkey::before { background: var(--plate-accent-2); border-color: var(--plate-accent-2); }
+.g-legend .g-donekey::before { background: var(--plate-accent-ink); border-color: var(--plate-accent-ink); }
 
 /* The run in progress: main.js marks what has not printed yet. It keeps
    its room (the window is held at the finished run's height), so nothing
    under the window moves. */
 .agent-win:not(.measure) .pending { display: none; }
-.agent-win.paused .caret, .agent-win.paused .g-card { animation-play-state: paused; }
+.agent-win.paused .caret, .agent-win.paused .g-chart, .agent-win.paused .g-row { animation-play-state: paused; }
 
 @media (max-width: 860px) {
   .agent-split { grid-template-columns: minmax(0, 1fr); }
@@ -1806,22 +1858,26 @@ details.data th, details.data td { white-space: normal; padding-inline: 10px; } 
 }
 @media (max-width: 640px) {
   .agent-win { font-size: 12px; }
-  .agent-term, .agent-guide { padding: var(--sp-4); }
+  .agent-term { padding: var(--sp-4); }
+  .agent-guide { --g-pad: var(--sp-4); }
   .agent-title { display: none; }   /* the status alone fits the bar */
-  .g-card { grid-template-columns: minmax(0, 1fr) auto; }
-  .g-title, .g-meta { grid-column: 1 / -1; }
-  .g-tag { justify-self: start; grid-row: 3; }
-  .g-link { grid-row: 3; }
-  /* Both panes keep a fixed height and follow the newest output, as a
-     terminal and a document being written do; what scrolled off fades at
-     the top. main.js keeps each one at its end. */
-  .agent-term { height: 17.5rem; overflow: hidden; }
+  .gc-top { flex-wrap: wrap; row-gap: 2px; }
+  .g-meta { grid-column: 2 / -1; }
+  .g-link { grid-column: 2; margin-top: 2px; }
+  /* Both panes keep a fixed height and scroll on their own; while the run
+     plays they follow the newest output, as a terminal and a document being
+     written do (main.js keeps each at its end), and the terminal fades at
+     the top. The guide keeps its head. Not playing (reduced motion), a
+     reader can scroll them. */
+  .agent-term { height: 17.5rem; overflow: auto; }
   .agent-term .t-caret { margin-top: 0; }
-  .g-cards { max-height: 21rem; overflow: hidden; align-content: start; }
-  .agent-term, .g-cards { -webkit-mask-image: linear-gradient(to bottom, transparent, #000 2.5rem); mask-image: linear-gradient(to bottom, transparent, #000 2.5rem); }
+  .agent-guide { height: 30rem; overflow: auto; }
+  .agent-win.playing .agent-term, .agent-win.playing .agent-guide { overflow: hidden; }
+  .agent-term { -webkit-mask-image: linear-gradient(to bottom, transparent, #000 2.5rem); mask-image: linear-gradient(to bottom, transparent, #000 2.5rem); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .g-card, .g-card.decided .g-tag.g-after, .caret { animation: none; }
+  .g-chart, .g-row, .caret { animation: none; }
+  .gc-kept, .gc-kept i, .g-picker .k-ill, .g-picker .k-dep, .g-mark, .g-mark::after, .g-picker .gc-key li, .g-var .gc-key { transition: none; }
   .agent-win.busy .agent-status::before { animation: none; }
 }
 

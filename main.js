@@ -2771,11 +2771,14 @@ const CONFIG = {
      button; under reduced motion, or with no script, the finished run
      stands as written. */
   const initDemo = () => $$("[data-demo]").forEach((fig) => {
-    const win = $(".agent-win", fig), term = $("[data-demo-term]", fig), guide = $("[data-demo-guide]", fig);
+    const win = $(".agent-win", fig), term = $("[data-demo-term]", fig), guide = $("[data-demo-guide]", fig);   // guide: the pane that scrolls on a phone
     if (!win || !term || !guide) return;
     if (reduced) { term.scrollTop = term.scrollHeight; return; }   // the finished run, its terminal at the end
+    win.classList.add("playing");
     const status = $("[data-demo-status]", win), total = $("[data-demo-total]", win);
     const lines = $$("li:not(.t-caret)", term), cards = $$("[data-card]", guide);
+    const card = (id) => cards.find((c) => c.dataset.card === id);
+    const ids = (v) => (v || "").split(" ").filter(Boolean);
     const typed = $$("[data-type]", win);
     typed.forEach((el) => { el.dataset.full = el.textContent; });
     const finalStatus = status.textContent, finalTotal = total.textContent;
@@ -2823,7 +2826,10 @@ const CONFIG = {
     };
     const reset = () => {
       lines.forEach((l) => l.classList.add("pending"));
-      cards.forEach((c) => { c.classList.add("pending"); c.classList.remove("decided"); });
+      cards.forEach((c) => {
+        c.classList.add("pending");
+        c.classList.remove("decided", ...Array.from(c.classList).filter((k) => k.startsWith("set-")));
+      });
       typed.forEach((el) => { el.textContent = ""; });
       total.textContent = "0";
       status.textContent = "Starting";
@@ -2832,14 +2838,14 @@ const CONFIG = {
     const show = (el) => {
       el.classList.remove("pending");
       el.style.animation = "none"; void el.offsetWidth; el.style.animation = "";   // replay its entrance
-      follow();
+      follow(term.contains(el) ? term : guide);
     };
     // Where a pane has a fixed height (a phone), it keeps its newest line
     // or card in view.
-    const follow = () => [term, guide].forEach((pane) => {
+    const follow = (pane) => {
       if (pane.scrollHeight > pane.clientHeight + 1) pane.scrollTo({ top: pane.scrollHeight, behavior: "smooth" });
       else pane.scrollTop = 0;
-    });
+    };
     const run = async () => {
       for (;;) {
         reset();
@@ -2858,22 +2864,25 @@ const CONFIG = {
               await wait(45);
             }
           }
-          for (const id of (line.dataset.card || "").split(" ").filter(Boolean)) {
-            const card = cards.find((c) => c.dataset.card === id);
-            if (!card) continue;
-            show(card);
-            await type($("[data-type]", card), 16);
-            follow();
+          for (const id of ids(line.dataset.card)) {
+            const c = card(id);
+            if (!c) continue;
+            show(c);
+            const title = $("[data-type]", c);
+            if (title) await type(title, 16);   // a chart has no title to type: it draws in
+            follow(guide);
             await wait(250);
+          }
+          for (const pair of ids(line.dataset.set)) {   // "picker:dep": that chart's bar takes that part
+            const [id, part] = pair.split(":");
+            if (card(id)) card(id).classList.add(`set-${part}`);
           }
           if (line.dataset.total) {
             const to = Number(line.dataset.total);
             for (let k = 0; k <= to; k++) { total.textContent = String(k); await wait(28); }
           }
-          if (line.dataset.decide) {
-            const card = cards.find((c) => c.dataset.card === line.dataset.decide);
-            if (card) card.classList.add("decided");
-          }
+          for (const id of ids(line.dataset.decide)) if (card(id)) card(id).classList.add("decided");
+          if (line.dataset.decide && guide.scrollTop > 0) guide.scrollTo({ top: 0, behavior: "smooth" });   // the charts take the result, so bring them back into view
           await wait(Number(line.dataset.hold) || 400);
         }
         status.textContent = finalStatus; total.textContent = finalTotal;
