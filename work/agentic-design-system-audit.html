@@ -70,7 +70,7 @@
     <div class="hero-lead">
       <div class="cs-hero-copy">
       <h1 class="t-display" data-rise style="--i:0">Agentic design system audit and remediation</h1>
-      <p class="t-lede" data-rise style="--i:1">An agent that audits Best Egg’s whole Figma design system, and the plan to fix what it found. It began with one overloaded button and grew into an audit of all 296 files.</p>
+      <p class="t-lede" data-rise style="--i:1">An agent that audits Best Egg’s whole Figma design system, and the plan to fix what it found. A senior product designer’s agent fixed one overloaded button first. Then the audit covered all 296 files.</p>
     </div>
       <div class="outcome-stat"><p class="eyebrow">Outcome</p><div class="t-stat" data-flow>90.7%</div><p class="t-small">Library adoption, measured for the first time across 296 files</p></div>
     </div>
@@ -160,9 +160,9 @@
     </header>
     <article class="row" id="problem">
       <div class="row-copy">
-        <p class="t-body">One component, .Button, held seven properties: style, color, size, icon, fixed width, state and theme. Multiplied out, that was 2,304 variants, most unused and many near-identical. Behind it sat a library of 1,316 assets across 8 teams that nobody had ever measured.</p>
+        <p class="t-body">One component, .Button, held seven properties: style, color, size, icon, fixed width, state and theme. Multiplied out, that was 2,304 variants, most unused and many near-identical. Behind it sat a library of 1,316 assets across eight teams that nobody had ever measured.</p>
         <ul class="tensions">
-          <li><strong>Icons</strong><span>A variant, not a boolean, so one icon multiplied the whole matrix by 4.</span></li>
+          <li><strong>Icons</strong><span>A variant, not a boolean, so one icon multiplied the whole matrix by four.</span></li>
           <li><strong>Fixed width</strong><span>A variant too, so turning it on doubled everything else in the matrix.</span></li>
           <li><strong>Disabled state</strong><span>One per color, so the same disabled look got defined again and again.</span></li>
         </ul>
@@ -178,7 +178,7 @@
       <h2 class="t-title">How I led it</h2>
     </header>
     <div class="ledger">
-            <div class="ledger-row"><h3 class="t-heading">The full audit</h3><p class="t-body">I built the agent and ran the whole-library audit myself: generated the Figma token, wrote the crawler’s rules, registered the teams, excluded the archives and the library’s own file, took a name-match heuristic out of the adoption formula and reported Brand Studio separately, because marketing collateral does not instance a dropdown.</p></div>
+            <div class="ledger-row"><h3 class="t-heading">The full audit</h3><p class="t-body">I built the agent and ran the whole-library audit myself. I generated the Figma token, wrote the crawler’s rules and registered the teams. I left out the archives and the library’s own file, and took a name-match heuristic out of the adoption formula. Brand Studio is reported separately, because marketing collateral does not instance a dropdown.</p></div>
       <div class="ledger-row"><h3 class="t-heading">The direction</h3><p class="t-body">I directed the remediation. The plan divided at write access: specs and lists to the agent, every edit to the library to one senior product designer, and the order set by who could act. The button portion was the other senior product designer’s from start to finish, agent and remediation.</p></div>
       <div class="ledger-row"><h3 class="t-heading">The line</h3><p class="t-body">The analysis narrowed decisions and people made them. The data could not pick between 10px, used 1,834 times, and 12px, used 1,796. The 92 dormant illustrations went to Brand Studio for a conversation instead of being deleted.</p></div>
     </div>
@@ -214,7 +214,7 @@
           <div class="pair-demo"><img decoding="async" width="960" height="400" src="../assets/btn-pair-cut.webp?v=3f6ffeff" alt="A corner of the old .Button sheet: Primary buttons in three sizes, solid and ghost, each drawn four times, with no icon, a left icon, a right icon and the icon alone" loading="lazy"></div>
           <p class="eyebrow pair-verdict">Cut</p>
           <p class="t-subhead">Icon as a variant</p>
-          <p class="t-body">One icon property multiplied the whole .Button matrix by 4, and most of those variants were never used.</p>
+          <p class="t-body">One icon property multiplied the whole .Button matrix by four, and most of those variants were never used.</p>
         </div>
         <div class="pair-item right">
           <div class="pair-demo"><img decoding="async" width="960" height="400" src="../assets/btn-pair-kept.webp?v=e92d34b9" alt="The new Button on the design system site with a left icon, next to its properties: Style, Size, State and On navy, then Left icon set to Yes and Right icon set to No" loading="lazy"></div>
@@ -228,7 +228,7 @@
     <article class="row full" id="index">
       <div class="row-copy">
         <h3 class="t-heading">An audit of every file</h3>
-        <p class="t-lede">I built an agent and gave it a read-only Figma token, so it could open every file at Best Egg. It read every instance against the design system: what was used, what was not and where the system got in its own way. That list is what the remediation works from.</p>
+        <p class="t-lede">I built an agent on a read-only Figma token, so it could open every file at Best Egg. The list it wrote is what the remediation works from.</p>
       </div>
       <div class="cols">
         <div class="col">
@@ -252,7 +252,7 @@
           <li class="rn-node">
             <div class="rn-head"><span class="rn-no">01</span>Crawl<span class="rn-state" aria-hidden="true"></span></div>
             <p class="rn-title">Open every file</p>
-            <p class="rn-sub">Every page and every instance, across the 8 registered teams, on a read-only Figma token.</p>
+            <p class="rn-sub">Every page and every instance, across the eight registered teams, on a read-only Figma token.</p>
             <div class="rn-meter"><span class="rn-num" data-to="296">296</span><span class="rn-unit">files read</span><span class="rn-bar" aria-hidden="true"><i></i></span></div>
           </li>
           <li class="rn-node">
@@ -303,8 +303,8 @@
     </article>
     <article class="row flip media-first" id="findings">
       <div class="row-copy">
-        <h3 class="t-heading">What the index showed</h3>
-        <p class="t-body">Adoption sat at 90.7% across 1.15 million instances, so nobody was rebuilding components. The findings were housekeeping.</p>
+        <h3 class="t-heading">What the audit found</h3>
+        <p class="t-body">Adoption sat at 90.7% across 1.15 million instances, so nobody was rebuilding components. The findings were upkeep: unwired tokens, dormant components and art in the component picker.</p>
         <ul class="tensions stack">
           <li><h4 class="t-subhead">A token system, almost unbound</h4><p class="t-body">Five collections and 229 variables exist, but nothing in the library is wired to them. 844,333 values are still hand-set instead.</p></li>
           <li><h4 class="t-subhead">770 components never used</h4><p class="t-body">770 components have zero instances, and 59 standalones are the real deprecation candidates.</p></li>
@@ -366,7 +366,7 @@
     <div class="figures">
       <ul class="figures-row">
         <li class="figure"><div class="t-stat" data-flow data-flow-delay="0">66%</div><p class="eyebrow">Fewer components in the picker</p><p class="t-body">The picker went from 491 standalone components to 166.</p></li>
-        <li class="figure"><div class="t-stat" data-flow data-flow-delay="1">844K</div><p class="eyebrow">Hard-coded values linked to tokens</p><p class="t-body">844,333 values typed in by hand were linked to the library’s 229 tokens.</p></li>
+        <li class="figure"><div class="t-stat" data-flow data-flow-delay="1">844K</div><p class="eyebrow">Hand-set values linked to tokens</p><p class="t-body">844,333 hand-set values were linked to the library’s 229 tokens.</p></li>
         <li class="figure"><div class="t-stat" data-flow data-flow-delay="2">266</div><p class="eyebrow">Illustrations moved out</p><p class="t-body">The hand-drawn art got a library of its own, so nobody scrolls past it to reach a button.</p></li>
         <li class="figure"><div class="t-stat" data-flow data-flow-delay="3">59</div><p class="eyebrow">Unused components deprecated</p><p class="t-body">Every standalone component with zero instances came out of the library.</p></li>
       </ul>
