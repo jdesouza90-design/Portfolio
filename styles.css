@@ -2603,7 +2603,7 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
 @media (max-width: 640px) { .dash-settings-fields { grid-template-columns: 1fr; gap: var(--sp-5); } }
 
 @media (max-width: 1000px) { .dash-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-@media (max-width: 900px) { .dash-grid, .dash-grid-wide { grid-template-columns: 1fr; } }
+@media (max-width: 900px) { .dash-grid, .dash-grid-wide { grid-template-columns: minmax(0, 1fr); } }   /* minmax: a long tally label would hold the track open at 320 */
 @media (max-width: 640px) {
   .dash-facts { grid-template-columns: 1fr; }
   .dash-chart-shell { height: 220px; }
