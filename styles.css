@@ -258,7 +258,7 @@
 .facts dt, table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
 .gallery figcaption, .proof-head small, .tooltip, .chart-pill, details.data,
 .dash-live, .dash-list li, .leaflet-container, .leaflet-popup-content,
-thead th, .gauge .lbl, .table-wrap td[data-label]::before, .dash-kind, .dash-now,
+thead th, .stake-row .lbl, .table-wrap td[data-label]::before, .dash-kind, .dash-now,
 .chat-msg, .chat-offer-text, .chat-form textarea, .chat-unlock label, .chat-unlock input, .chat-unlocked, .chat-error, .dash-settings :is(label, input, textarea, legend)
   { font-family: var(--font-body); margin: 0; }
 .t-subhead, .testimonial-foot cite b, .prose h3
@@ -281,7 +281,7 @@ table, .tensions li, .testimonial-foot cite, .avatar, .testimonial-mark,
    the micro role is the one place the site speaks in a third face, so a label
    reads as the system's annotation on the page rather than as more copy. The
    facts' keys and a figure's number take it too. */
-.t-micro, .eyebrow, thead th, .gauge .lbl, .table-wrap td[data-label]::before, .dash-kind, .dash-now, .facts dt, .fig-no
+.t-micro, .eyebrow, thead th, .stake-row .lbl, .table-wrap td[data-label]::before, .dash-kind, .dash-now, .facts dt, .fig-no
   { font-family: var(--font-mono); font-size: var(--t-micro); line-height: var(--lh-micro); letter-spacing: var(--ls-micro); text-transform: uppercase; font-weight: 500; color: var(--ink-2); }
 .eyebrow { display: block; }
 .t-lede, .t-body { text-wrap: pretty; }   /* no paragraph ends on a lone word */
@@ -1437,7 +1437,7 @@ footer a:hover { color: var(--ink); }
 .walk-note { max-width: 932px; margin: var(--sp-3) auto 0; text-align: center; }
 @media (prefers-reduced-motion: reduce) { .walk::after, .walk .play { transition: none; } }
 
-/* Proof blocks: the chart and the capacity gauge share one frame */
+/* Proof blocks: the chart and the stake row share one frame */
 .proof { background: var(--surface); border: 1px solid var(--hair); border-radius: 16px; padding: clamp(22px, 3vw, 32px); position: relative; }
 /* Figures (after vercel.com): a row of headline numbers, each with a mono
    label and one sentence, no frame. The audit page's projected outcomes sit
@@ -1637,29 +1637,33 @@ details.data summary { cursor: pointer; }
 details.data table { min-width: 0; margin-top: 10px; }
 details.data th, details.data td { white-space: normal; padding-inline: 10px; }   /* wraps rather than clips at 320px */
 @media (max-width: 400px) { main table { width: 100%; table-layout: fixed; } main table :is(th, td) { white-space: normal; overflow-wrap: anywhere; } }   /* the columns share the width and wrap, so no table widens the page */
-/* Gauge: a half dial for capacity. The ring is the pool, filled left to right
-   along a 408-unit arc over 2.4s as the block reveals (the in-out: it starts
-   and ends on screen); a white slot with a green bar
-   rides its head, and white notches mark the hours. Labels are HTML placed
-   by percentage of the dial's box, so they keep their size at any width. */
-.gauge { position: relative; width: min(100%, 440px); aspect-ratio: 2 / 1; margin: var(--sp-6) auto var(--sp-7); }
-.gauge svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; display: block; }
-.gauge .track, .gauge .fill { fill: none; stroke-width: 56; }
-.gauge .track { stroke: color-mix(in srgb, var(--accent-2) 20%, var(--surface)); }
-.gauge .fill { stroke: url(#gauge-fill); stroke-dasharray: 409; stroke-dashoffset: 0; animation: gauge-fill 2.4s var(--ease-in-out) both; }
-.gauge .notch, .gauge .slot { stroke: var(--surface); stroke-width: 3; }
-.gauge .slot { stroke-width: 10; }
-.gauge .bar { stroke: var(--accent-ink); stroke-width: 3.5; stroke-linecap: round; }
-.gauge .needle { transform-box: view-box; transform-origin: 180px 178px; transform: rotate(90deg) translateX(-5px); animation: gauge-needle 2.4s var(--ease-in-out) both; }
-/* the dial is below the fold; hold it empty until its block reveals so the fill is actually seen */
-.anim [data-reveal]:not(.in) .gauge :is(.fill, .needle) { animation-play-state: paused; }
-@keyframes gauge-fill { from { stroke-dashoffset: 409; } to { stroke-dashoffset: 0; } }
-@keyframes gauge-needle { from { transform: rotate(-90deg) translateX(5px); } to { transform: rotate(90deg) translateX(-5px); } }   /* full sweep; the 5px nudge keeps the slot flush inside the ring's flat ends */
-.gauge .lbl { position: absolute; white-space: nowrap; }
-.gauge .l0 { left: 13.9%; top: 100%; transform: translate(-50%, 8px); }
-.gauge .l3 { left: 86.1%; top: 100%; transform: translate(-50%, 8px); }
-.gauge .l1 { left: 26.4%; top: 17.2%; transform: translate(-100%, -50%); }
-.gauge .l2 { left: 73.6%; top: 17.2%; transform: translateY(-50%); }
+/* Stake row: the pool as a row of LINK tokens, one per million (John picked
+   it Sep 30 2026 over an arch, an hourglass and a coil). The 45 slots are the
+   v0.1 pool; the first 25 are early access, which filled in three hours, so
+   those tokens drop in left to right as the block reveals while the other 20
+   stay pale. main.js draws it in WebGL (initStakeRow) and places the labels by
+   projection; without WebGL the flat .stake-bar below is the figure. */
+.stake-row { position: relative; aspect-ratio: 4 / 1; max-width: 100%; margin: var(--sp-7) 0 var(--sp-6); touch-action: pan-y; }
+.stake-row canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.stake-row.is-3d { cursor: grab; user-select: none; -webkit-user-select: none; }
+.stake-row.is-3d:active { cursor: grabbing; }
+.stake-bar { position: absolute; left: 0; right: 0; top: 50%; height: 26%; transform: translateY(-50%); border-radius: 6px; overflow: hidden; background: color-mix(in srgb, var(--accent-2) 20%, var(--surface)); }
+.stake-bar .fill { position: absolute; inset: 0 auto 0 0; width: calc(25 / 45 * 100%); background: linear-gradient(90deg, var(--accent), var(--accent-2)); transform-origin: left; animation: stake-fill 2.4s var(--ease-in-out) both; }
+.anim [data-reveal]:not(.in) .stake-bar .fill { animation-play-state: paused; }
+@keyframes stake-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.stake-row .lbl { position: absolute; left: 0; white-space: nowrap; color: var(--ink-2); pointer-events: none; }
+.stake-row [data-x="8.333"] { left: calc(100% / 45 * 25 / 3); }   /* data-x is the slot, of 45 */
+.stake-row [data-x="16.667"] { left: calc(100% / 45 * 50 / 3); }
+.stake-row [data-x="25"] { left: calc(100% / 45 * 25); }
+.stake-row [data-x="45"] { left: 100%; }
+.stake-row .below { top: 63%; transform: translate(-50%, 8px); }
+.stake-row .below.start { transform: translate(0, 8px); }
+.stake-row .below.after { transform: translate(0, 8px); }
+.stake-row .above { bottom: 63%; transform: translate(-100%, -8px); }
+.stake-row .above.start { transform: translate(0, -8px); }
+.stake-row.is-3d .stake-bar { display: none; }
+.stake-row.is-3d .lbl { left: 0; top: 0; bottom: auto; will-change: transform; }
+@media (max-width: 640px) { .stake-row { aspect-ratio: 5 / 2; } .stake-row .below.start { display: none; } }   /* the row's own start says 0 hr; the label would sit on 1 hr */
 
 /* Next: the closing band */
 .cs-next { margin-top: var(--section); padding-block: var(--section); background: var(--paper-2); border-top: 1px solid var(--hair); text-align: center; }
@@ -2133,7 +2137,7 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
   .coach-art img, .anim .coach-card.waits .coach-art img { opacity: 1; transform: none; transition: none; }
   .opener-body > * { opacity: 1; }                          /* the opener shows still, then goes */
   .opener-seam { transform: none; }
-  .gauge .fill, .gauge .needle { animation: none !important; }
+  .stake-bar .fill { animation: none !important; }
   .layer, .layer.active, .layer-tabs::after, .nest, .nest .t-subhead, .steps-stage .shot, .testimonial, .testimonial.active { transition: none; }
   .testimonial { filter: none; }
   .post-card:hover, .btn:hover:active { transform: none; }

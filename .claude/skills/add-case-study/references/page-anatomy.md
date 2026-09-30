@@ -34,7 +34,7 @@ Contents
   section's `.wrap` rises into place on scroll by itself (48px over 700ms once its top
   crosses 70% of the viewport; see Motion in the README). Keep that structure, one block
   per child of `.wrap`, and never put `data-reveal` inside another `data-reveal`. Anything
-  that plays inside a block (chart, `data-flow`, gauge) waits for the block's reveal on its
+  that plays inside a block (chart, `data-flow`, stake row) waits for the block's reveal on its
   own through `onceInView`.
 - **The unlock opener.** The first time a reader opens a case study after the password,
   the page opens behind a sheet that parts like doors (`initUnlock` in `main.js`, section
@@ -199,19 +199,13 @@ its label; the ticks carry the scale.
 ```html
 <div class="proof">
   <div class="proof-head">
-    <div><div class="t-stat" data-flow>25M LINK</div><small>staked, with the pool full within 3 hours of launch</small></div>
+    <div><div class="t-stat" data-flow>25M LINK</div><small>staked in the early access pool, full within 3 hours of launch</small></div>
     <span class="eyebrow">Pool capacity · hours after launch</span>
   </div>
-  <div class="gauge" role="img" aria-label="Pool capacity filled from 0 to 100 percent over the three hours after launch">
-    <svg viewBox="0 0 360 180" aria-hidden="true" focusable="false">
-      <defs><linearGradient id="gauge-fill" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="var(--accent)"/><stop offset="1" stop-color="var(--accent-2)"/></linearGradient></defs>
-      <path class="track" d="M50,178 A130,130 0 0 1 310,178"/>
-      <path class="fill" d="M50,178 A130,130 0 0 1 310,178"/>
-      <line class="notch" x1="180" y1="20" x2="180" y2="76" transform="rotate(-30 180 178)"/>
-      <line class="notch" x1="180" y1="20" x2="180" y2="76" transform="rotate(30 180 178)"/>
-      <g class="needle"><line class="slot" x1="180" y1="20" x2="180" y2="76"/><line class="bar" x1="180" y1="25" x2="180" y2="71"/></g>
-    </svg>
-    <span class="lbl l0">0 hr</span><span class="lbl l1">1 hr</span><span class="lbl l2">2 hr</span><span class="lbl l3">3 hr · full</span>
+  <div class="stake-row" role="img" aria-label="LINK tokens, one per million: 25 million staked in the early access pool within three hours of launch, out of the 45 million LINK v0.1 pool">
+    <div class="stake-bar" aria-hidden="true"><span class="fill"></span></div>
+    <span class="lbl below start" data-x="0">0 hr</span><span class="lbl below" data-x="8.333">1 hr</span><span class="lbl below" data-x="16.667">2 hr</span><span class="lbl below after" data-x="25">3 hr · full</span>
+    <span class="lbl above start" data-x="0">25M · early access</span><span class="lbl above" data-x="45">45M · v0.1 pool</span>
   </div>
 </div>
 ```
