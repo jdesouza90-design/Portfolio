@@ -135,6 +135,25 @@
   --dur-ui: 240ms;
   --dur-reveal: 700ms;
   --reveal-y: 48px;
+  --dur-reveal-in: var(--dur-reveal);   /* the block's rise; --dur-reveal itself also times .dash-bar */
+  --reveal-col-wait: 120ms;   /* columns and figures follow their block */
+  --reveal-col-step: 100ms;
+  --reveal-fig-step: 120ms;
+  --reveal-col-dur: .5s;
+  --reveal-fig-dur: .7s;
+}
+/* A phone flicks a screen in a few hundred ms, so a block rises quicker and
+   its columns land inside ~600ms (main.js starts it earlier, too). */
+@media (max-width: 640px), (hover: none) and (pointer: coarse) {
+  :root {
+    --dur-reveal-in: 300ms;
+    --reveal-y: 24px;
+    --reveal-col-wait: 60ms;
+    --reveal-col-step: 60ms;
+    --reveal-fig-step: 50ms;
+    --reveal-col-dur: .35s;
+    --reveal-fig-dur: .4s;
+  }
 }
 
 /* The dark register (after cursor.com's warm near-black): the same tokens
@@ -2067,25 +2086,25 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
 .anim [data-reveal] {
   opacity: 0; transform: translateY(var(--reveal-y));
   transition:
-    opacity var(--dur-reveal) linear calc(var(--reveal-i, 0) * 60ms),
-    transform var(--dur-reveal) var(--ease-soft) calc(var(--reveal-i, 0) * 60ms);
+    opacity var(--dur-reveal-in) linear calc(var(--reveal-i, 0) * 60ms),
+    transform var(--dur-reveal-in) var(--ease-soft) calc(var(--reveal-i, 0) * 60ms);
 }
 .anim [data-reveal].in { opacity: 1; transform: none; }
 /* Columns in a revealed block enter one after another, left to right, while
    the block is still settling (a column row reads as a sequence, not a slab). */
 .anim [data-reveal] .cols > .col {
   opacity: 0; transform: translateX(-32px);
-  transition: opacity .5s linear, transform .5s var(--ease-soft);
+  transition: opacity var(--reveal-col-dur) linear, transform var(--reveal-col-dur) var(--ease-soft);
 }
 .anim [data-reveal] .cols > .col:nth-child(2) { --col-i: 1; }
 .anim [data-reveal] .cols > .col:nth-child(3) { --col-i: 2; }
 .anim [data-reveal] .cols > .col:nth-child(4) { --col-i: 3; }
-.anim [data-reveal].in .cols > .col { opacity: 1; transform: none; transition-delay: calc(120ms + var(--col-i, 0) * 100ms); }   /* the wait only on the way in, so hiding at load is instant; a fourth column lands by 920ms */
-.anim [data-reveal] .figures-row > .figure { opacity: 0; transform: translateY(24px); transition: opacity .5s linear, transform .7s var(--ease-soft); }
+.anim [data-reveal].in .cols > .col { opacity: 1; transform: none; transition-delay: calc(var(--reveal-col-wait) + var(--col-i, 0) * var(--reveal-col-step)); }   /* the wait only on the way in, so hiding at load is instant; a fourth column lands by 920ms (590ms on a phone) */
+.anim [data-reveal] .figures-row > .figure { opacity: 0; transform: translateY(24px); transition: opacity var(--reveal-col-dur) linear, transform var(--reveal-fig-dur) var(--ease-soft); }
 .anim [data-reveal] .figures-row > .figure:nth-child(2) { --col-i: 1; }
 .anim [data-reveal] .figures-row > .figure:nth-child(3) { --col-i: 2; }
 .anim [data-reveal] .figures-row > .figure:nth-child(4) { --col-i: 3; }
-.anim [data-reveal].in .figures-row > .figure { opacity: 1; transform: none; transition-delay: calc(120ms + var(--col-i, 0) * 120ms); }   /* the figures follow each other, like the columns */
+.anim [data-reveal].in .figures-row > .figure { opacity: 1; transform: none; transition-delay: calc(var(--reveal-col-wait) + var(--col-i, 0) * var(--reveal-fig-step)); }   /* the figures follow each other, like the columns */
 /* The coaching cards enter one at a time as each one's well comes on screen
    (main.js adds .card-in, left to right within a row): the card rises, then
    its build clip plays in the well. The well stays empty until the clip or

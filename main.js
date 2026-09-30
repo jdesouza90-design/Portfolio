@@ -14,6 +14,7 @@ const CONFIG = {
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const handheld = window.matchMedia("(max-width: 640px), (hover: none) and (pointer: coarse)").matches;   // same query as the phone timing tokens in styles.css
 
   /* ---- Helpers ---- */
   // Tokens from styles.css, so the scripts draw and move in the page's own
@@ -337,7 +338,7 @@ const CONFIG = {
     });
 
     const revealEls = $$("[data-reveal]");
-    const LINE = 0.9;
+    const LINE = handheld ? 1.5 : 0.9;   // a phone starts a block half a screen below the fold: a flick outruns a rise that waits for the block to arrive
     if (reduced || !("IntersectionObserver" in window) || !revealEls.length) return;
     document.documentElement.classList.add("anim");
     afterOpener(() => revealOnScroll(revealEls, LINE));  // after a fresh unlock, the first screen rises as the doors part
@@ -430,8 +431,11 @@ const CONFIG = {
     // Every animation plays where it is seen (John, Sep 28 2026): at least 60%
     // of the element on screen, or as much as fits when it is taller than 80%
     // of the viewport, so a tall one still fires.
+    // Phones are the exception (John, Sep 30 2026): a flick carries the element
+    // past before 60% is ever on screen, so it starts once its block is
+    // revealed and any part of it shows.
     const h = Math.max(1, el.getBoundingClientRect().height);
-    threshold = Math.min(Math.max(threshold, 0.6), (window.innerHeight * 0.8) / h);
+    threshold = handheld ? 0 : Math.min(Math.max(threshold, 0.6), (window.innerHeight * 0.8) / h);
     const block = el.closest("[data-reveal]");
     const revealed = () => !block || block.classList.contains("in") || !document.documentElement.classList.contains("anim");
     const inView = () => {
