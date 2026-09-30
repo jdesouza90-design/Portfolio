@@ -1,0 +1,61 @@
+<!-- {
+  "title": "The dispute form has no agent option",
+  "description": "Agent purchases get disputed under codes written for stolen cards, and Regulation E's own definition may defeat the box a person picks.",
+  "pillar": "fintech",
+  "date": "2026-09-30T10:00:00-04:00",
+  "lede": "The networks spent this year building a record of what an agent was allowed to do. The screen where a person reports that their agent got it wrong still offers a list of reasons written for stolen cards.",
+  "claim": "A card dispute gets classified by the cardholder at intake, from a fixed list, and that label decides which rules and clocks run. For an agent purchase there's no true option on the list.",
+  "keywords": ["agentic commerce", "chargebacks", "Regulation E", "fintech design", "dispute resolution"],
+  "sources": [
+    "<a href=\"https://www.chargeback.io/blog/agentic-payments-chargebacks\">Agentic Payments and Chargebacks: A Merchant Guide</a>, Theodore Sterling, chargeback.io, August 21, 2026. Which reason codes agent purchases land under, and the mandate evidence gap.",
+    "<a href=\"https://www.consumerfinance.gov/rules-policy/regulations/1005/2/\">Regulation E, 12 CFR 1005.2(m)</a>, CFPB. The definition of an unauthorized electronic fund transfer and the exclusion for a person furnished the access device.",
+    "<a href=\"https://www.consumerfinance.gov/rules-policy/regulations/1005/11/\">Regulation E, 12 CFR 1005.11</a>, CFPB. Error resolution timing: 60 days from the statement, 10 business days to investigate, provisional credit, the 45 and 90 day extensions.",
+    "<a href=\"https://itif.org/publications/2026/03/23/agentic-commerce-is-coming-but-regulation-meant-for-humans-will-slow-it-down/\">Agentic Commerce Is Coming, but Regulation Meant for Humans Will Slow It Down</a>, Eli Clemens, ITIF, March 23, 2026. On the missing dispute framework and what the CFPB should clarify.",
+    "<a href=\"https://www.americanexpress.com/en-us/company/agentic-commerce/\">Agentic Commerce Experiences</a>, American Express. Agent Purchase Protection, registered agents and authenticated purchase intent."
+  ],
+  "cover_line": "The person picks the reason before anyone investigates."
+} -->
+
+      <p>Theodore Sterling, writing at <a href="https://www.chargeback.io/blog/agentic-payments-chargebacks">chargeback.io</a> on August 21, 2026, named the gap in agentic commerce disputes: "Today's tools can't capture the mandate that proves an agent stayed inside the customer's limits." Three things are missing, he says. The customer's authorization, the agent's identity and a tamper-resistant record tying the two together.</p>
+
+      <p>Networks and dispute vendors are building all three. It's the right work, and it lands one step too late.</p>
+
+      <h2>Somebody picks the reason first</h2>
+
+      <p>A card dispute doesn't reach an investigator as an open question. It arrives with a label already on it. The cardholder opens the app or calls the number, and the first thing they're asked is what kind of problem this is. Their answer becomes a reason code, and that code decides which rules run, what the merchant gets asked for and how long everyone has.</p>
+
+      <p>Sterling names the codes an agent purchase lands under today: "A disputed agent purchase files under a reason code you already work with, most often Visa 10.4, 13.1, or 13.3." Other fraud in a card-absent environment. Merchandise not received. Not as described.</p>
+
+      <p>Now read that list as somebody whose shopping agent bought a $400 espresso machine they never asked for. The machine arrived, so it isn't a not received claim. It's exactly as described, so it isn't that one either. Nobody stole the card. The only box left says a person used the card without permission, and that isn't true, because they set the agent up themselves.</p>
+
+      <h2>The box most people will pick</h2>
+
+      <p>They'll pick fraud anyway. It's the closest thing on the list to "I didn't want this," and it's the box with a trapdoor in it.</p>
+
+      <p>Regulation E defines an unauthorized electronic fund transfer as one "initiated by a person other than the consumer without actual authority to initiate the transfer and from which the consumer receives no benefit." It then excludes a transfer initiated by "a person who was furnished the access device to the consumer's account by the consumer, unless the consumer has notified the financial institution that transfers by that person are no longer authorized."</p>
+
+      <p>You furnished the access device. On purpose, to your agent, in a setup flow that almost certainly called it connecting your card.</p>
+
+      <p>Whether that exclusion reaches software at all is unsettled. Eli Clemens argued at <a href="https://itif.org/publications/2026/03/23/agentic-commerce-is-coming-but-regulation-meant-for-humans-will-slow-it-down/">ITIF</a> on March 23, 2026 that Regulation E "provides no clear framework for how to handle disputes in agentic commerce," and that the CFPB should say plainly that "consumer-authorized agents do not waive all error resolution rights." Nobody has said it yet. So the person at the intake screen is making a legal argument they don't know they're making, by tapping the least wrong option on a menu.</p>
+
+      <h2>The clock starts at the statement</h2>
+
+      <p>The timing rules don't help either. Under <a href="https://www.consumerfinance.gov/rules-policy/regulations/1005/11/">1005.11</a> the notice has to reach the institution "no later than 60 days after the institution sends the periodic statement." The bank then has 10 business days to investigate, or up to 45 if it puts a provisional credit on the account, and up to 90 for point-of-sale debit claims.</p>
+
+      <p>Those clocks run from the statement date, not from the day the person noticed. An agent buying quietly through a month gets most of that window before anyone reads a line of it.</p>
+
+      <h2>Amex built a second path</h2>
+
+      <p>One network has done something a customer can actually see. American Express commits that "if a Card Member authorizes a registered AI agent to make a purchase, and that agent sends American Express the customer's authenticated purchase intent, American Express will protect eligible customers from charges related to AI agent error." It says that protection sits "in addition to ordinary course dispute resolution processes."</p>
+
+      <p>That's a real commitment, and it tells you something. Amex built a second path because the first one has nowhere to put this. Look at the conditions too: a registered agent, and authenticated intent that actually got sent. Miss either one and the customer is back at the reason list with everyone else.</p>
+
+      <h2>What I look at first</h2>
+
+      <p>On any product where money can go wrong, I ask to see the list of reasons a person can pick from when they report a problem, before I look at the flow being demoed. That list is short, usually inherited, and usually owned by nobody in the room. It's also the only place a person gets to say what happened to them, and everything downstream is decided by which line they tap.</p>
+
+      <p>If the true reason isn't on the list, the product has decided that problem doesn't exist.</p>
+
+      <p>I've watched what a screen with no honest option does to people. At Best Egg the decline page told applicants their application couldn't be approved and stopped there. One of them told us in an interview, "I probably won't use you again. It made me mad and frustrated." The fix wasn't better wording. I set a cross-sell framework for the funnel, and the team replaced "Rejected" with a few questions about the vehicle, so a declined applicant could say something about their situation and get a secured offer instead of a dead end.</p>
+
+      <p>The mandate record is worth building, and it'll get read after a case that was already sorted into the wrong pile by someone choosing from three options, none of which described what happened. That list is a design surface. Right now it's inherited from a world where the only thing that went wrong was a stolen card.</p>

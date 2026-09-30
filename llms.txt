@@ -26,6 +26,7 @@ Posts are John's own views. Every number in a post links to the primary source t
 
 ## Blog: Fintech, web3 and trust
 
+- [The dispute form has no agent option](https://john-desouza.com/blog/dispute-form-has-no-agent-option.html): A card dispute gets classified by the cardholder at intake, from a fixed list, and that label decides which rules and clocks run. For an agent purchase there’s no true option on the list.
 - [A name match is not a verdict](https://john-desouza.com/blog/a-name-match-is-not-a-verdict.html): A payee name check answers one narrow question, and the screen reporting it’s where a bank quietly answers a much bigger one on the payer’s behalf.
 - [Stablecoin trust is decided at redemption](https://john-desouza.com/blog/stablecoin-trust-is-decided-at-redemption.html): Rewards decide whether people move money into a stablecoin. Redemption decides whether they trust it, and the draft rules have already written a bad day that the rewards fight ignores.
 - [Metered pulls make frequency a consent question](https://john-desouza.com/blog/frequency-is-a-consent-question.html): Once every data pull has a price, how often an app checks a bank account stops being a back-end setting. It’s a consent decision, and it belongs on the consent screen instead of an invoice.
