@@ -1886,7 +1886,7 @@ const CONFIG = {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.outputEncoding = T.sRGBEncoding;
     const scene = new T.Scene();
-    const camera = new T.PerspectiveCamera(14, 4, .1, 400);
+    const camera = new T.PerspectiveCamera(9, 4, .1, 600);
     const hemi = new T.HemisphereLight(0xffffff, 0x8f8578, .95);
     const key = new T.DirectionalLight(0xffffff, .8);
     key.position.set(5, 9, 7);
@@ -1946,7 +1946,8 @@ const CONFIG = {
     });
 
     let w = 1, h = 1, p = 0, t0 = 0, playing = false, turn = 0, drag = null, raf = 0;
-    const dir = new T.Vector3(.12, .36, 1).normalize(), look = new T.Vector3(0, Y * .9, 0);
+    // Square on and a little above, so the row reads level
+    const dir = new T.Vector3(0, .34, 1).normalize(), look = new T.Vector3(0, Y * .9, 0);
     const fit = () => {
       const half = Math.tan(T.MathUtils.degToRad(camera.fov / 2));
       const dW = (L / 2 + .5) / (half * camera.aspect), dH = (Y + .9) / half;
