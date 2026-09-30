@@ -1841,6 +1841,181 @@ const CONFIG = {
     });
   });
 
+  /* ---- Stake row ----
+     The Staking results figure: the v0.1 pool as 45 hexagonal LINK tokens in a
+     row, one per million. The first 25 are the early access pool, which filled
+     within three hours, so they drop in left to right when the block reveals;
+     the other 20 stay pale. Drawn with three.js, which loads only when the row
+     is near (and only where WebGL works); until then, or without it, the flat
+     .stake-bar is the figure. Drag turns the row a little. Reduced motion shows
+     it full. */
+  const initStakeRow = () => {
+    const fig = $(".stake-row");
+    if (!fig) return;
+    const probe = document.createElement("canvas");
+    if (!(probe.getContext("webgl") || probe.getContext("experimental-webgl"))) return;
+
+    let build = null, want = null;   // want: "play" or "settle", from onceInView before three.js is in
+    onceInView(fig, 0.35, (animate) => {
+      const how = animate && !reduced ? "play" : "settle";
+      if (build) build[how](); else want = how;
+    });
+    const load = () => {
+      if (window.THREE) { build = stakeRow(fig); if (want) build[want](); return; }
+      const s = document.createElement("script");
+      s.src = "/assets/vendor/three.r128.min.js";
+      s.onload = () => { try { build = stakeRow(fig); if (want) build[want](); } catch (err) { console.error(err); } };
+      document.head.appendChild(s);
+    };
+    if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { io.disconnect(); load(); } }, { rootMargin: "800px 0px" });
+      io.observe(fig);
+    } else load();
+  };
+
+  const stakeRow = (fig) => {
+    const T = window.THREE;
+    const N = 45, FILLED = 25, R = 1, H = .2, P = .24, L = N * P, RG = R * 1.06, Y = .866 * R, DUR = 3000;
+    const slotX = (i) => -L / 2 + i * P;                     // the left edge of slot i
+    const lin = (v) => new T.Color(v).convertSRGBToLinear();
+
+    const canvas = document.createElement("canvas");
+    canvas.setAttribute("aria-hidden", "true");
+    fig.prepend(canvas);
+    const renderer = new T.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.outputEncoding = T.sRGBEncoding;
+    const scene = new T.Scene();
+    const camera = new T.PerspectiveCamera(14, 4, .1, 400);
+    const hemi = new T.HemisphereLight(0xffffff, 0x8f8578, .95);
+    const key = new T.DirectionalLight(0xffffff, .8);
+    key.position.set(5, 9, 7);
+    scene.add(hemi, key);
+    const row = new T.Group();
+    scene.add(row);
+
+    // A soft contact shadow under the whole row
+    const sc = document.createElement("canvas");
+    sc.width = sc.height = 128;
+    const g = sc.getContext("2d"), gr = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+    gr.addColorStop(0, "rgba(0,0,0,1)"); gr.addColorStop(.55, "rgba(0,0,0,.45)"); gr.addColorStop(1, "rgba(0,0,0,0)");
+    g.fillStyle = gr; g.fillRect(0, 0, 128, 128);
+    const shadow = new T.Mesh(new T.PlaneGeometry(1, 1), new T.MeshBasicMaterial({ map: new T.CanvasTexture(sc), color: 0x000000, transparent: true, depthWrite: false }));
+    shadow.rotation.x = -Math.PI / 2; shadow.scale.set(L + 2.4, 3.2, 1); shadow.position.y = -.01; shadow.renderOrder = -1;
+    row.add(shadow);
+
+    // Tokens: a hexagonal prism on its side, flat face down
+    const geo = new T.CylinderGeometry(R, R, H, 6);
+    geo.rotateZ(Math.PI / 2);
+    const edges = new T.EdgesGeometry(geo);
+    const edgeMat = new T.LineBasicMaterial({ transparent: true });
+    const paleEdgeMat = new T.LineBasicMaterial({ transparent: true });
+    const paleMat = new T.MeshStandardMaterial({ roughness: .9 });
+    const tokensUp = [];
+    for (let i = 0; i < N; i++) {
+      const filled = i < FILLED;
+      const m = filled ? new T.MeshStandardMaterial({ roughness: .6, metalness: .05, transparent: true }) : paleMat;
+      const t = new T.Mesh(geo, m);
+      t.add(new T.LineSegments(edges, filled ? edgeMat : paleEdgeMat));
+      t.position.set(slotX(i) + P / 2, Y, 0);
+      row.add(t);
+      if (filled) tokensUp.push(t);
+    }
+
+    // The early access pool's outline, dashed, and a hex ring at each mark
+    const ghostGeo = new T.CylinderGeometry(RG, RG, FILLED * P, 6);
+    ghostGeo.rotateZ(Math.PI / 2);
+    ghostGeo.translate(slotX(0) + FILLED * P / 2, Y, 0);
+    const dashMat = new T.LineDashedMaterial({ dashSize: .12, gapSize: .09 });
+    const ghost = new T.LineSegments(new T.EdgesGeometry(ghostGeo), dashMat);
+    ghost.computeLineDistances();
+    row.add(ghost);
+    const ringMat = new T.LineBasicMaterial();
+    const ring = (x) => {
+      const pts = [];
+      for (let j = 0; j <= 6; j++) { const a = j * Math.PI / 3; pts.push(new T.Vector3(x, Y + RG * Math.sin(a), RG * Math.cos(a))); }
+      row.add(new T.Line(new T.BufferGeometry().setFromPoints(pts), ringMat));
+    };
+    [0, FILLED / 3, FILLED * 2 / 3, FILLED, N].forEach((s) => ring(slotX(s)));
+
+    // Labels: the hours under the row's front edge, the pool sizes over its top
+    const labels = $$(".lbl", fig).map((el) => {
+      const s = parseFloat(el.dataset.x) || 0;
+      const above = el.classList.contains("above");
+      return { el, above, start: el.classList.contains("start") || el.classList.contains("after"), v: new T.Vector3(slotX(s), above ? 2 * Y + .06 : -.06, above ? -R * .5 : R * .5) };
+    });
+
+    let w = 1, h = 1, p = 0, t0 = 0, playing = false, turn = 0, drag = null, raf = 0;
+    const dir = new T.Vector3(.12, .36, 1).normalize(), look = new T.Vector3(0, Y * .9, 0);
+    const fit = () => {
+      const half = Math.tan(T.MathUtils.degToRad(camera.fov / 2));
+      const dW = (L / 2 + .5) / (half * camera.aspect), dH = (Y + .9) / half;
+      camera.position.copy(look).addScaledVector(dir, Math.max(dW, dH) + 1);
+      camera.lookAt(look);
+    };
+    const draw = () => {
+      row.rotation.y = turn;
+      tokensUp.forEach((t, i) => {
+        const land = (i + 1) / FILLED, u = Math.min(1, Math.max(0, (p - (land - .16)) / .16));
+        t.visible = u > 0;
+        t.position.y = Y + 1.1 * (1 - u * u);   // a short drop, so each token falls inside the frame
+        t.material.opacity = Math.min(1, u * 3);
+        t.material.transparent = u < 1;
+      });
+      row.updateMatrixWorld();
+      renderer.render(scene, camera);
+      labels.forEach((l) => {
+        const q = l.v.clone().applyMatrix4(row.matrixWorld).project(camera);
+        const x = (q.x + 1) / 2 * w, y = (1 - q.y) / 2 * h;
+        const shift = l.above ? (l.start ? "0, calc(-100% - 6px)" : "-100%, calc(-100% - 6px)") : l.start ? "0, 6px" : "-50%, 6px";
+        l.el.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) translate(${shift})`;
+      });
+    };
+    const tick = (now) => {
+      raf = 0;
+      if (playing) { p = Math.min(1, (now - t0) / DUR); if (p >= 1) playing = false; }
+      draw();
+      if (playing || drag) raf = requestAnimationFrame(tick);
+    };
+    const kick = () => { if (!raf) raf = requestAnimationFrame(tick); };
+
+    const paint = () => {
+      const dark = document.documentElement.dataset.theme ? document.documentElement.dataset.theme === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const accent = lin(hex("--accent", "#3B6B44")), accent2 = lin(hex("--accent-2", "#6E9A5A"));
+      tokensUp.forEach((t, i) => t.material.color.copy(accent).lerp(accent2, i / (FILLED - 1)));
+      const [a, b] = [rgb("--accent-2", "#6E9A5A"), rgb("--surface", "#FFFFFF")];   // the old gauge's track (accent-2 on the surface), deeper so it holds under the light
+      paleMat.color.setRGB(...a.map((v, i) => (v * .4 + b[i] * .6) / 255)).convertSRGBToLinear();
+      edgeMat.color.copy(lin(hex("--ink", "#14100C"))); edgeMat.opacity = dark ? .18 : .28;
+      paleEdgeMat.color.copy(edgeMat.color); paleEdgeMat.opacity = dark ? .1 : .12;
+      dashMat.color.copy(lin(hex("--ink-3", "#6F675D")));
+      ringMat.color.copy(dashMat.color);
+      shadow.material.opacity = dark ? .5 : .16;
+      hemi.groundColor.set(dark ? 0x2a241c : 0x8f8578);
+      hemi.intensity = dark ? .8 : .95;
+      kick();
+    };
+    onTheme(paint);
+
+    new ResizeObserver(() => {
+      w = fig.clientWidth || 1; h = fig.clientHeight || 1;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h; camera.updateProjectionMatrix(); fit(); kick();
+    }).observe(fig);
+
+    fig.addEventListener("pointerdown", (e) => { drag = { x: e.clientX, turn }; fig.setPointerCapture(e.pointerId); kick(); });
+    fig.addEventListener("pointermove", (e) => { if (drag) turn = Math.max(-.6, Math.min(.6, drag.turn + (e.clientX - drag.x) * .006)); });
+    const release = () => { drag = null; };
+    fig.addEventListener("pointerup", release);
+    fig.addEventListener("pointercancel", release);
+
+    fig.classList.add("is-3d");
+    paint();
+    return {
+      play: () => { p = 0; t0 = performance.now(); playing = true; kick(); },
+      settle: () => { p = 1; playing = false; kick(); },
+    };
+  };
+
   /* ---- Number flow ----
      A headline stat rolls into place like an odometer: every digit is a
      column of 0 to 9 behind a soft mask, and each column turns once around
@@ -3845,6 +4020,6 @@ const CONFIG = {
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { if (current() === "system") document.dispatchEvent(new CustomEvent("themechange")); });
   };
 
-  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStory, initRun, initCoach, initFields, initCharts, initMatrix, initSheets, initConfig, initFlows, initBeforeAfter, initStrips, initTableWraps, initPortrait, initClock, initArcade, initStack, initLens, initSteps, initDemo, initPalette, initPostList, initChat, initYear, initTheme, initTalk]
+  [initUnlock, initLinks, initNav, initReveal, initTabs, initCarousels, initWalkthroughs, initStory, initRun, initCoach, initFields, initCharts, initMatrix, initSheets, initConfig, initFlows, initStakeRow, initBeforeAfter, initStrips, initTableWraps, initPortrait, initClock, initArcade, initStack, initLens, initSteps, initDemo, initPalette, initPostList, initChat, initYear, initTheme, initTalk]
     .forEach((init) => { try { init(); } catch (err) { console.error(`main.js: ${init.name} failed`, err); } });
 })();
