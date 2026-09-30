@@ -763,7 +763,8 @@ scrolls to it, and every page gets it the same way:
   so a flick finds the block already rising. On first paint anything on screen counts wherever it sits, so
   the first screen never ends in a blank band. As the page runs out of
   scroll the line drops toward the bottom edge, so the last blocks on a page
-  (the closing band, the footer) never wait for room that isn't there. The
+  (the closing band, the footer) never wait for room that isn't there (a
+  phone's line is already below the fold, so it never needs to drop). The
   rise runs on its timer, not with the scroll: a rise scrubbed by scrolling
   leaves whatever rests at the foot of the screen half faded.
 - **The hero hands off** where the browser drives animations from scroll
