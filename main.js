@@ -338,7 +338,7 @@ const CONFIG = {
     });
 
     const revealEls = $$("[data-reveal]");
-    const LINE = handheld ? 1.15 : 0.9;   // a phone starts a block just below the fold: a flick outruns a rise that waits for the block to arrive
+    const LINE = handheld ? 1.5 : 0.9;   // a phone starts a block half a screen below the fold: a flick outruns a rise that waits for the block to arrive
     if (reduced || !("IntersectionObserver" in window) || !revealEls.length) return;
     document.documentElement.classList.add("anim");
     afterOpener(() => revealOnScroll(revealEls, LINE));  // after a fresh unlock, the first screen rises as the doors part

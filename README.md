@@ -754,12 +754,12 @@ scrolls to it, and every page gets it the same way:
   700ms to be seen). Tokens: `--reveal-y`, `--dur-reveal-in` (from
   `--dur-reveal`, which also times `.dash-bar`), `--ease-soft`. On a phone
   (`max-width: 640px`, or `hover: none` with a coarse pointer) it is 24px
-  over 400ms, and the columns and figures inside follow after 60ms, so a
+  over 300ms, and the columns and figures inside follow after 60ms, so a
   block has landed within ~600ms (`--reveal-col-*`, `--reveal-fig-*`).
 - **A block starts once its top crosses a line 90% down the viewport**, or
   as soon as it is entirely on screen, so the move starts as the block
   appears and has landed before the reader reaches it. On a phone the line
-  is 15% of a viewport below the bottom edge (`LINE` 1.15 in `initReveal`),
+  is half a viewport below the bottom edge (`LINE` 1.5 in `initReveal`),
   so a flick finds the block already rising. On first paint anything on screen counts wherever it sits, so
   the first screen never ends in a blank band. As the page runs out of
   scroll the line drops toward the bottom edge, so the last blocks on a page

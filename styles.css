@@ -146,7 +146,7 @@
    its columns land inside ~600ms (main.js starts it earlier, too). */
 @media (max-width: 640px), (hover: none) and (pointer: coarse) {
   :root {
-    --dur-reveal-in: 400ms;
+    --dur-reveal-in: 300ms;
     --reveal-y: 24px;
     --reveal-col-wait: 60ms;
     --reveal-col-step: 60ms;
