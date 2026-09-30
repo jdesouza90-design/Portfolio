@@ -29,7 +29,14 @@
       "Bash(sh .claude/qa/setup.sh)",
       "Bash(python3 stamp.py)",
       "Bash(python3 blog.py --check)",
-      "Bash(python3 .claude/skills/add-case-study/scripts/check.py*)"
+      "Bash(python3 .claude/skills/add-case-study/scripts/check.py*)",
+      "Bash(git push origin *:main)"
+    ]
+  },
+  "autoMode": {
+    "allow": [
+      "$defaults",
+      "Pushing a finished, John-approved branch to main in the Portfolio repo"
     ]
   }
 }
