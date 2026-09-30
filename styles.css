@@ -2715,6 +2715,8 @@ footer { view-transition-name: site-foot; }   /* one a page, at the foot of its 
 .post-search svg { width: 15px; height: 15px; color: var(--ink-3); flex: none; }
 .post-search input { border: 0; background: none; outline: none; min-width: 170px; color: var(--ink); }
 .post-search:focus-within { border-color: var(--accent); }
+/* iOS Safari zooms the page into any field under 16px when it takes focus, so on touch screens the search is 16 */
+@media (pointer: coarse) { .post-search input { font-size: 1rem; } }
 .post-search input::-webkit-search-cancel-button {   /* the browser's blue cross, as Hugeicons' cancel-01 in the site's ink */
   -webkit-appearance: none; appearance: none; width: 14px; height: 14px; cursor: pointer; background: var(--ink-3);
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6L6.00081 17.9992M17.9992 18L6 6.00085'/%3E%3C/svg%3E") center / contain no-repeat;
