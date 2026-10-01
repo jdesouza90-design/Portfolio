@@ -1,0 +1,67 @@
+<!-- {
+  "title": "A design review can't see accessibility",
+  "description": "WebAIM found WCAG failures on 95.9% of a million home pages and 56.1 errors on the average one. Those defects don't show up in a screenshot.",
+  "pillar": "craft",
+  "date": "2026-10-01T10:00:00-04:00",
+  "lede": "WebAIM scanned a million home pages in February and found WCAG failures on 95.9% of them, with 56.1 errors on the average page. Both numbers went up. Generated screens are landing on that baseline, and the thing meant to catch them is a room of people looking at a screen.",
+  "claim": "Accessibility defects are invisible to the review designers actually run, so the control has to be a check that runs on every build against rules someone wrote down.",
+  "keywords": ["accessibility", "WCAG", "AI-generated code", "design review", "product design craft"],
+  "sources": [
+    "<a href=\"https://webaim.org/projects/million/\">The WebAIM Million</a>, WebAIM, February 2026. Automated accessibility scan of 1,000,000 home pages: detected WCAG 2 failures on 95.9%, up from 94.8% a year earlier, and 56.1 errors on the average page, up 10.1% from 51.",
+    "<a href=\"https://arxiv.org/abs/2607.22928\">Design Theater: Evaluating the Gap Between User-Facing Design Reasoning and Implementation in Generative UI Tools</a>, Kashif Imteyaz, Kaif Imteyaz, Nakul Rajpal, Kaif Shaikh, Michael Muller and Saiph Savage, submitted July 24, 2026. 24 UI generation tasks across five generative UI tools, 120 interfaces, each stated rationale compared against the interface produced: 25% of rationales not implemented, 34% for functional requirements, 54% of prompted UX principles recognized, and four of five tools implementing 6% or fewer functional principles.",
+    "<a href=\"https://arxiv.org/abs/2604.06373\">Beyond Functional Correctness: Design Issues in AI IDE-Generated Large-Scale Projects</a>, Syed Mohammad Kashif, Ruiyin Li, Peng Liang, Amjed Tahir, Qiong Feng, Zengyang Li and Mojtaba Shahin, submitted April 7, 2026. 10 projects built with Cursor, averaging 16,965 lines and 114 files, then put through static analysis: 91% average functional correctness alongside 1,305 design issues from CodeScene and 3,193 from SonarQube, with accessibility among the most prevalent categories.",
+    "<a href=\"https://www.smashingmagazine.com/2026/06/why-accessibility-operational-capability-not-feature/\">Why Accessibility Is An Operational Capability, Not A Feature</a>, Mikhail Prosmitskiy, Smashing Magazine, June 30, 2026. The case for treating accessibility like reliability or security, the observation that models produce inaccessible markup by default, and the continuous integration tooling that moves it off memory and onto process.",
+    "<a href=\"https://dev.to/lixingliangsy/ai-generated-ui-is-shipping-faster-than-accessibility-can-catch-up-1o2i\">AI-generated UI is shipping faster than accessibility can catch up</a>, LXSAIHUB, DEV, September 26, 2026. A working through of why focus management, accessible names, ARIA usage and contrast survive both a screenshot and a code review read at speed, with a dashboard example of icon buttons carrying no accessible name."
+  ],
+  "cover_line": "Focus order doesn't show up in a screenshot."
+} -->
+
+      <p>The standard answer to generated interfaces is review. A model writes the screen, someone looks at it before it ships, and the bar holds because a person was in the loop.</p>
+
+      <p>That works for the defects a person can see.</p>
+
+      <p>In February, WebAIM ran its yearly scan of a million home pages. It found detected WCAG failures on <a href="https://webaim.org/projects/million/">95.9%</a> of them, up from 94.8% a year earlier, and 56.1 errors on the average page, up 10.1%. Nearly every one of those pages belongs to a team that would tell you it reviews its work.</p>
+
+      <h2>What looking can't find</h2>
+
+      <p>Focus order. Accessible names on icon buttons. Whether a modal traps focus or drops the keyboard behind it. Contrast ratios. An error state carried by a red border and nothing else.</p>
+
+      <p>Writing on DEV on September 26, a developer publishing as <a href="https://dev.to/lixingliangsy/ai-generated-ui-is-shipping-faster-than-accessibility-can-catch-up-1o2i">LXSAIHUB</a> worked through the mechanism: those are the defects that survive a screenshot and survive a code review read at normal speed. Their dashboard example is three icon buttons with no accessible name, a button wrapped around an SVG and nothing else.</p>
+
+      <p>None of that is a judgment call. It's a set of facts about the markup, and a person looking at a rendered screen has no way to check any of them. Color, hierarchy, copy and layout review fine from a screenshot. Everything in the list above needs a keyboard or a script.</p>
+
+      <p>Mikhail Prosmitskiy made the engineering version of this argument in <a href="https://www.smashingmagazine.com/2026/06/why-accessibility-operational-capability-not-feature/">Smashing Magazine</a> on June 30. Accessibility is an operational capability, like reliability or security, and models produce inaccessible markup by default. He's right, and the tooling he points at is the right tooling. The part his piece doesn't have to deal with is that a lot of this markup no longer arrives through engineering at all.</p>
+
+      <p>The markup for a screen increasingly comes out of a tool a designer is driving, and designers brought a review method with them that was built for pictures. It's a good method. It catches the things it was built to catch. It has never had a step where somebody touches a keyboard, because it never needed one.</p>
+
+      <h2>The tool's explanation isn't the build</h2>
+
+      <p>There's a second failure underneath. If you can't see the defect, the reasonable fallback is to read what the tool says it did.</p>
+
+      <p>A paper submitted on July 24 by Kashif Imteyaz and five co-authors benchmarked exactly that. They ran 24 UI generation tasks across five generative UI tools, 120 interfaces in total, and compared each stated design rationale against the interface that actually came out.</p>
+
+      <p>A quarter of the rationales weren't implemented. For functional requirements it was <a href="https://arxiv.org/abs/2607.22928">34%</a>. On average the tools recognized 54% of the UX principles written into the prompts, and four of the five implemented 6% or fewer of the functional ones. The authors call it design theater: a plausible explanation with no dependable connection to the code.</p>
+
+      <p>So the rationale isn't review either. It's a second artifact that needs checking.</p>
+
+      <h2>The code works anyway</h2>
+
+      <p>This isn't a story about weak models. In April, Syed Mohammad Kashif and six colleagues had Cursor build 10 large projects, averaging 16,965 lines and 114 files each, then ran static analysis across them. Average functional correctness came in at <a href="https://arxiv.org/abs/2604.06373">91%</a>. The same projects carried 1,305 design issues by one analyzer and 3,193 by another, with accessibility among the most prevalent categories.</p>
+
+      <p>The code runs and the markup is wrong at the same time. A demo won't surface that and a passing test suite won't flag it.</p>
+
+      <h2>A check that can fail the build</h2>
+
+      <p>I've argued on this blog that the judgment in a design system is the part you can't automate, and I still think that. This is the other case. Accessible names, focus order, contrast and landmarks are mechanical, checkable and dull, which is why leaving them to a human eye is hard to defend once the volume goes up.</p>
+
+      <p>At Best Egg I built and ran an audit across the whole component library. I wrote the crawler's rules and directed the remediation that came out of it. The report wasn't the useful part. The rules being written down was, because the same check could run again and the answer didn't depend on who was looking that day.</p>
+
+      <p>That's the shape I'd ask for: the check runs on every build and it can fail the build. Not a review-day checklist and not an audit at the end of a quarter. Prosmitskiy's version of this is that accessibility should depend on process instead of memory.</p>
+
+      <h2>In the review itself</h2>
+
+      <p>In a design review I ask whoever's presenting to put the trackpad down and tab through the screen while everyone watches. It takes about 20 seconds. It finds the focus trap, the control that announces nothing and the step you can't reach without a mouse. Nobody enjoys it the first time.</p>
+
+      <p>The written standard matters more than which linter you pick. If no one on the team can say what good means for a disabled state or an error message, no tool will decide it, and whatever the model produced becomes the standard by default.</p>
+
+      <p>WebAIM's scan and that static analysis run both turned these defects up with no person in the room. That's the clearest argument available for putting the same kind of check in the pipeline and letting it stop a release.</p>

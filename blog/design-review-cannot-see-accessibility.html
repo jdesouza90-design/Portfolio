@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>try{var d=document.documentElement;d.classList.add("js");setTimeout(function(){if(!d.classList.contains("js-ok"))d.classList.remove("js")},4000);if(/Mac|iPhone|iPad/.test(navigator.platform||""))d.classList.add("mac");var t=localStorage.getItem("theme");if(t==="dark"||t==="light")d.dataset.theme=t}catch(e){}</script>
+<title>A design review can’t see accessibility — John DeSouza</title>
+<meta name="description" content="WebAIM found WCAG failures on 95.9% of a million home pages and 56.1 errors on the average one. Those defects don’t show up in a screenshot.">
+<link rel="canonical" href="https://john-desouza.com/blog/design-review-cannot-see-accessibility.html">
+<meta property="og:title" content="A design review can’t see accessibility — John DeSouza">
+<meta property="og:description" content="WebAIM found WCAG failures on 95.9% of a million home pages and 56.1 errors on the average one. Those defects don’t show up in a screenshot.">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://john-desouza.com/og-image.png?v=8143c1fe">
+<meta property="og:url" content="https://john-desouza.com/blog/design-review-cannot-see-accessibility.html">
+<meta property="og:site_name" content="John DeSouza">
+<meta property="og:locale" content="en_US">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="A design review can’t see accessibility — John DeSouza">
+<meta name="twitter:description" content="WebAIM found WCAG failures on 95.9% of a million home pages and 56.1 errors on the average one. Those defects don’t show up in a screenshot.">
+<link rel="alternate" type="text/plain" title="John DeSouza for language models" href="https://john-desouza.com/llms.txt">
+<meta property="article:published_time" content="2026-10-01T10:00:00-04:00">
+<meta property="article:author" content="John DeSouza">
+<meta property="article:tag" content="accessibility">
+<meta property="article:tag" content="WCAG">
+<meta property="article:tag" content="AI-generated code">
+<meta property="article:tag" content="design review">
+<meta property="article:tag" content="product design craft">
+<link rel="icon" href="/favicon.ico?v=76498377" sizes="32x32">
+<link rel="icon" href="/favicon.svg?v=9c2ff544" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=23c14cf0">
+<link rel="alternate" type="application/rss+xml" title="John DeSouza — Blog" href="https://john-desouza.com/feed.xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css?v=bf285ddf">
+<script defer src="/_vercel/insights/script.js"></script>
+<script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
+<script defer src="/_vercel/speed-insights/script.js"></script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"A design review can\u2019t see accessibility","description":"WebAIM found WCAG failures on 95.9% of a million home pages and 56.1 errors on the average one. Those defects don\u2019t show up in a screenshot.","datePublished":"2026-10-01T10:00:00-04:00","dateModified":"2026-10-01T10:00:00-04:00","author":{"@type":"Person","@id":"https://john-desouza.com/#john","name":"John DeSouza","url":"https://john-desouza.com/","jobTitle":"Director of Product Design","description":"Director of Product Design with 13 years across consumer lending (Best Egg), blockchain infrastructure (Chainlink Labs) and enterprise identity (Auth0).","knowsAbout":["Product design","Design leadership","Design systems","Fintech","Consumer lending","Web3","Stablecoins","Open banking","Digital identity","AI in product design"],"sameAs":["https://www.linkedin.com/in/johndesouza-/"]},"publisher":{"@type":"Person","@id":"https://john-desouza.com/#john","name":"John DeSouza","url":"https://john-desouza.com/","jobTitle":"Director of Product Design","description":"Director of Product Design with 13 years across consumer lending (Best Egg), blockchain infrastructure (Chainlink Labs) and enterprise identity (Auth0).","knowsAbout":["Product design","Design leadership","Design systems","Fintech","Consumer lending","Web3","Stablecoins","Open banking","Digital identity","AI in product design"],"sameAs":["https://www.linkedin.com/in/johndesouza-/"]},"mainEntityOfPage":{"@type":"WebPage","@id":"https://john-desouza.com/blog/design-review-cannot-see-accessibility.html"},"url":"https://john-desouza.com/blog/design-review-cannot-see-accessibility.html","inLanguage":"en","isPartOf":{"@type":"Blog","@id":"https://john-desouza.com/blog.html","name":"Blog"},"articleSection":"Where product design is going","wordCount":931,"abstract":"Accessibility defects are invisible to the review designers actually run, so the control has to be a check that runs on every build against rules someone wrote down.","about":{"@type":"Thing","name":"Where product design is going"},"image":{"@type":"ImageObject","url":"https://john-desouza.com/og-image.png","width":1200,"height":630},"citation":[{"@type":"CreativeWork","name":"The WebAIM Million","url":"https://webaim.org/projects/million/"},{"@type":"CreativeWork","name":"Design Theater: Evaluating the Gap Between User-Facing Design Reasoning and Implementation in Generative UI Tools","url":"https://arxiv.org/abs/2607.22928"},{"@type":"CreativeWork","name":"Beyond Functional Correctness: Design Issues in AI IDE-Generated Large-Scale Projects","url":"https://arxiv.org/abs/2604.06373"},{"@type":"CreativeWork","name":"Why Accessibility Is An Operational Capability, Not A Feature","url":"https://www.smashingmagazine.com/2026/06/why-accessibility-operational-capability-not-feature/"},{"@type":"CreativeWork","name":"AI-generated UI is shipping faster than accessibility can catch up","url":"https://dev.to/lixingliangsy/ai-generated-ui-is-shipping-faster-than-accessibility-can-catch-up-1o2i"}],"keywords":"accessibility, WCAG, AI-generated code, design review, product design craft"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://john-desouza.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://john-desouza.com/blog.html"},{"@type":"ListItem","position":3,"name":"A design review can\u2019t see accessibility","item":"https://john-desouza.com/blog/design-review-cannot-see-accessibility.html"}]}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="/" aria-label="John DeSouza, home"><span>John DeSouza</span></a>
+    <button class="icon-btn nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8.5L20 8.5"/><path d="M4 15.5L20 15.5"/></svg>
+    </button>
+    <nav class="nav-links" id="site-nav" aria-label="Primary">
+      <ul>
+        <li><a href="/work.html">Work</a></li>
+        <li><a href="/#leadership">Leadership</a></li>
+        <li><a href="/#about">About</a></li>
+        <li><a href="/blog.html" aria-current="true">Blog</a></li>
+        <li class="nav-search"><button class="nav-kbd" type="button"><span>Search</span><kbd aria-hidden="true"></kbd></button></li>
+        <li><a class="nav-icon" data-link="linkedin" href="#" aria-label="LinkedIn profile" title="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.125 2.062 2.062 0 0 1 0 4.125zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/></svg><span>LinkedIn</span></a></li>
+        <li class="nav-resume"><a class="nav-download" data-link="resume" href="#"><span>Resume</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.99969 17.0002C2.99969 17.9302 2.99969 18.3952 3.10192 18.7767C3.37932 19.8119 4.18796 20.6206 5.22324 20.898C5.60474 21.0002 6.06972 21.0002 6.99969 21.0002L16.9997 21.0002C17.9297 21.0002 18.3947 21.0002 18.7762 20.898C19.8114 20.6206 20.6201 19.8119 20.8975 18.7767C20.9997 18.3952 20.9997 17.9302 20.9997 17.0002"/><path d="M16.4998 11.5002C16.4998 11.5002 13.1856 16.0002 11.9997 16.0002C10.8139 16.0002 7.49976 11.5002 7.49976 11.5002M11.9997 15.0002V3.00016"/></svg></a></li>
+      </ul>
+      <div class="nav-foot">
+        <a class="btn btn-primary" data-link="email" href="#"><span class="icon-swap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 6L8.91302 9.91697C11.4616 11.361 12.5384 11.361 15.087 9.91697L22 6"/><path d="M2.01577 13.4756C2.08114 16.5412 2.11383 18.0739 3.24496 19.2094C4.37608 20.3448 5.95033 20.3843 9.09883 20.4634C11.0393 20.5122 12.9607 20.5122 14.9012 20.4634C18.0497 20.3843 19.6239 20.3448 20.7551 19.2094C21.8862 18.0739 21.9189 16.5412 21.9842 13.4756C22.0053 12.4899 22.0053 11.5101 21.9842 10.5244C21.9189 7.45886 21.8862 5.92609 20.7551 4.79066C19.6239 3.65523 18.0497 3.61568 14.9012 3.53657C12.9607 3.48781 11.0393 3.48781 9.09882 3.53656C5.95033 3.61566 4.37608 3.65521 3.24495 4.79065C2.11382 5.92608 2.08114 7.45885 2.01576 10.5244C1.99474 11.5101 1.99475 12.4899 2.01577 13.4756Z"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18.5 12L4.99997 12"/><path d="M13 18C13 18 19 13.5811 19 12C19 10.4188 13 6 13 6"/></svg></span>Contact me</a>
+        <a class="btn btn-ghost" data-link="resume" href="#"><span class="icon-swap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.99969 17.0002C2.99969 17.9302 2.99969 18.3952 3.10192 18.7767C3.37932 19.8119 4.18796 20.6206 5.22324 20.898C5.60474 21.0002 6.06972 21.0002 6.99969 21.0002L16.9997 21.0002C17.9297 21.0002 18.3947 21.0002 18.7762 20.898C19.8114 20.6206 20.6201 19.8119 20.8975 18.7767C20.9997 18.3952 20.9997 17.9302 20.9997 17.0002"/><path d="M16.4998 11.5002C16.4998 11.5002 13.1856 16.0002 11.9997 16.0002C10.8139 16.0002 7.49976 11.5002 7.49976 11.5002M11.9997 15.0002V3.00016"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 14L8.5 17.5L19 6.5"/></svg></span>Resume</a>
+      </div>
+    </nav>
+    <div class="nav-actions">
+      <a class="btn btn-primary btn-sm" data-link="email" href="#"><span class="icon-swap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 6L8.91302 9.91697C11.4616 11.361 12.5384 11.361 15.087 9.91697L22 6"/><path d="M2.01577 13.4756C2.08114 16.5412 2.11383 18.0739 3.24496 19.2094C4.37608 20.3448 5.95033 20.3843 9.09883 20.4634C11.0393 20.5122 12.9607 20.5122 14.9012 20.4634C18.0497 20.3843 19.6239 20.3448 20.7551 19.2094C21.8862 18.0739 21.9189 16.5412 21.9842 13.4756C22.0053 12.4899 22.0053 11.5101 21.9842 10.5244C21.9189 7.45886 21.8862 5.92609 20.7551 4.79066C19.6239 3.65523 18.0497 3.61568 14.9012 3.53657C12.9607 3.48781 11.0393 3.48781 9.09882 3.53656C5.95033 3.61566 4.37608 3.65521 3.24495 4.79065C2.11382 5.92608 2.08114 7.45885 2.01576 10.5244C1.99474 11.5101 1.99475 12.4899 2.01577 13.4756Z"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18.5 12L4.99997 12"/><path d="M13 18C13 18 19 13.5811 19 12C19 10.4188 13 6 13 6"/></svg></span>Contact me</a>
+    </div>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+
+<section class="post-hero">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><span class="crumb-sep" aria-hidden="true">/</span><a href="/blog.html">Blog</a></li>
+        <li aria-current="page"><span class="crumb-sep" aria-hidden="true">/</span>A design review can’t see accessibility</li>
+      </ol>
+    </nav>
+    <p class="eyebrow" data-rise style="--i:0">Where product design is going</p>
+    <h1 class="t-display" data-rise style="--i:1">A design review can’t see accessibility</h1>
+    <p class="t-lede" data-rise style="--i:2">WebAIM scanned a million home pages in February and found WCAG failures on 95.9% of them, with 56.1 errors on the average page. Both numbers went up. Generated screens are landing on that baseline, and the thing meant to catch them is a room of people looking at a screen.</p>
+    <p class="post-meta t-small">
+      <span>Published on <time datetime="2026-10-01T10:00:00-04:00">October 1, 2026</time></span>
+      <span class="dot" aria-hidden="true">·</span>
+      <span>4 min read</span>
+    </p>
+  </div>
+</section>
+
+<section class="section tight">
+  <div class="wrap">
+    <div class="claim" data-reveal>
+      <p class="t-quote">Accessibility defects are invisible to the review designers actually run, so the control has to be a check that runs on every build against rules someone wrote down.</p>
+    </div>
+    <div class="prose" data-reveal>
+<p>The standard answer to generated interfaces is review. A model writes the screen, someone looks at it before it ships, and the bar holds because a person was in the loop.</p>
+
+      <p>That works for the defects a person can see.</p>
+
+      <p>In February, WebAIM ran its yearly scan of a million home pages. It found detected WCAG failures on <a href="https://webaim.org/projects/million/">95.9%</a> of them, up from 94.8% a year earlier, and 56.1 errors on the average page, up 10.1%. Nearly every one of those pages belongs to a team that would tell you it reviews its work.</p>
+
+      <h2>What looking can’t find</h2>
+
+      <p>Focus order. Accessible names on icon buttons. Whether a modal traps focus or drops the keyboard behind it. Contrast ratios. An error state carried by a red border and nothing else.</p>
+
+      <p>Writing on DEV on September 26, a developer publishing as <a href="https://dev.to/lixingliangsy/ai-generated-ui-is-shipping-faster-than-accessibility-can-catch-up-1o2i">LXSAIHUB</a> worked through the mechanism: those are the defects that survive a screenshot and survive a code review read at normal speed. Their dashboard example is three icon buttons with no accessible name, a button wrapped around an SVG and nothing else.</p>
+
+      <p>None of that is a judgment call. It’s a set of facts about the markup, and a person looking at a rendered screen has no way to check any of them. Color, hierarchy, copy and layout review fine from a screenshot. Everything in the list above needs a keyboard or a script.</p>
+
+      <p>Mikhail Prosmitskiy made the engineering version of this argument in <a href="https://www.smashingmagazine.com/2026/06/why-accessibility-operational-capability-not-feature/">Smashing Magazine</a> on June 30. Accessibility is an operational capability, like reliability or security, and models produce inaccessible markup by default. He’s right, and the tooling he points at is the right tooling. The part his piece doesn’t have to deal with is that a lot of this markup no longer arrives through engineering at all.</p>
+
+      <p>The markup for a screen increasingly comes out of a tool a designer is driving, and designers brought a review method with them that was built for pictures. It’s a good method. It catches the things it was built to catch. It has never had a step where somebody touches a keyboard, because it never needed one.</p>
+
+      <h2>The tool’s explanation isn’t the build</h2>
+
+      <p>There’s a second failure underneath. If you can’t see the defect, the reasonable fallback is to read what the tool says it did.</p>
+
+      <p>A paper submitted on July 24 by Kashif Imteyaz and five co-authors benchmarked exactly that. They ran 24 UI generation tasks across five generative UI tools, 120 interfaces in total, and compared each stated design rationale against the interface that actually came out.</p>
+
+      <p>A quarter of the rationales weren’t implemented. For functional requirements it was <a href="https://arxiv.org/abs/2607.22928">34%</a>. On average the tools recognized 54% of the UX principles written into the prompts, and four of the five implemented 6% or fewer of the functional ones. The authors call it design theater: a plausible explanation with no dependable connection to the code.</p>
+
+      <p>So the rationale isn’t review either. It’s a second artifact that needs checking.</p>
+
+      <h2>The code works anyway</h2>
+
+      <p>This isn’t a story about weak models. In April, Syed Mohammad Kashif and six colleagues had Cursor build 10 large projects, averaging 16,965 lines and 114 files each, then ran static analysis across them. Average functional correctness came in at <a href="https://arxiv.org/abs/2604.06373">91%</a>. The same projects carried 1,305 design issues by one analyzer and 3,193 by another, with accessibility among the most prevalent categories.</p>
+
+      <p>The code runs and the markup is wrong at the same time. A demo won’t surface that and a passing test suite won’t flag it.</p>
+
+      <h2>A check that can fail the build</h2>
+
+      <p>I’ve argued on this blog that the judgment in a design system is the part you can’t automate, and I still think that. This is the other case. Accessible names, focus order, contrast and landmarks are mechanical, checkable and dull, which is why leaving them to a human eye is hard to defend once the volume goes up.</p>
+
+      <p>At Best Egg I built and ran an audit across the whole component library. I wrote the crawler’s rules and directed the remediation that came out of it. The report wasn’t the useful part. The rules being written down was, because the same check could run again and the answer didn’t depend on who was looking that day.</p>
+
+      <p>That’s the shape I’d ask for: the check runs on every build and it can fail the build. Not a review-day checklist and not an audit at the end of a quarter. Prosmitskiy’s version of this is that accessibility should depend on process instead of memory.</p>
+
+      <h2>In the review itself</h2>
+
+      <p>In a design review I ask whoever’s presenting to put the trackpad down and tab through the screen while everyone watches. It takes about 20 seconds. It finds the focus trap, the control that announces nothing and the step you can’t reach without a mouse. Nobody enjoys it the first time.</p>
+
+      <p>The written standard matters more than which linter you pick. If no one on the team can say what good means for a disabled state or an error message, no tool will decide it, and whatever the model produced becomes the standard by default.</p>
+
+      <p>WebAIM’s scan and that static analysis run both turned these defects up with no person in the room. That’s the clearest argument available for putting the same kind of check in the pipeline and letting it stop a release.</p>
+    </div>
+
+    <div class="sources" data-reveal>
+      <p class="eyebrow">Sources</p>
+      <ol>
+        <li><a href="https://webaim.org/projects/million/">The WebAIM Million</a>, WebAIM, February 2026. Automated accessibility scan of 1,000,000 home pages: detected WCAG 2 failures on 95.9%, up from 94.8% a year earlier, and 56.1 errors on the average page, up 10.1% from 51.</li>
+        <li><a href="https://arxiv.org/abs/2607.22928">Design Theater: Evaluating the Gap Between User-Facing Design Reasoning and Implementation in Generative UI Tools</a>, Kashif Imteyaz, Kaif Imteyaz, Nakul Rajpal, Kaif Shaikh, Michael Muller and Saiph Savage, submitted July 24, 2026. 24 UI generation tasks across five generative UI tools, 120 interfaces, each stated rationale compared against the interface produced: 25% of rationales not implemented, 34% for functional requirements, 54% of prompted UX principles recognized, and four of five tools implementing 6% or fewer functional principles.</li>
+        <li><a href="https://arxiv.org/abs/2604.06373">Beyond Functional Correctness: Design Issues in AI IDE-Generated Large-Scale Projects</a>, Syed Mohammad Kashif, Ruiyin Li, Peng Liang, Amjed Tahir, Qiong Feng, Zengyang Li and Mojtaba Shahin, submitted April 7, 2026. 10 projects built with Cursor, averaging 16,965 lines and 114 files, then put through static analysis: 91% average functional correctness alongside 1,305 design issues from CodeScene and 3,193 from SonarQube, with accessibility among the most prevalent categories.</li>
+        <li><a href="https://www.smashingmagazine.com/2026/06/why-accessibility-operational-capability-not-feature/">Why Accessibility Is An Operational Capability, Not A Feature</a>, Mikhail Prosmitskiy, Smashing Magazine, June 30, 2026. The case for treating accessibility like reliability or security, the observation that models produce inaccessible markup by default, and the continuous integration tooling that moves it off memory and onto process.</li>
+        <li><a href="https://dev.to/lixingliangsy/ai-generated-ui-is-shipping-faster-than-accessibility-can-catch-up-1o2i">AI-generated UI is shipping faster than accessibility can catch up</a>, LXSAIHUB, DEV, September 26, 2026. A working through of why focus management, accessible names, ARIA usage and contrast survive both a screenshot and a code review read at speed, with a dashboard example of icon buttons carrying no accessible name.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="section tight">
+  <div class="wrap">
+    <div class="post-next" data-reveal>
+      <p class="eyebrow">Next</p>
+      <h2 class="t-title"><a href="/blog/dispute-form-has-no-agent-option.html">The dispute form has no agent option</a></h2>
+      <div class="actions">
+        <a class="btn btn-ghost" href="/blog.html">All posts</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section tight">
+  <div class="wrap">
+    <footer>
+      <span>© <span data-year></span> John DeSouza</span>
+      <span>Posts are my own views.</span>
+    </footer>
+  </div>
+</section>
+
+</main>
+<script src="../main.js?v=96381950"></script>
+</body>
+</html>
