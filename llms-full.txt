@@ -4,6 +4,78 @@
 
 ---
 
+## Promote on decisions you wrote down
+
+- URL: https://john-desouza.com/blog/promote-on-decisions-you-wrote-down.html
+- Author: John DeSouza
+- Published: 2026-10-02
+- Topic: Design leadership
+- Claim: A rubric line for AI skills adds a competency to the ladder without replacing the evidence the ladder lost, and the only fix is writing the decision down when it gets made.
+
+Two thirds of organizations now link AI skills to promotion. In design the rubric gets a new line and the review cycle percentile-ranks people against it. The harder problem sits one level down, in what a review reads to decide anything.
+
+Sixty-seven percent of organizations now link AI skills to promotion criteria. Half tie them straight to performance ratings. Both numbers come from [HiBob’s 2026 AI skills research](https://www.hibob.com/research/ai-skills-2026-report/), which surveyed 1,200 decision makers across six regions in February and March.
+
+In design the change has a face. An executive at a publicly traded company told the [AI in Design 2026](https://stateofaidesign.com/chapters/teams) survey that every design role now has AI craft skills in the rubric, “built into our mid-year and annual review cycles to measure where in the percentile each employee sits relative to peers in these new craft skills.” Meta did it at scale first. Janelle Gale, its head of people, [told staff last November](https://finance.yahoo.com/news/meta-start-grading-workers-ai-194500277.html) that AI-driven impact becomes “a core expectation” from 2026.
+
+I don’t think any of that is unreasonable. A leader who watches the work change this fast and leaves the ladder untouched is pretending nothing happened.
+
+## The part the rubric doesn’t touch
+
+HiBob’s own write-up in Charter, published September 22, names the gap this way: “AI skills are entering performance reviews before many companies have defined what ‘good’ actually looks like.” The proposed fix is clearer standards.
+
+Define the competency better and you still have the older problem underneath it. A performance review is an evidence exercise. You read the work, you read your notes, you decide. The work used to carry authorship on its face. It doesn’t now.
+
+Designers say so themselves, in the same AI in Design survey. Forty percent call the direction and judgment fully theirs. Another 43% say the work is mostly theirs while they’re aware AI shaped outcomes they didn’t fully control. Nine percent say it’s “genuinely hard to separate” their contribution from the tool’s.
+
+Read that as a measurement problem rather than an identity one. When the person who made the file isn’t sure which parts were their call, a manager opening that file eight months later is not going to recover it.
+
+## Someone already named this
+
+Keyuri Anand wrote the sharpest line on it in August: “Your promotion did not disappear. The evidence you used to earn it did.” She calls it the proxy collapsing. Polished artifacts stopped signaling judgment because they got cheap.
+
+Her advice goes to the designer. Own a system, stop shipping tasks, build something that proves judgment. That’s good advice and it’s aimed at the wrong person. A designer can’t fix the evidence base a company promotes from. The manager owns that, and right now the manager is being handed a new rubric line and the same broken packet.
+
+Tommy Geoco made the structural version of this point at UX Tools last week. Writing about design career ladders, he argues that most technology panic “isn’t about the tool. It’s about what happens when the old path to competence disappears before anyone builds a new one.” The path up was also the path along which a manager could watch someone’s judgment develop. Both of them went at the same time.
+
+## The behavior they ranked first
+
+The same research has a finding that didn’t travel. Asked which everyday AI behaviors matter most, decision makers put two at the top, tied at 52%: proactively reviewing output quality, and documenting workflow decisions.
+
+So the field already knows what it needs. Neither of those is a proficiency. Both are records. You can’t percentile-rank someone on documenting workflow decisions, which is probably why 67% of organizations wired promotion to AI skills instead.
+
+One more finding from the same research. Only 36% of organizations that expect managers to build AI capability see those managers as highly prepared to do it.
+
+## What my review notes carry now
+
+I run weekly design reviews, and what changed is what leaves the meeting written down. The call, the reason it went that way and the name of the person who made it. Not the file. The decision.
+
+It takes four or five lines. The reason I bother is that a promotion case assembled in November from work done in March is a reconstruction, and a reconstruction favors whoever talks about their work most fluently. Notes taken at the time favor whoever was right.
+
+At Best Egg I wrote the crawler’s rules for the whole-library audit before the agent touched a file, across 296 files. Those rules are the artifact that shows what I thought good meant. The 28 fixes a run produced show that the agent worked. Separately, a senior product designer on the team ran the button component audit start to finish, agent and remediation, and that sentence is in my notes because in eight months the files won’t say it.
+
+## The 13% who changed something
+
+Betterworks surveyed 2,387 HR leaders, managers and employees this year and found executives six times more likely than employees to believe performance reviews and goal setting have kept up with AI-driven work. In the same study 49% of HR leaders rank AI use as a top influence on performance. Nine percent of employees think it matters to their success.
+
+That spread is what a rubric change looks like from underneath. The line gets added, the cycle runs, and the people being measured can’t tell what it bought them.
+
+In design, 13% of leaders have updated official performance review metrics or hiring practices at all. The ones who did mostly added a skill. The evidence their reviews run on hasn’t changed, and it no longer records who decided what.
+
+Sources:
+
+- [AI Skills 2026](https://www.hibob.com/research/ai-skills-2026-report/)
+- [AI skills are entering performance reviews. Are managers ready?](https://www.charterworks.com/ai-skills-are-entering-performance-reviews-are-managers-ready/)
+- [Teams](https://stateofaidesign.com/chapters/teams)
+- [Craft](https://stateofaidesign.com/chapters/craft)
+- [2026 State of Performance Enablement](https://www.betterworks.com/performance-report-2026)
+- [Meta is about to start grading workers on their AI skills](https://finance.yahoo.com/news/meta-start-grading-workers-ai-194500277.html)
+- [Is AI Taking Promotions Away, or Deciding Who Gets Them?](https://keyurianand.substack.com/p/is-ai-taking-promotions-away-or-deciding)
+- [What is AI doing to design career ladders?](https://www.uxtools.co/blog/what-is-ai-doing-to-design-career-ladders)
+- [Agentic design system audit and remediation](/work/agentic-design-system-audit.html)
+
+---
+
 ## A design review can’t see accessibility
 
 - URL: https://john-desouza.com/blog/design-review-cannot-see-accessibility.html
