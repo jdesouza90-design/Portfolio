@@ -1273,11 +1273,13 @@ footer a:hover { color: var(--ink); }
 .outcome-stat { padding-left: var(--col-pad); border-left: 1px solid var(--hair-2); }
 .outcome-stat .t-heading { max-width: 18ch; }
 .outcome-stat .t-small { max-width: 28ch; }
+.outcome-stat > div + div { margin-top: var(--sp-5); padding-top: var(--sp-5); border-top: 1px solid var(--hair); }   /* two products, one stat each (Cross-Sell) */
 /* Facts: a stat strip under the screens. A label above, the value beneath at
    heading size, cells divided by hairlines, after the Mercury stat band. */
 .facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: clamp(28px, 4vw, 48px) 0 0; padding: 0; border-top: 1px solid var(--hair); border-left: 1px solid var(--hair); }
 .facts > div { min-width: 0; padding: clamp(22px, 3vw, 32px) clamp(20px, 3vw, 36px); border-right: 1px solid var(--hair); border-bottom: 1px solid var(--hair); }
 .facts dd { margin-top: var(--sp-3); }
+.facts + .proof { margin-top: var(--sp-6); }   /* Cross-Sell Results: the product split above the chart */
 @media (max-width: 1100px) { .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }   /* four columns leave a value 170px at 1024 */
 @media (max-width: 480px) { .facts { grid-template-columns: 1fr; } }
 
