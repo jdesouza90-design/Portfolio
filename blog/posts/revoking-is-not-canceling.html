@@ -1,0 +1,78 @@
+<!-- {
+  "title": "Revoking an agent doesn't cancel what's pending",
+  "description": "Six banks and a bill in Congress agree an agent's access must be revocable at any time. Neither says what the screen tells you when you use it.",
+  "pillar": "fintech",
+  "date": "2026-10-03T10:00:00-04:00",
+  "lede": "Everyone building agent payments has landed on the same promise: a person can pull an agent's authority whenever they want. The promise is about a switch. The part nobody has specified is what the person reads after they flip it.",
+  "claim": "Revoking an agent stops the next authorization. It doesn't cancel what the agent already set in motion, and the screen where a person turns an agent off is the only place that could tell them the difference.",
+  "keywords": ["agentic commerce", "agent permissions", "revocation", "consent design", "fintech design", "Regulation E", "delegated authorization"],
+  "sources": [
+    "<a href=\"https://www.natwestgroup.com/news-and-insights/news-room/press-releases/2026/global-banks-collaborate-on-principles-for-trusted-agentic-comme.html\">Global banks collaborate on principles for trusted agentic commerce</a>, NatWest Group, September 22, 2026. The six banks, the five areas and the quote from ING's Hans Overeem.",
+    "<a href=\"https://lawler.house.gov/news/documentsingle.aspx?DocumentID=6477\">Reps. Lawler, Gottheimer Introduce Bipartisan Bill to Stop Rogue AI Agents and Keep People In Control</a>, September 15, 2026. The Stop Rogue AI Act and what it asks NIST to standardize.",
+    "<a href=\"https://arxiv.org/pdf/2607.13718\">How Agents Ask for Permission: User Permissions for AI Agents, from Interfaces to Enforcement</a>, Alexandra E. Michael and Franziska Roesner, University of Washington, arXiv 2607.13718v2, July 20, 2026. A review of 21 systems from 2024 to 2026 and five commercial agents.",
+    "<a href=\"https://arxiv.org/pdf/2609.00060\">A Formal Analysis of Agent Payment Protocols</a>, Ke Jiang and others at Southern University of Science and Technology, the Indian Institute of Technology and City University of Hong Kong, arXiv 2609.00060v1, August 30, 2026. x402, MPP, ACP and AP2 modeled in Tamarin across 86 verification cases, with 40 previously undocumented findings.",
+    "<a href=\"https://www.rfc-editor.org/rfc/rfc7009.html\">RFC 7009, OAuth 2.0 Token Revocation</a>. On propagation delay and on access tokens that survive the revocation of the refresh token behind them.",
+    "<a href=\"https://www.consumerfinance.gov/rules-policy/regulations/1005/2/\">Regulation E, 12 CFR 1005.2(m)</a>, CFPB. The definition of an unauthorized electronic fund transfer and the exclusion for a person furnished the access device.",
+    "<a href=\"https://ap2-protocol.net/en/topics/core-concepts/\">Agent Payments Protocol, core concepts</a>. The Intent Mandate, its constraints and its expiration time.",
+    "<a href=\"https://usa.visa.com/about-visa/newsroom/press-releases.releaseId.21716.html\">Visa Introduces Trusted Agent Protocol</a>, Visa, October 14, 2025. Merchant-side recognition of trusted agents.",
+    "<a href=\"https://corporate.visa.com/content/dam/VCOM/corporate/products/documents/earning-consumer-trust-in-the-age-of-agentic-commerce.pdf\">Earning consumer trust in the age of agentic commerce</a>, Visa, 2025. Online surveys of adults 18 to 65 who shop online monthly and hold a card, United States n=1600, Australia n=1600, New Zealand n=500.",
+    "<a href=\"https://fintechnize.substack.com/p/agentic-commerce-daily-8-october\">Agentic Commerce Daily #8</a>, Charlie Liu, October 2, 2026, on infrastructure hardening around continuous authorization."
+  ],
+  "cover_line": "The off switch has to show what's already moving."
+} -->
+
+      <p>On September 22 six banks published <a href="https://www.natwestgroup.com/news-and-insights/news-room/press-releases/2026/global-banks-collaborate-on-principles-for-trusted-agentic-comme.html">a shared set of principles</a> for trusted agentic commerce: NatWest, ASB Bank, Bank of America, Capital One, Commonwealth Bank of Australia and ING. Hans Overeem, who runs payments at ING, put the point plainly. "As AI agents enter the payments ecosystem, customers must remain in control, understand what the agent is doing, and have confidence that their data and payments are secure."</p>
+
+      <p>A week before that, Mike Lawler and Josh Gottheimer <a href="https://lawler.house.gov/news/documentsingle.aspx?DocumentID=6477">introduced the Stop Rogue AI Act</a>, which hands NIST the job of writing standards so an organization can "allow, deny, or revoke an agent's access, actions, and interactions at any time, so people have the final say over what it can access or do."</p>
+
+      <p>This is the one thing the whole industry agrees on, and it's correct. Revocation has to be there.</p>
+
+      <p>Both documents treat it as a capability. A capability is something a system has. Revoking is something a person does, at a particular second, usually because they're alarmed, and what they need at that second is not a switch.</p>
+
+      <h2>Authorization and the purchase come apart</h2>
+
+      <p>A team at Southern University of Science and Technology, the Indian Institute of Technology and City University of Hong Kong <a href="https://arxiv.org/pdf/2609.00060">modeled four agent payment protocols</a> in Tamarin at the end of August: x402, the Machine Payments Protocol, the Agentic Commerce Protocol and AP2. Across 86 verification cases they turned up 40 findings that hadn't been documented before. One sentence in their introduction explains why this is hard, and it's about sequence rather than cryptography.</p>
+
+      <p>"A user may authorize a task before the final merchant or terms are fixed, so each subsequent step can be locally valid while the transaction as a whole is inconsistent with that authorization."</p>
+
+      <p>Read that as a calendar. The person grants authority on Monday. The agent picks the merchant on Wednesday, the money moves Thursday and the box arrives the week after. Revoking on Wednesday evening lands in the middle of that, and which parts it reaches depends on plumbing the person can't see.</p>
+
+      <p>The specs are detailed about the front of that sequence. AP2's <a href="https://ap2-protocol.net/en/topics/core-concepts/">core concepts</a> give the Intent Mandate a list of authorized payment methods, the shopping criteria and an expiration time. Taking it back isn't on the page. Visa's <a href="https://usa.visa.com/about-visa/newsroom/press-releases.releaseId.21716.html">Trusted Agent Protocol</a> announcement, from October 14, 2025, is about how a merchant recognizes an agent it can trust. The consumer's side of revocation isn't in it either.</p>
+
+      <h2>Identity already wrote this down</h2>
+
+      <p><a href="https://www.rfc-editor.org/rfc/rfc7009.html">RFC 7009</a> is the OAuth token revocation spec, and it's honest in a way product copy never is. "The invalidation takes place immediately, and the token cannot be used again after the revocation." Then, a few lines later: "In practice, there could be a propagation delay, for example, in which some servers know about the invalidation while others do not."</p>
+
+      <p>It goes further. "If the authorization server does not support access token revocation, access tokens will not be immediately invalidated when the corresponding refresh token is revoked." Pull the thing that issues access and the access it already issued can keep working.</p>
+
+      <p>That has been in the spec for years, in the plumbing agent payments are built on. The difference now is that the token spends money.</p>
+
+      <h2>The revoke that counts is the bank's</h2>
+
+      <p>There's also a legal answer to where the switch belongs, and it's older than any of this. <a href="https://www.consumerfinance.gov/rules-policy/regulations/1005/2/">Regulation E</a> says a transfer isn't unauthorized when it was initiated by "a person who was furnished the access device to the consumer's account by the consumer, unless the consumer has notified the financial institution that transfers by that person are no longer authorized."</p>
+
+      <p>Everything turns on that last clause. The revocation that changes a person's position is the one their bank hears about. Switching the agent off inside the agent's own app, which is where a person would obviously go to do it, is housekeeping.</p>
+
+      <h2>Six systems out of 21</h2>
+
+      <p>Alexandra Michael and Franziska Roesner at the University of Washington <a href="https://arxiv.org/pdf/2607.13718">reviewed 21 agent permission systems</a> proposed between 2024 and 2026, plus five commercial agents. Their finding on this point is blunt. Of the 21, "only six clearly provide ways for users to change or revoke permissions after the policy has been specified," and two of those six only allow the change between sessions rather than during one.</p>
+
+      <p>They name the assumption underneath it. These systems "assume that a one-time decision extrapolates to all future circumstances."</p>
+
+      <p>They're writing about agents in general, not payments. Payments is where that assumption carries a dollar amount.</p>
+
+      <h2>What the screen owes a person</h2>
+
+      <p>Visa's own research found about half of respondents worried about "decisions made without me." Asked whether they'd still use a shopping agent without control over their data, 54% said not very or not at all likely. Those were online surveys of card holders who shop online monthly: 1,600 in the United States, 1,600 in Australia and 500 in New Zealand.</p>
+
+      <p>A revoke screen that says "Access removed" answers a question about the system. The questions a person actually has are about their money, and there are four. What did my agent already commit me to? Which of those does this switch stop? Which of them is still coming anyway? Where do I go to cancel each one?</p>
+
+      <p>That's a list, and lists are generated from state somebody has to go and fetch: orders placed and not shipped, an authorization approved yesterday that posts on Friday, the subscription the agent started under its own credential at the merchant. None of it is exotic. It just isn't anybody's ticket, because the feature shipped when the grant screen worked.</p>
+
+      <p>So in any review where a screen hands something authority, I ask to see the second screen in the same session. Not the confirmation. The one where a person takes the authority back, and what it lists when they land on it. The first screen is usually in high fidelity. The second one is usually a line in a backlog.</p>
+
+      <p>At Chainlink Labs I directed Staking v0.1, and the call I made there was about where the facts sit. The pool gauge, the reward rate and the remaining allotment went next to the stake action, so nobody had to leave the page to decide.</p>
+
+      <p>Charlie Liu, writing <a href="https://fintechnize.substack.com/p/agentic-commerce-daily-8-october">Agentic Commerce Daily</a> on October 2, summed up the week as trust and payment infrastructure "hardening around continuous authorization and open standards." That's a fair read of what's being built. Continuous authorization means the grant keeps working while nobody is watching it, which makes the moment somebody wants it to stop more consequential.</p>
+
+      <p>The switch most products will ship lives in the agent's app, because that's where the agent lives. Regulation E puts the one that changes a person's legal position at their bank. Somebody is going to decide which of those a person gets, and on current evidence it's whoever owns the settings page.</p>
