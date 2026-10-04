@@ -4,6 +4,82 @@
 
 ---
 
+## Generated screens still need a record
+
+- URL: https://john-desouza.com/blog/generated-screens-need-a-record.html
+- Author: John DeSouza
+- Published: 2026-10-04
+- Topic: Where product design is going
+- Claim: When the interface is assembled per person at runtime, the record of what was rendered becomes part of the design deliverable, because support, review and accountability all need two people looking at the same screen.
+
+The case for interfaces you tear off like a used sheet of paper is getting strong, and the best usability result for it was measured inside a banking app. The protocol that delivers those screens says nothing about keeping one.
+
+Michael Bernstein published a two-page vision paper for UIST last month arguing that interfaces are about to stop being durable things. Software construction is getting cheap enough that we’ll build them at the moment of need instead, which he calls [“rapid, discardable, on-demand interfaces tailored to our needs in the moment”](https://arxiv.org/abs/2609.06770). When you’re finished with one, you “tear the interface away like a used sheet of paper, and start your next task on a blank one.”
+
+He takes the obvious objection seriously inside the paper. Just-in-time interfaces break Nielsen’s consistency heuristic, and Microsoft already rolled back adaptive menus once because people couldn’t predict them. His bet is that usefulness wins anyway, the way file sharing won despite terrible affordances. I think he’s probably right, and familiarity is the objection everybody reaches for first.
+
+It’s the sentence about us that should stop a design leader.
+
+we create the levers that shape what gets created and how they operate, but we may never lay hands or eyes on the last-mile interfaces themselves
+
+Michael S. Bernstein, The Interface of Theseus, September 2026
+
+That’s an operations sentence, not a philosophical one. If the designer never lays eyes on the screen that shipped, no one else does either, and the screen is gone by the time anyone wants to discuss it.
+
+## The strongest demo was a bank
+
+This isn’t a thought experiment waiting on better models. Google Research ran a within-subject study with 72 participants on Penny, a digital banking prototype, comparing an adaptive generative version against a fixed one. The adaptive version scored [84.38 on the System Usability Scale against 53.96](https://research.google/pubs/self-evolving-systems-moving-beyond-deterministic-interfaces-to-adaptive-generative-interfaces/), a gap of 30 points. The authors put it down to cutting what they call the navigation tax.
+
+A separate Google team showed the generation itself holds up. Yaniv Leviathan and 11 colleagues found that generated interfaces are [overwhelmingly preferred](https://arxiv.org/abs/2604.09577) over the markdown wall of text an LLM normally returns, and at least comparable to expert-crafted work in half of cases. Trond Wuellner has been making the practitioner [case for shipping this](https://trond.ai/p/2026-is-the-year-of-just-in-time) since May.
+
+So the evidence is real, it’s good, and the place it was measured most convincingly is a banking app, where every screen in the product is a disclosure of some kind.
+
+## The record is already in the transport
+
+The fix is cheaper than the problem sounds, because of how these screens travel.
+
+A2UI, the protocol Google opened up for agent-driven interfaces, doesn’t ship code to the client. The agent sends [a JSON payload carrying a component tree and its data model](https://developers.googleblog.com/introducing-a2ui-an-open-project-for-agent-driven-interfaces/), and the client maps that onto its own native widgets. The screen exists as a document before it exists as pixels. Every generated interface in that architecture is already serialized, already small and already passing through a server.
+
+Neither the protocol’s own introduction nor Google’s launch post says anything about storing it, logging it or replaying it. Both are about getting the screen rendered correctly and safely, which is the right job for a spec. What happened afterward is left to whoever builds the client, and right now the default is that it’s gone.
+
+## Finance already requires reproduction
+
+The E-Sign Act has had an answer to this since 2000. Under [15 U.S.C. 7001(d)(1)](https://www.govinfo.gov/content/pkg/USCODE-2024-title15/html/USCODE-2024-title15-chap96.htm), an electronic record kept to satisfy a retention requirement has to accurately reflect the information and stay accessible “in a form that is capable of being accurately reproduced for later reference”.
+
+A rate, a fee schedule or a repayment term assembled for one person at one moment and then thrown away isn’t capable of being reproduced for later reference. It isn’t a design preference that the bank keeps a copy. It’s the condition on doing it electronically at all.
+
+## What I ask in a review
+
+When a team brings me a surface that a model composes, the question I ask isn’t whether we can explain the model. It’s what the person taking the call sees when this customer calls back about this screen.
+
+That question has a way of settling arguments fast. If the answer is a transcript, or a reconstruction, or a confident guess from a dashboard, the design isn’t finished no matter how well it tested.
+
+On the document verification work at Best Egg, applicants who had uploaded their files couldn’t tell what was pending, so they called to ask. We gave each document a status they could see, and the verification rate went to 71% against 61% for control in the live A/B test, sized with product and operations at 7,000 fewer support calls a month. The screen was fixed, so the applicant and the agent on the phone were at least describing the same thing. Take that away and the call starts with both people guessing.
+
+## Two halves of one deliverable
+
+If Bernstein’s equilibrium shift lands the way he describes it, the design deliverable splits in two.
+
+The first half is the one the field is already building: the catalog, the rules, the signals, the evaluation criteria. The generator. That work is underway and A2UI’s trusted component catalog is a good version of it.
+
+The second half barely has a name yet. It’s the record of what the generator actually produced for a given person at a given moment, kept long enough and structured well enough that a support agent, a reviewer, an accessibility audit or a regulator can put it back on screen. Not analytics about the session. The session’s interface, re-renderable.
+
+Designers are good at arguing for the first half, because it looks like design. The second half reads like a storage bill, so it lands on an engineering backlog and stays there. It’s worth more than that. It’s what makes a generated screen something a company can stand behind after the fact.
+
+The JSON that drew the screen is sitting in the transport layer already. Throwing it away is a decision, and at the moment it’s the one being made by default.
+
+Sources:
+
+- [The Interface of Theseus: The Rise of Just-In-Time Interfaces](https://arxiv.org/abs/2609.06770)
+- [Self-Evolving Systems: Moving Beyond Deterministic Interfaces to Adaptive Generative Interfaces](https://research.google/pubs/self-evolving-systems-moving-beyond-deterministic-interfaces-to-adaptive-generative-interfaces/)
+- [Generative UI: LLMs Are Effective UI Generators](https://arxiv.org/abs/2604.09577)
+- [What is A2UI](https://a2ui.org/introduction/what-is-a2ui/)
+- [Introducing A2UI: An open project for agent-driven interfaces](https://developers.googleblog.com/introducing-a2ui-an-open-project-for-agent-driven-interfaces/)
+- [15 U.S.C. 7001(d)(1)](https://www.govinfo.gov/content/pkg/USCODE-2024-title15/html/USCODE-2024-title15-chap96.htm)
+- [2026 is the Year of Just-in-Time UX](https://trond.ai/p/2026-is-the-year-of-just-in-time)
+
+---
+
 ## Revoking an agent doesn’t cancel what’s pending
 
 - URL: https://john-desouza.com/blog/revoking-is-not-canceling.html
