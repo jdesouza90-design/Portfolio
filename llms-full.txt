@@ -4,6 +4,83 @@
 
 ---
 
+## Getting hands-on costs you the crit
+
+- URL: https://john-desouza.com/blog/hands-on-costs-you-the-crit.html
+- Author: John DeSouza
+- Published: 2026-10-05
+- Topic: Design leadership
+- Claim: Hands-on time with agents comes out of the feedback hours, and feedback is the only part of the week that holds up as a team gets bigger.
+
+The advice going to design leaders this year is to get back on the tools. Gallup says 97% of managers already carry individual contributor work, at a median of 40% of the week. Nobody says which hours the new advice replaces.
+
+The advice going to design leaders this year is to get your hands back on the tools. Katie Dill, head of design at Stripe, puts it plainly in [AI in Design 2026](https://stateofaidesign.com/chapters/teams): “If leaders want to understand what’s actually possible and how their teams need to adapt, they have to get close to the makers and hands-on with the tools themselves.”
+
+She’s right, and I’d go further. A design leader who hasn’t built anything with an agent is guessing about the work their team does all day, and the guess shows up in the standard they hold.
+
+The question nobody attaches to the advice is which hours it replaces.
+
+## The second job was already there
+
+Gallup put the question to a random sample of 16,442 American managers and leaders. Ninety-seven percent said they carry individual contributor work on top of leading people. The median manager spends 40% of the week on it.
+
+So getting hands-on isn’t a new allocation. It’s a bigger share of a half that was already full.
+
+The same study carries the number being passed around this fall. The average team went from 10.9 direct reports in 2024 to 12.1 in 2025, nearly 50% larger than when Gallup first measured in 2013. The median held at five or six. The average moved because the big teams got bigger, not because every manager woke up with more people.
+
+## Span isn’t the variable
+
+Chris Cancialosi made that case well on September 29. Writing about the flattening, he argues that span of control “is not an independent variable. It is a multiplier on a condition set somewhere else.” The condition is the individual contributor load. A manager with four reports and a full delivery queue is in worse shape than one with 14 reports and nothing to build.
+
+His fix goes to human resources. Screen managers on two numbers, team size and estimated time on non-managerial work, then intervene where both run high.
+
+That fix assumes somebody assigned the work. In design, increasingly, nobody did.
+
+The leader picked it up. An agent made producing look free, so the thing that used to take a designer a week now looks like an afternoon on the leader’s own calendar. It doesn’t feel like taking on delivery work. No screen catches it either, because on paper it isn’t a delivery queue. It’s curiosity, and the field is telling leaders to have more of it.
+
+## What comes off the calendar instead
+
+The report that carries Dill’s advice also tells teams to “run crits more often, in smaller groups. Shorter, more frequent sessions mean that feedback happens while the work is still in progress.” One team in the study went from weekly crits to 4x weekly crits across sub-groups.
+
+Read those two recommendations next to each other. Both are good. Both are drawn on the same week, and only one of them has a meeting invite with other people’s names on it.
+
+That asymmetry decides which one survives a bad month. Prototyping with an agent is work a leader can do at 9pm with nobody noticing it moved. A crit that gets skipped is visible to eight people, which is exactly why it’s the first thing a leader quietly stops defending when their own build queue fills up. Nobody announces it. The invite stays on the calendar and the quality of what happens inside it drops.
+
+## The one finding I’d plan around
+
+Gallup’s most useful result isn’t about team size at all. About seven in 10 employees were highly engaged regardless of team size when they strongly agreed they had received meaningful feedback.
+
+Regardless of team size. Feedback is the part of the job that keeps working at 14 reports. Hands-on tool time is the part that doesn’t scale with anything, because it only ever informs one person.
+
+Manager engagement fell from 27% to 22% between 2024 and 2025, the sharpest year over year drop Gallup has recorded, and nine points below where it sat in 2022. Those are the people now being told to add a build practice.
+
+## How I spend the week
+
+Most of my week goes into feedback. Weekly reviews, structured critique and time on specific work with specific people. I’d rather give a little every week than a lot at once, because feedback that arrives in a batch arrives after the decision.
+
+On the cross-sell work there were two products, two roadmaps and two release calendars. I ran the weekly reviews for both myself so the patterns stayed shared across them. That was the expensive choice and it was the right one.
+
+I do the hands-on part too. I built and ran the whole-library audit at Best Egg across 296 files, wrote the crawler’s rules and directed the remediation, which was weeks of my own hands on an agent. I scheduled it around the reviews rather than through them. A senior product designer on the team ran the button component audit end to end, agent and remediation, and that was hers.
+
+Here’s the check I’d run this quarter. Count the hours you spent producing last month against the hours you spent giving feedback, then ask which of the two numbers you’d defend to your team out loud.
+
+## What the advice is missing
+
+Get hands-on. The advice is right and the people giving it are right about why. What it leaves out is the trade, and the trade is bad. You learn the tools faster, and your team gets less of the one thing Gallup found holds engagement at any team size.
+
+Ninety-seven percent of managers had a second job before agents made the second job look easy. The hours for the new advice come from somewhere, and the crit is the softest thing on the calendar.
+
+Sources:
+
+- [Teams](https://stateofaidesign.com/chapters/teams)
+- [Span of Control: What's the Optimal Team Size for Managers?](https://www.gallup.com/workplace/700718/span-control-optimal-team-size-managers.aspx)
+- [State of the Global Workplace 2026](https://www.gallup.com/workplace/349484/state-of-the-global-workplace.aspx)
+- [Span of Control Is the Wrong Question](https://gothamculture.com/2026/09/29/span-of-control-wrong-question/)
+- [Cross-Sell](/work/cross-sell.html)
+- [Agentic design system audit and remediation](/work/agentic-design-system-audit.html)
+
+---
+
 ## Generated screens still need a record
 
 - URL: https://john-desouza.com/blog/generated-screens-need-a-record.html

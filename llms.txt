@@ -12,6 +12,7 @@ Posts are John's own views. Every number in a post links to the primary source t
 
 ## Blog: Design leadership
 
+- [Getting hands-on costs you the crit](https://john-desouza.com/blog/hands-on-costs-you-the-crit.html): Hands-on time with agents comes out of the feedback hours, and feedback is the only part of the week that holds up as a team gets bigger.
 - [Promote on decisions you wrote down](https://john-desouza.com/blog/promote-on-decisions-you-wrote-down.html): A rubric line for AI skills adds a competency to the ladder without replacing the evidence the ladder lost, and the only fix is writing the decision down when it gets made.
 - [The bottleneck moved and the budget didn’t](https://john-desouza.com/blog/the-constraint-moved-to-review.html): When agents triple a team’s output the constraint moves to the people who decide whether the work is right, and spending that gain on a deferred hire funds the queue instead of the decision.
 - [Count the drift, not the adoption rate](https://john-desouza.com/blog/count-the-drift-not-the-adoption-rate.html): A design system team earns its staffing on the count of what the system failed to prevent, not on an adoption rate or an estimate of hours saved.
