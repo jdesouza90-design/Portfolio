@@ -30,6 +30,7 @@ Posts are John's own views. Every number in a post links to the primary source t
 
 ## Blog: Fintech, web3 and trust
 
+- [Explainability ends on the decline screen](https://john-desouza.com/blog/explainability-ends-at-the-screen.html): Explainability gets built as a property of the model and delivered as a string on a screen, and Regulation B’s floor for that string is a label with no direction and no size.
 - [Revoking an agent doesn’t cancel what’s pending](https://john-desouza.com/blog/revoking-is-not-canceling.html): Revoking an agent stops the next authorization. It doesn’t cancel what the agent already set in motion, and the screen where a person turns an agent off is the only place that could tell them the difference.
 - [The dispute form has no agent option](https://john-desouza.com/blog/dispute-form-has-no-agent-option.html): A card dispute gets classified by the cardholder at intake, from a fixed list, and that label decides which rules and clocks run. For an agent purchase there’s no true option on the list.
 - [A name match is not a verdict](https://john-desouza.com/blog/a-name-match-is-not-a-verdict.html): A payee name check answers one narrow question, and the screen reporting it’s where a bank quietly answers a much bigger one on the payer’s behalf.

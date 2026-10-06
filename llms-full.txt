@@ -4,6 +4,71 @@
 
 ---
 
+## Explainability ends on the decline screen
+
+- URL: https://john-desouza.com/blog/explainability-ends-at-the-screen.html
+- Author: John DeSouza
+- Published: 2026-10-06
+- Topic: Fintech, web3 and trust
+- Claim: Explainability gets built as a property of the model and delivered as a string on a screen, and Regulation B’s floor for that string is a label with no direction and no size.
+
+Lenders are treating AI explainability as a modeling problem. What a denied applicant actually reads is up to four noun phrases, plus a screen that says the application wasn’t approved. The federal guidance that pushed those past boilerplate was withdrawn in May 2025.
+
+The standard answer to AI underwriting right now is per-feature attribution. Compute each applicant’s contribution scores, rank them, map the top few onto reason codes. That beats the older habit of back-filling a plausible reason from the application form after a score came back, and the people building it aren’t wrong.
+
+It stops one step short of the applicant. The notice is the only part of a credit model a denied person will ever read, and Regulation B lets it be a noun.
+
+## The playbooks cite guidance that’s gone
+
+A compliance guide dated May 1, 2026 opens by saying that “CFPB Circulars 2023-03 and 2024-06 require specific, accurate reasons for every adverse action.” Circular 2023-03 was withdrawn on May 12, 2025. So was 2024-06, which covered hiring and employment screening rather than credit. Both went out in [one Federal Register notice](https://www.govinfo.gov/content/pkg/FR-2025-05-12/html/2025-08286.htm) that withdrew 67 guidance documents at once.
+
+[Circular 2022-03](https://www.consumerfinance.gov/compliance/circulars/circular-2022-03-adverse-action-notification-requirements-in-connection-with-credit-decisions-based-on-complex-algorithms/) went with them, and that’s the one worth missing. It asked whether a creditor using algorithms complex enough to obscure the reasons still owes the applicant specific ones, and answered that “ECOA and Regulation B do not permit creditors to use complex algorithms when doing so means they cannot provide the specific and accurate reasons for adverse actions.” Its page is still up at the original address. You would have to read the Federal Register to know it no longer applies.
+
+The Bureau’s most recent circular is 2024-07, from December 2024. The notice put its reasoning as removing compliance obligations imposed outside notice-and-comment rulemaking. Whatever you make of that, the documents telling lenders a checkbox isn’t a reason are no longer operative, and at least some 2026 compliance writing still cites them as binding.
+
+## What the regulation still asks for
+
+ECOA didn’t change and neither did Regulation B. [Section 1002.9(b)(2)](https://www.consumerfinance.gov/rules-policy/regulations/1002/9/) requires a statement of reasons that is “specific and indicate the principal reason(s) for the adverse action.” It closes the two easy exits: a creditor can’t point at internal standards or at a failing score.
+
+The [official commentary](https://www.consumerfinance.gov/rules-policy/regulations/1002/interp-9/) is where the ceiling sits. On quantity, the regulation “does not mandate that a specific number of reasons be disclosed, but disclosure of more than four reasons is not likely to be helpful to the applicant.” On depth, it gives an example. “A creditor need not describe how or why a factor adversely affected an applicant. For example, the notice may say ‘length of residence’ rather than ‘too short a period of residence.‘”
+
+The compliant floor is four nouns, accurate to what the model actually scored, carrying no direction and no size. Length of residence. Someone reading that can’t tell whether they’d lived somewhere too briefly or too long, or whether it shaved a few points off or decided the entire application. A model can be fully interpretable and still produce that notice, because the notice gets written somewhere else by someone else.
+
+## The screen isn’t the notice
+
+Here’s the distinction the explainability work skips. The adverse action notice is a formal document on a 30-day clock. The screen where a person finds out is a different artifact, and Regulation B has nothing to say about it.
+
+Best Egg’s decline screen read “Unfortunately, we are unable to approve your application at this time.” Every declined applicant left the funnel there. On Cross-Sell we replaced that dead end with a secured loan offer for the people who qualified, which came to about $40M in Home Secured and $3.7M in Vehicle Equity originations.
+
+I raise it for the sequence, not the number. The applicant reads the screen first and forms a view of what happened. The notice arrives days later, to a person who already decided. Different teams own those two surfaces at most lenders, and neither one treats the pair as a single explanation.
+
+## Where this is still enforced
+
+In July 2025 the Massachusetts attorney general [settled with Earnest Operations](https://www.paulhastings.com/insights/client-alerts/disparate-impact-lives-massachusetts-attacks-ai-in-lending), a student lender, for $2.5 million. The coverage went to the model, fairly. There was a knockout rule that denied applicants on immigration status and a Cohort Default Rate variable that fell harder on Black and Hispanic applicants.
+
+The notices were in there too. Ballard Spahr’s [summary of the allegations](https://www.consumerfinancemonitor.com/2025/07/18/massachusetts-ag-reaches-settlement-with-student-loan-company-earnest-operations-llc/) lists “inaccurate adverse action notices that prevented applicants from understanding their own creditworthiness.” That isn’t a modeling finding. An inaccurate notice is a string that doesn’t match what the system did, which makes it a content and interface problem that ended up inside a $2.5 million settlement.
+
+## What I ask for
+
+Before I’ll take a lender’s explainability story seriously I ask for two things: the full list of reason strings the system can send, and how often each one fires. Not the model card. The strings.
+
+A ranked attribution that terminates in a list nobody has opened since the integration shipped explains nothing. If no one in the room owns that list, the interpretability work is decoration. The string that fires most often is the one to rewrite first, because it’s the sentence the largest number of declined people are going to read.
+
+Federal guidance saying a checkbox isn’t a reason has been gone since May 2025. Regulation B still permits “length of residence.” Everything a denied applicant understands above that floor is a design decision, and at most lenders it’s being made by whoever wrote the strings first.
+
+Sources:
+
+- [Withdrawal of Guidance Documents](https://www.govinfo.gov/content/pkg/FR-2025-05-12/html/2025-08286.htm)
+- [Regulation B, 12 CFR 1002.9](https://www.consumerfinance.gov/rules-policy/regulations/1002/9/)
+- [Official interpretations of 12 CFR 1002.9](https://www.consumerfinance.gov/rules-policy/regulations/1002/interp-9/)
+- [Circular 2022-03](https://www.consumerfinance.gov/compliance/circulars/circular-2022-03-adverse-action-notification-requirements-in-connection-with-credit-decisions-based-on-complex-algorithms/)
+- [Circular 2023-03](https://www.consumerfinance.gov/compliance/circulars/circular-2023-03-adverse-action-notification-requirements-and-the-proper-use-of-the-cfpbs-sample-forms-provided-in-regulation-b/)
+- [Adverse action and LLM-influenced decisions](https://www.respan.ai/resources/adverse-action-llm)
+- [Massachusetts AG reaches settlement with student loan company Earnest Operations LLC](https://www.consumerfinancemonitor.com/2025/07/18/massachusetts-ag-reaches-settlement-with-student-loan-company-earnest-operations-llc/)
+- [Disparate impact lives: Massachusetts attacks AI in lending](https://www.paulhastings.com/insights/client-alerts/disparate-impact-lives-massachusetts-attacks-ai-in-lending)
+
+---
+
 ## Getting hands-on costs you the crit
 
 - URL: https://john-desouza.com/blog/hands-on-costs-you-the-crit.html
