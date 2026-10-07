@@ -1,0 +1,64 @@
+<!-- {
+  "title": "The summary dropped the user who disagreed",
+  "description": "Researchers trust AI most for summarizing. Across 18 models, bias against minority views ran 34.4 times larger than random. The objection goes first.",
+  "pillar": "craft",
+  "date": "2026-10-07T10:00:00-04:00",
+  "lede": "The rule the industry settled on governs who answers the research questions. It says nothing about who writes up the answers, and that's the step most teams already handed over.",
+  "claim": "The argument about AI in research is policing the participant and leaving the summary alone, and summarization is the step that drops the one user who disagreed.",
+  "keywords": ["research synthesis", "synthetic users", "AI in user research", "product design", "design leadership"],
+  "sources": [
+    "<a href=\"https://jakobnielsenphd.substack.com/p/ux-roundup-20261005\">Jakob Nielsen, UX Roundup</a>, October 5, 2026, where he proposes \"syntheticipation\" and the rule \"Diverge with silicon; validate with carbon.\"",
+    "<a href=\"https://www.nngroup.com/articles/synthetic-users/\">Maria Rosala and Kate Moran, Nielsen Norman Group</a>, June 21, 2024, which ran synthetic users against three studies NN/g had already done with real people.",
+    "<a href=\"https://www.userinterviews.com/state-of-synthetic-users-report\">User Interviews, The State of Synthetic Users</a>, a survey of 150 research professionals fielded May 11 to 22, 2026.",
+    "<a href=\"https://maze.co/blog/future-user-research-2026/\">Maze, The Future of User Research Report 2026</a>, March 11, 2026, nearly 500 researchers, designers and product people surveyed between December 23, 2025 and January 13, 2026.",
+    "<a href=\"https://www.lyssna.com/guides/ai-in-user-research-guide/analyzing-and-synthesizing-research-with-ai/\">Lyssna, analyzing and synthesizing research with AI</a>, September 17, 2026, citing its Research Synthesis Report of 300 researchers, designers and product managers.",
+    "<a href=\"https://arxiv.org/abs/2510.05154\">Can AI Truly Represent Your Voice in Deliberations?</a>, arXiv, March 20, 2026, which benchmarked 18 language models on aggregating opinions and measured how well each summary represented minority views.",
+    "<a href=\"https://arxiv.org/abs/2601.04889\">Aghaebe and colleagues, Faithful Summarisation under Disagreement via Belief-Level Aggregation</a>, arXiv, January 9, 2026, on summarizers that resolve disagreement instead of reporting it.",
+    "<a href=\"/work/cross-sell.html\">Cross-Sell at Best Egg</a>, the case study the applicant quote comes from."
+  ],
+  "cover_line": "Summaries keep the finding and lose the objection."
+} -->
+
+      <p>On October 5 Jakob Nielsen gave the synthetic-user argument its cleanest form. Use AI personas to open up the problem, then put real people in front of the thing before you ship it. He called it syntheticipation and wrote the rule as "Diverge with silicon; validate with carbon."</p>
+
+      <p>He's right, and he has the receipts for it. When Nielsen Norman Group ran synthetic users against three studies they had already done with real people, the synthetic answers came back agreeable and flat. A real learner said "I didn't finish all the courses." The synthetic one said "I completed all the courses I mentioned." Nielsen's conclusion from it is "Real users are meaner. Cherish that."</p>
+
+      <p>So the rule guards one door. It decides who answers the questions. It doesn't say anything about who writes up the answers.</p>
+
+      <h2>The fight is over the part almost nobody uses</h2>
+
+      <p>User Interviews surveyed 150 research professionals in May. Eight percent actively use tools that simulate participants. 28% reject the idea outright and 47% call themselves skeptical and want more evidence first.</p>
+
+      <p>In the same survey, 80% said they use AI regularly in their work. Maze asked nearly 500 researchers and product people over the new year and found 69% using AI on at least some research projects, up 19 points in a year.</p>
+
+      <p>Read those together. The loud argument is about a tool fewer than one in ten researchers has adopted. The quiet default, already in most studies, is a model reading the transcripts and telling you what's in them.</p>
+
+      <h2>Trust peaks exactly where it shouldn't</h2>
+
+      <p>Lyssna asked 300 practitioners how much they trust AI across the synthesis tasks. Trust falls as the task takes more interpretation: 82.9% for summarizing, down to 25.6% for visualization.</p>
+
+      <p>That ranking makes sense if summarizing is compression. It isn't. Summarizing is selection, and something has to be left out for the summary to be shorter than the thing it summarizes. What matters is what gets cut, and that has now been measured.</p>
+
+      <h2>What a summary does to an objection</h2>
+
+      <p>A study published in March benchmarked 18 language models on aggregating opinions and scored how well each summary represented the people in the source. Minority views lost. Bias against them ran 34.4 times larger than random bias, consistently, across every model and every topic they tested. The paper separates people who see themselves as a minority from positions that are semantically in the minority, and finds both under-represented in the generated summaries.</p>
+
+      <p>A January paper by Aghaebe and colleagues names the mechanism. Summarizers resolve disagreement while they write. Handed a set of people who don't agree, the model converges on the dominant view and the dissent comes out the other side as consensus.</p>
+
+      <p>The failure here isn't inaccuracy. The summary is accurate about the majority. The problem is that the one person who said the thing nobody else said is the cheapest line to cut, and that person is usually the reason the study was worth running.</p>
+
+      <p>On the Cross-Sell work at Best Egg, applicant interviews before design started turned up this, from someone who had just been declined: "I probably won't use you again. It made me mad and frustrated." One person, one sentence, and it set the shape of the work. I put it in the before-state flow next to the dead end and it's still on the case study. A good themed summary would have filed it under negative sentiment at decline. True, and nothing to design from.</p>
+
+      <h2>The quote that argues against the recommendation</h2>
+
+      <p>When a team brings me a synthesis, I ask for the strongest quote that argues against the recommendation. Not the limitations slide. A sentence a real person said that makes the recommendation harder to make.</p>
+
+      <p>If nobody can produce one, I don't assume the finding is wrong. I assume nobody has checked whether the disagreement survived the write-up, and the study goes back until someone has looked. Usually the objection is sitting in a transcript nobody reopened. The check costs an afternoon, because the raw material never left the building.</p>
+
+      <p>The same question works in an interview. Not whether a candidate uses the research tools, which everyone does now, but what the inconvenient finding in their last study was and what they did about it.</p>
+
+      <h2>Where the rule needs extending</h2>
+
+      <p>Validating with carbon and writing up with silicon gets you a study with real people in it and a deliverable that reads like agreement. The participants were real. The disagreement died in the summary, and the team acted on the summary.</p>
+
+      <p>So extend the rule one step past the participant. The objection belongs in the synthesis, in the words the person used, with the recommendation it cuts against named next to it. If it isn't in there, the study isn't finished, however many real humans sat for it.</p>
