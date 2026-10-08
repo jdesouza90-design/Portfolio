@@ -12,6 +12,7 @@ Posts are John's own views. Every number in a post links to the primary source t
 
 ## Blog: Design leadership
 
+- [A new role isn’t a new process](https://john-desouza.com/blog/a-new-role-is-not-a-new-process.html): Leaders are answering AI with a change to the roster instead of a change to who approves work, and the collaboration numbers show the roster change doesn’t fix what broke.
 - [Getting hands-on costs you the crit](https://john-desouza.com/blog/hands-on-costs-you-the-crit.html): Hands-on time with agents comes out of the feedback hours, and feedback is the only part of the week that holds up as a team gets bigger.
 - [Promote on decisions you wrote down](https://john-desouza.com/blog/promote-on-decisions-you-wrote-down.html): A rubric line for AI skills adds a competency to the ladder without replacing the evidence the ladder lost, and the only fix is writing the decision down when it gets made.
 - [The bottleneck moved and the budget didn’t](https://john-desouza.com/blog/the-constraint-moved-to-review.html): When agents triple a team’s output the constraint moves to the people who decide whether the work is right, and spending that gain on a deferred hire funds the queue instead of the decision.

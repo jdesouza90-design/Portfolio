@@ -4,6 +4,77 @@
 
 ---
 
+## A new role isn’t a new process
+
+- URL: https://john-desouza.com/blog/a-new-role-is-not-a-new-process.html
+- Author: John DeSouza
+- Published: 2026-10-08
+- Topic: Design leadership
+- Claim: Leaders are answering AI with a change to the roster instead of a change to who approves work, and the collaboration numbers show the roster change doesn’t fix what broke.
+
+Asked for their ideal product team, the design leaders who left product designer off picked design engineer 72% of the time. In the same survey, half of teams say they haven’t made any significant structural change. Both answers came from the same people.
+
+Ask design leaders what the ideal product team looks like now and a job title shows up that most orgs didn’t have two years ago. In [AI in Design 2026](https://stateofaidesign.com/chapters/teams), among the leaders who didn’t select “product designer” as a core role, 72% selected “design engineer” and 44% selected “AI design specialist.” Designer Fund and Foundation Capital surveyed more than 900 designers across 60 countries for it.
+
+The instinct is sound. Designing a screen and building it have collapsed into one motion on a lot of teams, and somebody has to be good at both ends of that.
+
+Then you read the structure question in the same report. Half of respondents, executives and managers and individual contributors alike, say their teams haven’t made significant structural changes. Only 7% added new AI-focused roles.
+
+So the design engineer is the stated ideal of a field that has mostly changed nothing. The gap between those two answers is the interesting part, and it isn’t a budget story.
+
+## The receipt is in the collaboration numbers
+
+A third of respondents, 34%, say collaboration has become messier, with roles and ownership less clearly defined than before. Twenty percent say collaboration has decreased outright. In 2025 that number was 5%.
+
+Four times worse in a year. Whatever that is, it didn’t happen because designers got worse at talking to engineers.
+
+The cause isn’t mysterious. The work picked up more authors and nobody moved the ownership to match. “Roles and ownership less clearly defined” is the respondents’ own language, and it describes a definition problem rather than a skill problem.
+
+## The capability already spread
+
+One number should settle whether a title is the fix. Half of all respondents have pushed AI-generated code to production, product and brand designers included. Only 20% identify as design engineers.
+
+The hybrid work is already being done by people whose job description says something else. Hiring a design engineer on top of that doesn’t change who ships. It gives one person a title for work half the field is doing without one.
+
+It also tells everyone else their job didn’t change. The AI work routes to the person hired for it, every other role definition stays exactly as it was, and the new capability sits with one hire who can take it with them.
+
+## What DoorDash changed instead
+
+Shali Nguyen, head of consumer experience design at DoorDash, describes the other move in the same report. Their pull request process stayed as it was. “Everything goes through GitHub PR approvals, and designers are held to the same production-quality bar as our engineering counterparts.” Then they added one thing: “We’ve added a design review step where designers are tagged to review and approve UI changes before they go to production.”
+
+No new role. A named approval, bolted onto a step that already existed, with designers answerable to the same bar as the engineers next to them.
+
+That’s what a structural change looks like once it’s written down. It survives a resignation. It applies to everyone who touches the surface, including the product manager who generated a screen on Tuesday afternoon.
+
+## What I ask before opening a role
+
+When someone brings me the case for a new kind of designer, I ask which approval is currently unowned. Not which skill is missing. Which decision gets made today by nobody in particular.
+
+There’s usually an answer, and it’s a step rather than a person. Then the real question is whose name goes on that step and what standard they hold the work to, and I can write that down this week without a requisition.
+
+The trade I work from is that the team owns the method and I own the standard and the decision. The method turns over every quarter now. The standard shouldn’t, because the standard is the part you can hand to somebody who wasn’t in the room.
+
+The cleanest version of that I’ve done is the whole-library audit at Best Egg. I built and ran it across 296 files, wrote the crawler’s rules and directed the remediation. Writing the rules was the actual work. A rule precise enough for a crawler to apply is a standard that no longer needs me sitting in the review. A senior product designer on the team ran the button component audit end to end, agent and remediation, and that one was hers.
+
+## Where the title earns its place
+
+The DesignWhine editorial team, writing in April, calls the AI design engineer “a high-value specialization, not a universal career direction” and ties demand for it to specific conditions: a high cost to translate design into code, or AI features built into the product itself. That’s the honest version of the case. Under those conditions I’d hire for it.
+
+What the role can’t do is settle ownership. A specialist makes the hybrid work better where there’s a lot of it. A specialist doesn’t decide who signs off on a screen a product manager generated last night, and that’s the part 34% of the field says got worse.
+
+Adding a role is the half of this problem a leader can solve in a budget conversation. Changing who approves what means editing job descriptions, review steps and somebody’s authority, and that one makes people unhappy in meetings.
+
+Seven percent of teams added the role. Half changed nothing about how work gets approved. The collaboration numbers moved anyway, in the wrong direction, and a title on an org chart has no approval step attached to it.
+
+Sources:
+
+- [Teams](https://stateofaidesign.com/chapters/teams)
+- [Craft](https://stateofaidesign.com/chapters/craft)
+- [The AI Design Engineer: Defining An Emerging Role In The AI-Native Workforce](https://www.designwhine.com/ai-design-engineer-emerging-role-ai-native/)
+- [Agentic design system audit and remediation](/work/agentic-design-system-audit.html)
+
+---
+
 ## The summary dropped the user who disagreed
 
 - URL: https://john-desouza.com/blog/synthesis-drops-the-disagreement.html
