@@ -4,6 +4,76 @@
 
 ---
 
+## The kiosk warning contradicts the refund right
+
+- URL: https://john-desouza.com/blog/the-warning-contradicts-the-refund.html
+- Author: John DeSouza
+- Published: 2026-10-09
+- Topic: Fintech, web3 and trust
+- Claim: The refund right is the only part of crypto kiosk law that returns anyone’s money, and the screen where the loss happens is required to describe that loss as permanent instead of naming the deadline to claim it.
+
+Hawaii’s ban on putting cash into a crypto kiosk took effect on October 1. The states that regulated instead of banning wrote the same three parts into law: a warning on the screen, a daily cap and a refund for people who were defrauded. Arizona’s mandated warning tells the customer the money can’t come back.
+
+Hawaii’s kiosks stopped taking cash on October 1. [Act 224](https://data.capitol.hawaii.gov/sessions/session2026/bills/HB1642_CD1_.pdf) makes it an unlawful practice to own, operate or manage a kiosk in the state that accepts United States currency in exchange for a digital financial asset. Selling crypto for cash at one is still fine. The legislature’s findings cite investigations by the attorneys general for the District of Columbia and Iowa that put the fraudulent share of kiosk transactions as high as 90%.
+
+Most states went the other way and wrote rules instead. Both choices are an argument about the machine: whether it should be there, how much it should take in a day, how big the warning on it has to be. The sentence that machine puts in front of a person who is being defrauded right now is not part of the argument.
+
+## What the laws actually give back
+
+Warnings and caps don’t return money. The refund right does, and it’s built as a claim with a clock on it.
+
+Arizona’s [section 6-1236](https://www.azleg.gov/ars/6/01236.htm) took effect on September 26, 2025. A new customer who was fraudulently induced into a transaction gets a full refund including fees, on three conditions: they contact the operator within 30 days, they contact a law enforcement agency or the attorney general within 30 days, and they hand the operator a report from one of those agencies determining that they were fraudulently induced. Attorney General Kris Mayes said in [August](https://www.azag.gov/press-release/attorney-general-mayes-helps-nearly-three-dozen-crypto-atm-scam-victims-recover-full) that 35 people had recovered $171,332 that way.
+
+Florida wrote the same idea with different arithmetic. [Section 560.507](http://laws.flrules.org/2026/178), effective January 1, 2027, requires a full refund within 72 hours, for the customer’s first virtual currency transaction only, if within 60 days the customer notifies both the kiosk business and a law enforcement or governmental agency and provides proof of the fraud, “such as a police report or a notarized affidavit”.
+
+So the path back runs through two phone calls, a document and a date. Miss any one of them and the statute has nothing for you.
+
+## The warning says the opposite
+
+Arizona requires the operator to present two warnings that the customer has to accept before the machine will transact. The second one opens like this: “Losses due to fraudulent or accidental transactions are not recoverable. Transactions in virtual currency are irreversible.”
+
+For a fraudulently induced new customer in Arizona, the first of those two sentences isn’t true. Subsection H of the same statute is why. The legislature appears to have noticed, because subsection I says a fraud victim is eligible for a refund even if the operator provided the disclosures in subsections A and B.
+
+There’s a fair reading that rescues the warning. On the chain nothing is recoverable, and the operator’s refund is a statutory duty rather than a reversal of the transfer. That distinction would hold up in a hearing. The person reading the warning isn’t in a hearing. Arizona’s own text, a few lines earlier, describes who they’re talking to: “communication from someone impersonating a representative of your bank or a law enforcement officer”. The statute names the scam in progress, tells the target the loss is permanent, then gives them 30 days to undo it.
+
+## The machine already knows
+
+Eligibility turns on facts the operator holds and the customer doesn’t. A new customer in Arizona is someone who has been a customer of that operator for less than 10 days, and the statute converts them to an existing customer automatically on day 10. Florida’s refund turns on whether this is the customer’s first virtual currency transaction. Both are counters in the operator’s own records.
+
+The screen is already running that kind of logic. Florida’s section 560.504 requires the kiosk to ask the customer to confirm what they’ve transacted at other kiosks that day, and the amounts, so the machine can work out how much it will still accept. It computes a number from the customer’s own history before it takes the cash. It just never says what that same history means for getting the cash back.
+
+Everything a person would need is sitting right there at the moment of the transaction. Whether they’re inside the window. The date the 30 days runs out. The two agencies to call. The phrase “fraudulently induced”, which is what the report has to say. Florida’s receipt is required to carry the business’s refund policy, which is the closest any of these laws get, and a policy isn’t a deadline.
+
+## The federal bill returns the fee
+
+The [Stop Crypto ATM Scams Act](https://casten.house.gov/media/press-releases/casten-salazar-introduce-bill-to-protect-seniors-from-crypto-atm-scams), introduced on June 11, 2026 by Sean Casten and María Elvira Salazar, would set national caps, require warnings and red flags before each transaction, and make operators promptly refund the fees they collected on fraudulent transactions. Full refunds stay a state question, which the bill preserves on purpose.
+
+Hawaii’s legislature wrote down why that matters. Its findings record that operators “have consistently argued that, while the cash may be in the machine, the victim’s money has already been transferred to the scammer, and the operator is unable to assist the victim in recovering the money.” That’s the obligation the refund sections override, and the screen never mentions it.
+
+The FBI’s [kiosk supplement](https://www.ic3.gov/PSA/2026/PSA260515-2) to last year’s crime report counted 13,460 complaints in 2025 and $388,981,267 in reported losses, up 23% and 58% from 2024. The bureau notes those losses involve kiosks alongside other transaction types rather than kiosks alone. More than half of the complaints came from people over 50.
+
+## What I’d put side by side
+
+At Best Egg the app knew which customers had a lower rate available and showed them a generic invitation anyway, the one saying you’re pre-approved for another loan. I set the design direction for a card that leads with the rate that customer is pre-approved for and sits beside the loan it would replace. Two designers took it through their own product teams, and it shipped in seven weeks, worth $2.6M in [additional originations from native mobile](https://john-desouza.com/work/refinance-offers.html) since launch on September 8, 2026.
+
+The card wasn’t the hard part. I got product, marketing and compliance to agree on one rule: the offer a customer sees in email, on the web and in the app is the same offer. One rule checked across three surfaces, because the same company had been telling the same person different things depending on where they looked.
+
+That’s the check I’d run on a kiosk. Put three texts next to each other: what the screen says before the transaction, what the receipt says after it and what the statute says the operator owes. In Arizona those three don’t agree.
+
+Hawaii decided the machine shouldn’t take cash at all. In the states that kept the kiosks, the refund right is the consumer protection, and its clock starts the moment the bills go in. The screen that starts that clock is required to say the money isn’t coming back.
+
+Sources:
+
+- [Arizona Revised Statutes 6-1236](https://www.azleg.gov/ars/6/01236.htm)
+- [Arizona House Bill 2387, Chapter 171](https://www.azleg.gov/legtext/57leg/1R/laws/0171.pdf)
+- [Attorney General Mayes helps nearly three dozen crypto ATM scam victims recover full refunds](https://www.azag.gov/press-release/attorney-general-mayes-helps-nearly-three-dozen-crypto-atm-scam-victims-recover-full)
+- [Chapter 2026-178, Laws of Florida](http://laws.flrules.org/2026/178)
+- [Cryptocurrency kiosk state-level data](https://www.ic3.gov/PSA/2026/PSA260515-2)
+- [Hawaii House Bill 1642 CD1](https://data.capitol.hawaii.gov/sessions/session2026/bills/HB1642_CD1_.pdf)
+- [Casten, Salazar introduce bill to protect seniors from crypto ATM scams](https://casten.house.gov/media/press-releases/casten-salazar-introduce-bill-to-protect-seniors-from-crypto-atm-scams)
+
+---
+
 ## A new role isn’t a new process
 
 - URL: https://john-desouza.com/blog/a-new-role-is-not-a-new-process.html
