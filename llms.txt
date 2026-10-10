@@ -22,6 +22,7 @@ Posts are John's own views. Every number in a post links to the primary source t
 
 ## Blog: Where product design is going
 
+- [The agent edits the standard it follows](https://john-desouza.com/blog/the-agent-edits-the-standard.html): The context file an agent reads is a design spec, so a change to it needs a name and a date on it, and the field’s own research on power users shows that change going unread.
 - [The summary dropped the user who disagreed](https://john-desouza.com/blog/synthesis-drops-the-disagreement.html): The argument about AI in research is policing the participant and leaving the summary alone, and summarization is the step that drops the one user who disagreed.
 - [Generated screens still need a record](https://john-desouza.com/blog/generated-screens-need-a-record.html): When the interface is assembled per person at runtime, the record of what was rendered becomes part of the design deliverable, because support, review and accountability all need two people looking at the same screen.
 - [A design review can’t see accessibility](https://john-desouza.com/blog/design-review-cannot-see-accessibility.html): Accessibility defects are invisible to the review designers actually run, so the control has to be a check that runs on every build against rules someone wrote down.

@@ -6,7 +6,65 @@
     <atom:link href="https://john-desouza.com/feed.xml" rel="self" type="application/rss+xml"/>
     <description>Design leadership, where product design is heading, and trust in fintech and web3.</description>
     <language>en</language>
-    <lastBuildDate>Fri, 09 Oct 2026 10:00:00 -0400</lastBuildDate>
+    <lastBuildDate>Sat, 10 Oct 2026 10:00:00 -0400</lastBuildDate>
+    <item>
+      <title>The agent edits the standard it follows</title>
+      <link>https://john-desouza.com/blog/the-agent-edits-the-standard.html</link>
+      <guid isPermaLink="true">https://john-desouza.com/blog/the-agent-edits-the-standard.html</guid>
+      <pubDate>Sat, 10 Oct 2026 10:00:00 -0400</pubDate>
+      <category>Where product design is going</category>
+      <dc:creator>John DeSouza</dc:creator>
+      <description>NN/g watched seven power users of agent tools. They let the agent rewrite the files that define good, and rarely read what it changed.</description>
+      <content:encoded><![CDATA[<p><strong>The context file an agent reads is a design spec, so a change to it needs a name and a date on it, and the field’s own research on power users shows that change going unread.</strong></p>
+<p>Tanner Kohler published the maintenance version of context engineering at Nielsen Norman Group on October 9. The markdown files your agent reads are infrastructure, so they should be short, findable and audited when your work changes. His summary line is that your agent is only as powerful as its context library.</p>
+
+      <p>I’d sign all of it. The trouble shows up in the same article, in how the people furthest along actually maintain those files.</p>
+
+      <h2>They aren’t writing the file</h2>
+
+      <p>Kohler’s participants rarely typed into their context files at all. They described what they wanted and let Claude do the editing, often across many files in one go. They “rarely checked what Claude had changed”, and judged the result by whether the output got better. Some had global files the agent created without their knowledge. Plenty couldn’t find their own files when they went looking. One library held more than 2,700 of them.</p>
+
+      <p>The study underneath that article is worth reading on its own. Kate Moran and Sarah Gibbons ran sessions in June with seven nontechnical people running agentic systems at work. One of them went digging and found a boundaries.md file holding the security and privacy rules for their system. Claude had written it and had been maintaining it. They authorized it after the fact.</p>
+
+      <blockquote>
+        <p>Most of the time I will just click “yes” for things that [it] asks me, even if I don’t understand what it means</p>
+        <cite>Participant, Vibe Architects, NN/g, June 2026</cite>
+      </blockquote>
+
+      <p>That’s a security story in the article. For a design leader it’s a document-control story, and the document happens to be ours.</p>
+
+      <h2>That file is a spec</h2>
+
+      <p>Design teams have been handed this exact file and told it’s the new deliverable. Call it DESIGN.md, call it the rules file, call it the system’s instructions for agents. It holds the usage guidance, the sentence that says when not to use the component. That’s the half a machine-readable design system drops first. Whatever ends up in it decides what the generated screens look like for every person who runs the agent after you.</p>
+
+      <p>So it’s a spec, and design already knows how a spec behaves when nobody owns it. Somebody adds a paragraph in a review. It contradicts itself by the second quarter. The team stops reading it and goes back to asking the one person who knows what the standard really is.</p>
+
+      <h2>The loop runs backwards</h2>
+
+      <p>The part I’d flag hardest isn’t that the agent edits the file. It’s that the edit gets graded on the output.</p>
+
+      <p>The rule exists to decide whether the output is right. Grade the rule by the output and the direction reverses. The work the agent produced becomes the evidence for the rule the agent wrote. In a crit you’d catch that in a second. The same author brings the work and the standard it should be held to, and the standard shows up second.</p>
+
+      <p>None of this is the tool misbehaving. Anthropic’s documentation is direct about what these files are. Claude “treats them as context, not enforced configuration”. If you want an action blocked no matter what the model decides, the docs send you to a hook. The same page splits its two memory systems on one question, which is who writes it. CLAUDE.md is written by you. Auto memory is written by Claude. The power users in the study rubbed out that line and kept the filename.</p>
+
+      <h2>What decays</h2>
+
+      <p>Kohler’s other piece, from October 2, says where this lands. Systems built with nothing forcing a priority turn into what Foote and Yoder called a big ball of mud. One holds up fine until “accumulated complexity makes the system difficult to direct, diagnose, or reconstruct”. One participant lost 45 minutes pulling the wrong files out of an unsorted folder. Another couldn’t rebuild their own system. A third said it in three words: “The systems decay.”</p>
+
+      <p>Kohler’s prescription is that “the discipline that matters most is not tidier folders but periodic reflection”. That’s right, and on its own it isn’t enough. Reflection needs something to reflect on. What’s missing isn’t a tidy folder. It’s a record of what changed and who decided it.</p>
+
+      <h2>A name and a date</h2>
+
+      <p>When a team brings me screens an agent built, I ask who made the last change to the file the agent read. I want a name and a date.</p>
+
+      <p>“The agent suggested it and the output looked better” is a real answer, and it’s the finding. It means the standard moved and no designer was in the room when it did. Then the screens in front of me only tell me the agent agreed with itself.</p>
+
+      <p>When I ran the agent audit across the whole Best Egg library, I wrote the crawler’s rules myself. The audit runs again on the first of every month. That setup has one property I’d now call the whole point. When a number moves, either the files changed or a rule changed. I can tell which, because changing a rule is something I did on purpose and wrote down.</p>
+
+      <p>A design system ships with an owner, a version history and a note about what changed. That isn’t ceremony. It’s the only reason somebody who wasn’t in the room can hold work to it a year later.</p>
+
+      <p>The file that tells the agent how to use that system does the same job now, across more screens and with no changelog. In the study, nearly every participant assumed someone else must be doing this more cleanly. Seven people, and each one believed the clean version of this was sitting in somebody else’s folder.</p>]]></content:encoded>
+    </item>
     <item>
       <title>The kiosk warning contradicts the refund right</title>
       <link>https://john-desouza.com/blog/the-warning-contradicts-the-refund.html</link>
