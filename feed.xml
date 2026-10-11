@@ -6,7 +6,58 @@
     <atom:link href="https://john-desouza.com/feed.xml" rel="self" type="application/rss+xml"/>
     <description>Design leadership, where product design is heading, and trust in fintech and web3.</description>
     <language>en</language>
-    <lastBuildDate>Sat, 10 Oct 2026 10:00:00 -0400</lastBuildDate>
+    <lastBuildDate>Sun, 11 Oct 2026 10:00:00 -0400</lastBuildDate>
+    <item>
+      <title>The interview was never the expensive part</title>
+      <link>https://john-desouza.com/blog/interview-was-never-the-expensive-part.html</link>
+      <guid isPermaLink="true">https://john-desouza.com/blog/interview-was-never-the-expensive-part.html</guid>
+      <pubDate>Sun, 11 Oct 2026 10:00:00 -0400</pubDate>
+      <category>Design leadership</category>
+      <dc:creator>John DeSouza</dc:creator>
+      <description>Greenhouse found 51% of candidates who finished an AI interview never got an outcome. The new capacity went where hiring was already cheap.</description>
+      <content:encoded><![CDATA[<p><strong>The argument about AI in hiring is being fought over disclosure and detection, while the measured failure is that most candidates who finish an AI interview never get an answer, which is what happens when you add capacity to the one step that was already cheap.</strong></p>
+<p>Remote employers have started designing interviews around the possibility that the candidate is cheating. The Wall Street Journal’s <a href="https://allwork.space/2026/09/employers-are-changing-job-interviews-to-catch-ai-cheating-from-camera-pans-to-hand-wave-tests/">account of the tactics</a>, republished on September 1, goes company by company. One company asks candidates to show their surroundings and wave a hand in front of their face, and checks IP addresses after finding people who said they were in the US and weren’t. Another dropped its take-home assignment once the submissions came back heavily generated, and moved to screen sharing and live exercises. A third requires finalists in person, on a company laptop.</p>
+
+      <p>None of that is paranoid. If you hire remotely, identity is a real question now, and the people selling detection didn’t have to invent the demand.</p>
+
+      <p>The argument running alongside it is about disclosure. Candidates want to be told when a machine is scoring them, and most think it should be the law. Fifty-seven percent of US candidates told Greenhouse that companies should be legally required to disclose AI evaluation. The remedy on offer is a clearer notice at the top of the funnel. Daniel Chait, who runs Greenhouse, makes the honest version of the case for the tools: “A 15-minute conversation with an AI where a candidate can show who they are is a better front door than a keyword-stuffed resume.” He’s right about the resume.</p>
+
+      <h2>The number nobody is arguing about</h2>
+
+      <p>Greenhouse surveyed 2,950 job seekers across the US, UK, Ireland, Germany and Australia for its <a href="https://www.greenhouse.com/blog/2026-candidate-ai-interview-report">2026 Candidate AI Interview Report</a>. Nearly two-thirds of US job seekers, 63%, say they’ve already sat through an AI interview. The finding that should stop a hiring manager is further down the page. “Of US candidates who completed an AI interview, 51% never received an outcome.”</p>
+
+      <p>Not a rejection. No outcome at all. They did the round and the process went quiet.</p>
+
+      <p>Thirty-eight percent of US candidates have already withdrawn from a hiring process because it included an AI interview. The UK cut of the survey, <a href="https://www.peoplemanagement.co.uk/article/1956592/third-candidates-drop-hiring-process-ai-led-interviews-survey-finds">reported in People Management</a> on April 30, says the safeguard candidates asked for most often was the option of a human interview, at 45%. Only 19% wanted less AI in recruitment at all.</p>
+
+      <p>So this isn’t a revolt against the machine. People object to being processed by one and then dropped.</p>
+
+      <h2>The capacity went to the cheap half</h2>
+
+      <p>The cost in a hiring loop was never evenly spread. A first-round screen is the most schedulable hour in the company. The expensive step is the one after it, where somebody senior reads the work, forms a view and commits to a yes or a no they’ll defend in a debrief. That step doesn’t scale with tooling. It scales with someone’s attention, and it was the bottleneck before any of this arrived.</p>
+
+      <p>An AI interviewer adds throughput to the first step and nothing to the second. Run it and the queue in front of the decision gets longer. Fifty-one percent with no outcome is what that queue looks like from the candidate’s side.</p>
+
+      <p>Greenhouse says as much in its own write-up, which is unusual for a vendor describing its own category: “Without clear criteria and consistent evaluation, AI doesn’t improve hiring”. The rest of that sentence is that it “exposes where the process breaks.”</p>
+
+      <h2>The round design can’t hand off</h2>
+
+      <p>Design hiring has one round where this bites hardest. A portfolio review isn’t a knowledge test. You’re there to find out which version the candidate killed, why they killed it, and whether the reason survives you pushing on it.</p>
+
+      <p>That’s a follow-up question, and the follow-up is the whole instrument. A pre-recorded video, scored after the fact, can’t ask it. Candidates have worked this out: the most common reason US candidates gave for abandoning a process was an AI-scored pre-recorded video with no human present, at 33%.</p>
+
+      <p>Generated work raises the stakes on that round. When the screens show up finished, the judgment that picked them is the only thing left to assess.</p>
+
+      <h2>Where I’d put the hour</h2>
+
+      <p>I don’t add a round to a loop I can’t close. If there’s no named person who reads what comes out of it and sends an answer inside a stated window, the round doesn’t go in, however cheap it is to run. A round nobody closes isn’t a filter. It’s a backlog with a better front door.</p>
+
+      <p>The other half is writing the criteria down before the req opens, rather than after three candidates have been through and the panel is arguing from memory. What good looks like for this specific role, in enough detail that someone who missed the debrief can hold a candidate to it. That’s what makes a structured loop worth running, and it’s what an AI interviewer assumes you’ve already done.</p>
+
+      <p>Detection can tell you a candidate used a model. It can’t tell you whether you’d hire them, and it won’t close a single open req.</p>
+
+      <p>The arms race over camera pans and hand waves will keep running, and some of it is earned. It still isn’t what’s costing anyone people. Thirty-eight percent of US candidates have walked out of a process over the round that was added to make hiring faster.</p>]]></content:encoded>
+    </item>
     <item>
       <title>The agent edits the standard it follows</title>
       <link>https://john-desouza.com/blog/the-agent-edits-the-standard.html</link>
