@@ -6,7 +6,61 @@
     <atom:link href="https://john-desouza.com/feed.xml" rel="self" type="application/rss+xml"/>
     <description>Design leadership, where product design is heading, and trust in fintech and web3.</description>
     <language>en</language>
-    <lastBuildDate>Sun, 11 Oct 2026 10:00:00 -0400</lastBuildDate>
+    <lastBuildDate>Mon, 12 Oct 2026 10:00:00 -0400</lastBuildDate>
+    <item>
+      <title>A tying ban needs a decline path</title>
+      <link>https://john-desouza.com/blog/tying-ban-needs-a-decline-path.html</link>
+      <guid isPermaLink="true">https://john-desouza.com/blog/tying-ban-needs-a-decline-path.html</guid>
+      <pubDate>Mon, 12 Oct 2026 10:00:00 -0400</pubDate>
+      <category>Fintech, web3 and trust</category>
+      <dc:creator>John DeSouza</dc:creator>
+      <description>The Fed’s new stablecoin proposals ban tying for every issuer. That ban has always been hard to enforce because nobody specifies the screen.</description>
+      <content:encoded><![CDATA[<p><strong>A tying prohibition is enforced against an interface. Whether a customer was required to take a second product is settled by the signup flow, and nobody has written down what a genuinely optional second product looks like on the screen.</strong></p>
+<p>The Federal Reserve asked for comment on two stablecoin proposals on <a href="https://www.federalreserve.gov/newsevents/pressreleases/bcreg20260924a.htm">September 24</a>, and they hit the Federal Register five days later. Rewards are the right place to look if you’re deciding whether to launch a dollar token. Writing in The Pulse Monitor on <a href="https://tpmgeo.substack.com/p/with-the-clarity-act-stalled-in-the">October 9</a>, David Annen put the open question on platform rewards: platforms that fund customer rewards with revenue received from issuers “may have to change those payments under the final rules.”</p>
+
+      <p>Section E of the same proposal is about something else. The Board took <a href="https://www.troutmanfinancialservices.com/2026/09/federal-reserve-proposes-comprehensive-regulatory-framework-for-payment-stablecoins-under-the-genius-act/">exclusive authority</a> over the GENIUS Act’s tying prohibition for every permitted payment stablecoin issuer in the country, including the ones it doesn’t supervise. The <a href="https://www.federalreserve.gov/newsevents/pressreleases/files/bcreg20260924a1.pdf">staff memo</a> describes a rule that would stop an issuer from providing services to a customer “on the condition that the customer (i) pay for an additional product or service from the PPSI or its subsidiaries, or (ii) agree not to obtain an additional product or service from a competitor.”</p>
+
+      <h2>A condition isn’t a line in the terms</h2>
+
+      <p>Read that as a designer and it’s a spec. What it prohibits isn’t a document. It’s a state: this person couldn’t get the thing they came for without taking the second thing.</p>
+
+      <p>That state gets built on a screen. A toggle that starts on. Two products presented as one choice with one button. A decline that drops you back at the top of the flow, or into a support queue, or onto a page that doesn’t say what you still have. None of that turns up in a contract review and all of it is the condition.</p>
+
+      <p>The guidance after the proposals landed went the other way. Willkie’s team wrote on <a href="https://www.willkie.com/-/media/files/publications/2026/10/final-pieces-to-the-stablecoin-puzzle-federal-reserve-and-treasury-propose-genius-act-framework.pdf">October 5</a> that issuers “should review product-bundling, account-opening, reserve-management, distribution, and commercial-partner arrangements for any conditions that could constitute tying.” That’s sound advice about agreements, and agreements are where the word optional gets written down. The flow is where it’s either true or it isn’t.</p>
+
+      <h2>One rule leaves a trail</h2>
+
+      <p>The yield ban is enforceable because somebody paid somebody. The Board’s proposal would presume a violation when the payment reaches holders through certain third parties, matching the approach the OCC took earlier this year. Either way there’s a ledger with the answer in it.</p>
+
+      <p>Redemption is the same kind of rule. An issuer has to publicly disclose its redemption policy, and that policy can’t carry a redemption period longer than two business days unless a safe harbor applies. A document to read, a number to check it against. Tying has neither.</p>
+
+      <h2>This one has failed before</h2>
+
+      <p>Nellie Liang and William Dudley looked at the Act in <a href="https://www.brookings.edu/articles/next-steps-for-genius-payment-stablecoins/">March</a> and noted that stablecoin issuers are subject to anti-tying provisions, then added that “enforcement of anti-tying prohibitions has often proven difficult in practice.” Their example of how a firm gets around the interest ban runs on the same machinery. A provider or third party could “bundle the stablecoin offering with ‘free’ ancillary services.”</p>
+
+      <p>That difficulty isn’t legal. A condition assembled out of defaults leaves no record behind, so there’s nothing to examine afterward. The screen that created it ships again next quarter with a new layout, and the version the customer saw is gone.</p>
+
+      <h2>What would make it checkable</h2>
+
+      <p>Four rules about the screen would cover most of it. Each one can be checked against a build:</p>
+
+      <ul>
+        <li>The decline sits on the same screen as the accept, at the same weight, not behind a link or a back button.</li>
+        <li>Nothing about the second product is pre-selected.</li>
+        <li>Declining continues the first product’s flow instead of restarting it or ending it.</li>
+        <li>The second product is named for what it is, including what it isn’t.</li>
+      </ul>
+
+      <p>An examiner can verify all four in a prototype. None of them needs a lawyer.</p>
+
+      <h2>What I ask for</h2>
+
+      <p>When a team brings me a flow that adds a second product, I ask to see the version where the customer says no. Not the accepted path with the offer sitting in it. The refusal, clicked through, end to end. If that path isn’t built, the second product isn’t optional yet, whatever the terms page claims.</p>
+
+      <p>On <a href="/work/cross-sell.html">Cross-Sell</a> at Best Egg we put a secured loan in front of people at the worst moment there is, right after a decline. Applicant interviews run before design started said they couldn’t tell what they were being offered: “Best Egg could make it clearer, ‘this is not a title loan’. Somehow or another, you’ve got to get that on a page.” Saying what the product wasn’t did more for that offer than the layout did.</p>
+
+      <p>The Board has posed more than 250 questions across the two proposals. The five Willkie’s authors call most consequential are about reserve diversification, interest rate buffers, physical currency as a reserve asset, liquidity treatment and whether tokens tied to reserves are securities. Comments are due on or about November 30, and the provision that will be hardest to enforce is the one that needs somebody to draw a screen.</p>]]></content:encoded>
+    </item>
     <item>
       <title>The interview was never the expensive part</title>
       <link>https://john-desouza.com/blog/interview-was-never-the-expensive-part.html</link>
