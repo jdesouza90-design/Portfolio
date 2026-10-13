@@ -227,7 +227,6 @@ def nav(current, section=None):
         <li><a href="/work.html"{mark('/work.html')}>Work</a></li>
         <li><a href="/#leadership">Leadership</a></li>
         <li><a href="/#about">About</a></li>
-        <li><a href="/blog.html"{mark('/blog.html')}>Blog</a></li>
         <li class="nav-search"><button class="nav-kbd" type="button"><span>Search</span><kbd aria-hidden="true"></kbd></button></li>
         <li><a class="nav-icon" data-link="linkedin" href="#" aria-label="LinkedIn profile" title="LinkedIn">{LINKEDIN_LOGO}<span>LinkedIn</span></a></li>
         <li class="nav-resume"><a class="nav-download" data-link="resume" href="#"><span>Resume</span>{DOWN_SVG}</a></li>
