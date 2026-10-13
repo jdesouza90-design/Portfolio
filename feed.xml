@@ -6,7 +6,60 @@
     <atom:link href="https://john-desouza.com/feed.xml" rel="self" type="application/rss+xml"/>
     <description>Design leadership, where product design is heading, and trust in fintech and web3.</description>
     <language>en</language>
-    <lastBuildDate>Mon, 12 Oct 2026 10:00:00 -0400</lastBuildDate>
+    <lastBuildDate>Tue, 13 Oct 2026 10:00:00 -0400</lastBuildDate>
+    <item>
+      <title>Designers disagree and the judge decides</title>
+      <link>https://john-desouza.com/blog/designers-disagree-the-judge-decides.html</link>
+      <guid isPermaLink="true">https://john-desouza.com/blog/designers-disagree-the-judge-decides.html</guid>
+      <pubDate>Tue, 13 Oct 2026 10:00:00 -0400</pubDate>
+      <category>Where product design is going</category>
+      <dc:creator>John DeSouza</dc:creator>
+      <description>Twenty trained designers rated the same generated screens and agreed at a kappa of 0.25. The judge tuned on their labels inherits that argument.</description>
+      <content:encoded><![CDATA[<p><strong>A quality rubric for generated screens isn’t a measuring instrument, because trained designers disagree systematically about which screen is better, so whatever the judge rewards is a design decision and it needs a name on it.</strong></p>
+<p>The measurement problem with generative interfaces is real, and the field has been straight about it. When the screen gets assembled per person, there’s no fixed A to put against B. The design agency Orizon <a href="https://www.orizon.co/blog/generative-ui-is-here-why-2026-is-the-year-interfaces-become-adaptive">said it plainly in August</a>: “A/B testing gets harder when there’s no fixed ‘A.‘” Their other line is the sharper one. Time on page means nothing if the page is different every time.</p>
+
+      <p>So the answer that’s settled in is to grade the output instead. Score each render with a model, calibrate that model against expert human labels, ship when the agreement is good enough. <a href="https://www.statsig.com/blog/guide-to-testing-optimizing-ai">Statsig’s guide</a> to testing AI products recommends judge scoring for exactly this reason. <a href="https://arize.com/guides/llm-as-a-judge/">Arize’s</a> says to compare the judge’s decisions with trusted labels and keep human review involved in defining the rubric.</p>
+
+      <p>I’d do the same thing. What I’d argue with is what happens to that rubric once somebody writes “expert human labels” and starts tuning toward them.</p>
+
+      <h2>What the platform holds still</h2>
+
+      <p>Start with what the experiment can still do, because it’s narrower than people assume. <a href="https://docs.optimizely.com/web-experimentation/docs/how-bucketing-works">Optimizely’s bucketing documentation</a> is specific: a user with the same ID always sees the same variation, because the platform hashes user IDs consistently. That’s a guarantee about the variant. It was never a guarantee about the screen.</p>
+
+      <p>Which means the test runs fine. Put the generator in one arm and a drawn design in the other, and the number that comes back is about the generator. It says the policy beat the page, on average, for that population, in that window. It says nothing about the screen one applicant got at 11 on a Sunday night.</p>
+
+      <p>That isn’t the method failing. It’s the method answering the question you asked it. The design question used to ride along for free, because the thing sitting in the arm was a screen somebody drew and somebody else approved. Now the thing in the arm is a generator and the screens arrive after the result.</p>
+
+      <h2>The labels don’t agree</h2>
+
+      <p>So the judge carries the design question by itself, which makes calibration the step worth reading slowly.</p>
+
+      <p>In April, Yi-Hao Peng, Samarth Das, Jeffrey Bigham and Jason Wu <a href="https://arxiv.org/abs/2604.09876">put 20 trained designers</a> in front of generated mobile interfaces, everyone with at least a year of professional UI experience. Each rated the same 600 pairs. 12,000 labels in total. On the plain question of which interface in a pair was better, their average Cohen’s kappa came out at 0.25, on a scale where 1.0 is perfect agreement and zero is chance.</p>
+
+      <p>Agreement that low normally means a sloppy task or careless raters. The authors went and checked. Thirteen of the designers wrote 1,378 rationales on the pairs they’d split over, and the disagreement held up as systematic. They were weighting different design dimensions, not guessing. The authors’ conclusion is the part to take away: a single aggregate judge loses that signal.</p>
+
+      <p>A second group reached it from the other side. In July, Zheng Wu and four colleagues <a href="https://arxiv.org/abs/2607.28439">wrote that a judge of this kind</a> reflects only one implicit viewpoint, and that a homogeneous one erases disagreement between user subgroups. Replacing the single judge with a panel of grounded personas moved correlation with human ratings from 0.716 to 0.922. Their panelists still agreed on which model was better overall. They diverged on the individual dimensions.</p>
+
+      <h2>What a deployment threshold actually is</h2>
+
+      <p>Read the calibration step again with that in hand. <a href="https://www.appen.com/llm-as-a-judge-rubric-design">Appen sells rubric design</a> for judges and describes the work honestly. An LLM judge is only as reliable as the rubric it’s given. Calibration is the systematic measurement of agreement between judge scores and expert human rater scores on a calibration dataset, and the rubric gets refined until agreement meets your deployment threshold.</p>
+
+      <p>Tune a rubric until it agrees with a pool of raters who agree with each other at 0.25, and you haven’t measured design quality. You’ve picked a side in an argument those raters were having. Hierarchy over density, or density over hierarchy. Familiar over faster. The rubric that ships is the one whose weighting got rewarded, and the threshold makes that look like convergence.</p>
+
+      <p>Then the ruling runs on every screen the system renders, at a volume no review meeting has ever touched.</p>
+
+      <h2>Who makes that call</h2>
+
+      <p>On most teams the rubric belongs to whoever runs evals, with designers brought in as raters. That’s backwards, and the research is already saying so. Hyewon Lee and colleagues, <a href="https://arxiv.org/abs/2609.21285">writing in September</a>, start from the position that designers stay responsible for what a generative interface produces while being unable to specify or even see every interface it might produce. Their system trains its scoring model on designers’ own edits.</p>
+
+      <p>That responsibility is the job description now. What the scorer rewards is the last design call a person makes before a million screens get rendered without one.</p>
+
+      <p>When a team brings me a generated surface, I ask two things before I look at any screens. Which comparison produced the number. And whose judgment is in the label set the scorer was tuned against. If the answer to the second one is the eval team plus whichever raters were available, then the product’s taste got set by a staffing accident.</p>
+
+      <p>The trade I work from is that the team owns the method and I own the standard. A scoring rubric is a standard with a number bolted to it, so it’s mine to sign, the same way a design review was. It’s slower than approving screens. It’s also the only part of the work that survives the screens being different every time.</p>
+
+      <p>Those 20 designers were not split because one group was wrong. A judge tuned to 0.25 agreement reports one of their weightings as the standard, and the rest get outvoted by a dataset.</p>]]></content:encoded>
+    </item>
     <item>
       <title>A tying ban needs a decline path</title>
       <link>https://john-desouza.com/blog/tying-ban-needs-a-decline-path.html</link>
