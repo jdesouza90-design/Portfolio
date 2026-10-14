@@ -4,6 +4,83 @@
 
 ---
 
+## Give your managers something to approve
+
+- URL: https://john-desouza.com/blog/give-your-managers-something-to-approve.html
+- Author: John DeSouza
+- Published: 2026-10-14
+- Topic: Design leadership
+- Claim: Managers are leaving management because the role’s trade stopped paying, and the proof is that the jump is concentrated in the people furthest from the craft, so preparation and mentorship can’t fix it.
+
+A third of people in managerial positions say they are considering a move back to individual contributor work, up from a quarter a year earlier. The report that found it asks whether that is a healthy recalibration or a warning about the leadership pipeline, and leaves the question open. The breakdown answers it.
+
+A third of people in managerial positions say they’re currently considering a move back to individual contributor work. That’s 32% in [The LeadDev Engineering Leadership Report 2026](https://leaddev.com/wp-content/uploads/2026/06/ENGINEERING_LEADERSHIP_REPORT_2026_FINAL.pdf), up from 24% a year earlier, out of 600 engineers surveyed between March 31 and April 16, 2026. The report puts its own question plainly. Whether this is “a healthy recalibration or a warning sign about sustainability in the leadership pipeline is a question the industry will need to take seriously.”
+
+That’s engineering data. Design has no equivalent number, which is a problem of its own. More than half of this sample manages people, so it’s the closest read available on what’s happening inside the management layer.
+
+The explanation going around is that the craft got good again. James Stanier, chief technology officer at Nordhealth, gives the generous version of it in the report: “Given that most leaders come from an IC path, and now that AI tooling makes it so much easier to contribute, I’m not surprised leaders are getting more hands on.” Chantal Kapani made the fuller case in LeadDev in January, that scope, flattening and a frozen market turned management into a dead end.
+
+## The pull theory doesn’t fit the breakdown
+
+If the craft were doing the pulling, the people standing closest to it would move first.
+
+They didn’t. Managers of engineers, one step from the work, went from 30% to 34% in a year. Managers of managers went from 14% to 29%. The group furthest from the craft is the group whose interest in leaving roughly doubled.
+
+Those people aren’t one prototype away from the fun part. They sit two approvals from it, and better tooling does nothing for them. Whatever moved them, it wasn’t Figma getting faster.
+
+## What the role picked up instead
+
+The same report holds the other half of it. Just under half of respondents, 45%, work more hours than they did a year ago, up from 38% in 2025 and 35% in 2024. For managers of managers it’s 46%, against 42%. A quarter of them now spend more time on technical tasks than they did last year, up from 18%.
+
+The report’s own summary: AI is “expanding what leaders can do technically and what is expected of them organizationally, without reducing the demands on their time in either dimension.”
+
+Read it as a job description. More hours, more technical work and nothing taken off.
+
+## The seat above got scarcer
+
+Across the whole sample the manager count roughly nets out, 22% reporting fewer managerial jobs against 19% reporting more. The shape of the cuts is the part that moved. Where organizations did cut manager roles, the cuts landed on middle management in 65% of cases and line management in 59%. Upper management was significantly hit in 23%, up from 18% in 2025 and 13% in 2024. The report describes a flattening that “is becoming less selective in who it affects.”
+
+Tyler Blackwell scored the forecast behind all of this on October 8, in Layers Not Linear. His grade: the direction was right and organizations are flatter, the size never came close, and the companies that did flatten mostly gave reasons other than AI. One line of his, on a 1993 review of the same question, is the useful part. “The technology didn’t decide it. Who held the decisions did.”
+
+So the work went up, the hours went up, and the layer you would get promoted into started getting cut as well. Working that out takes a spreadsheet, not a mentor.
+
+## Design leaders are writing the same job
+
+In [AI in Design 2026](https://stateofaidesign.com/chapters/teams), 32% of design leaders expect to keep headcount the same while raising output expectations. Another 10% expect to reduce it. Designer Fund and Foundation Capital surveyed more than 900 designers across 60 countries.
+
+That’s the job a design manager is handed this year. Same team, more output, and the decisions that matter sitting one level up.
+
+Doug Powell wrote up design leadership week at UXINDIA on October 5. His research with graduate students at Washington University in St. Louis found no clear playbook for moving into leadership, and gaps in mentorship and leadership development. He’s right about that gap. It’s a gap on the way in.
+
+The 32% is the gap on the way out. Preparation doesn’t touch it, because the people considering the exit are the ones who already know exactly what the job is.
+
+## What I give a manager to own
+
+The trade management used to offer was easy to state. You give up most of the making and you get the decisions. Take away the making and leave the decisions a level up, and the role’s a message queue with a title on it.
+
+So when a manager reports to me, I name what ships without me. Not what they run or coordinate or represent in a meeting. What they approve, which surfaces that covers, and where my opinion doesn’t get a vote.
+
+That costs something, and the cost should be said out loud: work goes out that I’d have done differently. A senior product designer on my team at Best Egg ran the button component audit from start to finish, the agent and the remediation both, and the calls inside it were hers. I built and ran the whole-library audit across 296 files and wrote the crawler’s rules. Hers wasn’t a smaller copy of mine with my sign-off at the end. It was hers.
+
+The version of the role without that is a manager who carries the hours and forwards the decisions. That’s the role 32% say they’re thinking about leaving.
+
+## The question the report left open
+
+Healthy recalibration or pipeline warning. It’s neither. It’s a price.
+
+The role used to be paid in decision authority. That authority moved up a level or into a queue, and the hours stayed. People are reading the terms and declining. The sharpest jump came from managers of managers, 14% to 29% in one year, who are close enough to the top to see what they would be climbing toward.
+
+Sources:
+
+- [The LeadDev Engineering Leadership Report 2026](https://leaddev.com/wp-content/uploads/2026/06/ENGINEERING_LEADERSHIP_REPORT_2026_FINAL.pdf)
+- [Rolled Over](https://layersnotlinear.substack.com/p/rolled-over)
+- [Who wants to be an engineering manager anyway?](https://leaddev.com/management/why-would-anyone-be-an-engineering-manager-in-2026)
+- [Teams](https://stateofaidesign.com/chapters/teams)
+- [The Future of Design Leadership is Taking Shape in India](https://dougpowelldesignleadership.substack.com/p/the-future-of-design-leadership-is)
+- [Agentic design system audit and remediation](/work/agentic-design-system-audit.html)
+
+---
+
 ## Designers disagree and the judge decides
 
 - URL: https://john-desouza.com/blog/designers-disagree-the-judge-decides.html

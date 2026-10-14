@@ -12,6 +12,7 @@ Posts are John's own views. Every number in a post links to the primary source t
 
 ## Blog: Design leadership
 
+- [Give your managers something to approve](https://john-desouza.com/blog/give-your-managers-something-to-approve.html): Managers are leaving management because the role’s trade stopped paying, and the proof is that the jump is concentrated in the people furthest from the craft, so preparation and mentorship can’t fix it.
 - [The interview was never the expensive part](https://john-desouza.com/blog/interview-was-never-the-expensive-part.html): The argument about AI in hiring is being fought over disclosure and detection, while the measured failure is that most candidates who finish an AI interview never get an answer, which is what happens when you add capacity to the one step that was already cheap.
 - [A new role isn’t a new process](https://john-desouza.com/blog/a-new-role-is-not-a-new-process.html): Leaders are answering AI with a change to the roster instead of a change to who approves work, and the collaboration numbers show the roster change doesn’t fix what broke.
 - [Getting hands-on costs you the crit](https://john-desouza.com/blog/hands-on-costs-you-the-crit.html): Hands-on time with agents comes out of the feedback hours, and feedback is the only part of the week that holds up as a team gets bigger.
